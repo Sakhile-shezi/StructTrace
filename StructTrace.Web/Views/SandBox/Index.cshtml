@@ -1,0 +1,363 @@
+﻿@model StructTrace.Web.Models.DataStructureLesson
+@{
+    ViewData["Title"] = Model.Title + " - StructTrace";
+    var allLessons = ViewBag.AllLessons as List<StructTrace.Web.Models.DataStructureLesson> ?? [];
+    var submissions = ViewBag.Submissions as List<StructTrace.Web.Models.CodeSubmission> ?? [];
+    var traces = ViewBag.SavedTraces as List<StructTrace.Web.Models.SavedTrace> ?? [];
+}
+
+<div class="container py-4">
+    <!-- Module Selector Bar -->
+    <div class="d-flex flex-wrap gap-2 mb-3">
+        @foreach (var item in allLessons)
+        {
+            var activeClass = item.Slug == Model.Slug ? "btn-primary" : "btn-outline-primary";
+            <a asp-action="Index" asp-route-slug="@item.Slug" class="btn btn-sm @activeClass">
+                @item.Title
+            </a>
+        }
+    </div>
+
+    @if (TempData["StatusMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["StatusMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- 1. Learning Section -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2 class="h4 mb-0">@Model.Title</h2>
+                <span class="badge bg-primary">@Model.Category</span>
+            </div>
+            <p class="text-muted mb-2">@Model.ConceptNotes</p>
+            <div class="small">
+                <strong>Time Complexity:</strong> <code>@Model.TimeComplexity</code> &nbsp;|&nbsp;
+                <strong>Space Complexity:</strong> <code>@Model.SpaceComplexity</code>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- 2. Interactive Step-by-Step Visualizer -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header fw-bold">Step-by-Step Execution Visualizer</div>
+                <div class="card-body">
+                    <div class="input-group mb-2">
+                        <input id="structInput" type="text" class="form-control" placeholder="Input values..." />
+                        <button id="btnBuildTrace" class="btn btn-primary" type="button">Generate Trace</button>
+                    </div>
+
+                    <canvas id="structCanvas" width="520" height="270" class="border rounded w-100 bg-light mb-2"></canvas>
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <button id="btnPrev" class="btn btn-outline-secondary btn-sm" type="button">Prev</button>
+                            <button id="btnNext" class="btn btn-outline-secondary btn-sm" type="button">Next</button>
+                        </div>
+                        <span id="stepCounter" class="badge bg-dark">Step 0 / 0</span>
+                    </div>
+                    <p id="stepLog" class="small text-primary fw-semibold mb-3">Click "Generate Trace" to animate.</p>
+
+                    <form asp-action="SaveTrace" method="post" class="border-top pt-3">
+                        <input type="hidden" name="lessonId" value="@Model.Id" />
+                        <input type="hidden" name="slug" value="@Model.Slug" />
+                        <input type="hidden" id="hiddenInputSeq" name="inputSequence" />
+                        <input type="hidden" id="hiddenTraceJson" name="traceFramesJson" />
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="title" class="form-control" placeholder="Trace label (e.g., Traversal Run)" required />
+                            <button type="submit" class="btn btn-success">Save Trace to Neon</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Multi-Language Code Editor & Execution Tracker -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header fw-bold">Multi-Language Code Editor & Execution Log</div>
+                <div class="card-body">
+                    <form asp-action="SaveSubmission" method="post">
+                        <input type="hidden" name="lessonId" value="@Model.Id" />
+                        <input type="hidden" name="slug" value="@Model.Slug" />
+                        <div class="row g-2 mb-2">
+                            <div class="col-md-5">
+                                <select id="langSelect" name="language" class="form-select form-select-sm">
+                                    <option value="C++">C++</option>
+                                    <option value="Java">Java</option>
+                                    <option value="Python">Python</option>
+                                    <option value="C#">C#</option>
+                                </select>
+                            </div>
+                            <div class="col-md-7">
+                                <input type="number" step="0.01" name="executionTimeMs" class="form-control form-control-sm" value="1.25" placeholder="Runtime (ms)" required />
+                            </div>
+                        </div>
+
+                        <textarea id="codeEditor" name="sourceCode" rows="10" class="form-control font-monospace small mb-2">@Model.CppTemplate</textarea>
+
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="executionNotes" class="form-control" placeholder="Execution output or complexity note..." required />
+                            <button type="submit" class="btn btn-primary">Save Run to Neon</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Database Records Persisted in Neon -->
+    <div class="row g-4 mt-2">
+        <div class="col-md-6">
+            <h6>Your Saved Visual Traces in Neon (@traces.Count)</h6>
+            <ul class="list-group list-group-flush small border rounded">
+                @foreach (var t in traces)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div><strong>@t.Title</strong> <span class="text-muted">(@t.InputSequence)</span></div>
+                        <button type="button" class="btn btn-link btn-sm p-0 load-trace-btn" data-json="@t.TraceFramesJson" data-seq="@t.InputSequence">Replay</button>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h6>Your Logged Code Runs in Neon (@submissions.Count)</h6>
+            <ul class="list-group list-group-flush small border rounded">
+                @foreach (var s in submissions)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span><strong>[@s.Language]</strong> @s.ExecutionNotes</span>
+                        <span class="badge bg-secondary">@s.ExecutionTimeMs ms</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const currentSlug = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Slug));
+        const templates = {
+            "C++": @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CppTemplate)),
+            "Java": @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.JavaTemplate)),
+            "Python": @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.PythonTemplate)),
+            "C#": @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CSharpTemplate))
+        };
+
+        document.getElementById("langSelect").addEventListener("change", (e) => {
+            document.getElementById("codeEditor").value = templates[e.target.value] || "";
+        });
+
+        const defaultInputs = {
+            "binary-search-tree": "50, 30, 70, 20, 40, 60, 80",
+            "singly-linked-list": "10, 25, 40, 55",
+            "stack-lifo": "10, 20, 30, POP, 40",
+            "graph-bfs": "0"
+        };
+        document.getElementById("structInput").value = defaultInputs[currentSlug] || "10, 20, 30";
+
+        let frames = [];
+        let currentStep = 0;
+
+        // --- 1. BST Frame Builder & Renderer ---
+        function cloneTree(n) { return n ? { val: n.val, left: cloneTree(n.left), right: cloneTree(n.right) } : null; }
+        function buildBstFrames(values) {
+            const res = []; let root = null;
+            for (const v of values) {
+                if (!root) { root = { val: v, left: null, right: null }; res.push({ kind: "bst", tree: cloneTree(root), active: v, msg: `Inserted ${v} as root.` }); continue; }
+                let c = root;
+                while (true) {
+                    res.push({ kind: "bst", tree: cloneTree(root), active: c.val, msg: `Comparing ${v} with ${c.val}...` });
+                    if (v < c.val) {
+                        if (!c.left) { c.left = { val: v, left: null, right: null }; res.push({ kind: "bst", tree: cloneTree(root), active: v, msg: `${v} < ${c.val}: inserted left.` }); break; }
+                        c = c.left;
+                    } else if (v > c.val) {
+                        if (!c.right) { c.right = { val: v, left: null, right: null }; res.push({ kind: "bst", tree: cloneTree(root), active: v, msg: `${v} > ${c.val}: inserted right.` }); break; }
+                        c = c.right;
+                    } else { res.push({ kind: "bst", tree: cloneTree(root), active: c.val, msg: `${v} already exists.` }); break; }
+                }
+            }
+            return res;
+        }
+        function drawTree(node, ctx, x, y, off, active) {
+            if (!node) return;
+            if (node.left) { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - off, y + 55); ctx.stroke(); drawTree(node.left, ctx, x - off, y + 55, off * 0.52, active); }
+            if (node.right) { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + off, y + 55); ctx.stroke(); drawTree(node.right, ctx, x + off, y + 55, off * 0.52, active); }
+            ctx.beginPath(); ctx.arc(x, y, 17, 0, Math.PI * 2);
+            ctx.fillStyle = node.val === active ? "#0d6efd" : "#ffffff"; ctx.fill(); ctx.stroke();
+            ctx.fillStyle = node.val === active ? "#ffffff" : "#212529";
+            ctx.font = "bold 12px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            ctx.fillText(node.val, x, y);
+        }
+
+        // --- 2. Singly Linked List Builder & Renderer ---
+        function buildListFrames(values) {
+            const res = [], list = [];
+            for (const v of values) {
+                for (let i = 0; i < list.length; i++) {
+                    res.push({ kind: "list", items: [...list], activeIdx: i, msg: `Traversing node [${list[i]}] looking for tail...` });
+                }
+                list.push(v);
+                res.push({ kind: "list", items: [...list], activeIdx: list.length - 1, msg: `Allocated Node(${v}) and linked next pointer.` });
+            }
+            return res;
+        }
+        function drawList(ctx, frame) {
+            const startX = 35, y = 115, boxW = 64, boxH = 36, gap = 36;
+            ctx.font = "bold 12px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            frame.items.forEach((val, i) => {
+                const x = startX + i * (boxW + gap);
+                ctx.fillStyle = i === frame.activeIdx ? "#0d6efd" : "#ffffff";
+                ctx.fillRect(x, y, boxW, boxH);
+                ctx.strokeStyle = "#212529"; ctx.strokeRect(x, y, boxW, boxH);
+                ctx.beginPath(); ctx.moveTo(x + 42, y); ctx.lineTo(x + 42, y + boxH); ctx.stroke();
+                ctx.fillStyle = i === frame.activeIdx ? "#ffffff" : "#212529";
+                ctx.fillText(val, x + 21, y + 18);
+                ctx.fillText("•", x + 53, y + 18);
+                // Arrow to next
+                ctx.beginPath(); ctx.moveTo(x + boxW, y + 18); ctx.lineTo(x + boxW + gap - 6, y + 18); ctx.stroke();
+                ctx.fillStyle = "#212529";
+                ctx.fillText("▶", x + boxW + gap - 4, y + 18);
+            });
+            const nullX = startX + frame.items.length * (boxW + gap) + 18;
+            ctx.fillStyle = "#6c757d";
+            ctx.fillText("NULL", nullX, y + 18);
+        }
+
+        // --- 3. Stack (LIFO) Builder & Renderer ---
+        function buildStackFrames(tokens) {
+            const res = [], stack = [];
+            for (const tok of tokens) {
+                if (tok.toUpperCase() === "POP") {
+                    const popped = stack.pop();
+                    res.push({ kind: "stack", items: [...stack], msg: popped !== undefined ? `POP() removed ${popped} from top.` : "Stack underflow (empty)." });
+                } else {
+                    const n = parseInt(tok, 10);
+                    if (!isNaN(n)) {
+                        stack.push(n);
+                        res.push({ kind: "stack", items: [...stack], msg: `PUSH(${n}) placed onto top of stack.` });
+                    }
+                }
+            }
+            return res;
+        }
+        function drawStack(ctx, frame) {
+            const x = 200, baseY = 225, w = 120, h = 32;
+            ctx.font = "bold 12px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            frame.items.forEach((val, idx) => {
+                const y = baseY - idx * (h + 4);
+                const isTop = idx === frame.items.length - 1;
+                ctx.fillStyle = isTop ? "#0d6efd" : "#ffffff";
+                ctx.fillRect(x, y, w, h);
+                ctx.strokeStyle = "#212529"; ctx.strokeRect(x, y, w, h);
+                ctx.fillStyle = isTop ? "#ffffff" : "#212529";
+                ctx.fillText(val, x + w / 2, y + h / 2);
+                if (isTop) {
+                    ctx.fillStyle = "#198754";
+                    ctx.fillText("◀ TOP", x + w + 38, y + h / 2);
+                }
+            });
+        }
+
+        // --- 4. Graph BFS Builder & Renderer ---
+        const graphNodes = [
+            { id: 0, x: 110, y: 135 }, { id: 1, x: 220, y: 60 }, { id: 2, x: 220, y: 210 },
+            { id: 3, x: 340, y: 60 },  { id: 4, x: 340, y: 210 }, { id: 5, x: 440, y: 135 }
+        ];
+        const graphAdj = [[1, 2], [0, 3, 4], [0, 4], [1, 5], [1, 2, 5], [3, 4]];
+
+        function buildBfsFrames(startNode) {
+            const start = (startNode >= 0 && startNode < graphNodes.length) ? startNode : 0;
+            const res = [], vis = new Set([start]), q = [start];
+            res.push({ kind: "bfs", active: start, visited: [...vis], queue: [...q], msg: `Enqueued start vertex ${start}.` });
+            while (q.length) {
+                const u = q.shift();
+                res.push({ kind: "bfs", active: u, visited: [...vis], queue: [...q], msg: `Dequeued ${u}; inspecting neighbors [${graphAdj[u].join(", ")}].` });
+                for (const v of graphAdj[u]) {
+                    if (!vis.has(v)) {
+                        vis.add(v); q.push(v);
+                        res.push({ kind: "bfs", active: u, visited: [...vis], queue: [...q], msg: `Discovered ${v} from ${u}; queue = [${q.join(", ")}].` });
+                    }
+                }
+            }
+            return res;
+        }
+        function drawGraph(ctx, frame) {
+            graphAdj.forEach((neighbors, u) => {
+                neighbors.forEach(v => {
+                    if (u < v) {
+                        ctx.beginPath();
+                        ctx.moveTo(graphNodes[u].x, graphNodes[u].y);
+                        ctx.lineTo(graphNodes[v].x, graphNodes[v].y);
+                        ctx.strokeStyle = "#adb5bd"; ctx.stroke();
+                    }
+                });
+            });
+            graphNodes.forEach(n => {
+                ctx.beginPath(); ctx.arc(n.x, n.y, 18, 0, Math.PI * 2);
+                const isActive = n.id === frame.active;
+                const isVisited = frame.visited.includes(n.id);
+                ctx.fillStyle = isActive ? "#0d6efd" : (isVisited ? "#198754" : "#ffffff");
+                ctx.fill(); ctx.strokeStyle = "#212529"; ctx.stroke();
+                ctx.fillStyle = (isActive || isVisited) ? "#ffffff" : "#212529";
+                ctx.font = "bold 12px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                ctx.fillText(n.id, n.x, n.y);
+            });
+            ctx.fillStyle = "#212529"; ctx.textAlign = "left";
+            ctx.fillText(`Queue: [${frame.queue.join(", ")}]`, 16, 20);
+        }
+
+        // --- Master Dispatcher ---
+        function renderStep(idx) {
+            const canvas = document.getElementById("structCanvas");
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (!frames.length) return;
+
+            currentStep = Math.max(0, Math.min(idx, frames.length - 1));
+            const f = frames[currentStep];
+
+            if (f.kind === "list") drawList(ctx, f);
+            else if (f.kind === "stack") drawStack(ctx, f);
+            else if (f.kind === "bfs") drawGraph(ctx, f);
+            else drawTree(f.tree, ctx, canvas.width / 2, 30, 120, f.active);
+
+            document.getElementById("stepCounter").textContent = `Step ${currentStep + 1} / ${frames.length}`;
+            document.getElementById("stepLog").textContent = f.msg;
+        }
+
+        document.getElementById("btnBuildTrace").addEventListener("click", () => {
+            const raw = document.getElementById("structInput").value;
+            const tokens = raw.split(",").map(s => s.trim()).filter(Boolean);
+            const nums = tokens.map(s => parseInt(s, 10)).filter(n => !isNaN(n));
+
+            if (currentSlug === "singly-linked-list") frames = buildListFrames(nums);
+            else if (currentSlug === "stack-lifo") frames = buildStackFrames(tokens);
+            else if (currentSlug === "graph-bfs") frames = buildBfsFrames(nums[0] ?? 0);
+            else frames = buildBstFrames(nums);
+
+            document.getElementById("hiddenInputSeq").value = tokens.join(", ");
+            document.getElementById("hiddenTraceJson").value = JSON.stringify(frames);
+            renderStep(0);
+        });
+
+        document.getElementById("btnPrev").addEventListener("click", () => renderStep(currentStep - 1));
+        document.getElementById("btnNext").addEventListener("click", () => renderStep(currentStep + 1));
+
+        document.querySelectorAll(".load-trace-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                frames = JSON.parse(btn.dataset.json);
+                document.getElementById("structInput").value = btn.dataset.seq;
+                renderStep(0);
+            });
+        });
+
+        document.getElementById("btnBuildTrace").click();
+    </script>
+}

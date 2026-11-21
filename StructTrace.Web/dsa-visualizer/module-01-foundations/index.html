@@ -1,0 +1,255 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Module 1: Foundations & Big-O Notation | Java DSA</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav-container" aria-label="Module Navigation">
+            <a href="../index.html" class="brand">DSA<span>Visual</span></a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">1. Big-O</a></li>
+                <li><a href="../module-02-linked-lists/index.html">2. Linked Lists</a></li>
+                <li><a href="../module-03-stacks-queues/index.html">3. Stacks & Queues</a></li>
+                <li><a href="../module-04-heaps/index.html">4. Heaps</a></li>
+                <li><a href="../module-05-bst/index.html">5. BST</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="module-hero">
+            <p class="module-tag">Module 01 • Foundations</p>
+            <h1>Asymptotic Growth, Big-O & Java Generics</h1>
+            <p class="subtitle">
+                Measure how runtime and memory scale as input size (<em>n</em>) grows, and build
+                type-safe algorithms using Java Generics and <code>Comparable<T></code>.
+            </p>
+        </section>
+
+        <!-- BLOCK 1: Intuition & Interactive Growth Plot -->
+        <section class="card" id="intuition-section">
+            <h2>1. Intuition & Interactive Growth Curves</h2>
+            <p>
+                Big-O strips away hardware differences and constant multipliers to show how fast
+                operations grow as <strong>n</strong> increases. Drag the slider to compare operation counts.
+            </p>
+
+            <div class="visualizer-controls">
+                <label for="n-slider">
+                    Input Size (<strong>n</strong>): <span id="n-value-display">20</span>
+                </label>
+                <input type="range" id="n-slider" min="2" max="64" value="20" />
+
+                <div class="curve-toggles" role="group" aria-label="Toggle Big-O Curves">
+                    <label><input type="checkbox" class="curve-toggle" value="O1" checked /> O(1)</label>
+                    <label><input type="checkbox" class="curve-toggle" value="Ologn" checked /> O(log n)</label>
+                    <label><input type="checkbox" class="curve-toggle" value="On" checked /> O(n)</label>
+                    <label><input type="checkbox" class="curve-toggle" value="Onlogn" checked /> O(n log n)</label>
+                    <label><input type="checkbox" class="curve-toggle" value="On2" checked /> O(n²)</label>
+                </div>
+            </div>
+
+            <div class="canvas-wrapper">
+                <canvas id="bigo-canvas" width="760" height="320" aria-label="Big-O Growth Chart"></canvas>
+            </div>
+            <div id="op-readout" class="readout-grid" aria-live="polite"></div>
+        </section>
+
+        <!-- BLOCK 2: Complexity Cheat Sheet -->
+        <section class="card" id="cheat-sheet-section">
+            <h2>2. Complexity Cheat Sheet</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Growth Class</th>
+                            <th>Name</th>
+                            <th>Typical Operation</th>
+                            <th>Ops at n = 1,000</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>O(1)</code></td>
+                            <td>Constant</td>
+                            <td>Array index lookup, hash probe</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td><code>O(log n)</code></td>
+                            <td>Logarithmic</td>
+                            <td>Binary search, balanced BST lookup</td>
+                            <td>≈ 10</td>
+                        </tr>
+                        <tr>
+                            <td><code>O(n)</code></td>
+                            <td>Linear</td>
+                            <td>Unsorted array scan, linked list traversal</td>
+                            <td>1,000</td>
+                        </tr>
+                        <tr>
+                            <td><code>O(n log n)</code></td>
+                            <td>Linearithmic</td>
+                            <td>Merge sort, heap sort, quick sort (avg)</td>
+                            <td>≈ 10,000</td>
+                        </tr>
+                        <tr>
+                            <td><code>O(n²)</code></td>
+                            <td>Quadratic</td>
+                            <td>Bubble sort, nested pair comparisons</td>
+                            <td>1,000,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="note">
+                <strong>Space Complexity:</strong> Iterative loops typically use <code>O(1)</code> auxiliary memory,
+                whereas recursive calls use <code>O(d)</code> stack frames for recursion depth <em>d</em>.
+            </p>
+        </section>
+
+        <!-- BLOCK 3: Pseudocode & Interactive Trace Table -->
+        <section class="card" id="trace-section">
+            <h2>3. Step-by-Step Pseudocode & Live Trace</h2>
+            <div class="two-col">
+                <div class="pseudocode-box">
+                    <h3>Iterative Binary Search</h3>
+                    <p class="contract"><strong>Pre:</strong> Sorted array <code>A</code> of size <em>n</em>; search key <code>target</code>.</p>
+                    <p class="contract"><strong>Post:</strong> Returns index <em>i</em> where <code>A[i] == target</code>, or <code>-1</code>.</p>
+<pre><code>BinarySearch(A, n, target)
+    low ← 0
+    high ← n - 1
+    while low ≤ high do
+        mid ← low + floor((high - low) / 2)
+        if A[mid] == target then
+            return mid
+        else if A[mid] < target then
+            low ← mid + 1
+        else
+            high ← mid - 1
+    return -1</code></pre>
+                </div>
+
+                <div class="interactive-trace">
+                    <h3>Dry-Run Array Visualizer</h3>
+                    <div class="trace-controls">
+                        <label for="bs-target-input">Target:</label>
+                        <input type="number" id="bs-target-input" value="42" />
+                        <button type="button" id="bs-step-btn" class="btn primary">Next Step</button>
+                        <button type="button" id="bs-reset-btn" class="btn secondary">Reset</button>
+                    </div>
+
+                    <div id="bs-array-container" class="array-visual" aria-label="Sorted Array State"></div>
+                    <p id="bs-status-msg" class="status-banner" aria-live="polite">
+                        Click <strong>Next Step</strong> to begin tracing.
+                    </p>
+
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Step</th>
+                                    <th>low</th>
+                                    <th>high</th>
+                                    <th>mid</th>
+                                    <th>A[mid]</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bs-trace-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 4: Java Implementation -->
+        <section class="card" id="java-section">
+            <h2>4. Java Implementation: Built-in API vs. Custom Generic</h2>
+            <div class="code-header">
+                <div class="tab-buttons" role="tablist">
+                    <button type="button" class="tab-btn active" data-tab="custom" role="tab" aria-selected="true">
+                        Custom Generic Class
+                    </button>
+                    <button type="button" class="tab-btn" data-tab="builtin" role="tab" aria-selected="false">
+                        Built-in Java API
+                    </button>
+                </div>
+                <button type="button" id="copy-code-btn" class="btn small">Copy Code</button>
+            </div>
+
+            <div id="code-custom" class="code-panel active">
+<pre><code>public class GenericSearch {
+    public static <T extends Comparable<T>> int binarySearch(T[] array, T target) {
+        int low = 0;
+        int high = array.length - 1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2; // Prevents 32-bit int overflow
+            int cmp = array[mid].compareTo(target);
+
+            if (cmp == 0) {
+                return mid;
+            } else if (cmp < 0) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+        return -1;
+    }
+}</code></pre>
+            </div>
+
+            <div id="code-builtin" class="code-panel" hidden>
+<pre><code>import java.util.Arrays;
+
+public class BuiltInSearchDemo {
+    public static int search(Integer[] sortedData, Integer target) {
+        // Returns index >= 0 if found, or -(insertionPoint) - 1 if absent
+        int index = Arrays.binarySearch(sortedData, target);
+        return index >= 0 ? index : -1;
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- BLOCK 5: Edge-Case Checklist -->
+        <section class="card" id="edge-cases-section">
+            <h2>5. Edge-Case Verification Checklist</h2>
+            <ul class="checklist">
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Empty Input (<code>n == 0</code>):</strong> Loop condition <code>0 ≤ -1</code> exits immediately and returns <code>-1</code>.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Single Element (<code>n == 1</code>):</strong> Evaluates <code>mid = 0</code> once without out-of-bounds access.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Out-of-Bounds Targets:</strong> Keys smaller than <code>A[0]</code> or larger than <code>A[n - 1]</code> terminate cleanly when <code>low > high</code>.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Midpoint Overflow Guard:</strong> Uses <code>low + (high - low) / 2</code> instead of <code>(low + high) / 2</code>.
+                    </label>
+                </li>
+            </ul>
+        </section>
+    </main>
+
+    <script src="module1.js"></script>
+</body>
+</html>

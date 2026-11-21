@@ -1,0 +1,366 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Module 2: Linked Lists | Java DSA</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav-container" aria-label="Module Navigation">
+            <a href="../index.html" class="brand">DSA<span>Visual</span></a>
+            <ul class="nav-links">
+                <li><a href="../module-01-foundations/index.html">1. Big-O</a></li>
+                <li><a href="index.html" class="active">2. Linked Lists</a></li>
+                <li><a href="../module-03-stacks-queues/index.html">3. Stacks & Queues</a></li>
+                <li><a href="../module-04-heaps/index.html">4. Heaps</a></li>
+                <li><a href="../module-05-bst/index.html">5. BST</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="module-hero">
+            <p class="module-tag">Module 02 • Linear Pointer Structures</p>
+            <h1>Singly & Doubly Linked Lists</h1>
+            <p class="subtitle">
+                Store elements in non-contiguous heap nodes linked by references, trading $O(1)$
+                random array indexing for $O(1)$ pointer-rewiring insertions without element shifting.
+            </p>
+        </section>
+
+        <!-- BLOCK 1: Intuition & Interactive Pointer Visualizer -->
+        <section class="card" id="intuition-section">
+            <h2>1. Intuition & Interactive Pointer Manipulator</h2>
+            <p>
+                Maintaining both <code>head</code> and <code>tail</code> references makes
+                <code>addFirst</code> and <code>addLast</code> run in <strong>O(1)</strong> time,
+                while <code>search</code> and arbitrary <code>remove</code> must walk nodes sequentially in <strong>O(n)</strong> time.
+            </p>
+
+            <div class="visualizer-controls">
+                <div class="trace-controls" style="margin-bottom: 0;">
+                    <label for="ll-value-input">Value:</label>
+                    <input type="number" id="ll-value-input" value="25" />
+                    <button type="button" id="ll-add-first-btn" class="btn primary">addFirst (O(1))</button>
+                    <button type="button" id="ll-add-last-btn" class="btn primary">addLast (O(1))</button>
+                    <button type="button" id="ll-search-btn" class="btn secondary">search (O(n))</button>
+                    <button type="button" id="ll-remove-btn" class="btn danger">remove (O(n))</button>
+                    <button type="button" id="ll-reset-btn" class="btn secondary">Reset</button>
+                </div>
+            </div>
+
+            <div class="ll-stage" aria-label="Linked List Node Diagram">
+                <div id="ll-nodes-container" class="ll-track"></div>
+            </div>
+
+            <p id="ll-status-msg" class="status-banner" aria-live="polite">
+                Initialized list <code>10 → 20 → 30</code> with <code>head = 10</code> and <code>tail = 30</code>.
+            </p>
+
+            <div class="readout-grid" aria-live="polite">
+                <div class="readout-item">
+                    <span>List Size</span>
+                    <strong id="ll-size-readout">3</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #2563eb;">
+                    <span>head Pointer</span>
+                    <strong id="ll-head-readout">10</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #7c3aed;">
+                    <span>tail Pointer</span>
+                    <strong id="ll-tail-readout">30</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #16a34a;">
+                    <span>Last Operation Cost</span>
+                    <strong id="ll-cost-readout">O(1) • 0 steps</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 2: Complexity Cheat Sheet -->
+        <section class="card" id="cheat-sheet-section">
+            <h2>2. Complexity Cheat Sheet</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Operation</th>
+                            <th>Singly Linked (<code>head</code> only)</th>
+                            <th>Singly Linked (<code>head</code> & <code>tail</code>)</th>
+                            <th>Doubly Linked (<code>head</code> & <code>tail</code>)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Access by Index</strong></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(n)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Search by Value</strong></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(n)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Insert at Head</strong></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(1)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Insert at Tail</strong></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(1)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Delete at Head</strong></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(1)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Delete at Tail</strong></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(n)</code> (needs <code>prev</code>)</td>
+                            <td><code>O(1)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Auxiliary Space</strong></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(n)</code> (extra <code>prev</code> ref)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="note">
+                <strong>Why Singly Linked Tail Deletion is O(n):</strong> Even with a <code>tail</code> pointer,
+                removing the final node requires finding the second-to-last node (<code>prev</code>) so
+                <code>prev.next</code> can be set to <code>null</code>.
+            </p>
+        </section>
+
+        <!-- BLOCK 3: Pseudocode & Live Operation Trace -->
+        <section class="card" id="trace-section">
+            <h2>3. Step-by-Step Pseudocode & Operation Log</h2>
+            <div class="two-col">
+                <div class="pseudocode-box">
+                    <h3>Delete First Matching Value</h3>
+                    <p class="contract"><strong>Pre:</strong> <code>list</code> has <code>head</code> & <code>tail</code> pointers; <code>target</code> is key to remove.</p>
+                    <p class="contract"><strong>Post:</strong> Unlinks first matching node, updates <code>head</code>/<code>tail</code>, returns <code>true</code> or <code>false</code>.</p>
+<pre><code>DeleteValue(list, target)
+    if list.head == null then
+        return false
+    if list.head.data == target then
+        list.head ← list.head.next
+        if list.head == null then
+            list.tail ← null
+        list.size ← list.size - 1
+        return true
+
+    prev ← list.head
+    curr ← list.head.next
+    while curr != null do
+        if curr.data == target then
+            prev.next ← curr.next
+            if curr == list.tail then
+                list.tail ← prev
+            list.size ← list.size - 1
+            return true
+        prev ← curr
+        curr ← curr.next
+    return false</code></pre>
+                </div>
+
+                <div class="interactive-trace">
+                    <h3>Live Pointer Mutation Log</h3>
+                    <p class="contract">
+                        Execute operations in Section 1 to record exact pointer reassignments and list states below.
+                    </p>
+                    <div class="table-responsive" style="margin-top: 0.75rem;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Operation</th>
+                                    <th>Pointer Mutation</th>
+                                    <th>Resulting List</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ll-trace-body">
+                                <tr>
+                                    <td>0</td>
+                                    <td><code>init()</code></td>
+                                    <td><code>head = 10, tail = 30</code></td>
+                                    <td><code>10 → 20 → 30 → null</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 4: Java Implementation -->
+        <section class="card" id="java-section">
+            <h2>4. Java Implementation: Custom SinglyLinkedList vs. Built-in API</h2>
+            <div class="code-header">
+                <div class="tab-buttons" role="tablist">
+                    <button type="button" class="tab-btn active" data-tab="custom" role="tab" aria-selected="true">
+                        Custom SinglyLinkedList<E>
+                    </button>
+                    <button type="button" class="tab-btn" data-tab="builtin" role="tab" aria-selected="false">
+                        Built-in java.util.LinkedList
+                    </button>
+                </div>
+                <button type="button" id="copy-code-btn" class="btn small">Copy Code</button>
+            </div>
+
+            <div id="code-custom" class="code-panel active">
+<pre><code>import java.util.Objects;
+
+public class SinglyLinkedList<E> {
+    private static class Node<E> {
+        E data;
+        Node<E> next;
+
+        Node(E data) {
+            this.data = data;
+        }
+    }
+
+    private Node<E> head;
+    private Node<E> tail;
+    private int size = 0;
+
+    public void addFirst(E value) {
+        Node<E> newNode = new Node<>(value);
+        newNode.next = head;
+        head = newNode;
+        if (tail == null) {
+            tail = head;
+        }
+        size++;
+    }
+
+    public void addLast(E value) {
+        Node<E> newNode = new Node<>(value);
+        if (tail == null) {
+            head = tail = newNode;
+        } else {
+            tail.next = newNode;
+            tail = newNode;
+        }
+        size++;
+    }
+
+    public boolean contains(E target) {
+        Node<E> curr = head;
+        while (curr != null) {
+            if (Objects.equals(curr.data, target)) {
+                return true;
+            }
+            curr = curr.next;
+        }
+        return false;
+    }
+
+    public boolean remove(E target) {
+        if (head == null) return false;
+
+        if (Objects.equals(head.data, target)) {
+            head = head.next;
+            if (head == null) {
+                tail = null;
+            }
+            size--;
+            return true;
+        }
+
+        Node<E> prev = head;
+        Node<E> curr = head.next;
+        while (curr != null) {
+            if (Objects.equals(curr.data, target)) {
+                prev.next = curr.next;
+                if (curr == tail) {
+                    tail = prev;
+                }
+                size--;
+                return true;
+            }
+            prev = curr;
+            curr = curr.next;
+        }
+        return false;
+    }
+
+    public int size() {
+        return size;
+    }
+}</code></pre>
+            </div>
+
+            <div id="code-builtin" class="code-panel" hidden>
+<pre><code>import java.util.LinkedList;
+
+public class BuiltInLinkedListDemo {
+    public static void main(String[] args) {
+        // Java's LinkedList is a doubly-linked list maintaining first & last pointers
+        LinkedList<Integer> list = new LinkedList<>();
+
+        list.addFirst(10); // O(1)
+        list.addLast(20);  // O(1)
+        list.addLast(30);  // O(1)
+
+        boolean found = list.contains(20); // O(n) -> true
+
+        // IMPORTANT: Passing primitive int calls remove(int index).
+        // Wrap in Integer.valueOf() to call remove(Object o) by value!
+        list.remove(Integer.valueOf(20)); // O(n) -> removes value 20
+        list.removeFirst();               // O(1) -> removes 10
+        list.removeLast();                // O(1) -> removes 30 (O(1) because doubly linked)
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- BLOCK 5: Edge-Case Checklist -->
+        <section class="card" id="edge-cases-section">
+            <h2>5. Edge-Case Verification Checklist</h2>
+            <ul class="checklist">
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Empty List Guard (<code>head == null</code>):</strong> Return <code>false</code> immediately on <code>remove</code> without dereferencing <code>head.data</code>.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Single-Node Removal:</strong> When removing the sole element sets <code>head = null</code>, <code>tail</code> must also be set to <code>null</code> to prevent a dangling reference.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Tail Node Deletion:</strong> Deleting the last node in a singly linked list must update <code>tail = prev</code> so subsequent <code>addLast</code> calls attach properly.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Java Overload Trap (<code>remove(int)</code> vs. <code>remove(Object)</code>):</strong> On <code>LinkedList<Integer></code>, <code>list.remove(20)</code> deletes index 20; pass <code>Integer.valueOf(20)</code> to remove value 20.
+                    </label>
+                </li>
+            </ul>
+        </section>
+    </main>
+
+    <script src="module2.js"></script>
+</body>
+</html>
