@@ -1,0 +1,384 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DSAVisual | Interactive Java Data Structures & Algorithms</title>
+    <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav-container" aria-label="Primary Navigation">
+            <a href="index.html" class="brand">DSA<span>Visual</span></a>
+            <ul class="nav-links">
+                <li><a href="module-01-foundations/index.html">1. Big-O</a></li>
+                <li><a href="module-02-linked-lists/index.html">2. Linked Lists</a></li>
+                <li><a href="module-03-stacks-queues/index.html">3. Stacks & Queues</a></li>
+                <li><a href="module-04-heaps/index.html">4. Heaps</a></li>
+                <li><a href="module-05-bst/index.html">5. BST</a></li>
+                <li><a href="module-06-balanced-trees/index.html">6. Balanced Trees</a></li>
+                <li><a href="module-07-hashing/index.html">7. Hashing</a></li>
+                <li><a href="module-08-graphs-algorithms/index.html">8. Graphs & Algos</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="hub-hero">
+            <p class="module-tag">Interactive Curriculum • Java & Pseudocode</p>
+            <h1>Data Structures & Algorithms Visualizer</h1>
+            <p class="subtitle">
+                Master core data structures through a two-step approach: trace pointer mutations and
+                <code>Pre</code>/<code>Post</code> conditions visually first, then compare custom
+                type-safe Java generics against the built-in Java Collections Framework.
+            </p>
+
+            <div class="hub-progress-card">
+                <div class="hub-progress-header">
+                    <span><strong>Study Progress:</strong> <span id="progress-text">0 of 5 active modules completed</span></span>
+                    <button type="button" id="reset-progress-btn" class="btn secondary" style="padding: 0.3rem 0.7rem; font-size: 0.82rem;">
+                        Reset Progress
+                    </button>
+                </div>
+                <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0" id="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Curriculum Module Grid -->
+        <section aria-label="Curriculum Modules">
+            <div class="module-grid">
+                <!-- Module 1 -->
+                <article class="module-card" data-module-id="mod1">
+                    <div class="module-card-top">
+                        <span class="module-num">Module 01</span>
+                        <span class="pill pill-ready">Ready</span>
+                    </div>
+                    <h2>Foundations & Big-O Notation</h2>
+                    <p>
+                        Compare asymptotic growth classes from <code>O(1)</code> to <code>O(n²)</code>,
+                        trace binary search pointer bounds, and write generic <code>Comparable<T></code> methods.
+                    </p>
+                    <ul class="topic-tags">
+                        <li>Interactive Big-O Plot</li>
+                        <li>Binary Search Stepper</li>
+                        <li>Java Generics</li>
+                    </ul>
+                    <div class="module-card-footer">
+                        <label class="status-label">
+                            <input type="checkbox" class="mod-complete-cb" data-mod="mod1" />
+                            Completed
+                        </label>
+                        <a href="module-01-foundations/index.html" class="btn primary">Launch Module →</a>
+                    </div>
+                </article>
+
+                <!-- Module 2 -->
+                <article class="module-card" data-module-id="mod2">
+                    <div class="module-card-top">
+                        <span class="module-num">Module 02</span>
+                        <span class="pill pill-ready">Ready</span>
+                    </div>
+                    <h2>Singly & Doubly Linked Lists</h2>
+                    <p>
+                        Visualize heap node rewiring for <code>addFirst</code>, <code>addLast</code>,
+                        <code>contains</code>, and <code>remove</code> with live <code>head</code>, <code>tail</code>, and <code>prev</code> pointers.
+                    </p>
+                    <ul class="topic-tags">
+                        <li>Pointer Rewiring</li>
+                        <li>O(1) Head/Tail Ops</li>
+                        <li>java.util.LinkedList</li>
+                    </ul>
+                    <div class="module-card-footer">
+                        <label class="status-label">
+                            <input type="checkbox" class="mod-complete-cb" data-mod="mod2" />
+                            Completed
+                        </label>
+                        <a href="module-02-linked-lists/index.html" class="btn primary">Launch Module →</a>
+                    </div>
+                </article>
+
+                <!-- Module 3 -->
+                <article class="module-card" data-module-id="mod3">
+                    <div class="module-card-top">
+                        <span class="module-num">Module 03</span>
+                        <span class="pill pill-ready">Ready</span>
+                    </div>
+                    <h2>Stacks, Queues & Deques</h2>
+                    <p>
+                        Switch between LIFO stacks, FIFO queues, and double-ended queues to observe
+                        strict <code>O(1)</code> boundary access and underflow handling.
+                    </p>
+                    <ul class="topic-tags">
+                        <li>LIFO & FIFO Workbench</li>
+                        <li>LinkedQueue<E></li>
+                        <li>java.util.ArrayDeque</li>
+                    </ul>
+                    <div class="module-card-footer">
+                        <label class="status-label">
+                            <input type="checkbox" class="mod-complete-cb" data-mod="mod3" />
+                            Completed
+                        </label>
+                        <a href="module-03-stacks-queues/index.html" class="btn primary">Launch Module →</a>
+                    </div>
+                </article>
+
+                <!-- Module 4 -->
+                <article class="module-card" data-module-id="mod4">
+                    <div class="module-card-top">
+                        <span class="module-num">Module 04</span>
+                        <span class="pill pill-ready">Ready</span>
+                    </div>
+                    <h2>Binary Min-Heaps</h2>
+                    <p>
+                        Inspect synchronized tree and zero-indexed array views, animate <code>siftUp</code>
+                        and <code>siftDown</code> swaps, and run bottom-up <code>O(n)</code> heap construction.
+                    </p>
+                    <ul class="topic-tags">
+                        <li>Dual Tree/Array View</li>
+                        <li>Index Arithmetic</li>
+                        <li>java.util.PriorityQueue</li>
+                    </ul>
+                    <div class="module-card-footer">
+                        <label class="status-label">
+                            <input type="checkbox" class="mod-complete-cb" data-mod="mod4" />
+                            Completed
+                        </label>
+                        <a href="module-04-heaps/index.html" class="btn primary">Launch Module →</a>
+                    </div>
+                </article>
+
+                <!-- Module 5 -->
+                <article class="module-card" data-module-id="mod5">
+                    <div class="module-card-top">
+                        <span class="module-num">Module 05</span>
+                        <span class="pill pill-ready">Ready</span>
+                    </div>
+                    <h2>Binary Search Trees (BST)</h2>
+                    <p>
+                        Trace 4-case BST deletion with Inorder Successor promotion, animate DFS/BFS traversals,
+                        and test worst-case <code>O(n)</code> skewed chain degeneration.
+                    </p>
+                    <ul class="topic-tags">
+                        <li>4-Case Deletion</li>
+                        <li>Inorder / Pre / Post / BFS</li>
+                        <li>java.util.TreeSet</li>
+                    </ul>
+                    <div class="module-card-footer">
+                        <label class="status-label">
+                            <input type="checkbox" class="mod-complete-cb" data-mod="mod5" />
+                            Completed
+                        </label>
+                        <a href="module-05-bst/index.html" class="btn primary">Launch Module →</a>
+                    </div>
+                </article>
+
+                <!-- Module 6 -->
+                <article class="module-card" data-module-id="mod6">
+                    <div class="module-card-top">
+                        <span class="module-num">Module 06</span>
+                        <span class="pill pill-ready">Ready</span>
+                    </div>
+                    <h2>Balanced Search Trees (AVL & Red-Black)</h2>
+                    <p>
+                        Prevent BST skewness using Balance Factors, single rotations (<code>LL</code>, <code>RR</code>),
+                        and double rotations (<code>LR</code>, <code>RL</code>) to guarantee <code>O(log n)</code> worst-case height.
+                    </p>
+                    <ul class="topic-tags">
+                        <li>AVL Rotations</li>
+                        <li>Balance Factors</li>
+                        <li>java.util.TreeMap</li>
+                    </ul>
+                    <div class="module-card-footer">
+                        <label class="status-label">
+                            <input type="checkbox" class="mod-complete-cb" data-mod="mod6" />
+                            Completed
+                        </label>
+                        <a href="module-06-balanced-trees/index.html" class="btn primary">Launch Module →</a>
+                    </div>
+                </article>
+
+                <!-- Module 7 -->
+                <article class="module-card" data-module-id="mod7">
+                    <div class="module-card-top">
+                        <span class="module-num">Module 07</span>
+                        <span class="pill pill-ready">Ready</span>
+                    </div>
+                    <h2>Sets, Maps & Hash Tables</h2>
+                    <p>
+                        Explore Java <code>hashCode()</code> compression, separate chaining vs. linear probing
+                        with tombstones, and automatic rehashing at <code>α ≥ 0.75</code>.
+                    </p>
+                    <ul class="topic-tags">
+                        <li>Chaining & Probing</li>
+                        <li>Load Factor & Rehash</li>
+                        <li>HashMap & HashSet</li>
+                    </ul>
+                    <div class="module-card-footer">
+                        <label class="status-label">
+                            <input type="checkbox" class="mod-complete-cb" data-mod="mod7" />
+                            Completed
+                        </label>
+                        <a href="module-07-hashing/index.html" class="btn primary">Launch Module →</a>
+                    </div>
+                </article>
+
+                <!-- Module 8 -->
+                <article class="module-card" data-module-id="mod8">
+                    <div class="module-card-top">
+                        <span class="module-num">Module 08</span>
+                        <span class="pill pill-ready">Ready</span>
+                    </div>
+                    <h2>Graphs & Classic Algorithms</h2>
+                    <p>
+                        Represent weighted graphs via adjacency lists, trace BFS, DFS, and Dijkstra's shortest
+                        paths, and benchmark Insertion, Merge, and Quick Sort.
+                    </p>
+                    <ul class="topic-tags">
+                        <li>BFS, DFS & Dijkstra</li>
+                        <li>Merge & Quick Sort</li>
+                        <li>WeightedGraph<V></li>
+                    </ul>
+                    <div class="module-card-footer">
+                        <label class="status-label">
+                            <input type="checkbox" class="mod-complete-cb" data-mod="mod8" />
+                            Completed
+                        </label>
+                        <a href="module-08-graphs-algorithms/index.html" class="btn primary">Launch Module →</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Quick Reference Matrix -->
+        <section class="card" style="margin-top: 2rem;">
+            <h2>Master Data Structure Complexity Reference</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data Structure</th>
+                            <th>Access / Peek</th>
+                            <th>Search (Avg / Worst)</th>
+                            <th>Insert (Avg / Worst)</th>
+                            <th>Delete (Avg / Worst)</th>
+                            <th>Primary Java Class</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Sorted Array</strong></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(log n)</code> / <code>O(log n)</code></td>
+                            <td><code>O(n)</code> / <code>O(n)</code></td>
+                            <td><code>O(n)</code> / <code>O(n)</code></td>
+                            <td><code>Arrays.binarySearch</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Singly Linked List</strong> (<code>head</code> & <code>tail</code>)</td>
+                            <td><code>O(1)</code> ends</td>
+                            <td><code>O(n)</code> / <code>O(n)</code></td>
+                            <td><code>O(1)</code> ends</td>
+                            <td><code>O(1)</code> head / <code>O(n)</code> tail</td>
+                            <td><code>java.util.LinkedList</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Stack / Queue / Deque</strong></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(n)</code> / <code>O(n)</code></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>java.util.ArrayDeque</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Binary Min-Heap</strong></td>
+                            <td><code>O(1)</code> min</td>
+                            <td><code>O(n)</code> / <code>O(n)</code></td>
+                            <td><code>O(log n)</code> / <code>O(log n)</code></td>
+                            <td><code>O(log n)</code> / <code>O(log n)</code></td>
+                            <td><code>java.util.PriorityQueue</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Binary Search Tree</strong></td>
+                            <td><code>O(log n)</code> min/max</td>
+                            <td><code>O(log n)</code> / <code>O(n)</code></td>
+                            <td><code>O(log n)</code> / <code>O(n)</code></td>
+                            <td><code>O(log n)</code> / <code>O(n)</code></td>
+                            <td><code>java.util.TreeSet</code> (balanced)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const STORAGE_KEY = "dsavisual_completed_modules";
+      const checkboxes = document.querySelectorAll(".mod-complete-cb");
+      const progressText = document.getElementById("progress-text");
+      const progressFill = document.getElementById("progress-fill");
+      const progressBar = document.getElementById("progress-bar");
+      const resetBtn = document.getElementById("reset-progress-btn");
+
+      function loadState() {
+        try {
+          return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        } catch {
+          return {};
+        }
+      }
+
+      function saveState(state) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch {
+          // Ignore storage quota or private-mode restrictions
+        }
+      }
+
+      function updateUI() {
+        const state = loadState();
+        let completedCount = 0;
+
+        checkboxes.forEach((cb) => {
+          const modId = cb.dataset.mod;
+          const isDone = Boolean(state[modId]);
+          cb.checked = isDone;
+
+          const card = cb.closest(".module-card");
+          if (card) {
+            card.classList.toggle("is-completed", isDone);
+          }
+          if (isDone) completedCount += 1;
+        });
+
+        const totalActive = checkboxes.length;
+        const pct = Math.round((completedCount / totalActive) * 100);
+        progressText.textContent = `${completedCount} of ${totalActive} active modules completed (${pct}%)`;
+        progressFill.style.width = `${pct}%`;
+        progressBar.setAttribute("aria-valuenow", String(completedCount));
+      }
+
+      checkboxes.forEach((cb) => {
+        cb.addEventListener("change", () => {
+          const state = loadState();
+          state[cb.dataset.mod] = cb.checked;
+          saveState(state);
+          updateUI();
+        });
+      });
+
+      if (resetBtn) {
+        resetBtn.addEventListener("click", () => {
+          saveState({});
+          updateUI();
+        });
+      }
+
+      updateUI();
+    });
+    </script>
+</body>
+</html>

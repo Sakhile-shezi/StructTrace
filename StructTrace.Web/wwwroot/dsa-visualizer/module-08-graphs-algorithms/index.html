@@ -1,0 +1,399 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Module 8: Graphs & Classic Algorithms | Java DSA</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav-container" aria-label="Module Navigation">
+            <a href="../index.html" class="brand">DSA<span>Visual</span></a>
+            <ul class="nav-links">
+                <li><a href="../module-01-foundations/index.html">1. Big-O</a></li>
+                <li><a href="../module-02-linked-lists/index.html">2. Linked Lists</a></li>
+                <li><a href="../module-03-stacks-queues/index.html">3. Stacks & Queues</a></li>
+                <li><a href="../module-04-heaps/index.html">4. Heaps</a></li>
+                <li><a href="../module-05-bst/index.html">5. BST</a></li>
+                <li><a href="../module-06-balanced-trees/index.html">6. Balanced Trees</a></li>
+                <li><a href="../module-07-hashing/index.html">7. Hashing</a></li>
+                <li><a href="index.html" class="active">8. Graphs & Algos</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="module-hero">
+            <p class="module-tag">Module 08 • Networks & Algorithmic Paradigms</p>
+            <h1>Graphs, Shortest Paths & Classic Sorting</h1>
+            <p class="subtitle">
+                Model pairwise relationships as vertices and weighted edges <code>G = (V, E)</code>,
+                contrast unweighted <strong>BFS</strong> against weighted <strong>Dijkstra's Algorithm</strong>,
+                and benchmark <strong>O(n²)</strong> vs. <strong>O(n log n)</strong> sorting strategies.
+            </p>
+        </section>
+
+        <!-- BLOCK 1: Intuition & Dual Graph / Sorting Visualizer -->
+        <section class="card" id="intuition-section">
+            <h2>1. Intuition & Interactive Graph / Sorting Workbench</h2>
+            <p>
+                In <strong>Graph Mode</strong>, run <strong>BFS</strong> (minimum hop count) vs. <strong>Dijkstra</strong>
+                (minimum total edge weight) starting from vertex <code>A</code>—notice how path <code>A → C → B → D → E → F</code>
+                takes 5 hops but costs only <strong>13</strong> vs. <strong>15</strong> for the 3-hop path <code>A → B → D → F</code>.
+                Switch to <strong>Sorting Mode</strong> to compare quadratic vs. divide-and-conquer sorts.
+            </p>
+
+            <div class="visualizer-controls">
+                <div class="mode-switcher" role="group" aria-label="Select Workbench Mode">
+                    <button type="button" class="mode-btn active" data-mode="graph">Graph Traversals & Paths</button>
+                    <button type="button" class="mode-btn" data-mode="sort">Sorting Algorithms</button>
+                </div>
+
+                <!-- Graph Controls -->
+                <div id="controls-graph" class="op-group">
+                    <label for="graph-start-select" style="align-self: center; font-size: 0.9rem; font-weight: 600;">Start:</label>
+                    <select id="graph-start-select" class="select-control">
+                        <option value="A" selected>Vertex A</option>
+                        <option value="B">Vertex B</option>
+                        <option value="C">Vertex C</option>
+                        <option value="D">Vertex D</option>
+                        <option value="E">Vertex E</option>
+                        <option value="F">Vertex F</option>
+                    </select>
+                    <button type="button" id="graph-bfs-btn" class="btn primary">BFS (O(V+E))</button>
+                    <button type="button" id="graph-dfs-btn" class="btn primary">DFS (O(V+E))</button>
+                    <button type="button" id="graph-dijkstra-btn" class="btn secondary">Dijkstra (O(E log V))</button>
+                    <button type="button" id="graph-reset-btn" class="btn secondary">Reset</button>
+                </div>
+
+                <!-- Sorting Controls -->
+                <div id="controls-sort" class="op-group" hidden>
+                    <button type="button" id="sort-insertion-btn" class="btn primary">Insertion Sort (O(n²))</button>
+                    <button type="button" id="sort-merge-btn" class="btn primary">Merge Sort (O(n log n))</button>
+                    <button type="button" id="sort-quick-btn" class="btn primary">Quick Sort (O(n log n))</button>
+                    <button type="button" id="sort-shuffle-btn" class="btn secondary">Shuffle Array</button>
+                </div>
+            </div>
+
+            <div class="canvas-wrapper">
+                <canvas id="algo-canvas" width="760" height="310" aria-label="Graph and Sorting Visualizer Canvas"></canvas>
+            </div>
+
+            <p id="algo-status-msg" class="status-banner" aria-live="polite" style="margin-top: 1rem;">
+                Weighted undirected graph loaded (<code>|V| = 6, |E| = 9</code>). Select an algorithm above to trace.
+            </p>
+
+            <div class="readout-grid" aria-live="polite">
+                <div class="readout-item">
+                    <span>Active Algorithm</span>
+                    <strong id="algo-name-readout">Ready</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #2563eb;">
+                    <span>Time Complexity</span>
+                    <strong id="algo-time-readout">O(V + E)</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #7c3aed;">
+                    <span>Auxiliary Structure</span>
+                    <strong id="algo-ds-readout">Queue / Stack / Min-Heap</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #d97706;">
+                    <span>Operations / Cost</span>
+                    <strong id="algo-ops-readout">0 steps</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 2: Complexity Cheat Sheet -->
+        <section class="card" id="cheat-sheet-section">
+            <h2>2. Graph & Sorting Complexity Cheat Sheet</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Algorithm / Representation</th>
+                            <th>Best Case</th>
+                            <th>Average Case</th>
+                            <th>Worst Case</th>
+                            <th>Auxiliary Space</th>
+                            <th>Key Property</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Adjacency List</strong> (<code>Map<V, List<Edge>></code>)</td>
+                            <td colspan="3">Edge check: <code>O(deg(v))</code> • Iterate neighbors: <code>O(deg(v))</code></td>
+                            <td><code>O(V + E)</code></td>
+                            <td>Optimal for sparse real-world graphs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Adjacency Matrix</strong> (<code>int[V][V]</code>)</td>
+                            <td colspan="3">Edge check: <code>O(1)</code> • Iterate neighbors: <code>O(V)</code></td>
+                            <td><code>O(V²)</code></td>
+                            <td>Fast edge lookup; costly memory for large <em>V</em></td>
+                        </tr>
+                        <tr>
+                            <td><strong>BFS & DFS Traversal</strong></td>
+                            <td><code>O(V + E)</code></td>
+                            <td><code>O(V + E)</code></td>
+                            <td><code>O(V + E)</code></td>
+                            <td><code>O(V)</code></td>
+                            <td>BFS finds unweighted shortest paths</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dijkstra's Algorithm</strong> (Min-Heap)</td>
+                            <td><code>O(E log V)</code></td>
+                            <td><code>O(E log V)</code></td>
+                            <td><code>O(E log V)</code></td>
+                            <td><code>O(V)</code></td>
+                            <td>Requires non-negative edge weights (<code>w ≥ 0</code>)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Insertion Sort</strong></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(n²)</code></td>
+                            <td><code>O(n²)</code></td>
+                            <td><code>O(1)</code></td>
+                            <td>Stable; fastest on tiny or nearly sorted arrays</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Merge Sort</strong></td>
+                            <td><code>O(n log n)</code></td>
+                            <td><code>O(n log n)</code></td>
+                            <td><code>O(n log n)</code></td>
+                            <td><code>O(n)</code></td>
+                            <td>Stable; guaranteed <code>O(n log n)</code> worst-case</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Quick Sort</strong></td>
+                            <td><code>O(n log n)</code></td>
+                            <td><code>O(n log n)</code></td>
+                            <td><code>O(n²)</code></td>
+                            <td><code>O(log n)</code> stack</td>
+                            <td>Unstable; in-place with superior cache locality</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="note">
+                <strong>How Java's <code>Arrays.sort()</code> Chooses:</strong> For primitive arrays (<code>int[]</code>),
+                Java uses <strong>Dual-Pivot Quicksort</strong> (fast in-place, stability irrelevant for equal primitives).
+                For object arrays (<code>T[]</code>) and <code>List.sort()</code>, Java uses <strong>TimSort</strong>
+                (a hybrid Merge + Insertion Sort) to guarantee <code>O(n log n)</code> worst-case time and preserve stability.
+            </p>
+        </section>
+
+        <!-- BLOCK 3: Pseudocode & Live Execution Trace -->
+        <section class="card" id="trace-section">
+            <h2>3. Step-by-Step Pseudocode & Execution Log</h2>
+            <div class="two-col">
+                <div class="pseudocode-box">
+                    <h3>Dijkstra's Shortest Path (Min-Heap)</h3>
+                    <p class="contract"><strong>Pre:</strong> Weighted graph <code>G = (V, E)</code> with non-negative weights <code>w(u, v) ≥ 0</code>; source <code>s</code>.</p>
+                    <p class="contract"><strong>Post:</strong> Computes shortest distance <code>dist[v]</code> and predecessor <code>prev[v]</code> for every reachable vertex <code>v</code>.</p>
+<pre><code>Dijkstra(G, s)
+    for each vertex v in G.V do
+        dist[v] ← ∞
+        prev[v] ← null
+    dist[s] ← 0
+
+    pq ← new MinPriorityQueue()
+    pq.insert((0, s))
+
+    while not pq.isEmpty() do
+        (d, u) ← pq.extractMin()
+        if d > dist[u] then
+            continue // Skip stale queue entry
+
+        for each edge (u, v, weight) in G.adj[u] do
+            if dist[u] + weight < dist[v] then
+                dist[v] ← dist[u] + weight
+                prev[v] ← u
+                pq.insert((dist[v], v))</code></pre>
+                </div>
+
+                <div class="interactive-trace">
+                    <h3>Live Algorithm Execution Log</h3>
+                    <p class="contract">
+                        Run BFS, DFS, Dijkstra, or a sorting algorithm above to record state transitions and complexity metrics.
+                    </p>
+                    <div class="table-responsive" style="margin-top: 0.75rem;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Algorithm</th>
+                                    <th>Step Detail</th>
+                                    <th>Result / State</th>
+                                </tr>
+                            </thead>
+                            <tbody id="algo-trace-body">
+                                <tr>
+                                    <td>0</td>
+                                    <td><code>init()</code></td>
+                                    <td>6 vertices, 9 weighted edges</td>
+                                    <td>Ready at source <code>A</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 4: Java Implementation -->
+        <section class="card" id="java-section">
+            <h2>4. Java Implementation: Custom WeightedGraph vs. Built-in Sorting & Comparators</h2>
+            <div class="code-header">
+                <div class="tab-buttons" role="tablist">
+                    <button type="button" class="tab-btn active" data-tab="custom" role="tab" aria-selected="true">
+                        Custom WeightedGraph<V> (BFS, DFS & Dijkstra)
+                    </button>
+                    <button type="button" class="tab-btn" data-tab="builtin" role="tab" aria-selected="false">
+                        Built-in Java Sorting & MergeSort
+                    </button>
+                </div>
+                <button type="button" id="copy-code-btn" class="btn small">Copy Code</button>
+            </div>
+
+            <div id="code-custom" class="code-panel active">
+<pre><code>import java.util.*;
+
+public class WeightedGraph<V> {
+    public record Edge<V>(V target, int weight) {}
+    private record NodeDist<V>(V vertex, int dist) implements Comparable<NodeDist<V>> {
+        @Override
+        public int compareTo(NodeDist<V> other) {
+            return Integer.compare(this.dist, other.dist);
+        }
+    }
+
+    private final Map<V, List<Edge<V>>> adj = new HashMap<>();
+
+    public void addVertex(V v) {
+        adj.putIfAbsent(v, new ArrayList<>());
+    }
+
+    public void addUndirectedEdge(V u, V v, int weight) {
+        addVertex(u);
+        addVertex(v);
+        adj.get(u).add(new Edge<>(v, weight));
+        adj.get(v).add(new Edge<>(u, weight));
+    }
+
+    public List<V> bfs(V start) {
+        List<V> order = new ArrayList<>();
+        if (!adj.containsKey(start)) return order;
+
+        Set<V> visited = new HashSet<>();
+        Queue<V> queue = new ArrayDeque<>();
+
+        visited.add(start);
+        queue.offer(start);
+
+        while (!queue.isEmpty()) {
+            V curr = queue.poll();
+            order.add(curr);
+            for (Edge<V> edge : adj.get(curr)) {
+                if (visited.add(edge.target())) {
+                    queue.offer(edge.target());
+                }
+            }
+        }
+        return order;
+    }
+
+    public Map<V, Integer> dijkstra(V start) {
+        Map<V, Integer> dist = new HashMap<>();
+        for (V v : adj.keySet()) {
+            dist.put(v, Integer.MAX_VALUE);
+        }
+        dist.put(start, 0);
+
+        PriorityQueue<NodeDist<V>> pq = new PriorityQueue<>();
+        pq.offer(new NodeDist<>(start, 0));
+
+        while (!pq.isEmpty()) {
+            NodeDist<V> current = pq.poll();
+            V u = current.vertex();
+            if (current.dist() > dist.get(u)) continue; // Stale entry
+
+            for (Edge<V> edge : adj.get(u)) {
+                int newDist = dist.get(u) + edge.weight();
+                if (newDist < dist.get(edge.target())) {
+                    dist.put(edge.target(), newDist);
+                    pq.offer(new NodeDist<>(edge.target(), newDist));
+                }
+            }
+        }
+        return dist;
+    }
+}</code></pre>
+            </div>
+
+            <div id="code-builtin" class="code-panel" hidden>
+<pre><code>import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
+public class BuiltInSortingDemo {
+    record Student(String name, double gpa) {}
+
+    public static void main(String[] args) {
+        // 1. Primitive array: Dual-Pivot Quicksort O(n log n) avg, O(1) space
+        int[] nums = {38, 14, 52, 9, 41, 23};
+        Arrays.sort(nums); // [9, 14, 23, 38, 41, 52]
+
+        // 2. Object List: TimSort (Stable Merge + Insertion Sort) O(n log n) worst-case
+        List<Student> students = new ArrayList<>(List.of(
+            new Student("Cleo", 3.9),
+            new Student("Alice", 3.9),
+            new Student("Bob", 3.5)
+        ));
+
+        // Sort by GPA descending, then alphabetically by name
+        students.sort(
+            Comparator.comparingDouble(Student::gpa).reversed()
+                      .thenComparing(Student::name)
+        );
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- BLOCK 5: Edge-Case Checklist -->
+        <section class="card" id="edge-cases-section">
+            <h2>5. Edge-Case Verification Checklist</h2>
+            <ul class="checklist">
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Graph Cycles & <code>visited</code> Guard:</strong> Mark vertices as visited <em>when enqueuing</em> (not when dequeuing) in BFS so the same vertex is not pushed multiple times by shared neighbors.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Disconnected Components:</strong> A single BFS/DFS from <code>start</code> only visits its connected component; iterate over all vertices in <code>G.V</code> if full-graph coverage is required.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Negative Edge Weights in Dijkstra:</strong> Dijkstra's greedy invariant fails when edges have negative weights because already-settled distances can be reduced later (use Bellman-Ford instead).
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Integer Overflow on Infinity Distance:</strong> Never compute <code>Integer.MAX_VALUE + edge.weight()</code> in Java without guarding against <code>dist[u] == Integer.MAX_VALUE</code>, or it overflows to negative!
+                    </label>
+                </li>
+            </ul>
+        </section>
+    </main>
+
+    <script src="module8.js"></script>
+</body>
+</html>

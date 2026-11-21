@@ -1,0 +1,410 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Module 5: Binary Search Trees (BST) | Java DSA</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav-container" aria-label="Module Navigation">
+            <a href="../index.html" class="brand">DSA<span>Visual</span></a>
+            <ul class="nav-links">
+                <li><a href="../module-01-foundations/index.html">1. Big-O</a></li>
+                <li><a href="../module-02-linked-lists/index.html">2. Linked Lists</a></li>
+                <li><a href="../module-03-stacks-queues/index.html">3. Stacks & Queues</a></li>
+                <li><a href="../module-04-heaps/index.html">4. Heaps</a></li>
+                <li><a href="index.html" class="active">5. BST</a></li>
+                <li><a href="../module-06-balanced-trees/index.html"></a></li>
+                <li><a href="../module-07-hashing /index.html">7. Hashing</a></li>
+                <li><a href="../module-08-graphs-algorithms/index.html">8. graphs</a></li>
+                <li><a href="../module-09-dijkstra-algorithm /index.html"></a>9. Algorithms</li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="module-hero">
+            <p class="module-tag">Module 05 • Hierarchical Ordered Structures</p>
+            <h1>Binary Search Trees (BST) & Traversals</h1>
+            <p class="subtitle">
+                Maintain the ordering invariant <code>left.key < node.key < right.key</code> at every
+                node so each comparison eliminates an entire subtree—achieving <strong>O(log n)</strong>
+                search, insertion, and deletion when balanced, or degrading to <strong>O(n)</strong> when skewed.
+            </p>
+        </section>
+
+        <!-- BLOCK 1: Intuition & Interactive BST Visualizer -->
+        <section class="card" id="intuition-section">
+            <h2>1. Intuition & Interactive BST Visualizer</h2>
+            <p>
+                Try deleting root <code>50</code> on the default tree to watch the <strong>2-child deletion case</strong>
+                locate the <em>Inorder Successor</em> (minimum key in the right subtree), or click
+                <strong>Load Skewed</strong> to observe $O(n)$ chain degeneration.
+            </p>
+
+            <div class="visualizer-controls">
+                <div class="trace-controls" style="margin-bottom: 0;">
+                    <label for="bst-value-input">Key:</label>
+                    <input type="number" id="bst-value-input" value="50" />
+                    <button type="button" id="bst-insert-btn" class="btn primary">insert</button>
+                    <button type="button" id="bst-search-btn" class="btn secondary">contains</button>
+                    <button type="button" id="bst-delete-btn" class="btn danger">delete</button>
+                    <button type="button" id="bst-skew-btn" class="btn secondary">Load Skewed</button>
+                    <button type="button" id="bst-reset-btn" class="btn secondary">Reset Balanced</button>
+                </div>
+
+                <div class="traversal-bar" role="group" aria-label="Tree Traversals">
+                    <span class="traversal-label">Traverse:</span>
+                    <button type="button" class="btn small bst-trav-btn" data-order="inorder">Inorder (Sorted)</button>
+                    <button type="button" class="btn small bst-trav-btn" data-order="preorder">Preorder</button>
+                    <button type="button" class="btn small bst-trav-btn" data-order="postorder">Postorder</button>
+                    <button type="button" class="btn small bst-trav-btn" data-order="bfs">Breadth-First (BFS)</button>
+                </div>
+            </div>
+
+            <div class="canvas-wrapper">
+                <canvas id="bst-canvas" width="760" height="310" aria-label="Binary Search Tree Diagram"></canvas>
+            </div>
+
+            <p id="bst-status-msg" class="status-banner" aria-live="polite" style="margin-top: 1rem;">
+                Balanced BST initialized with root <strong>50</strong> (<code>height = 2</code>).
+            </p>
+
+            <div class="readout-grid" aria-live="polite">
+                <div class="readout-item">
+                    <span>Node Count (n)</span>
+                    <strong id="bst-size-readout">7</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #7c3aed;">
+                    <span>Tree Height (h)</span>
+                    <strong id="bst-height-readout">2 (Balanced)</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #16a34a;">
+                    <span>Min / Max Key</span>
+                    <strong id="bst-minmax-readout">20 / 80</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #d97706;">
+                    <span>Last Operation Cost</span>
+                    <strong id="bst-cost-readout">O(log n) • 0 steps</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 2: Complexity Cheat Sheet -->
+        <section class="card" id="cheat-sheet-section">
+            <h2>2. Complexity Cheat Sheet</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Operation</th>
+                            <th>Average Case (Balanced)</th>
+                            <th>Worst Case (Skewed)</th>
+                            <th>Auxiliary Space</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>contains(key)</code></td>
+                            <td><code>O(log n)</code></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(1)</code> iterative / <code>O(h)</code> recursive</td>
+                        </tr>
+                        <tr>
+                            <td><code>insert(key)</code></td>
+                            <td><code>O(log n)</code></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(h)</code> call stack</td>
+                        </tr>
+                        <tr>
+                            <td><code>delete(key)</code></td>
+                            <td><code>O(log n)</code></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(h)</code> call stack</td>
+                        </tr>
+                        <tr>
+                            <td><code>findMin()</code> / <code>findMax()</code></td>
+                            <td><code>O(log n)</code></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(1)</code> iterative</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Inorder / Preorder / Postorder</strong></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(h)</code> recursion stack</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Breadth-First (Level Order)</strong></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(w)</code> queue (<em>w</em> = max width)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="note">
+                <strong>Why Skewness Happens:</strong> A standard BST performs no structural rebalancing.
+                Inserting keys in sorted order (<code>10, 20, 30, 40, 50</code>) creates a right-leaning linked chain
+                of height $h = n - 1$, motivating self-balancing AVL and Red-Black trees in Module 6.
+            </p>
+        </section>
+
+        <!-- BLOCK 3: Pseudocode & Live Operation Trace -->
+        <section class="card" id="trace-section">
+            <h2>3. Step-by-Step Pseudocode & Execution Log</h2>
+            <div class="two-col">
+                <div class="pseudocode-box">
+                    <h3>BST Deletion (All 4 Cases)</h3>
+                    <p class="contract"><strong>Pre:</strong> <code>root</code> is the root of a valid BST (or <code>null</code>); <code>key</code> is target value.</p>
+                    <p class="contract"><strong>Post:</strong> Returns updated subtree root with <code>key</code> removed and BST invariant preserved.</p>
+<pre><code>Delete(root, key)
+    if root == null then
+        return null
+
+    if key < root.key then
+        root.left ← Delete(root.left, key)
+    else if key > root.key then
+        root.right ← Delete(root.right, key)
+    else
+        // Case 1 & 2: 0 or 1 child
+        if root.left == null then
+            return root.right
+        else if root.right == null then
+            return root.left
+
+        // Case 3: 2 children → Inorder Successor
+        successor ← FindMin(root.right)
+        root.key ← successor.key
+        root.right ← Delete(root.right, successor.key)
+
+    return root
+
+FindMin(node)
+    while node.left != null do
+        node ← node.left
+    return node</code></pre>
+                </div>
+
+                <div class="interactive-trace">
+                    <h3>Live Structural & Traversal Log</h3>
+                    <p class="contract">
+                        Execute insertions, deletions, or traversals above to record decision branches and visited key sequences.
+                    </p>
+                    <div class="table-responsive" style="margin-top: 0.75rem;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Operation</th>
+                                    <th>Branch / Case Applied</th>
+                                    <th>Result / Sequence</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bst-trace-body">
+                                <tr>
+                                    <td>0</td>
+                                    <td><code>init()</code></td>
+                                    <td>Balanced root <code>50</code></td>
+                                    <td>Inorder: <code>[20, 30, 40, 50, 60, 70, 80]</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 4: Java Implementation -->
+        <section class="card" id="java-section">
+            <h2>4. Java Implementation: Custom BinarySearchTree<E> vs. Built-in TreeSet</h2>
+            <div class="code-header">
+                <div class="tab-buttons" role="tablist">
+                    <button type="button" class="tab-btn active" data-tab="custom" role="tab" aria-selected="true">
+                        Custom Generic BinarySearchTree<E>
+                    </button>
+                    <button type="button" class="tab-btn" data-tab="builtin" role="tab" aria-selected="false">
+                        Built-in java.util.TreeSet
+                    </button>
+                </div>
+                <button type="button" id="copy-code-btn" class="btn small">Copy Code</button>
+            </div>
+
+            <div id="code-custom" class="code-panel active">
+<pre><code>import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+
+public class BinarySearchTree<E extends Comparable<E>> {
+    private static class Node<E> {
+        E key;
+        Node<E> left;
+        Node<E> right;
+
+        Node(E key) {
+            this.key = key;
+        }
+    }
+
+    private Node<E> root;
+
+    public void insert(E key) {
+        if (key == null) throw new IllegalArgumentException("Null keys are not permitted");
+        root = insertRec(root, key);
+    }
+
+    private Node<E> insertRec(Node<E> node, E key) {
+        if (node == null) return new Node<>(key);
+        int cmp = key.compareTo(node.key);
+        if (cmp < 0) {
+            node.left = insertRec(node.left, key);
+        } else if (cmp > 0) {
+            node.right = insertRec(node.right, key);
+        }
+        return node; // Duplicate keys ignored
+    }
+
+    public boolean contains(E key) {
+        if (key == null) return false;
+        Node<E> curr = root;
+        while (curr != null) {
+            int cmp = key.compareTo(curr.key);
+            if (cmp == 0) return true;
+            curr = (cmp < 0) ? curr.left : curr.right;
+        }
+        return false;
+    }
+
+    public void delete(E key) {
+        if (key == null) return;
+        root = deleteRec(root, key);
+    }
+
+    private Node<E> deleteRec(Node<E> node, E key) {
+        if (node == null) return null;
+
+        int cmp = key.compareTo(node.key);
+        if (cmp < 0) {
+            node.left = deleteRec(node.left, key);
+        } else if (cmp > 0) {
+            node.right = deleteRec(node.right, key);
+        } else {
+            // Case 1 & 2: 0 or 1 child
+            if (node.left == null) return node.right;
+            if (node.right == null) return node.left;
+
+            // Case 3: 2 children → replace with Inorder Successor
+            Node<E> successor = findMin(node.right);
+            node.key = successor.key;
+            node.right = deleteRec(node.right, successor.key);
+        }
+        return node;
+    }
+
+    private Node<E> findMin(Node<E> node) {
+        while (node.left != null) {
+            node = node.left;
+        }
+        return node;
+    }
+
+    // Yields keys in sorted ascending order
+    public List<E> inOrderTraversal() {
+        List<E> result = new ArrayList<>();
+        inOrderRec(root, result);
+        return result;
+    }
+
+    private void inOrderRec(Node<E> node, List<E> result) {
+        if (node == null) return;
+        inOrderRec(node.left, result);
+        result.add(node.key);
+        inOrderRec(node.right, result);
+    }
+
+    // Level-by-level traversal using a FIFO queue
+    public List<E> breadthFirstTraversal() {
+        List<E> result = new ArrayList<>();
+        if (root == null) return result;
+
+        Queue<Node<E>> queue = new ArrayDeque<>();
+        queue.offer(root);
+        while (!queue.isEmpty()) {
+            Node<E> curr = queue.poll();
+            result.add(curr.key);
+            if (curr.left != null) queue.offer(curr.left);
+            if (curr.right != null) queue.offer(curr.right);
+        }
+        return result;
+    }
+}</code></pre>
+            </div>
+
+            <div id="code-builtin" class="code-panel" hidden>
+<pre><code>import java.util.TreeSet;
+
+public class BuiltInTreeSetDemo {
+    public static void main(String[] args) {
+        // TreeSet wraps a self-balancing Red-Black Tree (guaranteed O(log n))
+        TreeSet<Integer> bst = new TreeSet<>();
+        bst.add(50);
+        bst.add(30);
+        bst.add(70);
+        bst.add(20);
+        bst.add(40);
+        bst.add(60);
+        bst.add(80);
+
+        boolean exists = bst.contains(40); // O(log n) -> true
+        int min = bst.first();             // O(log n) -> 20
+        int max = bst.last();              // O(log n) -> 80
+
+        // Ordered navigation queries
+        Integer successorOf50 = bst.higher(50);   // 60
+        Integer predecessorOf50 = bst.lower(50);  // 40
+
+        bst.remove(50); // O(log n) -> rebalances automatically
+        System.out.println(bst); // [20, 30, 40, 60, 70, 80] (Inorder)
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- BLOCK 5: Edge-Case Checklist -->
+        <section class="card" id="edge-cases-section">
+            <h2>5. Edge-Case Verification Checklist</h2>
+            <ul class="checklist">
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Deleting the Root Node:</strong> Reassigning <code>root = deleteRec(root, key)</code> ensures the top-level <code>root</code> reference updates when the root itself is deleted or replaced.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Immediate Right Child as Inorder Successor:</strong> When <code>node.right.left == null</code>, <code>findMin(node.right)</code> returns <code>node.right</code> itself, and <code>deleteRec(node.right, successor.key)</code> cleanly promotes <code>successor.right</code>.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Sorted Insertion Degeneration:</strong> Inserting ascending or descending sequences produces a tree of height <code>n - 1</code>, degrading operations from <code>O(log n)</code> to <code>O(n)</code>.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Null Key Guard:</strong> Calling <code>compareTo(null)</code> throws a <code>NullPointerException</code>; validate non-null keys at public entry points.
+                    </label>
+                </li>
+            </ul>
+        </section>
+    </main>
+
+    <script src="module5.js"></script>
+</body>
+</html>

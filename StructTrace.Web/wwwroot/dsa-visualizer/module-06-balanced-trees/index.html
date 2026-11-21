@@ -1,0 +1,407 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Module 6: Balanced Search Trees (AVL & Red-Black) | Java DSA</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav-container" aria-label="Module Navigation">
+            <a href="../index.html" class="brand">DSA<span>Visual</span></a>
+            <ul class="nav-links">
+                <li><a href="../module-01-foundations/index.html">1. Big-O</a></li>
+                <li><a href="../module-02-linked-lists/index.html">2. Linked Lists</a></li>
+                <li><a href="../module-03-stacks-queues/index.html">3. Stacks & Queues</a></li>
+                <li><a href="../module-04-heaps/index.html">4. Heaps</a></li>
+                <li><a href="../module-05-bst/index.html">5. BST</a></li>
+                <li><a href="index.html" class="active">6. Balanced Trees</a></li>
+                <li><a href="../module-07-hash-tables/index.html">7. Hash Tables</a></li>
+                <li><a href="../module-08-graphs/index.html">8. Graphs</a></li>
+              
+                <li><a href="../module-09-dijkstra-algorithm /index.html"></a>9. Algorithms</li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="module-hero">
+            <p class="module-tag">Module 06 • Self-Balancing Search Trees</p>
+            <h1>AVL Trees, Rotations & Red-Black Invariants</h1>
+            <p class="subtitle">
+                Eliminate worst-case <strong>O(n)</strong> BST skewness by tracking each node's
+                <strong>Balance Factor</strong> (<code>BF = height(left) − height(right)</code>) and
+                applying <strong>O(1)</strong> pointer rotations whenever <code>|BF| > 1</code>.
+            </p>
+        </section>
+
+        <!-- BLOCK 1: Intuition & Interactive AVL Rotation Visualizer -->
+        <section class="card" id="intuition-section">
+            <h2>1. Intuition & Interactive AVL Rotation Visualizer</h2>
+            <p>
+                Every node displays its key and live <strong>Balance Factor (<code>BF</code>)</strong>.
+                Insert or delete keys manually, or trigger any of the <strong>4 classic rotation presets</strong>
+                to pause at the <code>|BF| = 2</code> imbalance before watching the tree self-balance.
+            </p>
+
+            <div class="visualizer-controls">
+                <div class="trace-controls" style="margin-bottom: 0;">
+                    <label for="avl-value-input">Key:</label>
+                    <input type="number" id="avl-value-input" value="10" />
+                    <button type="button" id="avl-insert-btn" class="btn primary">insert</button>
+                    <button type="button" id="avl-delete-btn" class="btn danger">delete</button>
+                    <button type="button" id="avl-reset-btn" class="btn secondary">Reset</button>
+                </div>
+
+                <div class="traversal-bar" role="group" aria-label="AVL Rotation Presets">
+                    <span class="traversal-label">Trigger Rotation:</span>
+                    <button type="button" class="btn small avl-preset-btn" data-preset="LL">LL (Right)</button>
+                    <button type="button" class="btn small avl-preset-btn" data-preset="RR">RR (Left)</button>
+                    <button type="button" class="btn small avl-preset-btn" data-preset="LR">LR (Double)</button>
+                    <button type="button" class="btn small avl-preset-btn" data-preset="RL">RL (Double)</button>
+                </div>
+            </div>
+
+            <div class="canvas-wrapper">
+                <canvas id="avl-canvas" width="760" height="320" aria-label="AVL Balanced Tree Diagram"></canvas>
+            </div>
+
+            <p id="avl-status-msg" class="status-banner" aria-live="polite" style="margin-top: 1rem;">
+                AVL Tree initialized with balanced keys <code>[30, 20, 40]</code>. Every node satisfies <code>|BF| ≤ 1</code>.
+            </p>
+
+            <div class="readout-grid" aria-live="polite">
+                <div class="readout-item">
+                    <span>Node Count (n)</span>
+                    <strong id="avl-size-readout">3</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #7c3aed;">
+                    <span>Tree Height (h)</span>
+                    <strong id="avl-height-readout">1 (O(log n))</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #16a34a;">
+                    <span>AVL Invariant</span>
+                    <strong id="avl-invariant-readout">Valid (Max |BF| = 0)</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #d97706;">
+                    <span>Last Rotation</span>
+                    <strong id="avl-rotation-readout">None</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 2: Complexity Cheat Sheet -->
+        <section class="card" id="cheat-sheet-section">
+            <h2>2. Balanced Tree Comparison & Complexity Cheat Sheet</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tree Variant</th>
+                            <th>Search (Worst)</th>
+                            <th>Insert (Worst)</th>
+                            <th>Delete (Worst)</th>
+                            <th>Balancing Rule</th>
+                            <th>Rotations per Update</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Unbalanced BST</strong></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(n)</code></td>
+                            <td>None (degenerates on sorted input)</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AVL Tree</strong></td>
+                            <td><code>O(log n)</code></td>
+                            <td><code>O(log n)</code></td>
+                            <td><code>O(log n)</code></td>
+                            <td><code>|height(L) − height(R)| ≤ 1</code></td>
+                            <td>Insert: ≤ 2 • Delete: <code>O(log n)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Red-Black Tree</strong></td>
+                            <td><code>O(log n)</code></td>
+                            <td><code>O(log n)</code></td>
+                            <td><code>O(log n)</code></td>
+                            <td>Equal black-height on all root-to-null paths</td>
+                            <td>Insert: ≤ 2 • Delete: ≤ 3 (<code>O(1)</code>)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2-4 Tree / B-Tree</strong></td>
+                            <td><code>O(log n)</code></td>
+                            <td><code>O(log n)</code></td>
+                            <td><code>O(log n)</code></td>
+                            <td>Multi-key nodes; all leaves at exact same depth</td>
+                            <td>Node splits / merges (disk & DB friendly)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="note">
+                <strong>AVL vs. Red-Black in Practice:</strong> AVL trees maintain stricter height balance
+                ($h < 1.44 \log_2 n$), making read-heavy lookups slightly faster. Red-Black trees allow
+                slightly looser height ($h \le 2 \log_2 n$) to cap rotations at $O(1)$ during deletions—which
+                is why <code>java.util.TreeMap</code> and <code>java.util.TreeSet</code> use Red-Black trees.
+            </p>
+        </section>
+
+        <!-- BLOCK 3: Pseudocode & Live Rotation Log -->
+        <section class="card" id="trace-section">
+            <h2>3. Step-by-Step Pseudocode & Rotation Log</h2>
+            <div class="two-col">
+                <div class="pseudocode-box">
+                    <h3>AVL Rotations & Rebalance</h3>
+                    <p class="contract"><strong>Pre:</strong> <code>y</code> is an unbalanced node whose left child <code>x</code> is non-null.</p>
+                    <p class="contract"><strong>Post:</strong> Performs a right rotation around <code>y</code>, updates heights bottom-up, and returns new root <code>x</code>.</p>
+<pre><code>RotateRight(y)
+    x ← y.left
+    T2 ← x.right
+
+    // Perform rotation
+    x.right ← y
+    y.left ← T2
+
+    // Update heights (child y first, then new root x)
+    y.height ← 1 + max(Height(y.left), Height(y.right))
+    x.height ← 1 + max(Height(x.left), Height(x.right))
+    return x
+
+Rebalance(node)
+    UpdateHeight(node)
+    bf ← Height(node.left) - Height(node.right)
+
+    // Left-Heavy (bf == +2)
+    if bf > 1 then
+        if BalanceFactor(node.left) < 0 then
+            node.left ← RotateLeft(node.left) // LR Case
+        return RotateRight(node)              // LL Case
+
+    // Right-Heavy (bf == -2)
+    if bf < -1 then
+        if BalanceFactor(node.right) > 0 then
+            node.right ← RotateRight(node.right) // RL Case
+        return RotateLeft(node)                // RR Case
+
+    return node</code></pre>
+                </div>
+
+                <div class="interactive-trace">
+                    <h3>Live Imbalance & Rotation Log</h3>
+                    <p class="contract">
+                        Insert, delete, or click a rotation preset above to record detected <code>BF</code> violations and structural rotations.
+                    </p>
+                    <div class="table-responsive" style="margin-top: 0.75rem;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Operation</th>
+                                    <th>Imbalance Detected</th>
+                                    <th>Rotation Applied</th>
+                                </tr>
+                            </thead>
+                            <tbody id="avl-trace-body">
+                                <tr>
+                                    <td>0</td>
+                                    <td><code>init()</code></td>
+                                    <td>None (<code>|BF| ≤ 1</code>)</td>
+                                    <td>Root <code>30</code> (<code>h = 1</code>)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 4: Java Implementation -->
+        <section class="card" id="java-section">
+            <h2>4. Java Implementation: Custom AVLTree<E> vs. Built-in TreeMap</h2>
+            <div class="code-header">
+                <div class="tab-buttons" role="tablist">
+                    <button type="button" class="tab-btn active" data-tab="custom" role="tab" aria-selected="true">
+                        Custom Generic AVLTree<E>
+                    </button>
+                    <button type="button" class="tab-btn" data-tab="builtin" role="tab" aria-selected="false">
+                        Built-in java.util.TreeMap (Red-Black)
+                    </button>
+                </div>
+                <button type="button" id="copy-code-btn" class="btn small">Copy Code</button>
+            </div>
+
+            <div id="code-custom" class="code-panel active">
+<pre><code>public class AVLTree<E extends Comparable<E>> {
+    private static class Node<E> {
+        E key;
+        Node<E> left, right;
+        int height = 0; // Leaf node has height 0; null has height -1
+
+        Node(E key) {
+            this.key = key;
+        }
+    }
+
+    private Node<E> root;
+
+    private int height(Node<E> n) {
+        return (n == null) ? -1 : n.height;
+    }
+
+    private void updateHeight(Node<E> n) {
+        n.height = 1 + Math.max(height(n.left), height(n.right));
+    }
+
+    private int getBalance(Node<E> n) {
+        return (n == null) ? 0 : height(n.left) - height(n.right);
+    }
+
+    private Node<E> rotateRight(Node<E> y) {
+        Node<E> x = y.left;
+        Node<E> t2 = x.right;
+
+        x.right = y;
+        y.left = t2;
+
+        updateHeight(y);
+        updateHeight(x);
+        return x;
+    }
+
+    private Node<E> rotateLeft(Node<E> x) {
+        Node<E> y = x.right;
+        Node<E> t2 = y.left;
+
+        y.left = x;
+        x.right = t2;
+
+        updateHeight(x);
+        updateHeight(y);
+        return y;
+    }
+
+    private Node<E> rebalance(Node<E> node) {
+        updateHeight(node);
+        int bf = getBalance(node);
+
+        // Left-Heavy
+        if (bf > 1) {
+            if (getBalance(node.left) < 0) {
+                node.left = rotateLeft(node.left); // Left-Right (LR)
+            }
+            return rotateRight(node);              // Left-Left (LL)
+        }
+
+        // Right-Heavy
+        if (bf < -1) {
+            if (getBalance(node.right) > 0) {
+                node.right = rotateRight(node.right); // Right-Left (RL)
+            }
+            return rotateLeft(node);                // Right-Right (RR)
+        }
+        return node;
+    }
+
+    public void insert(E key) {
+        if (key == null) throw new IllegalArgumentException("Null keys not allowed");
+        root = insertRec(root, key);
+    }
+
+    private Node<E> insertRec(Node<E> node, E key) {
+        if (node == null) return new Node<>(key);
+        int cmp = key.compareTo(node.key);
+        if (cmp < 0) node.left = insertRec(node.left, key);
+        else if (cmp > 0) node.right = insertRec(node.right, key);
+        else return node; // Duplicate ignored
+
+        return rebalance(node);
+    }
+
+    public void delete(E key) {
+        if (key == null) return;
+        root = deleteRec(root, key);
+    }
+
+    private Node<E> deleteRec(Node<E> node, E key) {
+        if (node == null) return null;
+        int cmp = key.compareTo(node.key);
+        if (cmp < 0) {
+            node.left = deleteRec(node.left, key);
+        } else if (cmp > 0) {
+            node.right = deleteRec(node.right, key);
+        } else {
+            if (node.left == null) return node.right;
+            if (node.right == null) return node.left;
+
+            Node<E> succ = node.right;
+            while (succ.left != null) succ = succ.left;
+            node.key = succ.key;
+            node.right = deleteRec(node.right, succ.key);
+        }
+        return rebalance(node);
+    }
+}</code></pre>
+            </div>
+
+            <div id="code-builtin" class="code-panel" hidden>
+<pre><code>import java.util.NavigableMap;
+import java.util.TreeMap;
+
+public class BuiltInBalancedTreeDemo {
+    public static void main(String[] args) {
+        // TreeMap is backed by a self-balancing Red-Black Tree (O(log n) worst-case)
+        NavigableMap<Integer, String> scores = new TreeMap<>();
+        scores.put(30, "Bronze");
+        scores.put(10, "Starter");
+        scores.put(20, "Silver");
+        scores.put(40, "Gold");
+
+        // Guaranteed O(log n) boundary & range queries
+        System.out.println("Lowest key:  " + scores.firstKey());       // 10
+        System.out.println("Ceiling(25): " + scores.ceilingKey(25));   // 30
+        System.out.println("Floor(25):   " + scores.floorKey(25));     // 20
+        System.out.println("SubMap 15..35: " + scores.subMap(15, 35)); // {20=Silver, 30=Bronze}
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- BLOCK 5: Edge-Case Checklist -->
+        <section class="card" id="edge-cases-section">
+            <h2>5. Edge-Case Verification Checklist</h2>
+            <ul class="checklist">
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Null Child Height Convention:</strong> Define <code>height(null) = -1</code> so a single leaf node has <code>height = 0</code> and <code>BF = (-1) - (-1) = 0</code>.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Bottom-Up Height Recomputation:</strong> In <code>rotateRight(y)</code>, recompute <code>y.height</code> <em>before</em> <code>x.height</code> because <code>y</code> becomes a child of <code>x</code>.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Double-Rotation Ordering:</strong> In an <code>LR</code> imbalance (<code>BF(node) == +2</code> and <code>BF(node.left) == -1</code>), rotate the <em>child</em> left first, then rotate the <em>parent</em> right.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Cascading Deletions:</strong> Unlike insertion (which terminates after at most 1 single or double rotation), deleting a node can shrink subtree height and require rotations at multiple ancestors up to <code>root</code>.
+                    </label>
+                </li>
+            </ul>
+        </section>
+    </main>
+
+    <script src="module6.js"></script>
+</body>
+</html>

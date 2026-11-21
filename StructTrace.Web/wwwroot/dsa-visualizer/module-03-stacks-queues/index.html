@@ -1,0 +1,366 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Module 3: Stacks, Queues & Deques | Java DSA</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav-container" aria-label="Module Navigation">
+            <a href="../index.html" class="brand">DSA<span>Visual</span></a>
+            <ul class="nav-links">
+                <li><a href="../module-01-foundations/index.html">1. Big-O</a></li>
+                <li><a href="../module-02-linked-lists/index.html">2. Linked Lists</a></li>
+                <li><a href="index.html" class="active">3. Stacks & Queues</a></li>
+                <li><a href="../module-04-heaps/index.html">4. Heaps</a></li>
+                <li><a href="../module-05-bst/index.html">5. BST</a></li>
+                <li> <a href="../module-06-balanced-trees/index.html"></a></li>
+                <li><a href="../module-07-hashing /index.html">7. Hashing</a></li>
+                <li><a href="../module-08-graphs-algorithms/index.html">8. graphs</a></li>
+                <li><a href="../module-09-dijkstra-algorithm /index.html"></a>9. Algorithms</li>
+
+
+
+
+
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="module-hero">
+            <p class="module-tag">Module 03 • Restricted-Access Linear Structures</p>
+            <h1>Stacks (LIFO), Queues (FIFO) & Deques</h1>
+            <p class="subtitle">
+                Enforce strict entry and exit rules on linear collections to guarantee <strong>O(1)</strong>
+                insertions, removals, and boundary inspections without shifting elements.
+            </p>
+        </section>
+
+        <!-- BLOCK 1: Intuition & Interactive Workbench -->
+        <section class="card" id="intuition-section">
+            <h2>1. Intuition & Interactive Structure Workbench</h2>
+            <p>
+                Switch between <strong>Stack</strong> (Last-In, First-Out), <strong>Queue</strong> (First-In, First-Out),
+                and <strong>Deque</strong> (Double-Ended Queue) to compare how elements enter and exit in <strong>O(1)</strong> time.
+            </p>
+
+            <div class="visualizer-controls">
+                <div class="mode-switcher" role="group" aria-label="Select Data Structure Mode">
+                    <button type="button" class="mode-btn active" data-mode="stack">Stack (LIFO)</button>
+                    <button type="button" class="mode-btn" data-mode="queue">Queue (FIFO)</button>
+                    <button type="button" class="mode-btn" data-mode="deque">Deque (Double-Ended)</button>
+                </div>
+
+                <div class="trace-controls" style="margin-bottom: 0;">
+                    <label for="sq-value-input">Value:</label>
+                    <input type="number" id="sq-value-input" value="40" />
+
+                    <!-- Stack Controls -->
+                    <div id="controls-stack" class="op-group">
+                        <button type="button" id="stack-push-btn" class="btn primary">push (O(1))</button>
+                        <button type="button" id="stack-pop-btn" class="btn danger">pop (O(1))</button>
+                        <button type="button" id="stack-peek-btn" class="btn secondary">peek (O(1))</button>
+                    </div>
+
+                    <!-- Queue Controls -->
+                    <div id="controls-queue" class="op-group" hidden>
+                        <button type="button" id="queue-enq-btn" class="btn primary">enqueue (O(1))</button>
+                        <button type="button" id="queue-deq-btn" class="btn danger">dequeue (O(1))</button>
+                        <button type="button" id="queue-peek-btn" class="btn secondary">peek (O(1))</button>
+                    </div>
+
+                    <!-- Deque Controls -->
+                    <div id="controls-deque" class="op-group" hidden>
+                        <button type="button" id="deque-add-first-btn" class="btn primary">addFirst</button>
+                        <button type="button" id="deque-add-last-btn" class="btn primary">addLast</button>
+                        <button type="button" id="deque-rem-first-btn" class="btn danger">removeFirst</button>
+                        <button type="button" id="deque-rem-last-btn" class="btn danger">removeLast</button>
+                    </div>
+
+                    <button type="button" id="sq-reset-btn" class="btn secondary">Reset</button>
+                </div>
+            </div>
+
+            <div class="sq-stage" aria-label="Stack Queue Deque Visualizer">
+                <div id="sq-visual-container" class="stack-tower"></div>
+            </div>
+
+            <p id="sq-status-msg" class="status-banner" aria-live="polite">
+                Stack initialized with <code>[10, 20, 30]</code> (<code>top = 30</code>).
+            </p>
+
+            <div class="readout-grid" aria-live="polite">
+                <div class="readout-item">
+                    <span>Active Structure</span>
+                    <strong id="sq-mode-readout">Stack (LIFO)</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #2563eb;">
+                    <span>Boundary Pointers</span>
+                    <strong id="sq-ends-readout">top = 30</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #d97706;">
+                    <span>Last Returned Value</span>
+                    <strong id="sq-return-readout">—</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #16a34a;">
+                    <span>Size & Time</span>
+                    <strong id="sq-size-readout">3 • O(1)</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 2: Complexity Cheat Sheet -->
+        <section class="card" id="cheat-sheet-section">
+            <h2>2. Complexity Cheat Sheet</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Structure</th>
+                            <th>Ordering Rule</th>
+                            <th>Core Operations</th>
+                            <th>Insert / Remove</th>
+                            <th>Peek</th>
+                            <th>Search</th>
+                            <th>Space</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Stack</strong></td>
+                            <td>LIFO (Last-In, First-Out)</td>
+                            <td><code>push</code>, <code>pop</code>, <code>peek</code></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(n)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Queue</strong></td>
+                            <td>FIFO (First-In, First-Out)</td>
+                            <td><code>enqueue</code>, <code>dequeue</code>, <code>peek</code></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(n)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Deque</strong></td>
+                            <td>Double-Ended Access</td>
+                            <td><code>addFirst</code>, <code>addLast</code>, <code>removeFirst</code>, <code>removeLast</code></td>
+                            <td><code>O(1)</code> (amortized array)</td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(n)</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="note">
+                <strong>Backing Implementation Choice:</strong> A singly linked list with <code>head</code> and
+                <code>tail</code> backs a standard Queue in strict <code>O(1)</code> worst-case time, whereas
+                a Deque requires either a <strong>doubly linked list</strong> or a <strong>circular array buffer</strong>
+                (<code>java.util.ArrayDeque</code>) to remove from both ends in <code>O(1)</code>.
+            </p>
+        </section>
+
+        <!-- BLOCK 3: Pseudocode & Live Operation Trace -->
+        <section class="card" id="trace-section">
+            <h2>3. Step-by-Step Pseudocode & Operation Log</h2>
+            <div class="two-col">
+                <div class="pseudocode-box">
+                    <h3>Linked Queue: Enqueue & Dequeue</h3>
+                    <p class="contract"><strong>Pre:</strong> <code>queue</code> has <code>head</code> & <code>tail</code> pointers (both <code>null</code> when empty).</p>
+                    <p class="contract"><strong>Post:</strong> <code>Enqueue</code> appends at <code>tail</code>; <code>Dequeue</code> removes and returns <code>head.data</code>.</p>
+<pre><code>Enqueue(queue, value)
+    node ← new Node(value)
+    if queue.tail == null then
+        queue.head ← node
+        queue.tail ← node
+    else
+        queue.tail.next ← node
+        queue.tail ← node
+    queue.size ← queue.size + 1
+
+Dequeue(queue)
+    if queue.head == null then
+        error "Queue Underflow"
+    value ← queue.head.data
+    queue.head ← queue.head.next
+    if queue.head == null then
+        queue.tail ← null
+    queue.size ← queue.size - 1
+    return value</code></pre>
+                </div>
+
+                <div class="interactive-trace">
+                    <h3>Live Execution Trace</h3>
+                    <p class="contract">
+                        Perform operations in Section 1 to log pointer changes, return values, and underflow checks.
+                    </p>
+                    <div class="table-responsive" style="margin-top: 0.75rem;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Mode</th>
+                                    <th>Operation</th>
+                                    <th>Output / Effect</th>
+                                    <th>Contents</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sq-trace-body">
+                                <tr>
+                                    <td>0</td>
+                                    <td>Stack</td>
+                                    <td><code>init()</code></td>
+                                    <td><code>top = 30</code></td>
+                                    <td><code>[10, 20, 30 (top)]</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 4: Java Implementation -->
+        <section class="card" id="java-section">
+            <h2>4. Java Implementation: Custom LinkedQueue vs. Built-in ArrayDeque</h2>
+            <div class="code-header">
+                <div class="tab-buttons" role="tablist">
+                    <button type="button" class="tab-btn active" data-tab="custom" role="tab" aria-selected="true">
+                        Custom LinkedQueue<E>
+                    </button>
+                    <button type="button" class="tab-btn" data-tab="builtin" role="tab" aria-selected="false">
+                        Built-in java.util.ArrayDeque
+                    </button>
+                </div>
+                <button type="button" id="copy-code-btn" class="btn small">Copy Code</button>
+            </div>
+
+            <div id="code-custom" class="code-panel active">
+<pre><code>import java.util.NoSuchElementException;
+
+public class LinkedQueue<E> {
+    private static class Node<E> {
+        E data;
+        Node<E> next;
+
+        Node(E data) {
+            this.data = data;
+        }
+    }
+
+    private Node<E> head;
+    private Node<E> tail;
+    private int size = 0;
+
+    public void enqueue(E value) {
+        Node<E> node = new Node<>(value);
+        if (tail == null) {
+            head = tail = node;
+        } else {
+            tail.next = node;
+            tail = node;
+        }
+        size++;
+    }
+
+    public E dequeue() {
+        if (head == null) {
+            throw new NoSuchElementException("Queue Underflow: queue is empty");
+        }
+        E value = head.data;
+        head = head.next;
+        if (head == null) {
+            tail = null; // Prevent dangling tail reference
+        }
+        size--;
+        return value;
+    }
+
+    public E peek() {
+        if (head == null) {
+            throw new NoSuchElementException("Queue is empty");
+        }
+        return head.data;
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    public int size() {
+        return size;
+    }
+}</code></pre>
+            </div>
+
+            <div id="code-builtin" class="code-panel" hidden>
+<pre><code>import java.util.ArrayDeque;
+import java.util.Deque;
+
+public class BuiltInDequeDemo {
+    public static void main(String[] args) {
+        // 1. Stack (LIFO) — prefer ArrayDeque over legacy synchronized java.util.Stack
+        Deque<String> stack = new ArrayDeque<>();
+        stack.push("Frame 1");
+        stack.push("Frame 2");
+        String topFrame = stack.pop(); // "Frame 2"
+
+        // 2. Queue (FIFO)
+        Deque<String> queue = new ArrayDeque<>();
+        queue.offerLast("Task A");
+        queue.offerLast("Task B");
+        String nextTask = queue.pollFirst(); // "Task A" (returns null if empty)
+
+        // 3. Double-Ended Queue (Deque)
+        Deque<Integer> deque = new ArrayDeque<>();
+        deque.addFirst(10);
+        deque.addLast(20);
+        int front = deque.removeFirst(); // 10
+        int back = deque.removeLast();   // 20
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- BLOCK 5: Edge-Case Checklist -->
+        <section class="card" id="edge-cases-section">
+            <h2>5. Edge-Case Verification Checklist</h2>
+            <ul class="checklist">
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Empty Underflow Handling:</strong> Calling <code>pop()</code>, <code>dequeue()</code>, or <code>peek()</code> on an empty structure throws <code>NoSuchElementException</code> (or returns <code>null</code> with <code>poll()</code>).
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Last-Element Dequeue Reset:</strong> Removing the final node in a linked queue sets both <code>head = null</code> and <code>tail = null</code>.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong><code>ArrayDeque</code> Null Prohibition:</strong> Java's <code>ArrayDeque</code> throws <code>NullPointerException</code> on <code>null</code> insertions because <code>pollFirst()</code> reserves <code>null</code> to indicate emptiness.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Avoid Legacy <code>java.util.Stack</code>:</strong> <code>java.util.Stack</code> extends <code>Vector</code> (synchronizing every method and allowing mid-index mutation); use <code>ArrayDeque</code> instead.
+                    </label>
+                </li>
+            </ul>
+        </section>
+    </main>
+
+    <script src="module3.js"></script>
+</body>
+</html>

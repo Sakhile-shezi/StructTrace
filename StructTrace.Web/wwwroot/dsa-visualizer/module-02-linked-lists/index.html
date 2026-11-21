@@ -1,0 +1,480 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Module 2: Singly, Doubly & Circular Linked Lists | Java DSA</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav-container" aria-label="Module Navigation">
+            <a href="../index.html" class="brand">DSA<span>Visual</span></a>
+            <ul class="nav-links">
+                <li><a href="../module-01-foundations/index.html">1. Big-O</a></li>
+                <li><a href="index.html" class="active">2. Linked Lists</a></li>
+                <li><a href="../module-03-stacks-queues/index.html">3. Stacks & Queues</a></li>
+                <li><a href="../module-04-heaps/index.html">4. Heaps</a></li>
+                <li><a href="../module-05-bst/index.html">5. BST</a></li>
+                <li><a href="../module-06-balanced-trees/index.html">6. Balanced Trees</a></li>
+                <li><a href="../module-07-hashing/index.html">7. Hashing</a></li>
+                <li><a href="../module-08-graphs-algorithms/index.html">8. Graphs & Algos</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="module-hero">
+            <p class="module-tag">Module 02 • Linear Pointer Structures</p>
+            <h1>Singly, Doubly & Circular Linked Lists</h1>
+            <p class="subtitle">
+                Store elements in non-contiguous heap nodes linked by object references. Compare
+                unidirectional <code>next</code> chains against bidirectional <code>prev</code>/<code>next</code>
+                links and ring-shaped <code>tail.next → head</code> circular lists.
+            </p>
+        </section>
+
+        <!-- BLOCK 1: Intuition & Interactive 3-Mode Linked List Visualizer -->
+        <section class="card" id="intuition-section">
+            <h2>1. Intuition & Interactive Pointer Visualizer</h2>
+            <p>
+                Switch between <strong>Singly</strong>, <strong>Doubly</strong>, and <strong>Circular</strong> modes.
+                Compare how <code>removeLast()</code> costs <strong>O(n)</strong> in a Singly list (must traverse to find
+                the penultimate node) but drops to <strong>O(1)</strong> in a Doubly list via <code>tail.prev</code>,
+                or use <code>rotate()</code> in Circular mode to advance the ring in <strong>O(1)</strong>.
+            </p>
+
+            <div class="visualizer-controls">
+                <div class="mode-switcher" role="group" aria-label="Select Linked List Variant">
+                    <button type="button" class="mode-btn active" data-mode="singly">Singly Linked</button>
+                    <button type="button" class="mode-btn" data-mode="doubly">Doubly Linked</button>
+                    <button type="button" class="mode-btn" data-mode="circular">Circular Linked</button>
+                </div>
+
+                <div class="trace-controls" style="margin-bottom: 0;">
+                    <label for="ll-value-input">Value:</label>
+                    <input type="number" id="ll-value-input" value="25" />
+                    <button type="button" id="ll-add-first-btn" class="btn primary">addFirst</button>
+                    <button type="button" id="ll-add-last-btn" class="btn primary">addLast</button>
+                    <button type="button" id="ll-remove-first-btn" class="btn danger">removeFirst</button>
+                    <button type="button" id="ll-remove-last-btn" class="btn danger">removeLast</button>
+                    <button type="button" id="ll-search-btn" class="btn secondary">contains</button>
+                    <button type="button" id="ll-rotate-btn" class="btn secondary" hidden>rotate()</button>
+                    <button type="button" id="ll-reset-btn" class="btn secondary">Reset</button>
+                </div>
+            </div>
+
+            <div id="ll-stage" class="ll-stage" aria-label="Linked List Node Diagram">
+                <div id="ll-nodes-container" class="ll-nodes"></div>
+                <div id="ll-circular-loop" class="ll-circular-loop" hidden>
+                    <span>↺ tail.next points back to head (Circular Ring — no null terminators)</span>
+                </div>
+            </div>
+
+            <p id="ll-status-msg" class="status-banner" aria-live="polite">
+                Singly Linked List initialized with <code>[10, 20, 30, 40]</code>.
+            </p>
+
+            <div class="readout-grid" aria-live="polite">
+                <div class="readout-item">
+                    <span>Active Variant</span>
+                    <strong id="ll-variant-readout">Singly (next only)</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #2563eb;">
+                    <span>Size (n)</span>
+                    <strong id="ll-size-readout">4</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #16a34a;">
+                    <span>Head / Tail Pointers</span>
+                    <strong id="ll-ends-readout">head: 10 • tail: 40</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #d97706;">
+                    <span>Last Operation Cost</span>
+                    <strong id="ll-cost-readout">O(1) • 0 steps</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 2: Complexity Cheat Sheet -->
+        <section class="card" id="cheat-sheet-section">
+            <h2>2. Singly vs. Doubly vs. Circular Complexity Cheat Sheet</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Operation</th>
+                            <th>Singly (<code>head</code> & <code>tail</code>)</th>
+                            <th>Doubly (<code>head</code> & <code>tail</code>)</th>
+                            <th>Circular Singly (<code>tail</code> ref)</th>
+                            <th>Pointer Overhead per Node</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>addFirst(e)</code></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(1)</code> (<code>tail.next = node</code>)</td>
+                            <td>Singly / Circular: 1 ref</td>
+                        </tr>
+                        <tr>
+                            <td><code>addLast(e)</code></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(1)</code> (advance <code>tail</code>)</td>
+                            <td>Doubly: 2 refs (<code>prev</code>, <code>next</code>)</td>
+                        </tr>
+                        <tr>
+                            <td><code>removeFirst()</code></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(1)</code> (<code>tail.next = head.next</code>)</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td><code>removeLast()</code></td>
+                            <td><strong><code>O(n)</code></strong> (no <code>prev</code> link)</td>
+                            <td><strong><code>O(1)</code></strong> (<code>tail = tail.prev</code>)</td>
+                            <td><strong><code>O(n)</code></strong> (unless Circular Doubly)</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td><code>rotate()</code> (Round-Robin)</td>
+                            <td><code>O(n)</code> (re-link ends)</td>
+                            <td><code>O(1)</code> (move head to tail)</td>
+                            <td><strong><code>O(1)</code></strong> (<code>tail = tail.next</code>)</td>
+                            <td>Zero memory allocations!</td>
+                        </tr>
+                        <tr>
+                            <td><code>contains(e)</code> / <code>get(i)</code></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(n)</code> (halved from closer end)</td>
+                            <td><code>O(n)</code> (stop when back at <code>head</code>)</td>
+                            <td>—</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="note">
+                <strong>Why Circular Lists Store Only <code>tail</code>:</strong> In a Circular Singly Linked List,
+                keeping a single reference to <code>tail</code> gives instant <code>O(1)</code> access to <em>both</em>
+                ends because <code>head</code> is always <code>tail.next</code>! Calling <code>rotate()</code> is a
+                single assignment: <code>tail = tail.next</code>.
+            </p>
+        </section>
+
+        <!-- BLOCK 3: Pseudocode & Live Pointer Trace -->
+        <section class="card" id="trace-section">
+            <h2>3. Step-by-Step Pseudocode & Pointer Trace</h2>
+            <div class="two-col">
+                <div class="pseudocode-box">
+                    <h3>Doubly removeLast vs. Circular rotate</h3>
+                    <p class="contract"><strong>Pre:</strong> List is non-empty (<code>size > 0</code>).</p>
+                    <p class="contract"><strong>Post:</strong> Updates boundary pointers in <code>O(1)</code> time without scanning the list.</p>
+<pre><code>// Doubly Linked List: O(1) removeLast
+DoublyRemoveLast(list)
+    if list.size == 0 then error "Underflow"
+    removed ← list.tail.data
+    if list.size == 1 then
+        list.head ← null
+        list.tail ← null
+    else
+        list.tail ← list.tail.prev
+        list.tail.next ← null
+    list.size ← list.size - 1
+    return removed
+
+// Circular Singly List: O(1) rotate
+CircularRotate(list)
+    if list.tail != null then
+        list.tail ← list.tail.next</code></pre>
+                </div>
+
+                <div class="interactive-trace">
+                    <h3>Live Pointer Mutation Log</h3>
+                    <p class="contract">
+                        Switch variants and trigger operations above to compare exact pointer rewirings and step counts.
+                    </p>
+                    <div class="table-responsive" style="margin-top: 0.75rem;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Variant & Op</th>
+                                    <th>Pointer Rewiring</th>
+                                    <th>Steps</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ll-trace-body">
+                                <tr>
+                                    <td>0</td>
+                                    <td><code>init()</code></td>
+                                    <td><code>head → [10] ... [40] ← tail</code></td>
+                                    <td>0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 4: Java Implementation -->
+        <section class="card" id="java-section">
+            <h2>4. Java Implementation: Singly, Doubly, Circular & Built-in LinkedList</h2>
+            <div class="code-header">
+                <div class="tab-buttons" role="tablist">
+                    <button type="button" class="tab-btn active" data-tab="singly" role="tab" aria-selected="true">
+                        SinglyLinkedList<E>
+                    </button>
+                    <button type="button" class="tab-btn" data-tab="doubly" role="tab" aria-selected="false">
+                        DoublyLinkedList<E>
+                    </button>
+                    <button type="button" class="tab-btn" data-tab="circular" role="tab" aria-selected="false">
+                        CircularLinkedList<E>
+                    </button>
+                    <button type="button" class="tab-btn" data-tab="builtin" role="tab" aria-selected="false">
+                        java.util.LinkedList
+                    </button>
+                </div>
+                <button type="button" id="copy-code-btn" class="btn small">Copy Code</button>
+            </div>
+
+            <div id="code-singly" class="code-panel active">
+<pre><code>import java.util.NoSuchElementException;
+
+public class SinglyLinkedList<E> {
+    private static class Node<E> {
+        E data;
+        Node<E> next;
+        Node(E data, Node<E> next) {
+            this.data = data;
+            this.next = next;
+        }
+    }
+
+    private Node<E> head;
+    private Node<E> tail;
+    private int size = 0;
+
+    public void addFirst(E element) {
+        head = new Node<>(element, head);
+        if (size == 0) tail = head;
+        size++;
+    }
+
+    public void addLast(E element) {
+        Node<E> newest = new Node<>(element, null);
+        if (size == 0) head = newest;
+        else tail.next = newest;
+        tail = newest;
+        size++;
+    }
+
+    public E removeFirst() {
+        if (size == 0) throw new NoSuchElementException("List is empty");
+        E answer = head.data;
+        head = head.next;
+        size--;
+        if (size == 0) tail = null;
+        return answer;
+    }
+
+    // O(n): Must traverse to locate node immediately before tail
+    public E removeLast() {
+        if (size == 0) throw new NoSuchElementException("List is empty");
+        if (size == 1) return removeFirst();
+
+        Node<E> prev = head;
+        while (prev.next != tail) {
+            prev = prev.next;
+        }
+        E answer = tail.data;
+        prev.next = null;
+        tail = prev;
+        size--;
+        return answer;
+    }
+}</code></pre>
+            </div>
+
+            <div id="code-doubly" class="code-panel" hidden>
+<pre><code>import java.util.NoSuchElementException;
+
+public class DoublyLinkedList<E> {
+    private static class Node<E> {
+        E data;
+        Node<E> prev;
+        Node<E> next;
+        Node(E data, Node<E> prev, Node<E> next) {
+            this.data = data;
+            this.prev = prev;
+            this.next = next;
+        }
+    }
+
+    // Sentinel dummy nodes eliminate null boundary checks
+    private final Node<E> header;
+    private final Node<E> trailer;
+    private int size = 0;
+
+    public DoublyLinkedList() {
+        header = new Node<>(null, null, null);
+        trailer = new Node<>(null, header, null);
+        header.next = trailer;
+    }
+
+    public void addFirst(E e) {
+        addBetween(e, header, header.next);
+    }
+
+    public void addLast(E e) {
+        addBetween(e, trailer.prev, trailer);
+    }
+
+    public E removeFirst() {
+        if (size == 0) throw new NoSuchElementException("List is empty");
+        return remove(header.next);
+    }
+
+    // O(1) removal via trailer.prev!
+    public E removeLast() {
+        if (size == 0) throw new NoSuchElementException("List is empty");
+        return remove(trailer.prev);
+    }
+
+    private void addBetween(E e, Node<E> predecessor, Node<E> successor) {
+        Node<E> newest = new Node<>(e, predecessor, successor);
+        predecessor.next = newest;
+        successor.prev = newest;
+        size++;
+    }
+
+    private E remove(Node<E> node) {
+        Node<E> predecessor = node.prev;
+        Node<E> successor = node.next;
+        predecessor.next = successor;
+        successor.prev = predecessor;
+        size--;
+        return node.data;
+    }
+}</code></pre>
+            </div>
+
+            <div id="code-circular" class="code-panel" hidden>
+<pre><code>import java.util.NoSuchElementException;
+
+public class CircularLinkedList<E> {
+    private static class Node<E> {
+        E data;
+        Node<E> next;
+        Node(E data, Node<E> next) {
+            this.data = data;
+            this.next = next;
+        }
+    }
+
+    // Only tail is stored; head is always tail.next
+    private Node<E> tail = null;
+    private int size = 0;
+
+    public E first() {
+        return (size == 0) ? null : tail.next.data;
+    }
+
+    public E last() {
+        return (size == 0) ? null : tail.data;
+    }
+
+    // O(1) round-robin rotation
+    public void rotate() {
+        if (tail != null) {
+            tail = tail.next;
+        }
+    }
+
+    public void addFirst(E e) {
+        if (size == 0) {
+            tail = new Node<>(e, null);
+            tail.next = tail; // Points to itself
+        } else {
+            Node<E> newest = new Node<>(e, tail.next);
+            tail.next = newest;
+        }
+        size++;
+    }
+
+    public void addLast(E e) {
+        addFirst(e);
+        tail = tail.next; // New node becomes tail
+    }
+
+    public E removeFirst() {
+        if (size == 0) throw new NoSuchElementException("Circular list is empty");
+        Node<E> head = tail.next;
+        if (head == tail) {
+            tail = null; // Removed sole node
+        } else {
+            tail.next = head.next;
+        }
+        size--;
+        return head.data;
+    }
+}</code></pre>
+            </div>
+
+            <div id="code-builtin" class="code-panel" hidden>
+<pre><code>import java.util.LinkedList;
+
+public class BuiltInLinkedListDemo {
+    public static void main(String[] args) {
+        // Java's LinkedList is a Doubly Linked List implementing List & Deque
+        LinkedList<Integer> list = new LinkedList<>();
+        list.addLast(10);
+        list.addLast(20);
+        list.addFirst(5);    // [5, 10, 20] -> O(1)
+
+        int first = list.removeFirst(); // 5  -> O(1)
+        int last = list.removeLast();   // 20 -> O(1) (uses tail.prev)
+        boolean found = list.contains(10); // true -> O(n)
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- BLOCK 5: Edge-Case Checklist -->
+        <section class="card" id="edge-cases-section">
+            <h2>5. Edge-Case Verification Checklist</h2>
+            <ul class="checklist">
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Single-Node Self-Loop in Circular Lists:</strong> When inserting into an empty Circular Linked List, set <code>tail.next = tail</code> so the 1-node invariant holds before any subsequent insertions.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Infinite Traversal Loop Guard:</strong> In a Circular Linked List, never loop with <code>while (curr != null)</code>—use a <code>do { ... } while (curr != head)</code> or bound by <code>size</code>.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Doubly Linked List Sentinels:</strong> Using dummy <code>header</code> and <code>trailer</code> nodes prevents <code>NullPointerException</code> bugs when inserting into an empty list or removing the sole element.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Single-Element Removal Reset:</strong> When <code>size</code> drops from <code>1</code> to <code>0</code> in non-sentinel lists, reset <em>both</em> <code>head = null</code> and <code>tail = null</code> to prevent loitering references.
+                    </label>
+                </li>
+            </ul>
+        </section>
+    </main>
+
+    <script src="../js/shared-nav.js"></script>
+    <script src="module2.js"></script>
+</body>
+</html>

@@ -1,0 +1,395 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Module 7: Sets, Maps & Hash Tables | Java DSA</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav-container" aria-label="Module Navigation">
+            <a href="../index.html" class="brand">DSA<span>Visual</span></a>
+            <ul class="nav-links">
+                <li><a href="../module-01-foundations/index.html">1. Big-O</a></li>
+                <li><a href="../module-02-linked-lists/index.html">2. Linked Lists</a></li>
+                <li><a href="../module-03-stacks-queues/index.html">3. Stacks & Queues</a></li>
+                <li><a href="../module-04-heaps/index.html">4. Heaps</a></li>
+                <li><a href="../module-05-bst/index.html">5. BST</a></li>
+                <li><a href="../module-06-balanced-trees/index.html">6. Balanced Trees</a></li>
+                <li><a href="index.html" class="active">7. Hashing</a></li>
+                <li><a href="../module-08-graphs/index.html">8. Graphs</a></li>
+           
+                <li><a href="../module-09-dijkstra-algorithm /index.html"></a>9. Algorithms</li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="module-hero">
+            <p class="module-tag">Module 07 • Associative Structures & Hashing</p>
+            <h1>Sets, Maps, Hash Functions & Collision Resolution</h1>
+            <p class="subtitle">
+                Map arbitrary keys directly to array bucket indices via <code>index = (key.hashCode() & 0x7fffffff) % M</code>,
+                achieving amortized <strong>O(1)</strong> lookup, insertion, and deletion while resolving collisions
+                through <strong>Separate Chaining</strong> or <strong>Open Addressing</strong>.
+            </p>
+        </section>
+
+        <!-- BLOCK 1: Intuition & Interactive Hash Table Visualizer -->
+        <section class="card" id="intuition-section">
+            <h2>1. Intuition & Interactive Hash Table Visualizer</h2>
+            <p>
+                Switch between <strong>Separate Chaining</strong> (linked buckets) and <strong>Open Addressing (Linear Probing)</strong>.
+                Watch how Java's <code>String.hashCode()</code> maps keys to buckets, how <code>TOMBSTONE</code> markers preserve
+                probe chains on deletion, and how crossing the <strong>0.75 Load Factor (α = n / M)</strong> triggers automatic rehashing.
+            </p>
+
+            <div class="visualizer-controls">
+                <div class="mode-switcher" role="group" aria-label="Select Collision Strategy">
+                    <button type="button" class="mode-btn active" data-mode="chaining">Separate Chaining</button>
+                    <button type="button" class="mode-btn" data-mode="linear">Linear Probing</button>
+                </div>
+
+                <div class="trace-controls" style="margin-bottom: 0;">
+                    <label for="ht-key-input">Key:</label>
+                    <input type="text" id="ht-key-input" value="Maya" maxlength="12" />
+                    <label for="ht-val-input">Val:</label>
+                    <input type="number" id="ht-val-input" value="88" />
+                    <button type="button" id="ht-put-btn" class="btn primary">put(k, v)</button>
+                    <button type="button" id="ht-get-btn" class="btn secondary">get(k)</button>
+                    <button type="button" id="ht-remove-btn" class="btn danger">remove(k)</button>
+                    <button type="button" id="ht-rehash-btn" class="btn secondary">Rehash</button>
+                    <button type="button" id="ht-reset-btn" class="btn secondary">Reset</button>
+                </div>
+            </div>
+
+            <div class="ht-stage" aria-label="Hash Table Buckets">
+                <div id="ht-buckets-container" class="ht-buckets"></div>
+            </div>
+
+            <p id="ht-status-msg" class="status-banner" aria-live="polite">
+                Initialized Hash Table (<code>capacity M = 7</code>) with 4 entries (<code>α = 4 / 7 = 0.57</code>).
+            </p>
+
+            <div class="readout-grid" aria-live="polite">
+                <div class="readout-item">
+                    <span>Entries / Capacity (n / M)</span>
+                    <strong id="ht-size-readout">4 / 7</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #7c3aed;">
+                    <span>Load Factor (α < 0.75)</span>
+                    <strong id="ht-load-readout">0.57 (Healthy)</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #2563eb;">
+                    <span>Last Hash Compression</span>
+                    <strong id="ht-hash-readout">—</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #d97706;">
+                    <span>Probes / Steps</span>
+                    <strong id="ht-probes-readout">O(1) • 0 probes</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 2: Complexity Cheat Sheet -->
+        <section class="card" id="cheat-sheet-section">
+            <h2>2. Sets, Maps & Hashing Complexity Cheat Sheet</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Implementation</th>
+                            <th>Ordering</th>
+                            <th><code>get</code> / <code>contains</code> (Avg)</th>
+                            <th><code>put</code> / <code>add</code> (Avg)</th>
+                            <th>Worst Case</th>
+                            <th>Null Keys / Elements</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>HashSet</code> / <code>HashMap</code></td>
+                            <td>Unordered</td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(1)</code> amortized</td>
+                            <td><code>O(n)</code> (or <code>O(log n)</code> treeified bins in Java 8+)</td>
+                            <td>1 <code>null</code> key allowed</td>
+                        </tr>
+                        <tr>
+                            <td><code>LinkedHashSet</code> / <code>LinkedHashMap</code></td>
+                            <td>Insertion / Access order</td>
+                            <td><code>O(1)</code></td>
+                            <td><code>O(1)</code> amortized</td>
+                            <td><code>O(n)</code> / <code>O(log n)</code></td>
+                            <td>1 <code>null</code> key allowed</td>
+                        </tr>
+                        <tr>
+                            <td><code>TreeSet</code> / <code>TreeMap</code></td>
+                            <td>Sorted (<code>Comparable</code>)</td>
+                            <td><code>O(log n)</code></td>
+                            <td><code>O(log n)</code></td>
+                            <td><code>O(log n)</code> (Red-Black Tree)</td>
+                            <td>Not permitted (<code>NullPointerException</code>)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sorted Set Union / Intersection</strong></td>
+                            <td>Sorted (size <em>m</em> & <em>n</em>)</td>
+                            <td colspan="2">Two-pointer linear merge: <code>O(m + n)</code></td>
+                            <td><code>O(m + n)</code></td>
+                            <td>—</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="note">
+                <strong>Why Mask With <code>0x7fffffff</code>?</strong> Java's <code>hashCode()</code> returns a
+                signed 32-bit <code>int</code> that can be negative (e.g., <code>"polygenelubricants".hashCode()</code> is
+                <code>Integer.MIN_VALUE</code>). Applying <code>(hash & 0x7fffffff) % M</code> clears the sign bit
+                safely before taking the modulo so array indices are never negative.
+            </p>
+        </section>
+
+        <!-- BLOCK 3: Pseudocode & Live Probe Log -->
+        <section class="card" id="trace-section">
+            <h2>3. Step-by-Step Pseudocode & Collision Log</h2>
+            <div class="two-col">
+                <div class="pseudocode-box">
+                    <h3>Separate Chaining Put & Rehash</h3>
+                    <p class="contract"><strong>Pre:</strong> <code>table</code> has bucket array <code>B[0..M-1]</code>; <code>key</code> is non-null.</p>
+                    <p class="contract"><strong>Post:</strong> Inserts or updates <code>(key, value)</code> and doubles/rehashes if <code>size / M ≥ 0.75</code>.</p>
+<pre><code>Put(table, key, value)
+    idx ← (HashCode(key) & 0x7fffffff) mod table.M
+    curr ← table.B[idx]
+
+    while curr != null do
+        if curr.key == key then
+            curr.value ← value
+            return
+        curr ← curr.next
+
+    // Prepend new node to bucket chain
+    node ← new Entry(key, value, next = table.B[idx])
+    table.B[idx] ← node
+    table.size ← table.size + 1
+
+    if (table.size / table.M) ≥ 0.75 then
+        Rehash(table, NextPrime(2 * table.M))</code></pre>
+                </div>
+
+                <div class="interactive-trace">
+                    <h3>Live Hash & Collision Probe Log</h3>
+                    <p class="contract">
+                        Execute <code>put</code>, <code>get</code>, or <code>remove</code> above to inspect hash codes, bucket collisions, and rehashing events.
+                    </p>
+                    <div class="table-responsive" style="margin-top: 0.75rem;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Operation</th>
+                                    <th>Hash → Bucket</th>
+                                    <th>Outcome & Probes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ht-trace-body">
+                                <tr>
+                                    <td>0</td>
+                                    <td><code>init()</code></td>
+                                    <td><code>M = 7</code></td>
+                                    <td>Seeded 4 keys (<code>α = 0.57</code>)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 4: Java Implementation -->
+        <section class="card" id="java-section">
+            <h2>4. Java Implementation: Custom ChainedHashMap vs. Built-in HashMap & Set Ops</h2>
+            <div class="code-header">
+                <div class="tab-buttons" role="tablist">
+                    <button type="button" class="tab-btn active" data-tab="custom" role="tab" aria-selected="true">
+                        Custom ChainedHashMap<K, V>
+                    </button>
+                    <button type="button" class="tab-btn" data-tab="builtin" role="tab" aria-selected="false">
+                        Built-in HashMap & Set Operations
+                    </button>
+                </div>
+                <button type="button" id="copy-code-btn" class="btn small">Copy Code</button>
+            </div>
+
+            <div id="code-custom" class="code-panel active">
+<pre><code>import java.util.Objects;
+
+public class ChainedHashMap<K, V> {
+    private static class Entry<K, V> {
+        final K key;
+        V value;
+        Entry<K, V> next;
+
+        Entry(K key, V value, Entry<K, V> next) {
+            this.key = key;
+            this.value = value;
+            this.next = next;
+        }
+    }
+
+    private static final double MAX_LOAD_FACTOR = 0.75;
+    private Entry<K, V>[] buckets;
+    private int size = 0;
+
+    @SuppressWarnings("unchecked")
+    public ChainedHashMap(int initialCapacity) {
+        this.buckets = (Entry<K, V>[]) new Entry[initialCapacity];
+    }
+
+    private int indexFor(K key, int capacity) {
+        int hash = (key == null) ? 0 : key.hashCode();
+        return (hash & 0x7fffffff) % capacity;
+    }
+
+    public V get(K key) {
+        int idx = indexFor(key, buckets.length);
+        Entry<K, V> curr = buckets[idx];
+        while (curr != null) {
+            if (Objects.equals(curr.key, key)) {
+                return curr.value;
+            }
+            curr = curr.next;
+        }
+        return null;
+    }
+
+    public void put(K key, V value) {
+        int idx = indexFor(key, buckets.length);
+        Entry<K, V> curr = buckets[idx];
+        while (curr != null) {
+            if (Objects.equals(curr.key, key)) {
+                curr.value = value; // Update existing key
+                return;
+            }
+            curr = curr.next;
+        }
+
+        buckets[idx] = new Entry<>(key, value, buckets[idx]);
+        size++;
+
+        if ((double) size / buckets.length >= MAX_LOAD_FACTOR) {
+            rehash(buckets.length * 2 + 1);
+        }
+    }
+
+    public V remove(K key) {
+        int idx = indexFor(key, buckets.length);
+        Entry<K, V> prev = null;
+        Entry<K, V> curr = buckets[idx];
+
+        while (curr != null) {
+            if (Objects.equals(curr.key, key)) {
+                if (prev == null) buckets[idx] = curr.next;
+                else prev.next = curr.next;
+                size--;
+                return curr.value;
+            }
+            prev = curr;
+            curr = curr.next;
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void rehash(int newCapacity) {
+        Entry<K, V>[] oldBuckets = buckets;
+        buckets = (Entry<K, V>[]) new Entry[newCapacity];
+
+        for (Entry<K, V> head : oldBuckets) {
+            Entry<K, V> curr = head;
+            while (curr != null) {
+                Entry<K, V> next = curr.next;
+                int newIdx = indexFor(curr.key, newCapacity);
+                curr.next = buckets[newIdx];
+                buckets[newIdx] = curr;
+                curr = next;
+            }
+        }
+    }
+
+    public int size() {
+        return size;
+    }
+}</code></pre>
+            </div>
+
+            <div id="code-builtin" class="code-panel" hidden>
+<pre><code>import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+public class BuiltInHashDemo {
+    public static void main(String[] args) {
+        // 1. O(1) Frequency Map with HashMap
+        Map<String, Integer> grades = new HashMap<>();
+        grades.put("Alice", 92);
+        grades.put("Bob", 85);
+        int bobScore = grades.getOrDefault("Bob", 0); // 85
+
+        // 2. Mathematical Set Operations in O(m + n) expected time
+        Set<String> cs201 = new HashSet<>(List.of("Alice", "Bob", "Cleo"));
+        Set<String> cs315 = new HashSet<>(List.of("Bob", "Cleo", "Dan"));
+
+        // Union (cs201 ∪ cs315)
+        Set<String> union = new HashSet<>(cs201);
+        union.addAll(cs315); // [Alice, Bob, Cleo, Dan]
+
+        // Intersection (cs201 ∩ cs315)
+        Set<String> intersection = new HashSet<>(cs201);
+        intersection.retainAll(cs315); // [Bob, Cleo]
+
+        // Difference (cs201 \ cs315)
+        Set<String> difference = new HashSet<>(cs201);
+        difference.removeAll(cs315); // [Alice]
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- BLOCK 5: Edge-Case Checklist -->
+        <section class="card" id="edge-cases-section">
+            <h2>5. Edge-Case Verification Checklist</h2>
+            <ul class="checklist">
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong><code>equals()</code> & <code>hashCode()</code> Contract:</strong> If <code>a.equals(b)</code> is <code>true</code>, then <code>a.hashCode() == b.hashCode()</code> <em>must</em> also be <code>true</code>; overriding one without the other breaks <code>HashMap</code> lookups.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Mutable Keys Hazard:</strong> Never mutate fields used in <code>hashCode()</code> while an object is stored inside a <code>HashSet</code> or as a <code>HashMap</code> key—its bucket index will no longer match its hash.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Tombstones in Open Addressing:</strong> Deleting a key in linear probing must leave a <code>TOMBSTONE</code> marker rather than <code>EMPTY</code>; otherwise subsequent <code>get()</code> probes stop prematurely and miss keys further along the cluster.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="checkbox" />
+                        <strong>Rehashing Recalculates All Indices:</strong> Because bucket indices depend on <code>% M</code>, resizing the table from <code>M</code> to <code>M'</code> requires recomputing every key's bucket index—never copy buckets verbatim.
+                    </label>
+                </li>
+            </ul>
+        </section>
+    </main>
+
+    <script src="module7.js"></script>
+</body>
+</html>
