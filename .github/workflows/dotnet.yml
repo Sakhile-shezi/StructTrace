@@ -1,0 +1,42 @@
+﻿name: StructTrace - Build and Validate
+
+on:
+  push:
+    branches:
+      - upgrade-net10
+      - master
+
+  pull_request:
+    branches:
+      - master
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build StructTrace Web
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install .NET 10 SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore NuGet packages
+        run: dotnet restore StructTrace.sln
+
+      - name: Build solution
+        run: dotnet build StructTrace.sln --configuration Release --no-restore
+
+      - name: Publish application
+        run: dotnet publish StructTrace.Web/StructTrace.Web.csproj --configuration Release --no-build --output "$RUNNER_TEMP/structtrace-publish"
+
+      - name: Verify published application
+        run: test -f "$RUNNER_TEMP/structtrace-publish/StructTrace.Web.dll"
