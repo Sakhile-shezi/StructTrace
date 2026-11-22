@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Module 3: Stacks, Queues & Deques | Java DSA</title>
-    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/styles.css?v=4" />
 </head>
 <body>
     <header class="site-header">
@@ -13,7 +13,7 @@
             <ul class="nav-links">
                 <li><a href="../module-01-foundations/index.html">1. Big-O</a></li>
                 <li><a href="../module-02-linked-lists/index.html">2. Linked Lists</a></li>
-                <li><a href="../module-03-stacks-queues/index.html">3. Stacks & Queues</a></li>
+                <li><a href="../module-03-stacks-queues/index.html" class="active">3. Stacks & Queues</a></li>
                 <li><a href="../module-04-heaps/index.html">4. Heaps</a></li>
                 <li><a href="../module-05-bst/index.html">5. BST</a></li>
                 <li><a href="../module-06-balanced-trees/index.html">6. Balanced Trees</a></li>
@@ -75,12 +75,20 @@
                         <button type="button" id="deque-rem-last-btn" class="btn danger">removeLast</button>
                     </div>
 
+                    <button type="button" id="sq-demo-btn" class="btn secondary">Auto-Play Demo</button>
                     <button type="button" id="sq-reset-btn" class="btn secondary">Reset</button>
+                    <label for="sq-speed-select">Speed:</label>
+                    <select id="sq-speed-select" class="dsav-speed-select" aria-label="Execution speed">
+                        <option value="0.5">0.5x</option>
+                        <option value="1" selected>1x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2">2x</option>
+                    </select>
                 </div>
             </div>
 
             <div class="sq-stage" aria-label="Stack Queue Deque Visualizer">
-                <div id="sq-visual-container" class="stack-tower"></div>
+                <div id="sq-visual-container" class="sq-stack-well"></div>
             </div>
 
             <p id="sq-status-msg" class="status-banner" aria-live="polite">
@@ -331,25 +339,25 @@ public class BuiltInDequeDemo {
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Empty Underflow Handling:</strong> Calling <code>pop()</code>, <code>dequeue()</code>, or <code>peek()</code> on an empty structure throws <code>NoSuchElementException</code> (or returns <code>null</code> with <code>poll()</code>).
+                        <span><strong>Empty Underflow Handling:</strong> Calling <code>pop()</code>, <code>dequeue()</code>, or <code>peek()</code> on an empty structure throws <code>NoSuchElementException</code> (or returns <code>null</code> with <code>poll()</code>).</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Last-Element Dequeue Reset:</strong> Removing the final node in a linked queue sets both <code>head = null</code> and <code>tail = null</code>.
+                        <span><strong>Last-Element Dequeue Reset:</strong> Removing the final node in a linked queue sets both <code>head = null</code> and <code>tail = null</code>.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong><code>ArrayDeque</code> Null Prohibition:</strong> Java's <code>ArrayDeque</code> throws <code>NullPointerException</code> on <code>null</code> insertions because <code>pollFirst()</code> reserves <code>null</code> to indicate emptiness.
+                        <span><strong><code>ArrayDeque</code> Null Prohibition:</strong> Java's <code>ArrayDeque</code> throws <code>NullPointerException</code> on <code>null</code> insertions because <code>pollFirst()</code> reserves <code>null</code> to indicate emptiness.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Avoid Legacy <code>java.util.Stack</code>:</strong> <code>java.util.Stack</code> extends <code>Vector</code> (synchronizing every method and allowing mid-index mutation); use <code>ArrayDeque</code> instead.
+                        <span><strong>Avoid Legacy <code>java.util.Stack</code>:</strong> <code>java.util.Stack</code> extends <code>Vector</code> (synchronizing every method and allowing mid-index mutation); use <code>ArrayDeque</code> instead.</span>
                     </label>
                 </li>
             </ul>
@@ -357,6 +365,6 @@ public class BuiltInDequeDemo {
     </main>
 
     <script src="../js/shared-nav.js"></script>
-    <script src="module3.js"></script>
+    <script src="module3.js?v=4"></script>
 </body>
 </html>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Module 4: Heaps (Binary Min-Heap) | Java DSA</title>
-    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/styles.css?v=4" />
 </head>
 <body>
     <header class="site-header">
@@ -14,7 +14,7 @@
                 <li><a href="../module-01-foundations/index.html">1. Big-O</a></li>
                 <li><a href="../module-02-linked-lists/index.html">2. Linked Lists</a></li>
                 <li><a href="../module-03-stacks-queues/index.html">3. Stacks & Queues</a></li>
-                <li><a href="../module-04-heaps/index.html">4. Heaps</a></li>
+                <li><a href="../module-04-heaps/index.html" class="active">4. Heaps</a></li>
                 <li><a href="../module-05-bst/index.html">5. BST</a></li>
                 <li><a href="../module-06-balanced-trees/index.html">6. Balanced Trees</a></li>
                 <li><a href="../module-07-hashing/index.html">7. Hashing</a></li>
@@ -55,6 +55,13 @@
                     <button type="button" id="heap-peek-btn" class="btn secondary">peekMin (O(1))</button>
                     <button type="button" id="heap-build-btn" class="btn secondary">buildHeap (O(n))</button>
                     <button type="button" id="heap-reset-btn" class="btn secondary">Reset</button>
+                    <label for="heap-speed-select">Speed:</label>
+                    <select id="heap-speed-select" class="dsav-speed-select" aria-label="Execution speed">
+                        <option value="0.5">0.5x</option>
+                        <option value="1" selected>1x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2">2x</option>
+                    </select>
                 </div>
             </div>
 
@@ -64,7 +71,9 @@
                 </div>
 
                 <div class="heap-array-box">
-                    <div class="heap-array-label">Backing Zero-Indexed Array <code>H[]</code> (click a cell to inspect index math):</div>
+                    <div class="heap-array-label" style="font-size: 0.88rem; font-weight: 600; color: #475569;">
+                        Backing Zero-Indexed Array <code>H[]</code> (click a cell to inspect index math):
+                    </div>
                     <div id="heap-array-container" class="array-visual" aria-label="Backing Heap Array"></div>
                 </div>
             </div>
@@ -142,7 +151,7 @@
             <p class="note">
                 <strong>Why <code>buildHeap</code> is O(n) instead of O(n log n):</strong> Half of all nodes in a
                 complete binary tree are leaves (height 0, requiring 0 swaps), a quarter sit at height 1 (at most 1 swap),
-                and only the single root sifts down $\log_2 n$ levels—summing to at most $2n$ operations.
+                and only the single root sifts down log<sub>2</sub> <em>n</em> levels—summing to at most 2<em>n</em> operations.
             </p>
         </section>
 
@@ -333,25 +342,25 @@ public class BuiltInPriorityQueueDemo {
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Single-Element Extraction:</strong> Removing the only item in the heap must not write <code>last</code> back into index <code>0</code> after <code>heap.remove(0)</code> empties the list.
+                        <span><strong>Single-Element Extraction:</strong> Removing the only item in the heap must not write <code>last</code> back into index <code>0</code> after <code>heap.remove(0)</code> empties the list.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Root Guard in <code>siftUp</code> (<code>while i > 0</code>):</strong> In Java integer division, <code>(0 - 1) / 2</code> truncates toward zero to <code>0</code>, causing an infinite loop if <code>i > 0</code> is omitted.
+                        <span><strong>Root Guard in <code>siftUp</code> (<code>while i > 0</code>):</strong> In Java integer division, <code>(0 - 1) / 2</code> truncates toward zero to <code>0</code>, causing an infinite loop if <code>i > 0</code> is omitted.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Missing Right Child Check (<code>right < n</code>):</strong> An internal node on the bottom level may have a left child without a right child; always verify <code>right < n</code> before reading <code>H[right]</code>.
+                        <span><strong>Missing Right Child Check (<code>right < n</code>):</strong> An internal node on the bottom level may have a left child without a right child; always verify <code>right < n</code> before reading <code>H[right]</code>.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Equal-Key Early Exit:</strong> Using <code><=</code> in <code>siftDown</code> and <code>>=</code> in <code>siftUp</code> terminates immediately on duplicate keys without redundant swaps.
+                        <span><strong>Equal-Key Early Exit:</strong> Using <code><=</code> in <code>siftDown</code> and <code>>=</code> in <code>siftUp</code> terminates immediately on duplicate keys without redundant swaps.</span>
                     </label>
                 </li>
             </ul>
@@ -359,6 +368,6 @@ public class BuiltInPriorityQueueDemo {
     </main>
 
     <script src="../js/shared-nav.js"></script>
-    <script src="module4.js"></script>
+    <script src="module4.js?v=4"></script>
 </body>
 </html>

@@ -4,10 +4,13 @@
 });
 
 function initModule9Workbench() {
+    const SPEED_KEY = "dsav_exec_speed";
+
     const modeButtons = document.querySelectorAll(".mode-btn");
     const dijkstraControls = document.getElementById("controls-dijkstra");
     const sortControls = document.getElementById("controls-sort");
     const startSelect = document.getElementById("m9-start-select");
+    const speedSelect = document.getElementById("m9-speed-select");
     const dijkstraBtn = document.getElementById("m9-dijkstra-btn");
     const graphResetBtn = document.getElementById("m9-graph-reset-btn");
     const insertionBtn = document.getElementById("m9-insertion-btn");
@@ -24,9 +27,30 @@ function initModule9Workbench() {
 
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
+
+    function getSpeed() {
+        const stored = parseFloat(localStorage.getItem(SPEED_KEY) || "1");
+        const val = speedSelect ? parseFloat(speedSelect.value) : stored;
+        return !Number.isNaN(val) && val > 0 ? val : 1;
+    }
+
+    if (speedSelect) {
+        const saved = parseFloat(localStorage.getItem(SPEED_KEY) || "1");
+        if (!Number.isNaN(saved) && saved > 0) {
+            speedSelect.value = String(saved);
+        }
+        speedSelect.addEventListener("change", (e) => {
+            localStorage.setItem(SPEED_KEY, e.target.value);
+        });
+    }
+
+    const sleep = (baseMs) => {
+        const delay = Math.max(60, Math.round(baseMs / getSpeed()));
+        return new Promise((r) => setTimeout(r, delay));
+    };
+
     let mode = "dijkstra";
     let isAnimating = false;
-    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
     const VERTICES = {
         A: { x: 110, y: 155 },
@@ -345,16 +369,31 @@ function initModule9Workbench() {
             sortControls.hidden = mode !== "sort";
             if (mode === "dijkstra") {
                 drawGraph();
+                algoReadout.textContent = "Ready";
+                timeReadout.textContent = "O(E log V)";
+                dsReadout.textContent = "Min-PriorityQueue";
+                opsReadout.textContent = "0 relaxations";
                 statusMsg.innerHTML = "Switched to <strong>Dijkstra Shortest Path</strong>.";
             } else {
                 drawBars();
+                algoReadout.textContent = "Ready";
+                timeReadout.textContent = "O(n log n)";
+                dsReadout.textContent = "Array[10]";
+                opsReadout.textContent = "0 comparisons";
                 statusMsg.innerHTML = "Switched to <strong>Sorting Algorithms</strong>.";
             }
         });
     });
 
     dijkstraBtn.addEventListener("click", runDijkstra);
-    graphResetBtn.addEventListener("click", () => { if (!isAnimating) drawGraph(); });
+    graphResetBtn.addEventListener("click", () => {
+        if (!isAnimating) {
+            drawGraph();
+            algoReadout.textContent = "Ready";
+            opsReadout.textContent = "0 relaxations";
+            statusMsg.innerHTML = "Weighted graph reset.";
+        }
+    });
     insertionBtn.addEventListener("click", runInsertionSort);
     mergeBtn.addEventListener("click", runMergeSort);
     quickBtn.addEventListener("click", runQuickSort);
@@ -362,6 +401,8 @@ function initModule9Workbench() {
         if (isAnimating) return;
         sortArray.sort(() => Math.random() - 0.5);
         drawBars();
+        opsReadout.textContent = "0 comparisons";
+        statusMsg.innerHTML = "Array shuffled.";
     });
 
     drawGraph();

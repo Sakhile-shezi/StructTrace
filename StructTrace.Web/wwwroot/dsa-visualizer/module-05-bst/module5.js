@@ -12,12 +12,15 @@ class BSTNode {
 }
 
 function initBstVisualizer() {
+    const SPEED_KEY = "dsav_exec_speed";
+
     const valueInput = document.getElementById("bst-value-input");
     const insertBtn = document.getElementById("bst-insert-btn");
     const searchBtn = document.getElementById("bst-search-btn");
     const deleteBtn = document.getElementById("bst-delete-btn");
     const skewBtn = document.getElementById("bst-skew-btn");
     const resetBtn = document.getElementById("bst-reset-btn");
+    const speedSelect = document.getElementById("bst-speed-select");
     const travButtons = document.querySelectorAll(".bst-trav-btn");
 
     const canvas = document.getElementById("bst-canvas");
@@ -31,11 +34,30 @@ function initBstVisualizer() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
 
+    function getSpeed() {
+        const stored = parseFloat(localStorage.getItem(SPEED_KEY) || "1");
+        const val = speedSelect ? parseFloat(speedSelect.value) : stored;
+        return !Number.isNaN(val) && val > 0 ? val : 1;
+    }
+
+    if (speedSelect) {
+        const saved = parseFloat(localStorage.getItem(SPEED_KEY) || "1");
+        if (!Number.isNaN(saved) && saved > 0) {
+            speedSelect.value = String(saved);
+        }
+        speedSelect.addEventListener("change", (e) => {
+            localStorage.setItem(SPEED_KEY, e.target.value);
+        });
+    }
+
+    const sleep = (baseMs) => {
+        const delay = Math.max(90, Math.round(baseMs / getSpeed()));
+        return new Promise((resolve) => setTimeout(resolve, delay));
+    };
+
     let root = null;
     let stepCount = 0;
     let isAnimating = false;
-
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
     function setControlsDisabled(disabled) {
         isAnimating = disabled;
@@ -58,11 +80,11 @@ function initBstVisualizer() {
         stepCount += 1;
         const row = document.createElement("tr");
         row.innerHTML = `
-      <td>${stepCount}</td>
-      <td><code>${operation}</code></td>
-      <td>${branch}</td>
-      <td>${result}</td>
-    `;
+            <td>${stepCount}</td>
+            <td><code>${operation}</code></td>
+            <td>${branch}</td>
+            <td>${result}</td>
+        `;
         traceBody.appendChild(row);
     }
 
@@ -272,7 +294,7 @@ function initBstVisualizer() {
             path.push(curr.key);
             drawTree({ visitedKey: curr.key });
             setStatus(`Comparing <strong>${key}</strong> with node <code>${curr.key}</code>...`);
-            await sleep(420);
+            await sleep(480);
 
             if (key === curr.key) {
                 drawTree({ foundKey: curr.key });
@@ -320,7 +342,7 @@ function initBstVisualizer() {
             steps += 1;
             drawTree({ visitedKey: curr.key });
             setStatus(`Checking node <code>${curr.key}</code> (${key} vs ${curr.key})...`);
-            await sleep(420);
+            await sleep(480);
 
             if (key === curr.key) {
                 drawTree({ foundKey: curr.key });
@@ -371,7 +393,7 @@ function initBstVisualizer() {
             steps += 1;
             drawTree({ visitedKey: curr.key });
             setStatus(`Searching for <strong>${key}</strong>: visiting <code>${curr.key}</code>...`);
-            await sleep(400);
+            await sleep(460);
             curr = key < curr.key ? curr.left : curr.right;
         }
 
@@ -391,22 +413,22 @@ function initBstVisualizer() {
         if (!curr.left && !curr.right) {
             caseDesc = "Case 1 (Leaf node: 0 children)";
             setStatus(`Located leaf <strong>${key}</strong>. Removing node directly...`);
-            await sleep(500);
+            await sleep(540);
         } else if (!curr.left || !curr.right) {
             const childKey = curr.left ? curr.left.key : curr.right.key;
             caseDesc = `Case 2 (1 child: promoted <code>${childKey}</code>)`;
             setStatus(`Located <strong>${key}</strong> with 1 child. Promoting subtree <code>${childKey}</code>...`);
-            await sleep(550);
+            await sleep(580);
         } else {
             let succ = curr.right;
             while (succ.left) succ = succ.left;
             caseDesc = `Case 3 (2 children → Inorder Successor <code>${succ.key}</code>)`;
             setStatus(`Located <strong>${key}</strong> with 2 children. Finding Inorder Successor in right subtree...`);
-            await sleep(500);
+            await sleep(540);
 
             drawTree({ deleteKey: curr.key, successorKey: succ.key });
             setStatus(`Replacing <strong>${key}</strong> with Inorder Successor <strong>${succ.key}</strong> and removing duplicate...`);
-            await sleep(650);
+            await sleep(680);
         }
 
         root = deleteNodeRecursive(root, key);
@@ -457,7 +479,7 @@ function initBstVisualizer() {
             visitedSoFar.push(k);
             drawTree({ foundKey: k });
             setStatus(`<strong>${order.toUpperCase()}</strong> visiting <code>${k}</code> → <code>[${visitedSoFar.join(", ")}]</code>`);
-            await sleep(360);
+            await sleep(440);
         }
 
         drawTree();
@@ -485,13 +507,13 @@ function initBstVisualizer() {
         root = buildFromKeys([50, 30, 70, 20, 40, 60, 80]);
         stepCount = 0;
         traceBody.innerHTML = `
-      <tr>
-        <td>0</td>
-        <td><code>init()</code></td>
-        <td>Balanced root <code>50</code></td>
-        <td>Inorder: <code>[20, 30, 40, 50, 60, 70, 80]</code></td>
-      </tr>
-    `;
+            <tr>
+                <td>0</td>
+                <td><code>init()</code></td>
+                <td>Balanced root <code>50</code></td>
+                <td>Inorder: <code>[20, 30, 40, 50, 60, 70, 80]</code></td>
+            </tr>
+        `;
         drawTree();
         updateReadouts("O(log n) • 0 steps");
         setStatus(`Reset to balanced BST with root <strong>50</strong> (<code>height = 2</code>).`);

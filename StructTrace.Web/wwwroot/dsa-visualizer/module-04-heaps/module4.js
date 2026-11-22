@@ -4,12 +4,15 @@
 });
 
 function initHeapVisualizer() {
+    const SPEED_KEY = "dsav_exec_speed";
+
     const valueInput = document.getElementById("heap-value-input");
     const insertBtn = document.getElementById("heap-insert-btn");
     const extractBtn = document.getElementById("heap-extract-btn");
     const peekBtn = document.getElementById("heap-peek-btn");
     const buildBtn = document.getElementById("heap-build-btn");
     const resetBtn = document.getElementById("heap-reset-btn");
+    const speedSelect = document.getElementById("heap-speed-select");
 
     const canvas = document.getElementById("heap-canvas");
     const arrayContainer = document.getElementById("heap-array-container");
@@ -24,12 +27,31 @@ function initHeapVisualizer() {
     if (!canvas || !arrayContainer) return;
     const ctx = canvas.getContext("2d");
 
+    function getSpeed() {
+        const stored = parseFloat(localStorage.getItem(SPEED_KEY) || "1");
+        const val = speedSelect ? parseFloat(speedSelect.value) : stored;
+        return !Number.isNaN(val) && val > 0 ? val : 1;
+    }
+
+    if (speedSelect) {
+        const saved = parseFloat(localStorage.getItem(SPEED_KEY) || "1");
+        if (!Number.isNaN(saved) && saved > 0) {
+            speedSelect.value = String(saved);
+        }
+        speedSelect.addEventListener("change", (e) => {
+            localStorage.setItem(SPEED_KEY, e.target.value);
+        });
+    }
+
+    const sleep = (baseMs) => {
+        const delay = Math.max(90, Math.round(baseMs / getSpeed()));
+        return new Promise((resolve) => setTimeout(resolve, delay));
+    };
+
     let heap = [10, 15, 20, 30, 25];
     let selectedIdx = 0;
     let stepCount = 0;
     let isAnimating = false;
-
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
     function setControlsDisabled(disabled) {
         isAnimating = disabled;
@@ -49,11 +71,11 @@ function initHeapVisualizer() {
         stepCount += 1;
         const row = document.createElement("tr");
         row.innerHTML = `
-      <td>${stepCount}</td>
-      <td><code>${operation}</code></td>
-      <td>${detail}</td>
-      <td><code>[${heap.join(", ")}]</code></td>
-    `;
+            <td>${stepCount}</td>
+            <td><code>${operation}</code></td>
+            <td>${detail}</td>
+            <td><code>[${heap.join(", ")}]</code></td>
+        `;
         traceBody.appendChild(row);
     }
 
@@ -184,30 +206,37 @@ function initHeapVisualizer() {
         arrayContainer.innerHTML = "";
 
         if (heap.length === 0) {
-            arrayContainer.innerHTML = `<span class="ll-null">H = [] (empty)</span>`;
+            arrayContainer.innerHTML = `<div class="ll-null-pill">H = [] (empty)</div>`;
             return;
         }
 
         heap.forEach((val, idx) => {
             const cell = document.createElement("div");
-            cell.className = "array-cell is-clickable";
+            cell.className = "array-cell";
+            cell.style.cursor = "pointer";
 
-            if (highlights.foundIdx === idx) cell.classList.add("is-found");
-            else if (highlights.swapA === idx || highlights.swapB === idx) cell.classList.add("is-swap");
-            else if (highlights.compareA === idx || highlights.compareB === idx) cell.classList.add("is-mid");
-            else if (selectedIdx === idx) cell.classList.add("is-selected");
-
-            const badges = [];
-            if (idx === 0) badges.push('<span class="badge badge-low">MIN</span>');
-            if (highlights.swapA === idx || highlights.swapB === idx) {
-                badges.push('<span class="badge badge-mid">SWAP</span>');
+            if (highlights.foundIdx === idx) {
+                cell.classList.add("found");
+            } else if (highlights.swapA === idx || highlights.swapB === idx) {
+                cell.style.borderColor = "#dc2626";
+                cell.style.backgroundColor = "#fee2e2";
+                cell.style.transform = "translateY(-2px)";
+            } else if (highlights.compareA === idx || highlights.compareB === idx) {
+                cell.classList.add("active");
+            } else if (selectedIdx === idx) {
+                cell.style.borderColor = "#2563eb";
+                cell.style.backgroundColor = "#eff6ff";
             }
 
+            const badges = [];
+            if (idx === 0) badges.push("MIN");
+            if (highlights.swapA === idx || highlights.swapB === idx) badges.push("SWAP");
+
             cell.innerHTML = `
-        <span class="cell-index">[${idx}]</span>
-        <span class="cell-val">${val}</span>
-        <div class="pointer-tags">${badges.join("")}</div>
-      `;
+                <span>[${idx}]</span>
+                <strong>${val}</strong>
+                ${badges.length ? `<span>${badges.join("/")}</span>` : ""}
+            `;
 
             cell.addEventListener("click", () => {
                 if (isAnimating) return;
@@ -241,13 +270,13 @@ function initHeapVisualizer() {
 
         renderAll({ foundIdx: i });
         setStatus(`Appended <strong>${val}</strong> at index <code>[${i}]</code>. Starting <code>siftUp(${i})</code>...`);
-        await sleep(450);
+        await sleep(520);
 
         while (i > 0) {
             const parent = Math.floor((i - 1) / 2);
             renderAll({ compareA: i, compareB: parent });
             setStatus(`Comparing child <code>H[${i}] = ${heap[i]}</code> with parent <code>H[${parent}] = ${heap[parent]}</code>...`);
-            await sleep(450);
+            await sleep(520);
 
             if (heap[i] >= heap[parent]) {
                 setStatus(`<code>${heap[i]} ≥ ${heap[parent]}</code>: Min-Heap property satisfied!`);
@@ -263,7 +292,7 @@ function initHeapVisualizer() {
             renderAll({ swapA: i, swapB: parent });
             appendTrace(`insert(${val})`, `Swapped <code>H[${i}] (${childVal})</code> ↔ <code>H[${parent}] (${parentVal})</code>`);
             setStatus(`Swapped <strong>${childVal}</strong> up to parent index <code>[${parent}]</code>.`);
-            await sleep(480);
+            await sleep(560);
 
             i = parent;
         }
@@ -296,7 +325,7 @@ function initHeapVisualizer() {
             setStatus(
                 `Comparing <code>H[${i}] = ${heap[i]}</code> with smaller child <code>H[${smallest}] = ${heap[smallest]}</code>...`
             );
-            await sleep(460);
+            await sleep(520);
 
             if (heap[i] <= heap[smallest]) {
                 break;
@@ -310,7 +339,7 @@ function initHeapVisualizer() {
             renderAll({ swapA: i, swapB: smallest });
             appendTrace(opLabel, `Swapped <code>H[${i}] (${topVal})</code> ↔ <code>H[${smallest}] (${childVal})</code>`);
             setStatus(`Sifted <strong>${topVal}</strong> down to index <code>[${smallest}]</code>.`);
-            await sleep(480);
+            await sleep(560);
 
             i = smallest;
         }
@@ -331,7 +360,7 @@ function initHeapVisualizer() {
         const minVal = heap[0];
         renderAll({ swapA: 0 });
         setStatus(`Extracting root minimum <strong>${minVal}</strong> from <code>H[0]</code>...`);
-        await sleep(420);
+        await sleep(480);
 
         const last = heap.pop();
         let swaps = 0;
@@ -341,7 +370,7 @@ function initHeapVisualizer() {
             selectedIdx = 0;
             renderAll({ compareA: 0 });
             setStatus(`Moved last element <strong>${last}</strong> to <code>H[0]</code>. Running <code>siftDown(0)</code>...`);
-            await sleep(450);
+            await sleep(520);
 
             swaps = await siftDownAnimated(0, `extractMin() -> ${minVal}`);
             if (swaps === 0) {
@@ -382,7 +411,7 @@ function initHeapVisualizer() {
         renderAll();
         appendTrace("buildHeap()", "Loaded unsorted array <code>[42, 18, 35, 9, 27, 14, 50]</code>");
         setStatus(`Loaded unsorted array. Starting bottom-up <code>MinHeapify</code> from index <code>⌊n/2⌋ - 1 = 2</code>...`);
-        await sleep(600);
+        await sleep(650);
 
         let totalSwaps = 0;
         const startParent = Math.floor(heap.length / 2) - 1;
@@ -402,13 +431,13 @@ function initHeapVisualizer() {
         selectedIdx = 0;
         stepCount = 0;
         traceBody.innerHTML = `
-      <tr>
-        <td>0</td>
-        <td><code>init()</code></td>
-        <td>Valid Min-Heap invariant</td>
-        <td><code>[10, 15, 20, 30, 25]</code></td>
-      </tr>
-    `;
+            <tr>
+                <td>0</td>
+                <td><code>init()</code></td>
+                <td>Valid Min-Heap invariant</td>
+                <td><code>[10, 15, 20, 30, 25]</code></td>
+            </tr>
+        `;
         updateReadouts("O(1) • 0 swaps");
         renderAll();
         setStatus(`Reset Min-Heap to <code>[10, 15, 20, 30, 25]</code>.`);

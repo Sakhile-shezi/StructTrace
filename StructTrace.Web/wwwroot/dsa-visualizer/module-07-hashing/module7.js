@@ -25,6 +25,8 @@ function nextPrime(n) {
 }
 
 function initHashVisualizer() {
+    const SPEED_KEY = "dsav_exec_speed";
+
     const modeButtons = document.querySelectorAll(".mode-btn");
     const keyInput = document.getElementById("ht-key-input");
     const valInput = document.getElementById("ht-val-input");
@@ -33,6 +35,7 @@ function initHashVisualizer() {
     const removeBtn = document.getElementById("ht-remove-btn");
     const rehashBtn = document.getElementById("ht-rehash-btn");
     const resetBtn = document.getElementById("ht-reset-btn");
+    const speedSelect = document.getElementById("ht-speed-select");
 
     const bucketsContainer = document.getElementById("ht-buckets-container");
     const statusMsg = document.getElementById("ht-status-msg");
@@ -43,6 +46,27 @@ function initHashVisualizer() {
     const traceBody = document.getElementById("ht-trace-body");
 
     if (!bucketsContainer) return;
+
+    function getSpeed() {
+        const stored = parseFloat(localStorage.getItem(SPEED_KEY) || "1");
+        const val = speedSelect ? parseFloat(speedSelect.value) : stored;
+        return !Number.isNaN(val) && val > 0 ? val : 1;
+    }
+
+    if (speedSelect) {
+        const saved = parseFloat(localStorage.getItem(SPEED_KEY) || "1");
+        if (!Number.isNaN(saved) && saved > 0) {
+            speedSelect.value = String(saved);
+        }
+        speedSelect.addEventListener("change", (e) => {
+            localStorage.setItem(SPEED_KEY, e.target.value);
+        });
+    }
+
+    const sleep = (baseMs) => {
+        const delay = Math.max(90, Math.round(baseMs / getSpeed()));
+        return new Promise((resolve) => setTimeout(resolve, delay));
+    };
 
     const SEED_DATA = [
         { key: "Alice", val: 92 },
@@ -57,8 +81,6 @@ function initHashVisualizer() {
     let linearSlots = [];
     let stepCount = 0;
     let isAnimating = false;
-
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
     function setControlsDisabled(disabled) {
         isAnimating = disabled;
@@ -81,11 +103,11 @@ function initHashVisualizer() {
         stepCount += 1;
         const row = document.createElement("tr");
         row.innerHTML = `
-      <td>${stepCount}</td>
-      <td><code>${operation}</code></td>
-      <td><code>${hashInfo}</code></td>
-      <td>${outcome}</td>
-    `;
+            <td>${stepCount}</td>
+            <td><code>${operation}</code></td>
+            <td><code>${hashInfo}</code></td>
+            <td>${outcome}</td>
+        `;
         traceBody.appendChild(row);
     }
 
@@ -233,7 +255,11 @@ function initHashVisualizer() {
         initStorage(newCap, entries);
         renderBuckets();
         updateReadouts(`M = ${newCap}`, "Rehashed all keys");
-        appendTrace(`rehash(${oldCap} -> ${newCap})`, `<code>M = ${newCap}</code>`, `Re-indexed ${entries.length} entries (<code>α = ${(entries.length / newCap).toFixed(2)}</code>)`);
+        appendTrace(
+            `rehash(${oldCap} → ${newCap})`,
+            `<code>M = ${newCap}</code>`,
+            `Re-indexed ${entries.length} entries (<code>α = ${(entries.length / newCap).toFixed(2)}</code>)`
+        );
     }
 
     async function handlePut() {
@@ -248,7 +274,7 @@ function initHashVisualizer() {
 
         setControlsDisabled(true);
         const { rawHash, idx } = computeIndex(key);
-        const hashSummary = `hash=${rawHash} -> [${idx}]`;
+        const hashSummary = `hash=${rawHash} → [${idx}]`;
         let probes = 1;
 
         if (mode === "chaining") {
@@ -259,7 +285,7 @@ function initHashVisualizer() {
 
             for (let i = 0; i < chain.length; i++) {
                 renderBuckets({ targetBucket: idx, probeKey: chain[i].key });
-                await sleep(350);
+                await sleep(360);
                 if (chain[i].key === key) {
                     chain[i].val = val;
                     renderBuckets({ targetBucket: idx, foundKey: key });
@@ -332,7 +358,7 @@ function initHashVisualizer() {
         // Check Load Factor threshold
         if (getActiveCount() / capacity >= 0.75) {
             await sleep(550);
-            await triggerRehash(`α = ${(getActiveCount() / capacity).toFixed(2)} >= 0.75`);
+            await triggerRehash(`α = ${(getActiveCount() / capacity).toFixed(2)} ≥ 0.75`);
         }
 
         setControlsDisabled(false);
@@ -348,7 +374,7 @@ function initHashVisualizer() {
 
         setControlsDisabled(true);
         const { rawHash, idx } = computeIndex(key);
-        const hashSummary = `hash=${rawHash} -> [${idx}]`;
+        const hashSummary = `hash=${rawHash} → [${idx}]`;
         let probes = 1;
 
         if (mode === "chaining") {
@@ -409,14 +435,14 @@ function initHashVisualizer() {
 
         setControlsDisabled(true);
         const { rawHash, idx } = computeIndex(key);
-        const hashSummary = `hash=${rawHash} -> [${idx}]`;
+        const hashSummary = `hash=${rawHash} → [${idx}]`;
         let probes = 1;
 
         if (mode === "chaining") {
             const chain = buckets[idx];
             for (let i = 0; i < chain.length; i++) {
                 renderBuckets({ targetBucket: idx, probeKey: chain[i].key });
-                await sleep(350);
+                await sleep(360);
                 if (chain[i].key === key) {
                     const removedVal = chain[i].val;
                     chain.splice(i, 1);
@@ -434,7 +460,7 @@ function initHashVisualizer() {
             for (let step = 0; step < capacity; step++) {
                 const slot = linearSlots[slotIdx];
                 renderBuckets({ targetBucket: idx, probeSlot: slotIdx });
-                await sleep(350);
+                await sleep(360);
 
                 if (slot === null) break;
                 if (!slot.tombstone && slot.key === key) {
@@ -464,13 +490,13 @@ function initHashVisualizer() {
         initStorage(7, SEED_DATA);
         stepCount = 0;
         traceBody.innerHTML = `
-      <tr>
-        <td>0</td>
-        <td><code>init()</code></td>
-        <td><code>M = 7</code></td>
-        <td>Seeded 4 keys (<code>α = 0.57</code>)</td>
-      </tr>
-    `;
+            <tr>
+                <td>0</td>
+                <td><code>init()</code></td>
+                <td><code>M = 7</code></td>
+                <td>Seeded 4 keys (<code>α = 0.57</code>)</td>
+            </tr>
+        `;
         renderBuckets();
         updateReadouts("—", "O(1) • 0 probes");
         setStatus(`Reset Hash Table (<code>M = 7</code>) with 4 entries.`);

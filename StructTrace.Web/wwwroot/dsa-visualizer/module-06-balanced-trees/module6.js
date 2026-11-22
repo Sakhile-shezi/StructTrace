@@ -13,10 +13,13 @@ class AVLNode {
 }
 
 function initAvlVisualizer() {
+    const SPEED_KEY = "dsav_exec_speed";
+
     const valueInput = document.getElementById("avl-value-input");
     const insertBtn = document.getElementById("avl-insert-btn");
     const deleteBtn = document.getElementById("avl-delete-btn");
     const resetBtn = document.getElementById("avl-reset-btn");
+    const speedSelect = document.getElementById("avl-speed-select");
     const presetButtons = document.querySelectorAll(".avl-preset-btn");
 
     const canvas = document.getElementById("avl-canvas");
@@ -30,11 +33,30 @@ function initAvlVisualizer() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
 
+    function getSpeed() {
+        const stored = parseFloat(localStorage.getItem(SPEED_KEY) || "1");
+        const val = speedSelect ? parseFloat(speedSelect.value) : stored;
+        return !Number.isNaN(val) && val > 0 ? val : 1;
+    }
+
+    if (speedSelect) {
+        const saved = parseFloat(localStorage.getItem(SPEED_KEY) || "1");
+        if (!Number.isNaN(saved) && saved > 0) {
+            speedSelect.value = String(saved);
+        }
+        speedSelect.addEventListener("change", (e) => {
+            localStorage.setItem(SPEED_KEY, e.target.value);
+        });
+    }
+
+    const sleep = (baseMs) => {
+        const delay = Math.max(100, Math.round(baseMs / getSpeed()));
+        return new Promise((resolve) => setTimeout(resolve, delay));
+    };
+
     let root = null;
     let stepCount = 0;
     let isAnimating = false;
-
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
     function height(node) {
         return node === null ? -1 : node.height;
@@ -88,11 +110,11 @@ function initAvlVisualizer() {
         stepCount += 1;
         const row = document.createElement("tr");
         row.innerHTML = `
-      <td>${stepCount}</td>
-      <td><code>${operation}</code></td>
-      <td>${imbalanceText}</td>
-      <td>${rotationText}</td>
-    `;
+            <td>${stepCount}</td>
+            <td><code>${operation}</code></td>
+            <td>${imbalanceText}</td>
+            <td>${rotationText}</td>
+        `;
         traceBody.appendChild(row);
     }
 
@@ -317,7 +339,6 @@ function initAvlVisualizer() {
             if (bf > 1) {
                 const leftBF = getBF(node.left);
                 if (leftBF < 0) {
-                    // Left-Right (LR) Double Rotation
                     const childKey = node.left.key;
                     imbalanceSummaries.push(`Node <code>${node.key}</code> (BF=+2), child <code>${childKey}</code> (BF=${leftBF})`);
                     rotationsApplied.push("LR Double Rotation");
@@ -337,7 +358,6 @@ function initAvlVisualizer() {
                     const newSub = rotateRight(node);
                     attachSubtree(parent, side, newSub);
                 } else {
-                    // Left-Left (LL) Single Right Rotation
                     imbalanceSummaries.push(`Node <code>${node.key}</code> (BF=+2)`);
                     rotationsApplied.push("LL Right Rotation");
 
@@ -353,7 +373,6 @@ function initAvlVisualizer() {
             } else if (bf < -1) {
                 const rightBF = getBF(node.right);
                 if (rightBF > 0) {
-                    // Right-Left (RL) Double Rotation
                     const childKey = node.right.key;
                     imbalanceSummaries.push(`Node <code>${node.key}</code> (BF=-2), child <code>${childKey}</code> (BF=+${rightBF})`);
                     rotationsApplied.push("RL Double Rotation");
@@ -373,7 +392,6 @@ function initAvlVisualizer() {
                     const newSub = rotateLeft(node);
                     attachSubtree(parent, side, newSub);
                 } else {
-                    // Right-Right (RR) Single Left Rotation
                     imbalanceSummaries.push(`Node <code>${node.key}</code> (BF=-2)`);
                     rotationsApplied.push("RR Left Rotation");
 
@@ -390,7 +408,7 @@ function initAvlVisualizer() {
 
             recomputeAllHeights(root);
             drawTree();
-            await sleep(300);
+            await sleep(320);
         }
 
         const rotSummary = rotationsApplied.length > 0 ? rotationsApplied.join(" + ") : "None";
@@ -417,7 +435,7 @@ function initAvlVisualizer() {
         recomputeAllHeights(root);
         drawTree({ foundKey: key });
         setStatus(`Inserted <strong>${key}</strong>. Checking Balance Factors bottom-up...`);
-        await sleep(420);
+        await sleep(450);
 
         const rotApplied = await animateRebalanceLoop(`insert(${key})`);
         drawTree({ foundKey: key });
@@ -439,7 +457,7 @@ function initAvlVisualizer() {
         recomputeAllHeights(root);
         drawTree();
         setStatus(`Removed <strong>${key}</strong> (if present). Checking ancestor Balance Factors...`);
-        await sleep(420);
+        await sleep(450);
 
         const rotApplied = await animateRebalanceLoop(`delete(${key})`);
         drawTree();
@@ -471,7 +489,7 @@ function initAvlVisualizer() {
         drawTree();
         updateReadouts("None");
         setStatus(`Prepared <strong>${type}</strong> setup <code>[${config.setup.join(", ")}]</code>. Now inserting trigger key <strong>${config.trigger}</strong>...`);
-        await sleep(600);
+        await sleep(620);
 
         valueInput.value = config.trigger;
         await handleInsertKey(config.trigger);
@@ -486,13 +504,13 @@ function initAvlVisualizer() {
         recomputeAllHeights(root);
         stepCount = 0;
         traceBody.innerHTML = `
-      <tr>
-        <td>0</td>
-        <td><code>init()</code></td>
-        <td>None (<code>|BF| ≤ 1</code>)</td>
-        <td>Root <code>30</code> (<code>h = 1</code>)</td>
-      </tr>
-    `;
+            <tr>
+                <td>0</td>
+                <td><code>init()</code></td>
+                <td>None (<code>|BF| ≤ 1</code>)</td>
+                <td>Root <code>30</code> (<code>h = 1</code>)</td>
+            </tr>
+        `;
         drawTree();
         updateReadouts("None");
         setStatus(`Reset AVL Tree to balanced keys <code>[30, 20, 40]</code>.`);

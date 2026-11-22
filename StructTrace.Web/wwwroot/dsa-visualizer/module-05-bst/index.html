@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Module 5: Binary Search Trees (BST) | Java DSA</title>
-    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/styles.css?v=4" />
 </head>
 <body>
     <header class="site-header">
@@ -15,7 +15,7 @@
                 <li><a href="../module-02-linked-lists/index.html">2. Linked Lists</a></li>
                 <li><a href="../module-03-stacks-queues/index.html">3. Stacks & Queues</a></li>
                 <li><a href="../module-04-heaps/index.html">4. Heaps</a></li>
-                <li><a href="../module-05-bst/index.html">5. BST</a></li>
+                <li><a href="../module-05-bst/index.html" class="active">5. BST</a></li>
                 <li><a href="../module-06-balanced-trees/index.html">6. Balanced Trees</a></li>
                 <li><a href="../module-07-hashing/index.html">7. Hashing</a></li>
                 <li><a href="../module-08-graphs/index.html">8. Graphs</a></li>
@@ -23,6 +23,7 @@
             </ul>
         </nav>
     </header>
+
     <main class="container">
         <section class="module-hero">
             <p class="module-tag">Module 05 • Hierarchical Ordered Structures</p>
@@ -40,7 +41,7 @@
             <p>
                 Try deleting root <code>50</code> on the default tree to watch the <strong>2-child deletion case</strong>
                 locate the <em>Inorder Successor</em> (minimum key in the right subtree), or click
-                <strong>Load Skewed</strong> to observe $O(n)$ chain degeneration.
+                <strong>Load Skewed</strong> to observe <strong>O(n)</strong> chain degeneration.
             </p>
 
             <div class="visualizer-controls">
@@ -52,14 +53,21 @@
                     <button type="button" id="bst-delete-btn" class="btn danger">delete</button>
                     <button type="button" id="bst-skew-btn" class="btn secondary">Load Skewed</button>
                     <button type="button" id="bst-reset-btn" class="btn secondary">Reset Balanced</button>
+                    <label for="bst-speed-select">Speed:</label>
+                    <select id="bst-speed-select" class="dsav-speed-select" aria-label="Execution speed">
+                        <option value="0.5">0.5x</option>
+                        <option value="1" selected>1x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2">2x</option>
+                    </select>
                 </div>
 
-                <div class="traversal-bar" role="group" aria-label="Tree Traversals">
-                    <span class="traversal-label">Traverse:</span>
-                    <button type="button" class="btn small bst-trav-btn" data-order="inorder">Inorder (Sorted)</button>
-                    <button type="button" class="btn small bst-trav-btn" data-order="preorder">Preorder</button>
-                    <button type="button" class="btn small bst-trav-btn" data-order="postorder">Postorder</button>
-                    <button type="button" class="btn small bst-trav-btn" data-order="bfs">Breadth-First (BFS)</button>
+                <div class="traversal-bar" role="group" aria-label="Tree Traversals" style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem;">
+                    <span class="traversal-label" style="font-size: 0.86rem; font-weight: 600; color: #334155;">Traverse:</span>
+                    <button type="button" class="btn small secondary bst-trav-btn" data-order="inorder">Inorder (Sorted)</button>
+                    <button type="button" class="btn small secondary bst-trav-btn" data-order="preorder">Preorder</button>
+                    <button type="button" class="btn small secondary bst-trav-btn" data-order="postorder">Postorder</button>
+                    <button type="button" class="btn small secondary bst-trav-btn" data-order="bfs">Breadth-First (BFS)</button>
                 </div>
             </div>
 
@@ -147,7 +155,7 @@
             <p class="note">
                 <strong>Why Skewness Happens:</strong> A standard BST performs no structural rebalancing.
                 Inserting keys in sorted order (<code>10, 20, 30, 40, 50</code>) creates a right-leaning linked chain
-                of height $h = n - 1$, motivating self-balancing AVL and Red-Black trees in Module 6.
+                of height <code>h = n - 1</code>, motivating self-balancing AVL and Red-Black trees in Module 6.
             </p>
         </section>
 
@@ -379,25 +387,25 @@ public class BuiltInTreeSetDemo {
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Deleting the Root Node:</strong> Reassigning <code>root = deleteRec(root, key)</code> ensures the top-level <code>root</code> reference updates when the root itself is deleted or replaced.
+                        <span><strong>Deleting the Root Node:</strong> Reassigning <code>root = deleteRec(root, key)</code> ensures the top-level <code>root</code> reference updates when the root itself is deleted or replaced.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Immediate Right Child as Inorder Successor:</strong> When <code>node.right.left == null</code>, <code>findMin(node.right)</code> returns <code>node.right</code> itself, and <code>deleteRec(node.right, successor.key)</code> cleanly promotes <code>successor.right</code>.
+                        <span><strong>Immediate Right Child as Inorder Successor:</strong> When <code>node.right.left == null</code>, <code>findMin(node.right)</code> returns <code>node.right</code> itself, and <code>deleteRec(node.right, successor.key)</code> cleanly promotes <code>successor.right</code>.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Sorted Insertion Degeneration:</strong> Inserting ascending or descending sequences produces a tree of height <code>n - 1</code>, degrading operations from <code>O(log n)</code> to <code>O(n)</code>.
+                        <span><strong>Sorted Insertion Degeneration:</strong> Inserting ascending or descending sequences produces a tree of height <code>n - 1</code>, degrading operations from <code>O(log n)</code> to <code>O(n)</code>.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Null Key Guard:</strong> Calling <code>compareTo(null)</code> throws a <code>NullPointerException</code>; validate non-null keys at public entry points.
+                        <span><strong>Null Key Guard:</strong> Calling <code>compareTo(null)</code> throws a <code>NullPointerException</code>; validate non-null keys at public entry points.</span>
                     </label>
                 </li>
             </ul>
@@ -405,6 +413,6 @@ public class BuiltInTreeSetDemo {
     </main>
 
     <script src="../js/shared-nav.js"></script>
-    <script src="module5.js"></script>
+    <script src="module5.js?v=4"></script>
 </body>
 </html>

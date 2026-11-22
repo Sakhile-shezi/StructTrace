@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Module 2: Singly, Doubly & Circular Linked Lists | Java DSA</title>
-    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/styles.css?v=4" />
 </head>
 <body>
     <header class="site-header">
@@ -12,7 +12,7 @@
             <a href="../index.html" class="brand">DSA<span>Visual</span></a>
             <ul class="nav-links">
                 <li><a href="../module-01-foundations/index.html">1. Big-O</a></li>
-                <li><a href="../module-02-linked-lists/index.html">2. Linked Lists</a></li>
+                <li><a href="../module-02-linked-lists/index.html" class="active">2. Linked Lists</a></li>
                 <li><a href="../module-03-stacks-queues/index.html">3. Stacks & Queues</a></li>
                 <li><a href="../module-04-heaps/index.html">4. Heaps</a></li>
                 <li><a href="../module-05-bst/index.html">5. BST</a></li>
@@ -62,6 +62,13 @@
                     <button type="button" id="ll-search-btn" class="btn secondary">contains</button>
                     <button type="button" id="ll-rotate-btn" class="btn secondary" hidden>rotate()</button>
                     <button type="button" id="ll-reset-btn" class="btn secondary">Reset</button>
+                    <label for="ll-speed-select">Speed:</label>
+                    <select id="ll-speed-select" class="dsav-speed-select" aria-label="Execution speed">
+                        <option value="0.5">0.5x</option>
+                        <option value="1" selected>1x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2">2x</option>
+                    </select>
                 </div>
             </div>
 
@@ -450,25 +457,25 @@ public class BuiltInLinkedListDemo {
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Single-Node Self-Loop in Circular Lists:</strong> When inserting into an empty Circular Linked List, set <code>tail.next = tail</code> so the 1-node invariant holds before any subsequent insertions.
+                        <span><strong>Single-Node Self-Loop in Circular Lists:</strong> When inserting into an empty Circular Linked List, set <code>tail.next = tail</code> so the 1-node invariant holds before any subsequent insertions.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Infinite Traversal Loop Guard:</strong> In a Circular Linked List, never loop with <code>while (curr != null)</code>—use a <code>do { ... } while (curr != head)</code> or bound by <code>size</code>.
+                        <span><strong>Infinite Traversal Loop Guard:</strong> In a Circular Linked List, never loop with <code>while (curr != null)</code>—use a <code>do { ... } while (curr != head)</code> or bound by <code>size</code>.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Doubly Linked List Sentinels:</strong> Using dummy <code>header</code> and <code>trailer</code> nodes prevents <code>NullPointerException</code> bugs when inserting into an empty list or removing the sole element.
+                        <span><strong>Doubly Linked List Sentinels:</strong> Using dummy <code>header</code> and <code>trailer</code> nodes prevents <code>NullPointerException</code> bugs when inserting into an empty list or removing the sole element.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Single-Element Removal Reset:</strong> When <code>size</code> drops from <code>1</code> to <code>0</code> in non-sentinel lists, reset <em>both</em> <code>head = null</code> and <code>tail = null</code> to prevent loitering references.
+                        <span><strong>Single-Element Removal Reset:</strong> When <code>size</code> drops from <code>1</code> to <code>0</code> in non-sentinel lists, reset <em>both</em> <code>head = null</code> and <code>tail = null</code> to prevent loitering references.</span>
                     </label>
                 </li>
             </ul>
@@ -476,6 +483,6 @@ public class BuiltInLinkedListDemo {
     </main>
 
     <script src="../js/shared-nav.js"></script>
-    <script src="module2.js"></script>
+    <script src="module2.js?v=4"></script>
 </body>
 </html>

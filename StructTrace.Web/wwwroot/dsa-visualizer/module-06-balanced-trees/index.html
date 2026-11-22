@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Module 6: Balanced Search Trees (AVL & Red-Black) | Java DSA</title>
-    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/styles.css?v=4" />
 </head>
 <body>
     <header class="site-header">
@@ -16,7 +16,7 @@
                 <li><a href="../module-03-stacks-queues/index.html">3. Stacks & Queues</a></li>
                 <li><a href="../module-04-heaps/index.html">4. Heaps</a></li>
                 <li><a href="../module-05-bst/index.html">5. BST</a></li>
-                <li><a href="../module-06-balanced-trees/index.html">6. Balanced Trees</a></li>
+                <li><a href="../module-06-balanced-trees/index.html" class="active">6. Balanced Trees</a></li>
                 <li><a href="../module-07-hashing/index.html">7. Hashing</a></li>
                 <li><a href="../module-08-graphs/index.html">8. Graphs</a></li>
                 <li><a href="../module-09-dijkstra-algorithm/index.html">9. Algorithms</a></li>
@@ -51,14 +51,21 @@
                     <button type="button" id="avl-insert-btn" class="btn primary">insert</button>
                     <button type="button" id="avl-delete-btn" class="btn danger">delete</button>
                     <button type="button" id="avl-reset-btn" class="btn secondary">Reset</button>
+                    <label for="avl-speed-select">Speed:</label>
+                    <select id="avl-speed-select" class="dsav-speed-select" aria-label="Execution speed">
+                        <option value="0.5">0.5x</option>
+                        <option value="1" selected>1x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2">2x</option>
+                    </select>
                 </div>
 
-                <div class="traversal-bar" role="group" aria-label="AVL Rotation Presets">
-                    <span class="traversal-label">Trigger Rotation:</span>
-                    <button type="button" class="btn small avl-preset-btn" data-preset="LL">LL (Right)</button>
-                    <button type="button" class="btn small avl-preset-btn" data-preset="RR">RR (Left)</button>
-                    <button type="button" class="btn small avl-preset-btn" data-preset="LR">LR (Double)</button>
-                    <button type="button" class="btn small avl-preset-btn" data-preset="RL">RL (Double)</button>
+                <div class="traversal-bar" role="group" aria-label="AVL Rotation Presets" style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem;">
+                    <span class="traversal-label" style="font-size: 0.86rem; font-weight: 600; color: #334155;">Trigger Rotation:</span>
+                    <button type="button" class="btn small secondary avl-preset-btn" data-preset="LL">LL (Right)</button>
+                    <button type="button" class="btn small secondary avl-preset-btn" data-preset="RR">RR (Left)</button>
+                    <button type="button" class="btn small secondary avl-preset-btn" data-preset="LR">LR (Double)</button>
+                    <button type="button" class="btn small secondary avl-preset-btn" data-preset="RL">RL (Double)</button>
                 </div>
             </div>
 
@@ -143,8 +150,8 @@
             </div>
             <p class="note">
                 <strong>AVL vs. Red-Black in Practice:</strong> AVL trees maintain stricter height balance
-                ($h < 1.44 \log_2 n$), making read-heavy lookups slightly faster. Red-Black trees allow
-                slightly looser height ($h \le 2 \log_2 n$) to cap rotations at $O(1)$ during deletions—which
+                (<em>h</em> < 1.44 log<sub>2</sub> <em>n</em>), making read-heavy lookups slightly faster. Red-Black trees allow
+                slightly looser height (<em>h</em> ≤ 2 log<sub>2</sub> <em>n</em>) to cap rotations at <code>O(1)</code> during deletions—which
                 is why <code>java.util.TreeMap</code> and <code>java.util.TreeSet</code> use Red-Black trees.
             </p>
         </section>
@@ -376,25 +383,25 @@ public class BuiltInBalancedTreeDemo {
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Null Child Height Convention:</strong> Define <code>height(null) = -1</code> so a single leaf node has <code>height = 0</code> and <code>BF = (-1) - (-1) = 0</code>.
+                        <span><strong>Null Child Height Convention:</strong> Define <code>height(null) = -1</code> so a single leaf node has <code>height = 0</code> and <code>BF = (-1) - (-1) = 0</code>.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Bottom-Up Height Recomputation:</strong> In <code>rotateRight(y)</code>, recompute <code>y.height</code> <em>before</em> <code>x.height</code> because <code>y</code> becomes a child of <code>x</code>.
+                        <span><strong>Bottom-Up Height Recomputation:</strong> In <code>rotateRight(y)</code>, recompute <code>y.height</code> <em>before</em> <code>x.height</code> because <code>y</code> becomes a child of <code>x</code>.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Double-Rotation Ordering:</strong> In an <code>LR</code> imbalance (<code>BF(node) == +2</code> and <code>BF(node.left) == -1</code>), rotate the <em>child</em> left first, then rotate the <em>parent</em> right.
+                        <span><strong>Double-Rotation Ordering:</strong> In an <code>LR</code> imbalance (<code>BF(node) == +2</code> and <code>BF(node.left) == -1</code>), rotate the <em>child</em> left first, then rotate the <em>parent</em> right.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Cascading Deletions:</strong> Unlike insertion (which terminates after at most 1 single or double rotation), deleting a node can shrink subtree height and require rotations at multiple ancestors up to <code>root</code>.
+                        <span><strong>Cascading Deletions:</strong> Unlike insertion (which terminates after at most 1 single or double rotation), deleting a node can shrink subtree height and require rotations at multiple ancestors up to <code>root</code>.</span>
                     </label>
                 </li>
             </ul>
@@ -402,6 +409,6 @@ public class BuiltInBalancedTreeDemo {
     </main>
 
     <script src="../js/shared-nav.js"></script>
-    <script src="module6.js"></script>
+    <script src="module6.js?v=4"></script>
 </body>
 </html>

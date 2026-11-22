@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Module 1: Foundations & Big-O Notation | Java DSA</title>
-    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/styles.css?v=4" />
 </head>
 <body>
     <header class="site-header">
         <nav class="nav-container" aria-label="Module Navigation">
             <a href="../index.html" class="brand">DSA<span>Visual</span></a>
             <ul class="nav-links">
-                <li><a href="../module-01-foundations/index.html">1. Big-O</a></li>
+                <li><a href="../module-01-foundations/index.html" class="active">1. Big-O</a></li>
                 <li><a href="../module-02-linked-lists/index.html">2. Linked Lists</a></li>
                 <li><a href="../module-03-stacks-queues/index.html">3. Stacks & Queues</a></li>
                 <li><a href="../module-04-heaps/index.html">4. Heaps</a></li>
@@ -144,12 +144,20 @@
                         <label for="bs-target-input">Target:</label>
                         <input type="number" id="bs-target-input" value="42" />
                         <button type="button" id="bs-step-btn" class="btn primary">Next Step</button>
+                        <button type="button" id="bs-play-btn" class="btn secondary">Auto-Play</button>
                         <button type="button" id="bs-reset-btn" class="btn secondary">Reset</button>
+                        <label for="bs-speed-select">Speed:</label>
+                        <select id="bs-speed-select" class="dsav-speed-select" aria-label="Execution speed">
+                            <option value="0.5">0.5x</option>
+                            <option value="1" selected>1x</option>
+                            <option value="1.5">1.5x</option>
+                            <option value="2">2x</option>
+                        </select>
                     </div>
 
                     <div id="bs-array-container" class="array-visual" aria-label="Sorted Array State"></div>
                     <p id="bs-status-msg" class="status-banner" aria-live="polite">
-                        Click <strong>Next Step</strong> to begin tracing.
+                        Click <strong>Next Step</strong> or <strong>Auto-Play</strong> to begin tracing.
                     </p>
 
                     <div class="table-responsive">
@@ -229,31 +237,32 @@ public class BuiltInSearchDemo {
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Empty Input (<code>n == 0</code>):</strong> Loop condition <code>0 ≤ -1</code> exits immediately and returns <code>-1</code>.
+                        <span><strong>Empty Input (<code>n == 0</code>):</strong> Loop condition <code>0 ≤ -1</code> exits immediately and returns <code>-1</code>.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Single Element (<code>n == 1</code>):</strong> Evaluates <code>mid = 0</code> once without out-of-bounds access.
+                        <span><strong>Single Element (<code>n == 1</code>):</strong> Evaluates <code>mid = 0</code> once without out-of-bounds access.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Out-of-Bounds Targets:</strong> Keys smaller than <code>A[0]</code> or larger than <code>A[n - 1]</code> terminate cleanly when <code>low > high</code>.
+                        <span><strong>Out-of-Bounds Targets:</strong> Keys smaller than <code>A[0]</code> or larger than <code>A[n - 1]</code> terminate cleanly when <code>low > high</code>.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Midpoint Overflow Guard:</strong> Uses <code>low + (high - low) / 2</code> instead of <code>(low + high) / 2</code>.
+                        <span><strong>Midpoint Overflow Guard:</strong> Uses <code>low + (high - low) / 2</code> instead of <code>(low + high) / 2</code>.</span>
                     </label>
                 </li>
             </ul>
         </section>
     </main>
+
     <script src="../js/shared-nav.js"></script>
-    <script src="module1.js"></script>
+    <script src="module1.js?v=4"></script>
 </body>
 </html>

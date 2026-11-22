@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Module 7: Sets, Maps & Hash Tables | Java DSA</title>
-    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/styles.css?v=4" />
 </head>
 <body>
     <header class="site-header">
@@ -17,7 +17,7 @@
                 <li><a href="../module-04-heaps/index.html">4. Heaps</a></li>
                 <li><a href="../module-05-bst/index.html">5. BST</a></li>
                 <li><a href="../module-06-balanced-trees/index.html">6. Balanced Trees</a></li>
-                <li><a href="../module-07-hashing/index.html">7. Hashing</a></li>
+                <li><a href="../module-07-hashing/index.html" class="active">7. Hashing</a></li>
                 <li><a href="../module-08-graphs/index.html">8. Graphs</a></li>
                 <li><a href="../module-09-dijkstra-algorithm/index.html">9. Algorithms</a></li>
             </ul>
@@ -60,6 +60,13 @@
                     <button type="button" id="ht-remove-btn" class="btn danger">remove(k)</button>
                     <button type="button" id="ht-rehash-btn" class="btn secondary">Rehash</button>
                     <button type="button" id="ht-reset-btn" class="btn secondary">Reset</button>
+                    <label for="ht-speed-select">Speed:</label>
+                    <select id="ht-speed-select" class="dsav-speed-select" aria-label="Execution speed">
+                        <option value="0.5">0.5x</option>
+                        <option value="1" selected>1x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2">2x</option>
+                    </select>
                 </div>
             </div>
 
@@ -364,25 +371,25 @@ public class BuiltInHashDemo {
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong><code>equals()</code> & <code>hashCode()</code> Contract:</strong> If <code>a.equals(b)</code> is <code>true</code>, then <code>a.hashCode() == b.hashCode()</code> <em>must</em> also be <code>true</code>; overriding one without the other breaks <code>HashMap</code> lookups.
+                        <span><strong><code>equals()</code> & <code>hashCode()</code> Contract:</strong> If <code>a.equals(b)</code> is <code>true</code>, then <code>a.hashCode() == b.hashCode()</code> <em>must</em> also be <code>true</code>; overriding one without the other breaks <code>HashMap</code> lookups.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Mutable Keys Hazard:</strong> Never mutate fields used in <code>hashCode()</code> while an object is stored inside a <code>HashSet</code> or as a <code>HashMap</code> key—its bucket index will no longer match its hash.
+                        <span><strong>Mutable Keys Hazard:</strong> Never mutate fields used in <code>hashCode()</code> while an object is stored inside a <code>HashSet</code> or as a <code>HashMap</code> key—its bucket index will no longer match its hash.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Tombstones in Open Addressing:</strong> Deleting a key in linear probing must leave a <code>TOMBSTONE</code> marker rather than <code>EMPTY</code>; otherwise subsequent <code>get()</code> probes stop prematurely and miss keys further along the cluster.
+                        <span><strong>Tombstones in Open Addressing:</strong> Deleting a key in linear probing must leave a <code>TOMBSTONE</code> marker rather than <code>EMPTY</code>; otherwise subsequent <code>get()</code> probes stop prematurely and miss keys further along the cluster.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Rehashing Recalculates All Indices:</strong> Because bucket indices depend on <code>% M</code>, resizing the table from <code>M</code> to <code>M'</code> requires recomputing every key's bucket index—never copy buckets verbatim.
+                        <span><strong>Rehashing Recalculates All Indices:</strong> Because bucket indices depend on <code>% M</code>, resizing the table from <code>M</code> to <code>M'</code> requires recomputing every key's bucket index—never copy buckets verbatim.</span>
                     </label>
                 </li>
             </ul>
@@ -390,6 +397,6 @@ public class BuiltInHashDemo {
     </main>
 
     <script src="../js/shared-nav.js"></script>
-    <script src="module7.js"></script>
+    <script src="module7.js?v=4"></script>
 </body>
 </html>

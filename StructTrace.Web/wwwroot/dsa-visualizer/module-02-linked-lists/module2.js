@@ -4,6 +4,8 @@
 });
 
 function initLinkedListVisualizer() {
+    const SPEED_KEY = "dsav_exec_speed";
+
     const modeButtons = document.querySelectorAll(".mode-btn");
     const valueInput = document.getElementById("ll-value-input");
     const addFirstBtn = document.getElementById("ll-add-first-btn");
@@ -13,6 +15,7 @@ function initLinkedListVisualizer() {
     const searchBtn = document.getElementById("ll-search-btn");
     const rotateBtn = document.getElementById("ll-rotate-btn");
     const resetBtn = document.getElementById("ll-reset-btn");
+    const speedSelect = document.getElementById("ll-speed-select");
 
     const nodesContainer = document.getElementById("ll-nodes-container");
     const circularLoopBanner = document.getElementById("ll-circular-loop");
@@ -25,12 +28,31 @@ function initLinkedListVisualizer() {
 
     if (!nodesContainer) return;
 
+    function getSpeed() {
+        const stored = parseFloat(localStorage.getItem(SPEED_KEY) || "1");
+        const val = speedSelect ? parseFloat(speedSelect.value) : stored;
+        return !Number.isNaN(val) && val > 0 ? val : 1;
+    }
+
+    if (speedSelect) {
+        const saved = parseFloat(localStorage.getItem(SPEED_KEY) || "1");
+        if (!Number.isNaN(saved) && saved > 0) {
+            speedSelect.value = String(saved);
+        }
+        speedSelect.addEventListener("change", (e) => {
+            localStorage.setItem(SPEED_KEY, e.target.value);
+        });
+    }
+
+    const sleep = (baseMs) => {
+        const delay = Math.max(90, Math.round(baseMs / getSpeed()));
+        return new Promise((resolve) => setTimeout(resolve, delay));
+    };
+
     let mode = "singly"; // "singly" | "doubly" | "circular"
     let items = [10, 20, 30, 40];
     let stepCount = 0;
     let isAnimating = false;
-
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
     function setControlsDisabled(disabled) {
         isAnimating = disabled;
@@ -53,11 +75,11 @@ function initLinkedListVisualizer() {
         stepCount += 1;
         const row = document.createElement("tr");
         row.innerHTML = `
-      <td>${stepCount}</td>
-      <td><code>[${mode}] ${opLabel}</code></td>
-      <td>${rewiringHtml}</td>
-      <td><code>${stepsText}</code></td>
-    `;
+            <td>${stepCount}</td>
+            <td><code>[${mode}] ${opLabel}</code></td>
+            <td>${rewiringHtml}</td>
+            <td><code>${stepsText}</code></td>
+        `;
         traceBody.appendChild(row);
     }
 
@@ -117,10 +139,10 @@ function initLinkedListVisualizer() {
                     : `<div class="ll-ptr-row"><span>next</span></div>`;
 
             nodeBox.innerHTML = `
-        ${badgeHtml}
-        <div class="ll-val">${val}</div>
-        ${pointerCells}
-      `;
+                ${badgeHtml}
+                <div class="ll-val">${val}</div>
+                ${pointerCells}
+            `;
             nodesContainer.appendChild(nodeBox);
 
             if (idx < items.length - 1) {
@@ -223,7 +245,6 @@ function initLinkedListVisualizer() {
             return;
         }
 
-        // Doubly Linked List removes tail in O(1) via tail.prev
         if (mode === "doubly") {
             const removed = items.pop();
             renderList({ activeIdx: items.length - 1 });
@@ -233,14 +254,13 @@ function initLinkedListVisualizer() {
             return;
         }
 
-        // Singly & Circular Singly must scan from head to penultimate node in O(n)
         setControlsDisabled(true);
         let steps = 0;
         for (let i = 0; i < items.length - 1; i++) {
             steps += 1;
             renderList({ activeIdx: i });
             setStatus(`No <code>prev</code> pointer in ${mode} list—traversing to penultimate node (<code>index ${i}</code>)...`);
-            await sleep(340);
+            await sleep(480);
         }
 
         const removed = items.pop();
@@ -263,7 +283,7 @@ function initLinkedListVisualizer() {
             steps += 1;
             renderList({ activeIdx: i });
             setStatus(`Checking node <code>[${i}] = ${items[i]}</code>...`);
-            await sleep(340);
+            await sleep(480);
 
             if (items[i] === target) {
                 renderList({ foundIdx: i });
@@ -302,13 +322,13 @@ function initLinkedListVisualizer() {
         items = [10, 20, 30, 40];
         stepCount = 0;
         traceBody.innerHTML = `
-      <tr>
-        <td>0</td>
-        <td><code>init()</code></td>
-        <td>Seeded <code>[10, 20, 30, 40]</code></td>
-        <td>0</td>
-      </tr>
-    `;
+            <tr>
+                <td>0</td>
+                <td><code>init()</code></td>
+                <td>Seeded <code>[10, 20, 30, 40]</code></td>
+                <td>0</td>
+            </tr>
+        `;
         renderList();
         updateReadouts("O(1) • 0 steps");
         setStatus(`Reset ${mode} list to <code>[10, 20, 30, 40]</code>.`);

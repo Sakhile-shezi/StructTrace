@@ -1,0 +1,241 @@
+﻿/* ==========================================================================
+   StructTrace DSAVisual — Shared Layout Polish & Execution Speed Controls
+   ========================================================================== */
+
+/* 1. Prevent navbar & toolbar button clipping */
+nav,
+.navbar,
+.top-nav {
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.controls,
+.control-bar,
+.toolbar,
+.action-bar,
+.visualizer-controls,
+[class*="control-row"],
+[class*="toolbar"] {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 0.55rem !important;
+    overflow: visible !important;
+}
+
+/* Fix narrow / clipped Start dropdown in Graph & Traversal modules */
+select {
+    min-width: 74px;
+    min-height: 36px;
+    padding: 0.35rem 0.65rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #0f172a;
+    font-weight: 600;
+    font-size: 0.88rem;
+}
+
+/* 2. Execution Speed & Auto-Play Widget */
+.dsav-speed-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.6rem;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+    .dsav-speed-wrap select {
+        min-width: 68px;
+        min-height: 28px;
+        padding: 0.15rem 0.45rem;
+        font-size: 0.82rem;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+.dsav-autoplay-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.42rem 0.85rem;
+    border: 1px solid #0f172a;
+    border-radius: 8px;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 0.86rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+    .dsav-autoplay-btn:hover {
+        background: #1e293b;
+    }
+
+    .dsav-autoplay-btn.is-playing {
+        background: #d97706;
+        border-color: #b45309;
+    }
+
+/* 3. Edge-Case Verification Checklist: prevent inline text/code splitting */
+.dsav-check-row {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+    padding: 0.65rem 0.25rem !important;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+    .dsav-check-row:last-child {
+        border-bottom: none;
+    }
+
+    .dsav-check-row input[type="checkbox"] {
+        margin-top: 0.28rem !important;
+        width: 16px !important;
+        height: 16px !important;
+        flex-shrink: 0 !important;
+        cursor: pointer;
+        accent-color: #2563eb;
+    }
+
+.dsav-check-text {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    display: block !important;
+    line-height: 1.65 !important;
+    color: #334155;
+    font-size: 0.94rem;
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+}
+
+    .dsav-check-text strong {
+        color: #0f172a;
+        font-weight: 700;
+        margin-right: 0.3rem;
+    }
+
+    .dsav-check-text code {
+        display: inline !important;
+        white-space: nowrap;
+        padding: 0.1rem 0.42rem;
+        margin: 0 0.08rem;
+        border-radius: 5px;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        color: #0f172a;
+        font-size: 0.84em;
+    }
+
+/* 4. Dry-Run Array & Heap Zero-Indexed Array: horizontal boxed cells */
+.dsav-array-strip {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: stretch !important;
+    gap: 0.5rem !important;
+    margin: 0.85rem 0 !important;
+}
+
+.dsav-array-cell {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 62px !important;
+    padding: 0.45rem 0.65rem !important;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 9px;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    gap: 0.15rem;
+    text-align: center;
+    transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+
+    .dsav-array-cell > *:first-child {
+        font-size: 0.72rem;
+        font-family: Consolas, monospace;
+        color: #64748b;
+    }
+
+    .dsav-array-cell > *:nth-child(2) {
+        font-size: 0.98rem;
+        font-weight: 700;
+        font-family: Consolas, monospace;
+        color: #0f172a;
+    }
+
+    .dsav-array-cell > *:nth-child(3) {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        padding: 0.08rem 0.4rem;
+        border-radius: 999px;
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+/* 5. Hash Table Buckets: horizontal bucket rows */
+.dsav-hash-table {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.45rem !important;
+    margin: 0.85rem 0 !important;
+}
+
+.dsav-hash-row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    padding: 0.45rem 0.7rem !important;
+    border: 1px solid #e2e8f0;
+    border-radius: 9px;
+    background: #f8fafc;
+}
+
+    .dsav-hash-row > *:first-child {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 38px;
+        padding: 0.2rem 0.5rem;
+        border-radius: 6px;
+        background: #0f172a;
+        color: #ffffff;
+        font-family: Consolas, monospace;
+        font-size: 0.82rem;
+        font-weight: 700;
+    }
+
+    .dsav-hash-row > *:not(:first-child) {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.22rem 0.55rem;
+        border-radius: 6px;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        font-family: Consolas, monospace;
+        font-size: 0.84rem;
+        color: #0f172a;
+    }
+
+/* 6. Trace tables horizontal scroll guard on smaller screens */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-wrap,
+[class*="table-container"] {
+    overflow-x: auto;
+}

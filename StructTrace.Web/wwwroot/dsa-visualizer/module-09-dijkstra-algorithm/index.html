@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Module 9: Dijkstra & Classic Algorithms | Java DSA</title>
-    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../css/styles.css?v=4" />
 </head>
 <body>
     <header class="site-header">
@@ -19,7 +19,7 @@
                 <li><a href="../module-06-balanced-trees/index.html">6. Balanced Trees</a></li>
                 <li><a href="../module-07-hashing/index.html">7. Hashing</a></li>
                 <li><a href="../module-08-graphs/index.html">8. Graphs</a></li>
-                <li><a href="index.html" class="active">9. Algorithms</a></li>
+                <li><a href="../module-09-dijkstra-algorithm/index.html" class="active">9. Algorithms</a></li>
             </ul>
         </nav>
     </header>
@@ -48,25 +48,37 @@
                     <button type="button" class="mode-btn" data-mode="sort">Sorting Algorithms</button>
                 </div>
 
-                <div id="controls-dijkstra" class="op-group">
-                    <label for="m9-start-select" style="align-self: center; font-weight: 600;">Source:</label>
-                    <select id="m9-start-select" class="select-control">
-                        <option value="A" selected>A</option>
-                        <option value="B">B</option>
-                        <option value="C">C</option>
-                        <option value="D">D</option>
-                        <option value="E">E</option>
-                        <option value="F">F</option>
-                    </select>
-                    <button type="button" id="m9-dijkstra-btn" class="btn primary">Run Dijkstra (O(E log V))</button>
-                    <button type="button" id="m9-graph-reset-btn" class="btn secondary">Reset</button>
-                </div>
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;">
+                    <div id="controls-dijkstra" class="op-group" style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem;">
+                        <label for="m9-start-select" style="font-weight: 600;">Source:</label>
+                        <select id="m9-start-select" class="select-control">
+                            <option value="A" selected>A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
+                            <option value="F">F</option>
+                        </select>
+                        <button type="button" id="m9-dijkstra-btn" class="btn primary">Run Dijkstra (O(E log V))</button>
+                        <button type="button" id="m9-graph-reset-btn" class="btn secondary">Reset</button>
+                    </div>
 
-                <div id="controls-sort" class="op-group" hidden>
-                    <button type="button" id="m9-insertion-btn" class="btn primary">Insertion Sort</button>
-                    <button type="button" id="m9-merge-btn" class="btn primary">Merge Sort</button>
-                    <button type="button" id="m9-quick-btn" class="btn primary">Quick Sort</button>
-                    <button type="button" id="m9-shuffle-btn" class="btn secondary">Shuffle</button>
+                    <div id="controls-sort" class="op-group" hidden style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem;">
+                        <button type="button" id="m9-insertion-btn" class="btn primary">Insertion Sort</button>
+                        <button type="button" id="m9-merge-btn" class="btn primary">Merge Sort</button>
+                        <button type="button" id="m9-quick-btn" class="btn primary">Quick Sort</button>
+                        <button type="button" id="m9-shuffle-btn" class="btn secondary">Shuffle</button>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.35rem;">
+                        <label for="m9-speed-select" style="font-weight: 600;">Speed:</label>
+                        <select id="m9-speed-select" class="dsav-speed-select" aria-label="Execution speed">
+                            <option value="0.5">0.5x</option>
+                            <option value="1" selected>1x</option>
+                            <option value="1.5">1.5x</option>
+                            <option value="2">2x</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -155,7 +167,7 @@
             <div class="code-header">
                 <div class="tab-buttons" role="tablist">
                     <button type="button" class="tab-btn active" data-tab="dijkstra" role="tab" aria-selected="true">Dijkstra Shortest Path</button>
-                    <button type="button" class="tab-btn" data-tab="mergesort" role="tab" aria-selected="false">MergeSort<T></button>
+                    <button type="button" class="tab-btn" data-tab="mergesort" role="tab" aria-selected="false">MergeSort</button>
                 </div>
                 <button type="button" id="copy-code-btn" class="btn small">Copy Code</button>
             </div>
@@ -225,6 +237,6 @@ public class MergeSort {
     </main>
 
     <script src="../js/shared-nav.js"></script>
-    <script src="module9.js"></script>
+    <script src="module9.js?v=4"></script>
 </body>
 </html>

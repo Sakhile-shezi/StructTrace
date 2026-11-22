@@ -336,11 +336,14 @@
                             </select>
                         </div>
                         <div class="col-sm-8">
-                            <label for="sb-test-arg-input" class="form-label small fw-semibold text-secondary mb-1">
-                                Test Target / Query Argument
+                            <label for="sb-test-arg-select" class="form-label small fw-semibold text-secondary mb-1">
+                                Test Target / Query Action
                             </label>
-                            <input type="text" id="sb-test-arg-input" class="form-control form-control-sm font-monospace"
-                                   value="search=40" placeholder="e.g. search=40 or start=A" />
+                            <div class="input-group input-group-sm">
+                                <select id="sb-test-arg-select" class="form-select font-monospace"></select>
+                                <input type="text" id="sb-custom-target-input" class="form-control font-monospace d-none"
+                                       placeholder="Enter value / node" style="max-width: 140px;" />
+                            </div>
                         </div>
                     </div>
 
@@ -362,7 +365,7 @@
                     <label for="sb-console-output" class="form-label small fw-semibold text-secondary mb-1">
                         Execution & Trace Output Console
                     </label>
-                    <div id="sb-console-output" class="sb-console-box" aria-live="polite">Ready. Click "Run Trace & Simulate" to execute against the active input sequence, or "Save Run to Neon" to persist your snapshot.</div>
+                    <div id="sb-console-output" class="sb-console-box" aria-live="polite">Ready. Choose a target option, click "Run Trace & Simulate" to execute against the active input sequence, or "Save Run to Neon" to persist your snapshot.</div>
                     <div id="sb-neon-feedback" class="small mt-2 fw-semibold"></div>
                 </div>
             </div>
@@ -448,7 +451,11 @@
                 inputLabel: "Node Insertion Sequence",
                 defaultInput: "50, 30, 70, 20, 40, 60, 80",
                 edgeInput: "10, 20, 30, 40, 50, 60",
-                defaultArg: "search=40",
+                targetOptions: [
+                    { value: "search:40", label: "Search key: 40", needsCustom: false },
+                    { value: "search:custom", label: "Search custom key...", needsCustom: true },
+                    { value: "inorder", label: "In-order traversal check", needsCustom: false }
+                ],
                 templates: {
                     cpp: `#include <iostream>\n#include <vector>\nusing namespace std;\n\nstruct Node {\n    int key;\n    Node* left;\n    Node* right;\n    Node(int k) : key(k), left(nullptr), right(nullptr) {}\n};\n\nNode* insert(Node* root, int key) {\n    if (!root) return new Node(key);\n    if (key < root->key) root->left = insert(root->left, key);\n    else if (key > root->key) root->right = insert(root->right, key);\n    return root;\n}\n\nint main() {\n    Node* root = nullptr;\n    for (int v : {50, 30, 70, 20, 40, 60, 80}) root = insert(root, v);\n    cout << "Root: " << root->key << endl;\n    return 0;\n}`,
                     java: `public class BinarySearchTree {\n    static class Node {\n        int key; Node left, right;\n        Node(int key) { this.key = key; }\n    }\n    static Node insert(Node root, int key) {\n        if (root == null) return new Node(key);\n        if (key < root.key) root.left = insert(root.left, key);\n        else if (key > root.key) root.right = insert(root.right, key);\n        return root;\n    }\n}`,
@@ -465,7 +472,11 @@
                 inputLabel: "Append Sequence",
                 defaultInput: "10, 20, 30, 40, 50",
                 edgeInput: "99",
-                defaultArg: "find=30",
+                targetOptions: [
+                    { value: "find:30", label: "Find node: 30", needsCustom: false },
+                    { value: "find:custom", label: "Find custom value...", needsCustom: true },
+                    { value: "headTail", label: "Inspect HEAD & TAIL", needsCustom: false }
+                ],
                 templates: {
                     cpp: `#include <iostream>\nusing namespace std;\n\nstruct Node {\n    int data; Node* next;\n    Node(int d) : data(d), next(nullptr) {}\n};\n\nint main() {\n    Node* head = new Node(10);\n    head->next = new Node(20);\n    cout << "Head: " << head->data << endl;\n    return 0;\n}`,
                     java: `public class SinglyList {\n    static class Node<E> { E data; Node<E> next; Node(E d) { data = d; } }\n    private Node<Integer> head, tail;\n}`,
@@ -482,7 +493,11 @@
                 inputLabel: "Append Sequence",
                 defaultInput: "10, 20, 30, 40",
                 edgeInput: "5, 15",
-                defaultArg: "removeTail",
+                targetOptions: [
+                    { value: "removeTail", label: "Remove TAIL (O(1) via prev)", needsCustom: false },
+                    { value: "find:20", label: "Find value: 20", needsCustom: false },
+                    { value: "find:custom", label: "Find custom value...", needsCustom: true }
+                ],
                 templates: {
                     cpp: `#include <iostream>\nusing namespace std;\n\nstruct DNode {\n    int data; DNode* prev; DNode* next;\n    DNode(int d) : data(d), prev(nullptr), next(nullptr) {}\n};\n\nint main() {\n    DNode* a = new DNode(10);\n    DNode* b = new DNode(20);\n    a->next = b; b->prev = a;\n    cout << "b->prev: " << b->prev->data << endl;\n    return 0;\n}`,
                     java: `public class DoublyList<E> {\n    private static class Node<E> { E val; Node<E> prev, next; Node(E v) { val = v; } }\n    private Node<E> head, tail;\n}`,
@@ -499,7 +514,10 @@
                 inputLabel: "Stack Operations",
                 defaultInput: "push 15, push 30, push 45, pop, push 60",
                 edgeInput: "push 10, pop, pop",
-                defaultArg: "peek",
+                targetOptions: [
+                    { value: "peek", label: "Peek TOP element", needsCustom: false },
+                    { value: "popAll", label: "Drain stack (LIFO check)", needsCustom: false }
+                ],
                 templates: {
                     cpp: `#include <iostream>\n#include <stack>\nusing namespace std;\n\nint main() {\n    stack<int> st;\n    st.push(15); st.push(30); st.pop();\n    cout << "Top: " << st.top() << endl;\n    return 0;\n}`,
                     java: `import java.util.*;\nvar stack = new ArrayDeque<Integer>();\nstack.push(15); stack.push(30); stack.pop();`,
@@ -516,7 +534,10 @@
                 inputLabel: "Queue Operations",
                 defaultInput: "enqueue 10, enqueue 20, enqueue 30, dequeue, enqueue 40",
                 edgeInput: "enqueue 5, dequeue, dequeue",
-                defaultArg: "front",
+                targetOptions: [
+                    { value: "front", label: "Inspect FRONT & REAR", needsCustom: false },
+                    { value: "dequeueNext", label: "Dequeue next (FIFO check)", needsCustom: false }
+                ],
                 templates: {
                     cpp: `#include <iostream>\n#include <queue>\nusing namespace std;\n\nint main() {\n    queue<int> q;\n    q.push(10); q.push(20); q.pop();\n    cout << "Front: " << q.front() << endl;\n    return 0;\n}`,
                     java: `import java.util.*;\nQueue<Integer> q = new ArrayDeque<>();\nq.offer(10); q.offer(20); q.poll();`,
@@ -533,7 +554,10 @@
                 inputLabel: "Heap Insertion Sequence",
                 defaultInput: "40, 25, 60, 10, 30, 50, 15",
                 edgeInput: "70, 60, 50, 40, 30, 20, 10",
-                defaultArg: "extractMin",
+                targetOptions: [
+                    { value: "peekMin", label: "Peek min root (index 0)", needsCustom: false },
+                    { value: "extractMin", label: "Extract min & siftDown", needsCustom: false }
+                ],
                 templates: {
                     cpp: `#include <iostream>\n#include <queue>\n#include <vector>\nusing namespace std;\n\nint main() {\n    priority_queue<int, vector<int>, greater<int>> pq;\n    for (int x : {40, 25, 60, 10}) pq.push(x);\n    cout << "Min: " << pq.top() << endl;\n    return 0;\n}`,
                     java: `import java.util.*;\nPriorityQueue<Integer> pq = new PriorityQueue<>();\npq.offer(40); pq.offer(25); pq.offer(10);`,
@@ -547,10 +571,14 @@
                 desc: "Maps integer keys into bucket slots via index = ((key % buckets) + buckets) % buckets with separate chaining.",
                 time: "Avg O(1) | Worst O(n)",
                 space: "O(n + m)",
-                inputLabel: "Keys to Hash (7 Buckets)",
+                inputLabel: "Keys to Hash",
                 defaultInput: "15, 22, 8, 29, 3, 17",
                 edgeInput: "7, 14, 21, 28, 35",
-                defaultArg: "buckets=7",
+                targetOptions: [
+                    { value: "buckets=7", label: "7 buckets (mod 7)", needsCustom: false },
+                    { value: "buckets=5", label: "5 buckets (mod 5)", needsCustom: false },
+                    { value: "buckets=10", label: "10 buckets (mod 10)", needsCustom: false }
+                ],
                 templates: {
                     cpp: `#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    unordered_map<int, int> map;\n    for (int k : {15, 22, 8, 29}) map[k] = k % 7;\n    cout << "Bucket of 15: " << map[15] << endl;\n    return 0;\n}`,
                     java: `import java.util.*;\nMap<Integer, Integer> map = new HashMap<>();\nfor (int k : new int[]{15, 22, 8, 29}) map.put(k, k % 7);`,
@@ -567,7 +595,11 @@
                 inputLabel: "Undirected Edges",
                 defaultInput: "A-B, A-C, B-D, B-E, C-F, E-F",
                 edgeInput: "A-B, B-C, C-D, D-E",
-                defaultArg: "start=A",
+                targetOptions: [
+                    { value: "start=A", label: "Start from vertex A", needsCustom: false },
+                    { value: "start=B", label: "Start from vertex B", needsCustom: false },
+                    { value: "start=custom", label: "Start from custom vertex...", needsCustom: true }
+                ],
                 templates: {
                     cpp: `#include <iostream>\n#include <map>\n#include <queue>\n#include <set>\n#include <vector>\nusing namespace std;\n\nint main() {\n    map<char, vector<char>> adj = {{'A',{'B','C'}},{'B',{'A','D','E'}},{'C',{'A','F'}},{'D',{'B'}},{'E',{'B','F'}},{'F',{'C','E'}}};\n    queue<char> q; set<char> vis = {'A'}; q.push('A');\n    while (!q.empty()) { char u = q.front(); q.pop(); cout << u << " "; for (char v : adj[u]) if (vis.insert(v).second) q.push(v); }\n    return 0;\n}`,
                     java: `import java.util.*;\nQueue<String> q = new ArrayDeque<>();\nSet<String> visited = new HashSet<>();`,
@@ -584,7 +616,11 @@
                 inputLabel: "Undirected Edges",
                 defaultInput: "A-B, A-C, B-D, B-E, C-F, E-F",
                 edgeInput: "A-B, B-C, C-D, D-E",
-                defaultArg: "start=A",
+                targetOptions: [
+                    { value: "start=A", label: "Start from vertex A", needsCustom: false },
+                    { value: "start=B", label: "Start from vertex B", needsCustom: false },
+                    { value: "start=custom", label: "Start from custom vertex...", needsCustom: true }
+                ],
                 templates: {
                     cpp: `#include <iostream>\n#include <map>\n#include <stack>\n#include <set>\n#include <vector>\nusing namespace std;\n\nint main() {\n    map<char, vector<char>> adj = {{'A',{'B','C'}},{'B',{'A','D','E'}},{'C',{'A','F'}},{'D',{'B'}},{'E',{'B','F'}},{'F',{'C','E'}}};\n    stack<char> st; set<char> vis; st.push('A');\n    while (!st.empty()) { char u = st.top(); st.pop(); if (vis.insert(u).second) { cout << u << " "; for (auto it = adj[u].rbegin(); it != adj[u].rend(); ++it) if (!vis.count(*it)) st.push(*it); } }\n    return 0;\n}`,
                     java: `import java.util.*;\nDeque<String> stack = new ArrayDeque<>();\nSet<String> visited = new HashSet<>();`,
@@ -601,7 +637,11 @@
                 inputLabel: "Weighted Edges",
                 defaultInput: "A-B:4, A-C:2, B-C:1, B-D:5, C-D:8, C-E:10, D-E:2",
                 edgeInput: "A-B:1, B-C:1, C-D:1, A-D:10",
-                defaultArg: "start=A",
+                targetOptions: [
+                    { value: "start=A", label: "Shortest paths from A", needsCustom: false },
+                    { value: "start=B", label: "Shortest paths from B", needsCustom: false },
+                    { value: "start=custom", label: "Start from custom vertex...", needsCustom: true }
+                ],
                 templates: {
                     cpp: `#include <iostream>\n#include <map>\n#include <queue>\n#include <vector>\nusing namespace std;\n\nint main() {\n    map<char, vector<pair<char,int>>> adj = {{'A',{{'B',4},{'C',2}}},{'B',{{'C',1},{'D',5}}},{'C',{{'D',8},{'E',10}}},{'D',{{'E',2}}},{'E',{}}};\n    map<char,int> dist; for (auto& [k,_] : adj) dist[k] = 1e9; dist['A'] = 0;\n    priority_queue<pair<int,char>, vector<pair<int,char>>, greater<>> pq; pq.push({0,'A'});\n    while (!pq.empty()) { auto [d,u] = pq.top(); pq.pop(); if (d > dist[u]) continue; for (auto [v,w] : adj[u]) if (dist[u]+w < dist[v]) { dist[v] = dist[u]+w; pq.push({dist[v],v}); } }\n    for (auto& [k,d] : dist) cout << k << ":" << d << " ";\n    return 0;\n}`,
                     java: `import java.util.*;\nrecord Edge(String to, int weight) {}\nrecord State(String node, int dist) {}`,
@@ -646,7 +686,8 @@
         const stepCaption = document.getElementById("sb-step-caption");
 
         const langSelect = document.getElementById("sb-lang-select");
-        const testArgInput = document.getElementById("sb-test-arg-input");
+        const testArgSelect = document.getElementById("sb-test-arg-select");
+        const customTargetInput = document.getElementById("sb-custom-target-input");
         const codeEditor = document.getElementById("sb-code-editor");
         const editorMeta = document.getElementById("sb-editor-meta");
         const simulateBtn = document.getElementById("sb-simulate-btn");
@@ -655,6 +696,50 @@
         const resetCodeBtn = document.getElementById("sb-reset-code-btn");
         const consoleOutput = document.getElementById("sb-console-output");
         const neonFeedback = document.getElementById("sb-neon-feedback");
+
+        function getEffectiveTestArg() {
+            const selected = testArgSelect.value || "";
+            const customVal = (customTargetInput.value || "").trim();
+            if (!customVal) return selected;
+            if (selected.endsWith(":custom")) return selected.replace(/:custom$/i, `:${customVal}`);
+            if (selected.endsWith("=custom")) return selected.replace(/=custom$/i, `=${customVal}`);
+            return `${selected} (${customVal})`;
+        }
+
+        function syncCustomTargetVisibility() {
+            const opt = testArgSelect.selectedOptions[0];
+            const needsCustom = opt?.dataset.needsCustom === "true";
+            customTargetInput.classList.toggle("d-none", !needsCustom);
+            if (needsCustom) customTargetInput.focus();
+        }
+
+        function populateTargetDropdown(topicKey) {
+            const options = TOPICS[topicKey]?.targetOptions || [{ value: "default", label: "Default trace", needsCustom: false }];
+            testArgSelect.innerHTML = "";
+            options.forEach((o, idx) => {
+                const el = document.createElement("option");
+                el.value = o.value;
+                el.textContent = o.label;
+                el.dataset.needsCustom = o.needsCustom ? "true" : "false";
+                if (idx === 0) el.selected = true;
+                testArgSelect.appendChild(el);
+            });
+            customTargetInput.value = "";
+            syncCustomTargetVisibility();
+        }
+
+        testArgSelect.addEventListener("change", () => {
+            syncCustomTargetVisibility();
+            if (["HashTable", "BFS", "DFS", "Dijkstra"].includes(currentTopic)) {
+                regenerateTrace();
+            }
+        });
+
+        customTargetInput.addEventListener("change", () => {
+            if (["BFS", "DFS", "Dijkstra"].includes(currentTopic)) {
+                regenerateTrace();
+            }
+        });
 
         function parseInts(raw) {
             return raw.split(",")
@@ -669,6 +754,8 @@
         }
 
         function buildFrames(topic, rawInput) {
+            const effectiveArg = getEffectiveTestArg();
+
             if (topic === "BST") {
                 const nums = parseInts(rawInput);
                 if (!nums.length) return [{ type: "BST", root: null, active: null, comparing: [], caption: "Enter at least one integer." }];
@@ -807,7 +894,7 @@
 
             if (topic === "HashTable") {
                 const nums = parseInts(rawInput);
-                const mMatch = (testArgInput.value || "").match(/buckets\s*=\s*(\d+)/i);
+                const mMatch = effectiveArg.match(/buckets\s*=\s*(\d+)/i);
                 const bucketsCount = Math.min(Math.max(parseInt(mMatch?.[1] || "7", 10) || 7, 3), 10);
                 const buckets = Array.from({ length: bucketsCount }, () => []);
                 const list = [{ type: "HashTable", buckets: buckets.map(b => [...b]), activeBucket: -1, caption: `Initialized ${bucketsCount} buckets.` }];
@@ -840,7 +927,7 @@
                 if (!nodes.length) return [{ type: "Graph", nodes: [], edges: [], visited: [], frontier: [], active: null, caption: "Enter edges like A-B, A-C." }];
                 nodes.forEach(n => adj[n].sort());
 
-                const startMatch = (testArgInput.value || "").match(/start\s*=\s*([A-Za-z0-9]+)/i);
+                const startMatch = effectiveArg.match(/start\s*=\s*([A-Za-z0-9]+)/i);
                 const start = (startMatch && adj[startMatch[1].toUpperCase()]) ? startMatch[1].toUpperCase() : nodes[0];
 
                 const list = [];
@@ -892,7 +979,7 @@
                 const nodes = Object.keys(adj).sort();
                 if (!nodes.length) return [{ type: "Graph", nodes: [], edges: [], visited: [], frontier: [], active: null, caption: "Enter weighted edges like A-B:4, A-C:2." }];
 
-                const startMatch = (testArgInput.value || "").match(/start\s*=\s*([A-Za-z0-9]+)/i);
+                const startMatch = effectiveArg.match(/start\s*=\s*([A-Za-z0-9]+)/i);
                 const start = (startMatch && adj[startMatch[1].toUpperCase()]) ? startMatch[1].toUpperCase() : nodes[0];
 
                 const dist = {};
@@ -1168,7 +1255,7 @@
             spaceEl.textContent = cfg.space;
             traceLabelEl.textContent = cfg.inputLabel;
             traceInputEl.value = cfg.defaultInput;
-            testArgInput.value = cfg.defaultArg;
+            populateTargetDropdown(topicKey);
 
             if (!preserveEditor) {
                 codeEditor.value = cfg.templates[currentLang] || "";
@@ -1255,8 +1342,8 @@
         function runSimulation() {
             regenerateTrace();
             const summaryLines = frames.map((f, idx) => `[Step ${idx + 1}] ${f.caption}`);
-            const arg = testArgInput.value.trim();
-            const header = `=== ${TOPICS[currentTopic].title} | ${currentLang.toUpperCase()} | Arg: ${arg || "none"} ===`;
+            const arg = getEffectiveTestArg();
+            const header = `=== ${TOPICS[currentTopic].title} | ${currentLang.toUpperCase()} | Target: ${arg || "none"} ===`;
             const result = `${header}\n${summaryLines.join("\n")}\n\nCompleted ${frames.length} trace frames.`;
             consoleOutput.textContent = result;
             return result;

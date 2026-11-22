@@ -4,10 +4,15 @@
 });
 
 function initStackQueueVisualizer() {
+    const SPEED_KEY = "dsav_exec_speed";
+
     const modeButtons = document.querySelectorAll(".mode-btn");
     const valueInput = document.getElementById("sq-value-input");
     const visualContainer = document.getElementById("sq-visual-container");
     const statusMsg = document.getElementById("sq-status-msg");
+    const demoBtn = document.getElementById("sq-demo-btn");
+    const resetBtn = document.getElementById("sq-reset-btn");
+    const speedSelect = document.getElementById("sq-speed-select");
 
     const modeReadout = document.getElementById("sq-mode-readout");
     const endsReadout = document.getElementById("sq-ends-readout");
@@ -23,6 +28,22 @@ function initStackQueueVisualizer() {
 
     if (!visualContainer) return;
 
+    function getSpeed() {
+        const stored = parseFloat(localStorage.getItem(SPEED_KEY) || "1");
+        const val = speedSelect ? parseFloat(speedSelect.value) : stored;
+        return !Number.isNaN(val) && val > 0 ? val : 1;
+    }
+
+    if (speedSelect) {
+        const saved = parseFloat(localStorage.getItem(SPEED_KEY) || "1");
+        if (!Number.isNaN(saved) && saved > 0) {
+            speedSelect.value = String(saved);
+        }
+        speedSelect.addEventListener("change", (e) => {
+            localStorage.setItem(SPEED_KEY, e.target.value);
+        });
+    }
+
     const store = {
         stack: [10, 20, 30],
         queue: [10, 20, 30],
@@ -37,6 +58,18 @@ function initStackQueueVisualizer() {
 
     let currentMode = "stack";
     let stepCount = 0;
+    let demoTimer = null;
+
+    function stopDemo() {
+        if (demoTimer !== null) {
+            clearTimeout(demoTimer);
+            demoTimer = null;
+        }
+        if (demoBtn) {
+            demoBtn.textContent = "Auto-Play Demo";
+            demoBtn.classList.remove("is-playing");
+        }
+    }
 
     function getActiveItems() {
         return store[currentMode];
@@ -76,12 +109,12 @@ function initStackQueueVisualizer() {
         stepCount += 1;
         const row = document.createElement("tr");
         row.innerHTML = `
-      <td>${stepCount}</td>
-      <td>${currentMode.charAt(0).toUpperCase() + currentMode.slice(1)}</td>
-      <td><code>${operation}</code></td>
-      <td>${effect}</td>
-      <td><code>${formatItems(getActiveItems())}</code></td>
-    `;
+            <td>${stepCount}</td>
+            <td>${currentMode.charAt(0).toUpperCase() + currentMode.slice(1)}</td>
+            <td><code>${operation}</code></td>
+            <td>${effect}</td>
+            <td><code>${formatItems(getActiveItems())}</code></td>
+        `;
         traceBody.appendChild(row);
     }
 
@@ -90,64 +123,67 @@ function initStackQueueVisualizer() {
         visualContainer.innerHTML = "";
 
         if (currentMode === "stack") {
-            visualContainer.className = "stack-tower";
+            visualContainer.className = "sq-stack-well";
             if (items.length === 0) {
-                visualContainer.innerHTML = `<span class="ll-null">Empty Stack (top = null)</span>`;
+                visualContainer.innerHTML = `<div class="ll-null-pill">Empty Stack (top = null)</div>`;
                 return;
             }
 
             items.forEach((val, idx) => {
                 const slot = document.createElement("div");
-                slot.className = "stack-slot";
-                if (highlight.idx === idx && highlight.type) {
-                    slot.classList.add(highlight.type);
+                slot.className = "sq-item";
+                if (highlight.idx === idx) {
+                    slot.classList.add("is-highlight");
                 }
 
                 const isTop = idx === items.length - 1;
                 slot.innerHTML = `
-          <span class="sq-slot-val">${val}</span>
-          <span>${isTop ? '<span class="badge badge-low">TOP</span>' : ""}</span>
-        `;
+                    <span>${val}</span>
+                    ${isTop ? '<span class="sq-badge">TOP</span>' : ""}
+                `;
                 visualContainer.appendChild(slot);
             });
         } else {
-            visualContainer.className = "queue-pipe";
+            visualContainer.className = "sq-linear-track";
             if (items.length === 0) {
                 const emptyLabel =
                     currentMode === "queue"
                         ? "Empty Queue (head = null, tail = null)"
                         : "Empty Deque (front = null, back = null)";
-                visualContainer.innerHTML = `<span class="ll-null">${emptyLabel}</span>`;
+                visualContainer.innerHTML = `<div class="ll-null-pill">${emptyLabel}</div>`;
                 return;
             }
 
             items.forEach((val, idx) => {
                 const slot = document.createElement("div");
-                slot.className = "queue-slot";
-                if (highlight.idx === idx && highlight.type) {
-                    slot.classList.add(highlight.type);
+                slot.className = "sq-item";
+                slot.style.flexDirection = "column";
+                slot.style.alignItems = "center";
+                slot.style.gap = "0.3rem";
+                if (highlight.idx === idx) {
+                    slot.classList.add("is-highlight");
                 }
 
                 const badges = [];
                 if (idx === 0) {
                     badges.push(
                         currentMode === "queue"
-                            ? '<span class="badge badge-low">HEAD</span>'
-                            : '<span class="badge badge-low">FRONT</span>'
+                            ? '<span class="sq-badge">HEAD</span>'
+                            : '<span class="sq-badge">FRONT</span>'
                     );
                 }
                 if (idx === items.length - 1) {
                     badges.push(
                         currentMode === "queue"
-                            ? '<span class="badge badge-high">TAIL</span>'
-                            : '<span class="badge badge-high">BACK</span>'
+                            ? '<span class="sq-badge" style="background:#7c3aed;">TAIL</span>'
+                            : '<span class="sq-badge" style="background:#7c3aed;">BACK</span>'
                     );
                 }
 
                 slot.innerHTML = `
-          <div class="pointer-tags">${badges.join("")}</div>
-          <span class="sq-slot-val">${val}</span>
-        `;
+                    <div style="display:flex;gap:4px;min-height:20px;">${badges.join("")}</div>
+                    <span>${val}</span>
+                `;
                 visualContainer.appendChild(slot);
             });
         }
@@ -163,6 +199,7 @@ function initStackQueueVisualizer() {
     }
 
     function switchMode(newMode) {
+        stopDemo();
         currentMode = newMode;
 
         modeButtons.forEach((btn) => {
@@ -179,17 +216,15 @@ function initStackQueueVisualizer() {
     }
 
     // Stack Operations
-    document.getElementById("stack-push-btn").addEventListener("click", () => {
-        const val = parseInput();
-        if (val === null) return;
+    function pushStack(val) {
         store.stack.push(val);
         updateReadouts("void");
-        renderVisual({ idx: store.stack.length - 1, type: "is-new" });
+        renderVisual({ idx: store.stack.length - 1 });
         setStatus(`Pushed <strong>${val}</strong> onto <code>top</code> in <strong>O(1)</strong> time.`);
         appendTrace(`push(${val})`, `<code>top ← ${val}</code>`);
-    });
+    }
 
-    document.getElementById("stack-pop-btn").addEventListener("click", () => {
+    function popStack() {
         if (store.stack.length === 0) {
             updateReadouts("Exception");
             setStatus("<strong>Stack Underflow:</strong> Cannot <code>pop()</code> from an empty stack (throws <code>NoSuchElementException</code>).", true);
@@ -201,9 +236,9 @@ function initStackQueueVisualizer() {
         renderVisual();
         setStatus(`Popped <strong>${popped}</strong> from <code>top</code> in <strong>O(1)</strong> time.`);
         appendTrace("pop()", `Returned <code>${popped}</code>`);
-    });
+    }
 
-    document.getElementById("stack-peek-btn").addEventListener("click", () => {
+    function peekStack() {
         if (store.stack.length === 0) {
             updateReadouts("Exception");
             setStatus("<strong>Empty Stack:</strong> Cannot <code>peek()</code> when <code>top == null</code>.", true);
@@ -212,23 +247,21 @@ function initStackQueueVisualizer() {
         }
         const topVal = store.stack[store.stack.length - 1];
         updateReadouts(topVal);
-        renderVisual({ idx: store.stack.length - 1, type: "is-peek" });
+        renderVisual({ idx: store.stack.length - 1 });
         setStatus(`Peeked at <code>top</code>: <strong>${topVal}</strong> (stack unchanged).`);
         appendTrace("peek()", `Returned <code>${topVal}</code>`);
-    });
+    }
 
     // Queue Operations
-    document.getElementById("queue-enq-btn").addEventListener("click", () => {
-        const val = parseInput();
-        if (val === null) return;
+    function enqueueQueue(val) {
         store.queue.push(val);
         updateReadouts("void");
-        renderVisual({ idx: store.queue.length - 1, type: "is-new" });
+        renderVisual({ idx: store.queue.length - 1 });
         setStatus(`Enqueued <strong>${val}</strong> at <code>tail</code> in <strong>O(1)</strong> time.`);
         appendTrace(`enqueue(${val})`, `<code>tail ← ${val}</code>`);
-    });
+    }
 
-    document.getElementById("queue-deq-btn").addEventListener("click", () => {
+    function dequeueQueue() {
         if (store.queue.length === 0) {
             updateReadouts("Exception");
             setStatus("<strong>Queue Underflow:</strong> Cannot <code>dequeue()</code> when <code>head == null</code>.", true);
@@ -241,9 +274,9 @@ function initStackQueueVisualizer() {
         const note = store.queue.length === 0 ? " (both <code>head</code> & <code>tail</code> set to <code>null</code>)" : "";
         setStatus(`Dequeued <strong>${removed}</strong> from <code>head</code>${note}.`);
         appendTrace("dequeue()", `Returned <code>${removed}</code>`);
-    });
+    }
 
-    document.getElementById("queue-peek-btn").addEventListener("click", () => {
+    function peekQueue() {
         if (store.queue.length === 0) {
             updateReadouts("Exception");
             setStatus("<strong>Empty Queue:</strong> Cannot <code>peek()</code> when <code>head == null</code>.", true);
@@ -252,33 +285,29 @@ function initStackQueueVisualizer() {
         }
         const headVal = store.queue[0];
         updateReadouts(headVal);
-        renderVisual({ idx: 0, type: "is-peek" });
+        renderVisual({ idx: 0 });
         setStatus(`Peeked at <code>head</code>: <strong>${headVal}</strong> (queue unchanged).`);
         appendTrace("peek()", `Returned <code>${headVal}</code>`);
-    });
+    }
 
     // Deque Operations
-    document.getElementById("deque-add-first-btn").addEventListener("click", () => {
-        const val = parseInput();
-        if (val === null) return;
+    function addFirstDeque(val) {
         store.deque.unshift(val);
         updateReadouts("void");
-        renderVisual({ idx: 0, type: "is-new" });
+        renderVisual({ idx: 0 });
         setStatus(`Inserted <strong>${val}</strong> at <code>front</code> in <strong>O(1)</strong> time.`);
         appendTrace(`addFirst(${val})`, `<code>front ← ${val}</code>`);
-    });
+    }
 
-    document.getElementById("deque-add-last-btn").addEventListener("click", () => {
-        const val = parseInput();
-        if (val === null) return;
+    function addLastDeque(val) {
         store.deque.push(val);
         updateReadouts("void");
-        renderVisual({ idx: store.deque.length - 1, type: "is-new" });
+        renderVisual({ idx: store.deque.length - 1 });
         setStatus(`Inserted <strong>${val}</strong> at <code>back</code> in <strong>O(1)</strong> time.`);
         appendTrace(`addLast(${val})`, `<code>back ← ${val}</code>`);
-    });
+    }
 
-    document.getElementById("deque-rem-first-btn").addEventListener("click", () => {
+    function removeFirstDeque() {
         if (store.deque.length === 0) {
             updateReadouts("Exception");
             setStatus("<strong>Deque Underflow:</strong> Cannot <code>removeFirst()</code> from an empty deque.", true);
@@ -290,9 +319,9 @@ function initStackQueueVisualizer() {
         renderVisual();
         setStatus(`Removed <strong>${removed}</strong> from <code>front</code> in <strong>O(1)</strong> time.`);
         appendTrace("removeFirst()", `Returned <code>${removed}</code>`);
-    });
+    }
 
-    document.getElementById("deque-rem-last-btn").addEventListener("click", () => {
+    function removeLastDeque() {
         if (store.deque.length === 0) {
             updateReadouts("Exception");
             setStatus("<strong>Deque Underflow:</strong> Cannot <code>removeLast()</code> from an empty deque.", true);
@@ -304,25 +333,129 @@ function initStackQueueVisualizer() {
         renderVisual();
         setStatus(`Removed <strong>${removed}</strong> from <code>back</code> in <strong>O(1)</strong> time.`);
         appendTrace("removeLast()", `Returned <code>${removed}</code>`);
+    }
+
+    // Wire Manual Controls
+    document.getElementById("stack-push-btn").addEventListener("click", () => {
+        stopDemo();
+        const val = parseInput();
+        if (val !== null) pushStack(val);
+    });
+    document.getElementById("stack-pop-btn").addEventListener("click", () => {
+        stopDemo();
+        popStack();
+    });
+    document.getElementById("stack-peek-btn").addEventListener("click", () => {
+        stopDemo();
+        peekStack();
     });
 
-    // Reset & Mode Listeners
-    document.getElementById("sq-reset-btn").addEventListener("click", () => {
-        store[currentMode] = [10, 20, 30];
-        stepCount = 0;
-        traceBody.innerHTML = `
-      <tr>
-        <td>0</td>
-        <td>${currentMode.charAt(0).toUpperCase() + currentMode.slice(1)}</td>
-        <td><code>reset()</code></td>
-        <td>Initialized</td>
-        <td><code>${formatItems(store[currentMode])}</code></td>
-      </tr>
-    `;
-        updateReadouts("—");
-        renderVisual();
-        setStatus(`Reset <strong>${modeLabels[currentMode]}</strong> to <code>[10, 20, 30]</code>.`);
+    document.getElementById("queue-enq-btn").addEventListener("click", () => {
+        stopDemo();
+        const val = parseInput();
+        if (val !== null) enqueueQueue(val);
     });
+    document.getElementById("queue-deq-btn").addEventListener("click", () => {
+        stopDemo();
+        dequeueQueue();
+    });
+    document.getElementById("queue-peek-btn").addEventListener("click", () => {
+        stopDemo();
+        peekQueue();
+    });
+
+    document.getElementById("deque-add-first-btn").addEventListener("click", () => {
+        stopDemo();
+        const val = parseInput();
+        if (val !== null) addFirstDeque(val);
+    });
+    document.getElementById("deque-add-last-btn").addEventListener("click", () => {
+        stopDemo();
+        const val = parseInput();
+        if (val !== null) addLastDeque(val);
+    });
+    document.getElementById("deque-rem-first-btn").addEventListener("click", () => {
+        stopDemo();
+        removeFirstDeque();
+    });
+    document.getElementById("deque-rem-last-btn").addEventListener("click", () => {
+        stopDemo();
+        removeLastDeque();
+    });
+
+    // Auto-Play Demo Sequence (respects Speed selector)
+    const DEMO_STEPS = {
+        stack: [
+            () => pushStack(40),
+            () => pushStack(50),
+            () => peekStack(),
+            () => popStack(),
+            () => popStack(),
+        ],
+        queue: [
+            () => enqueueQueue(40),
+            () => enqueueQueue(50),
+            () => peekQueue(),
+            () => dequeueQueue(),
+            () => dequeueQueue(),
+        ],
+        deque: [
+            () => addFirstDeque(5),
+            () => addLastDeque(40),
+            () => removeFirstDeque(),
+            () => removeLastDeque(),
+        ],
+    };
+
+    if (demoBtn) {
+        demoBtn.addEventListener("click", () => {
+            if (demoTimer !== null) {
+                stopDemo();
+                return;
+            }
+            const steps = DEMO_STEPS[currentMode];
+            let idx = 0;
+            demoBtn.textContent = "Stop Demo";
+            demoBtn.classList.add("is-playing");
+
+            function runNextDemoStep() {
+                if (idx >= steps.length) {
+                    stopDemo();
+                    return;
+                }
+                steps[idx]();
+                idx += 1;
+                if (idx < steps.length) {
+                    const delay = Math.max(150, Math.round(750 / getSpeed()));
+                    demoTimer = setTimeout(runNextDemoStep, delay);
+                } else {
+                    stopDemo();
+                }
+            }
+
+            runNextDemoStep();
+        });
+    }
+
+    if (resetBtn) {
+        resetBtn.addEventListener("click", () => {
+            stopDemo();
+            store[currentMode] = [10, 20, 30];
+            stepCount = 0;
+            traceBody.innerHTML = `
+                <tr>
+                    <td>0</td>
+                    <td>${currentMode.charAt(0).toUpperCase() + currentMode.slice(1)}</td>
+                    <td><code>reset()</code></td>
+                    <td>Initialized</td>
+                    <td><code>${formatItems(store[currentMode])}</code></td>
+                </tr>
+            `;
+            updateReadouts("—");
+            renderVisual();
+            setStatus(`Reset <strong>${modeLabels[currentMode]}</strong> to <code>[10, 20, 30]</code>.`);
+        });
+    }
 
     modeButtons.forEach((btn) => {
         btn.addEventListener("click", () => switchMode(btn.dataset.mode));

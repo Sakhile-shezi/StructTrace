@@ -18,11 +18,8 @@
                 <li><a href="../module-05-bst/index.html">5. BST</a></li>
                 <li><a href="../module-06-balanced-trees/index.html">6. Balanced Trees</a></li>
                 <li><a href="../module-07-hashing/index.html">7. Hashing</a></li>
-                <li><a href="index.html" class="active">8. Graphs</a></li>
+                <li><a href="../module-08-graphs/index.html" class="active">8. Graphs</a></li>
                 <li><a href="../module-09-dijkstra-algorithm/index.html">9. Algorithms</a></li>
-                <li><a href="/" class="nav-app-link">Home</a></li>
-                <li><a href="/Sandbox" class="nav-app-link nav-sandbox-link">Sandbox</a></li>
-                <li><a href="/account/instant-logout" class="nav-app-link nav-logout-link">Logout</a></li>
             </ul>
         </nav>
     </header>
@@ -32,7 +29,7 @@
             <p class="module-tag">Module 08 • Non-Linear Network Structures</p>
             <h1>Graphs, Representations & Traversals (BFS & DFS)</h1>
             <p class="subtitle">
-                Model pairwise relationships $G = (V, E)$ with <strong>O(V + E)</strong> Adjacency Lists and
+                Model pairwise relationships <code>G = (V, E)</code> with <strong>O(V + E)</strong> Adjacency Lists and
                 <strong>O(V²)</strong> Adjacency Matrices. Trace level-by-level <strong>Breadth-First Search</strong>
                 against backtracking <strong>Depth-First Search</strong>.
             </p>
@@ -48,7 +45,7 @@
             </p>
 
             <div class="visualizer-controls">
-                <div class="op-group">
+                <div class="op-group" style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem;">
                     <label for="g8-preset-select" style="font-weight: 600;">Topology:</label>
                     <select id="g8-preset-select" class="select-control">
                         <option value="undirected" selected>Undirected Network (6V, 8E)</option>
@@ -58,9 +55,17 @@
 
                     <label for="g8-start-select" style="font-weight: 600; margin-left: 0.35rem;">Start:</label>
                     <select id="g8-start-select" class="select-control"></select>
+
+                    <label for="g8-speed-select" style="font-weight: 600; margin-left: 0.35rem;">Speed:</label>
+                    <select id="g8-speed-select" class="dsav-speed-select" aria-label="Execution speed">
+                        <option value="0.5">0.5x</option>
+                        <option value="1" selected>1x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2">2x</option>
+                    </select>
                 </div>
 
-                <div class="op-group">
+                <div class="op-group" style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem;">
                     <button type="button" id="g8-bfs-btn" class="btn primary">Run BFS (Queue)</button>
                     <button type="button" id="g8-dfs-btn" class="btn primary">Run DFS (Stack)</button>
                     <button type="button" id="g8-reset-btn" class="btn secondary">Reset</button>
@@ -152,7 +157,7 @@
             </div>
             <p class="note">
                 <strong>Why BFS Finds Unweighted Shortest Paths:</strong> Because a FIFO queue processes all vertices at
-                distance $k$ before any vertex at distance $k + 1$, the first time BFS reaches vertex $v$ is guaranteed
+                distance <em>k</em> before any vertex at distance <em>k + 1</em>, the first time BFS reaches vertex <em>v</em> is guaranteed
                 to follow a path with the minimum possible number of edges.
             </p>
         </section>
@@ -163,8 +168,8 @@
             <div class="two-col">
                 <div class="pseudocode-box">
                     <h3>BFS (Queue) & Iterative DFS (Stack)</h3>
-                    <p class="contract"><strong>Pre:</strong> Start vertex $s \in V$ exists in graph $G = (V, E)$.</p>
-                    <p class="contract"><strong>Post:</strong> Visits every vertex reachable from $s$ exactly once in <code>O(V + E)</code> time.</p>
+                    <p class="contract"><strong>Pre:</strong> Start vertex <code>s ∈ V</code> exists in graph <code>G = (V, E)</code>.</p>
+                    <p class="contract"><strong>Post:</strong> Visits every vertex reachable from <code>s</code> exactly once in <code>O(V + E)</code> time.</p>
 <pre><code>BFS(G, s)
     visited ← { s }
     Q ← empty Queue
@@ -361,25 +366,25 @@ public class MatrixGraph {
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Mark Visited on Enqueue in BFS:</strong> Always add neighbors to <code>visited</code> at the moment they are enqueued (not when dequeued) so the same vertex is never queued multiple times.
+                        <span><strong>Mark Visited on Enqueue in BFS:</strong> Always add neighbors to <code>visited</code> at the moment they are enqueued (not when dequeued) so the same vertex is never queued multiple times.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Cycle Termination Guard:</strong> Test on the <em>Directed Cyclic Graph</em> preset above—without a <code>visited</code> set, cycles like <code>B → C → D → E → B</code> cause infinite loops.
+                        <span><strong>Cycle Termination Guard:</strong> Test on the <em>Directed Cyclic Graph</em> preset above—without a <code>visited</code> set, cycles like <code>B → C → D → E → B</code> cause infinite loops.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Disconnected Components:</strong> A single <code>bfs(start)</code> or <code>dfs(start)</code> only visits vertices reachable from <code>start</code>; wrap in an outer loop over all <code>V</code> to traverse disconnected graphs.
+                        <span><strong>Disconnected Components:</strong> A single <code>bfs(start)</code> or <code>dfs(start)</code> only visits vertices reachable from <code>start</code>; wrap in an outer loop over all <code>V</code> to traverse disconnected graphs.</span>
                     </label>
                 </li>
                 <li>
                     <label>
                         <input type="checkbox" />
-                        <strong>Symmetry in Undirected Graphs:</strong> Adding an undirected edge <code>(u, v)</code> must populate both <code>adj.get(u)</code> and <code>adj.get(v)</code> (and set both <code>matrix[u][v]</code> and <code>matrix[v][u]</code>).
+                        <span><strong>Symmetry in Undirected Graphs:</strong> Adding an undirected edge <code>(u, v)</code> must populate both <code>adj.get(u)</code> and <code>adj.get(v)</code> (and set both <code>matrix[u][v]</code> and <code>matrix[v][u]</code>).</span>
                     </label>
                 </li>
             </ul>
@@ -387,6 +392,6 @@ public class MatrixGraph {
     </main>
 
     <script src="../js/shared-nav.js?v=4"></script>
-    <script src="module8.js"></script>
+    <script src="module8.js?v=4"></script>
 </body>
 </html>

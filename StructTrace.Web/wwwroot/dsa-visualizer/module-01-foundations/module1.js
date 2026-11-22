@@ -1,382 +1,393 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
-    initBigOVisualizer();
-    initBinarySearchVisualizer();
-    initCodeTabs();
-});
+    const SPEED_KEY = "dsav_exec_speed";
 
-function initBigOVisualizer() {
-    const slider = document.getElementById("n-slider");
+    function getSpeed() {
+        const parsed = parseFloat(localStorage.getItem(SPEED_KEY) || "1");
+        return !Number.isNaN(parsed) && parsed > 0 ? parsed : 1;
+    }
+
+    const speedSelect =
+        document.getElementById("bs-speed-select") ||
+        document.querySelector(".trace-controls select");
+
+    if (speedSelect) {
+        speedSelect.value = String(getSpeed());
+        speedSelect.addEventListener("change", (e) => {
+            localStorage.setItem(SPEED_KEY, e.target.value);
+        });
+    }
+
+    // =========================================================================
+    // BLOCK 1: Intuition & Interactive Growth Curves
+    // =========================================================================
+    const nSlider = document.getElementById("n-slider");
     const nDisplay = document.getElementById("n-value-display");
-    const toggles = document.querySelectorAll(".curve-toggle");
     const canvas = document.getElementById("bigo-canvas");
-    const readoutContainer = document.getElementById("op-readout");
+    const readoutGrid = document.getElementById("op-readout");
+    const curveToggles = document.querySelectorAll(".curve-toggle");
 
-    if (!slider || !canvas) return;
-    const ctx = canvas.getContext("2d");
-
-    const curves = {
-        O1: {
-            label: "O(1)",
-            color: "#16a34a",
-            fn: () => 1,
-            format: () => "1 op",
-        },
-        Ologn: {
-            label: "O(log n)",
-            color: "#0284c7",
-            fn: (n) => Math.log2(n),
-            format: (n) => `${Math.log2(n).toFixed(1)} ops`,
-        },
-        On: {
-            label: "O(n)",
-            color: "#2563eb",
-            fn: (n) => n,
-            format: (n) => `${n} ops`,
-        },
-        Onlogn: {
-            label: "O(n log n)",
-            color: "#7c3aed",
-            fn: (n) => n * Math.log2(n),
-            format: (n) => `${Math.round(n * Math.log2(n)).toLocaleString()} ops`,
-        },
-        On2: {
-            label: "O(n²)",
-            color: "#dc2626",
-            fn: (n) => n * n,
-            format: (n) => `${(n * n).toLocaleString()} ops`,
-        },
+    const CURVES = {
+        O1: { label: "O(1)", color: "#16a34a", fn: () => 1 },
+        Ologn: { label: "O(log n)", color: "#0284c7", fn: (n) => Math.max(1, Math.log2(n)) },
+        On: { label: "O(n)", color: "#2563eb", fn: (n) => n },
+        Onlogn: { label: "O(n log n)", color: "#d97706", fn: (n) => n * Math.max(1, Math.log2(n)) },
+        On2: { label: "O(n²)", color: "#dc2626", fn: (n) => n * n }
     };
 
-    function getActiveCurveKeys() {
-        return Array.from(toggles)
-            .filter((checkbox) => checkbox.checked)
-            .map((checkbox) => checkbox.value);
-    }
+    function renderBigOChart() {
+        if (!nSlider) return;
+        const currentN = Number(nSlider.value);
+        if (nDisplay) nDisplay.textContent = String(currentN);
 
-    function renderReadout(n, activeKeys) {
-        readoutContainer.innerHTML = "";
-        activeKeys.forEach((key) => {
-            const curve = curves[key];
-            const item = document.createElement("div");
-            item.className = "readout-item";
-            item.style.borderLeftColor = curve.color;
-            item.innerHTML = `
-        <span>${curve.label} at n=${n}</span>
-        <strong>${curve.format(n)}</strong>
-      `;
-            readoutContainer.appendChild(item);
-        });
-    }
+        const active = Array.from(curveToggles)
+            .filter((cb) => cb.checked)
+            .map((cb) => cb.value);
 
-    function drawChart() {
-        const nMax = parseInt(slider.value, 10);
-        nDisplay.textContent = nMax;
-
-        const activeKeys = getActiveCurveKeys();
-        renderReadout(nMax, activeKeys);
-
-        // Logical dimensions + devicePixelRatio scaling for crisp rendering
-        const width = 760;
-        const height = 320;
-        const dpr = window.devicePixelRatio || 1;
-        canvas.width = width * dpr;
-        canvas.height = height * dpr;
-        canvas.style.width = `${width}px`;
-        canvas.style.height = `${height}px`;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-        const pad = { top: 24, right: 85, bottom: 40, left: 58 };
-        const plotW = width - pad.left - pad.right;
-        const plotH = height - pad.top - pad.bottom;
-
-        ctx.clearRect(0, 0, width, height);
-
-        // Dynamic Y-axis ceiling based on currently enabled curves
-        let yMax = 10;
-        activeKeys.forEach((key) => {
-            const val = curves[key].fn(nMax);
-            if (val > yMax) yMax = val;
-        });
-
-        // Horizontal grid lines & Y-axis ticks
-        ctx.strokeStyle = "#e2e8f0";
-        ctx.fillStyle = "#64748b";
-        ctx.font = "12px system-ui, sans-serif";
-        ctx.textAlign = "right";
-        ctx.textBaseline = "middle";
-
-        const gridSteps = 4;
-        for (let i = 0; i <= gridSteps; i++) {
-            const ratio = i / gridSteps;
-            const yVal = Math.round(yMax * ratio);
-            const yPos = pad.top + plotH - ratio * plotH;
-
-            ctx.beginPath();
-            ctx.moveTo(pad.left, yPos);
-            ctx.lineTo(pad.left + plotW, yPos);
-            ctx.stroke();
-
-            ctx.fillText(yVal.toLocaleString(), pad.left - 8, yPos);
+        if (readoutGrid) {
+            readoutGrid.innerHTML = active.map((key) => {
+                const c = CURVES[key];
+                const ops = Math.round(c.fn(currentN));
+                return `
+                    <div class="readout-item" style="border-left-color:${c.color};">
+                        <span>${c.label}</span>
+                        <strong>${ops.toLocaleString()} ops</strong>
+                    </div>
+                `;
+            }).join("");
         }
 
-        // Axes lines
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        const W = canvas.width;
+        const H = canvas.height;
+        const pad = { top: 22, right: 28, bottom: 38, left: 56 };
+        const plotW = W - pad.left - pad.right;
+        const plotH = H - pad.top - pad.bottom;
+        const maxN = Number(nSlider.max) || 64;
+
+        ctx.clearRect(0, 0, W, H);
+
+        let maxY = 10;
+        active.forEach((key) => {
+            maxY = Math.max(maxY, CURVES[key].fn(maxN));
+        });
+
+        const toX = (n) => pad.left + ((n - 2) / (maxN - 2)) * plotW;
+        const toY = (ops) => pad.top + plotH - Math.min(1, ops / maxY) * plotH;
+
+        ctx.strokeStyle = "#e2e8f0";
+        ctx.lineWidth = 1;
+        ctx.fillStyle = "#64748b";
+        ctx.font = "11px Consolas, monospace";
+        ctx.textAlign = "right";
+
+        for (let i = 0; i <= 4; i++) {
+            const frac = i / 4;
+            const y = pad.top + plotH - frac * plotH;
+            ctx.beginPath();
+            ctx.moveTo(pad.left, y);
+            ctx.lineTo(W - pad.right, y);
+            ctx.stroke();
+            ctx.fillText(Math.round(frac * maxY).toLocaleString(), pad.left - 8, y + 4);
+        }
+
         ctx.strokeStyle = "#94a3b8";
         ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.moveTo(pad.left, pad.top);
         ctx.lineTo(pad.left, pad.top + plotH);
-        ctx.lineTo(pad.left + plotW, pad.top + plotH);
+        ctx.lineTo(W - pad.right, pad.top + plotH);
         ctx.stroke();
 
-        // X-axis label
-        ctx.fillStyle = "#334155";
         ctx.textAlign = "center";
-        ctx.fillText(`Input Size (n = 1 to ${nMax})`, pad.left + plotW / 2, height - 10);
+        [2, 16, 32, 48, 64].forEach((tick) => {
+            ctx.fillText(`n=${tick}`, toX(tick), H - 14);
+        });
 
-        // Plot each active Big-O curve
-        const samplePoints = 100;
-        activeKeys.forEach((key) => {
-            const curve = curves[key];
-            ctx.strokeStyle = curve.color;
+        const markerX = toX(currentN);
+        ctx.save();
+        ctx.setLineDash([5, 4]);
+        ctx.strokeStyle = "#475569";
+        ctx.beginPath();
+        ctx.moveTo(markerX, pad.top);
+        ctx.lineTo(markerX, pad.top + plotH);
+        ctx.stroke();
+        ctx.restore();
+
+        active.forEach((key) => {
+            const c = CURVES[key];
+            ctx.strokeStyle = c.color;
             ctx.lineWidth = 2.5;
             ctx.beginPath();
-
-            let lastX = pad.left;
-            let lastY = pad.top + plotH;
-
-            for (let s = 0; s <= samplePoints; s++) {
-                const currentN = 1 + ((nMax - 1) * s) / samplePoints;
-                const ops = curve.fn(currentN);
-
-                const x = pad.left + ((currentN - 1) / (nMax - 1)) * plotW;
-                const y = pad.top + plotH - (ops / yMax) * plotH;
-
-                if (s === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
-                lastX = x;
-                lastY = y;
+            for (let n = 2; n <= maxN; n++) {
+                const x = toX(n);
+                const y = toY(c.fn(n));
+                if (n === 2) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
             }
             ctx.stroke();
 
-            // Terminal point dot & right-edge label
-            ctx.fillStyle = curve.color;
+            ctx.fillStyle = c.color;
             ctx.beginPath();
-            ctx.arc(lastX, lastY, 4, 0, Math.PI * 2);
+            ctx.arc(markerX, toY(c.fn(currentN)), 4.5, 0, Math.PI * 2);
             ctx.fill();
-
-            ctx.font = "bold 12px system-ui, sans-serif";
-            ctx.textAlign = "left";
-            ctx.fillText(curve.label, lastX + 8, lastY);
         });
     }
 
-    slider.addEventListener("input", drawChart);
-    toggles.forEach((checkbox) => checkbox.addEventListener("change", drawChart));
+    if (nSlider) {
+        nSlider.addEventListener("input", renderBigOChart);
+        curveToggles.forEach((cb) => cb.addEventListener("change", renderBigOChart));
+        renderBigOChart();
+    }
 
-    drawChart();
-}
-
-function initBinarySearchVisualizer() {
+    // =========================================================================
+    // BLOCK 3: Dry-Run Binary Search Visualizer (Next Step + Auto-Play + Speed)
+    // =========================================================================
+    const DATA = [4, 11, 19, 27, 35, 42, 58];
     const arrayContainer = document.getElementById("bs-array-container");
-    const targetInput = document.getElementById("bs-target-input");
-    const stepBtn = document.getElementById("bs-step-btn");
-    const resetBtn = document.getElementById("bs-reset-btn");
     const statusMsg = document.getElementById("bs-status-msg");
     const traceBody = document.getElementById("bs-trace-body");
+    const targetInput = document.getElementById("bs-target-input");
+    const stepBtn = document.getElementById("bs-step-btn");
+    const playBtn =
+        document.getElementById("bs-play-btn") ||
+        document.getElementById("bs-autoplay-btn") ||
+        Array.from(document.querySelectorAll(".trace-controls button")).find((b) =>
+            b.textContent.toLowerCase().includes("auto")
+        );
+    const resetBtn = document.getElementById("bs-reset-btn");
 
-    if (!arrayContainer || !stepBtn) return;
+    let low = 0;
+    let high = DATA.length - 1;
+    let lastMid = null;
+    let foundIndex = null;
+    let stepCount = 0;
+    let done = false;
+    let playTimer = null;
 
-    const sortedArray = [4, 11, 19, 27, 35, 42, 58];
-    let state = {};
+    function renderArray() {
+        if (!arrayContainer) return;
+        arrayContainer.innerHTML = DATA.map((val, idx) => {
+            const classes = ["array-cell"];
+            if (foundIndex === idx) classes.push("found");
+            else if (lastMid === idx) classes.push("mid");
+            else if (!done && idx >= low && idx <= high) classes.push("in-range");
+            else if (stepCount > 0) classes.push("eliminated");
 
-    function resetState() {
-        state = {
-            low: 0,
-            high: sortedArray.length - 1,
-            mid: null,
-            step: 0,
-            done: false,
-            foundIndex: -1,
-        };
-        stepBtn.disabled = false;
-        traceBody.innerHTML = "";
-        statusMsg.innerHTML = "Click <strong>Next Step</strong> to begin tracing.";
+            const ptrs = [];
+            if (!done && idx === low) ptrs.push("L");
+            if (idx === lastMid) ptrs.push("M");
+            if (!done && idx === high) ptrs.push("H");
+
+            return `
+                <div class="${classes.join(" ")}">
+                    <span>[${idx}]</span>
+                    <strong>${val}</strong>
+                    ${ptrs.length ? `<span>${ptrs.join("/")}</span>` : ""}
+                </div>
+            `;
+        }).join("");
+    }
+
+    function appendTraceRow(step, l, h, m, val, actionHtml) {
+        if (!traceBody) return;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${step}</td>
+            <td><code>${l}</code></td>
+            <td><code>${h}</code></td>
+            <td><code>${m}</code></td>
+            <td><code>${val}</code></td>
+            <td><code>${actionHtml}</code></td>
+        `;
+        traceBody.appendChild(tr);
+    }
+
+    function stopAutoPlay() {
+        if (playTimer !== null) {
+            clearTimeout(playTimer);
+            playTimer = null;
+        }
+        if (playBtn) {
+            playBtn.textContent = "Auto-Play";
+            playBtn.classList.remove("is-playing");
+        }
+    }
+
+    function resetTrace() {
+        stopAutoPlay();
+        low = 0;
+        high = DATA.length - 1;
+        lastMid = null;
+        foundIndex = null;
+        stepCount = 0;
+        done = false;
+        if (traceBody) traceBody.innerHTML = "";
+        if (stepBtn) stepBtn.disabled = false;
+        if (playBtn) playBtn.disabled = false;
+        if (statusMsg) {
+            statusMsg.classList.remove("is-error");
+            statusMsg.innerHTML = "Click <strong>Next Step</strong> or <strong>Auto-Play</strong> to begin tracing.";
+        }
         renderArray();
     }
 
-    function renderArray() {
-        arrayContainer.innerHTML = "";
+    function stepOnce() {
+        if (done) return;
+        const target = Number(targetInput ? targetInput.value : 42);
 
-        sortedArray.forEach((val, idx) => {
-            const cell = document.createElement("div");
-            cell.className = "array-cell";
-
-            if (state.done && state.foundIndex === idx) {
-                cell.classList.add("is-found");
-            } else if (state.mid === idx) {
-                cell.classList.add("is-mid");
-            } else if (idx < state.low || idx > state.high) {
-                cell.classList.add("out-range");
+        if (low > high) {
+            done = true;
+            lastMid = null;
+            if (statusMsg) {
+                statusMsg.classList.add("is-error");
+                statusMsg.innerHTML = `Target <strong>${target}</strong> not found (<code>low = ${low} > high = ${high}</code>). Returned <code>-1</code> in ${stepCount} step(s).`;
             }
+            if (stepBtn) stepBtn.disabled = true;
+            stopAutoPlay();
+            renderArray();
+            return;
+        }
 
-            const badges = [];
-            if (idx === state.low) badges.push('<span class="badge badge-low">L</span>');
-            if (idx === state.mid) badges.push('<span class="badge badge-mid">M</span>');
-            if (idx === state.high) badges.push('<span class="badge badge-high">H</span>');
+        stepCount++;
+        const curLow = low;
+        const curHigh = high;
+        const mid = curLow + Math.floor((curHigh - curLow) / 2);
+        const midVal = DATA[mid];
+        lastMid = mid;
 
-            cell.innerHTML = `
-        <span class="cell-index">[${idx}]</span>
-        <span class="cell-val">${val}</span>
-        <div class="pointer-tags">${badges.join("")}</div>
-      `;
-            arrayContainer.appendChild(cell);
+        if (midVal === target) {
+            foundIndex = mid;
+            done = true;
+            appendTraceRow(stepCount, curLow, curHigh, mid, midVal, `${midVal} == ${target} → Return ${mid}`);
+            if (statusMsg) {
+                statusMsg.classList.remove("is-error");
+                statusMsg.innerHTML = `Found <strong>${target}</strong> at index <strong>${mid}</strong> in ${stepCount} step(s)!`;
+            }
+            if (stepBtn) stepBtn.disabled = true;
+            stopAutoPlay();
+        } else if (midVal < target) {
+            low = mid + 1;
+            appendTraceRow(stepCount, curLow, curHigh, mid, midVal, `${midVal} < ${target} → low ← ${low}`);
+            if (statusMsg) {
+                statusMsg.innerHTML = `Step ${stepCount}: <code>A[${mid}] = ${midVal} < ${target}</code> → updated <code>low = ${low}</code>.`;
+            }
+            if (low > high) {
+                done = true;
+                if (statusMsg) {
+                    statusMsg.classList.add("is-error");
+                    statusMsg.innerHTML = `Target <strong>${target}</strong> not found (<code>low = ${low} > high = ${high}</code>). Returned <code>-1</code> after ${stepCount} step(s).`;
+                }
+                if (stepBtn) stepBtn.disabled = true;
+                stopAutoPlay();
+            }
+        } else {
+            high = mid - 1;
+            appendTraceRow(stepCount, curLow, curHigh, mid, midVal, `${midVal} > ${target} → high ← ${high}`);
+            if (statusMsg) {
+                statusMsg.innerHTML = `Step ${stepCount}: <code>A[${mid}] = ${midVal} > ${target}</code> → updated <code>high = ${high}</code>.`;
+            }
+            if (low > high) {
+                done = true;
+                if (statusMsg) {
+                    statusMsg.classList.add("is-error");
+                    statusMsg.innerHTML = `Target <strong>${target}</strong> not found (<code>low = ${low} > high = ${high}</code>). Returned <code>-1</code> after ${stepCount} step(s).`;
+                }
+                if (stepBtn) stepBtn.disabled = true;
+                stopAutoPlay();
+            }
+        }
+
+        renderArray();
+    }
+
+    function runAutoLoop() {
+        if (done) {
+            stopAutoPlay();
+            return;
+        }
+        const mult = speedSelect ? parseFloat(speedSelect.value) || getSpeed() : getSpeed();
+        const delayMs = Math.max(150, Math.round(750 / mult));
+        playTimer = setTimeout(() => {
+            stepOnce();
+            if (!done && playTimer !== null) {
+                runAutoLoop();
+            }
+        }, delayMs);
+    }
+
+    if (stepBtn) {
+        stepBtn.addEventListener("click", () => {
+            stopAutoPlay();
+            stepOnce();
         });
     }
 
-    function appendTraceRow(step, low, high, mid, midVal, action) {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-      <td>${step}</td>
-      <td><code>${low}</code></td>
-      <td><code>${high}</code></td>
-      <td><code>${mid}</code></td>
-      <td><code>${midVal}</code></td>
-      <td>${action}</td>
-    `;
-        traceBody.appendChild(row);
+    if (playBtn) {
+        playBtn.addEventListener("click", () => {
+            if (playTimer !== null) {
+                stopAutoPlay();
+                return;
+            }
+            if (done) {
+                resetTrace();
+            }
+            playBtn.textContent = "Pause";
+            playBtn.classList.add("is-playing");
+            stepOnce();
+            if (!done) {
+                runAutoLoop();
+            }
+        });
     }
 
-    function executeStep() {
-        if (state.done) return;
-
-        const target = parseInt(targetInput.value, 10);
-        if (Number.isNaN(target)) {
-            statusMsg.textContent = "Please enter a valid integer target.";
-            return;
-        }
-
-        state.step += 1;
-
-        // Loop termination check: while low <= high
-        if (state.low > state.high) {
-            state.done = true;
-            state.mid = null;
-            stepBtn.disabled = true;
-            appendTraceRow(
-                state.step,
-                state.low,
-                state.high,
-                "—",
-                "—",
-                "<code>low > high</code> → Return <code>-1</code>"
-            );
-            statusMsg.innerHTML = `Target <strong>${target}</strong> is not in the array (<code>low > high</code>). Returned <strong>-1</strong>.`;
-            renderArray();
-            return;
-        }
-
-        const currentLow = state.low;
-        const currentHigh = state.high;
-        const mid = currentLow + Math.floor((currentHigh - currentLow) / 2);
-        const midVal = sortedArray[mid];
-        state.mid = mid;
-
-        if (midVal === target) {
-            state.done = true;
-            state.foundIndex = mid;
-            stepBtn.disabled = true;
-            renderArray();
-            appendTraceRow(
-                state.step,
-                currentLow,
-                currentHigh,
-                mid,
-                midVal,
-                `<code>${midVal} == ${target}</code> → Return <code>${mid}</code>`
-            );
-            statusMsg.innerHTML = `Found <strong>${target}</strong> at index <strong>${mid}</strong> in ${state.step} step(s)!`;
-        } else if (midVal < target) {
-            renderArray();
-            appendTraceRow(
-                state.step,
-                currentLow,
-                currentHigh,
-                mid,
-                midVal,
-                `<code>${midVal} < ${target}</code> → <code>low ← ${mid + 1}</code>`
-            );
-            statusMsg.innerHTML = `Step ${state.step}: <code>A[${mid}] = ${midVal} < ${target}</code>, discarding left half (<code>low = ${mid + 1}</code>).`;
-            state.low = mid + 1;
-        } else {
-            renderArray();
-            appendTraceRow(
-                state.step,
-                currentLow,
-                currentHigh,
-                mid,
-                midVal,
-                `<code>${midVal} > ${target}</code> → <code>high ← ${mid - 1}</code>`
-            );
-            statusMsg.innerHTML = `Step ${state.step}: <code>A[${mid}] = ${midVal} > ${target}</code>, discarding right half (<code>high = ${mid - 1}</code>).`;
-            state.high = mid - 1;
-        }
+    if (resetBtn) {
+        resetBtn.addEventListener("click", resetTrace);
     }
 
-    stepBtn.addEventListener("click", executeStep);
-    resetBtn.addEventListener("click", resetState);
-    targetInput.addEventListener("input", resetState);
-    targetInput.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            executeStep();
-        }
-    });
+    if (targetInput) {
+        targetInput.addEventListener("change", resetTrace);
+    }
 
-    resetState();
-}
+    resetTrace();
 
-function initCodeTabs() {
-    const tabButtons = document.querySelectorAll(".tab-btn");
-    const codePanels = document.querySelectorAll(".code-panel");
+    // =========================================================================
+    // BLOCK 4: Java Implementation Tabs & Copy Button
+    // =========================================================================
+    const tabBtns = document.querySelectorAll(".tab-btn");
+    const panels = document.querySelectorAll(".code-panel");
     const copyBtn = document.getElementById("copy-code-btn");
 
-    tabButtons.forEach((btn) => {
+    tabBtns.forEach((btn) => {
         btn.addEventListener("click", () => {
-            const targetTab = btn.dataset.tab;
-
-            tabButtons.forEach((b) => {
-                b.classList.remove("active");
-                b.setAttribute("aria-selected", "false");
+            const tab = btn.dataset.tab;
+            tabBtns.forEach((b) => {
+                const active = b === btn;
+                b.classList.toggle("active", active);
+                b.setAttribute("aria-selected", String(active));
             });
-            btn.classList.add("active");
-            btn.setAttribute("aria-selected", "true");
-
-            codePanels.forEach((panel) => {
-                const isMatch = panel.id === `code-${targetTab}`;
-                panel.hidden = !isMatch;
-                panel.classList.toggle("active", isMatch);
+            panels.forEach((panel) => {
+                const match = panel.id === `code-${tab}`;
+                panel.classList.toggle("active", match);
+                panel.hidden = !match;
             });
         });
     });
 
     if (copyBtn) {
         copyBtn.addEventListener("click", async () => {
-            const activeCode = document.querySelector(".code-panel.active code");
-            if (!activeCode) return;
-
+            const codeEl = document.querySelector(".code-panel.active code");
+            if (!codeEl) return;
             try {
-                await navigator.clipboard.writeText(activeCode.textContent);
-                const originalText = copyBtn.textContent;
+                await navigator.clipboard.writeText(codeEl.textContent);
+                const prev = copyBtn.textContent;
                 copyBtn.textContent = "Copied!";
                 setTimeout(() => {
-                    copyBtn.textContent = originalText;
+                    copyBtn.textContent = prev;
                 }, 1500);
             } catch {
                 copyBtn.textContent = "Copy failed";
             }
         });
     }
-}
+});
