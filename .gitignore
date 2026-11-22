@@ -362,12 +362,12 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-# Environment-specific configuration
+# StructTrace sensitive configuration
 **/appsettings.Development.json
 **/appsettings.Production.json
 **/secrets.json
 
-# Deployment credentials
+# Azure deployment credentials
 **/Properties/PublishProfiles/*.pubxml
 
 # Environment files
