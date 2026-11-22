@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Pgvector.EntityFrameworkCore;
 using StructTrace.Web.Data;
@@ -20,6 +21,8 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     options.SignIn.RequireConfirmedAccount = false;
 })
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddSingleton<IEmailSender, NoOpEmailSender>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -57,3 +60,8 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
+
+public sealed class NoOpEmailSender : IEmailSender
+{
+    public Task SendEmailAsync(string email, string subject, string htmlMessage) => Task.CompletedTask;
+}

@@ -48,7 +48,7 @@
     .sb-pill-bar {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.5rem;
+        gap: 0.45rem;
         margin-bottom: 1rem;
     }
 
@@ -57,8 +57,8 @@
         background: #ffffff;
         color: #1e293b;
         font-weight: 600;
-        font-size: 0.88rem;
-        padding: 0.45rem 0.9rem;
+        font-size: 0.84rem;
+        padding: 0.4rem 0.78rem;
         border-radius: 8px;
         transition: all 0.15s ease;
     }
@@ -213,18 +213,21 @@
 </style>
 
 <div class="pb-4">
-    <!-- Anti-Forgery Token for Neon POST requests -->
     <form id="sb-antiforgery-form" hidden>
         @Html.AntiForgeryToken()
     </form>
 
-    <!-- Topic Switcher Bar -->
+    <!-- 10-Topic Switcher Bar -->
     <div class="sb-pill-bar" role="tablist" aria-label="Data Structure & Algorithm Topics">
         <button type="button" class="sb-topic-btn active" data-topic="BST">Binary Search Tree</button>
         <button type="button" class="sb-topic-btn" data-topic="LinkedList">Singly Linked List</button>
+        <button type="button" class="sb-topic-btn" data-topic="DoublyLinkedList">Doubly Linked List</button>
         <button type="button" class="sb-topic-btn" data-topic="Stack">Stack</button>
+        <button type="button" class="sb-topic-btn" data-topic="Queue">Queue</button>
         <button type="button" class="sb-topic-btn" data-topic="MinHeap">Binary Min-Heap</button>
-        <button type="button" class="sb-topic-btn" data-topic="BFS">Graph Breadth-First Search</button>
+        <button type="button" class="sb-topic-btn" data-topic="HashTable">Hash Table</button>
+        <button type="button" class="sb-topic-btn" data-topic="BFS">Graph BFS</button>
+        <button type="button" class="sb-topic-btn" data-topic="DFS">Graph DFS</button>
         <button type="button" class="sb-topic-btn" data-topic="Dijkstra">Dijkstra Shortest Path</button>
     </div>
 
@@ -284,7 +287,6 @@
                         <span><i class="sb-dot" style="background:#16a34a;"></i>Inserted / Visited</span>
                     </div>
 
-                    <!-- Playback Toolbar -->
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
                         <div class="btn-group" role="group" aria-label="Trace Playback Controls">
                             <button type="button" id="sb-first-btn" class="btn btn-outline-secondary btn-sm" title="First Step">|<</button>
@@ -315,7 +317,7 @@
         <div class="col-lg-6">
             <div class="sb-panel">
                 <div class="sb-panel-header">
-                    <span class="fw-bold">Multi-Language Code Editor & Neon Log</span>
+                    <span class="fw-bold">Multi-Language Code Editor & Log</span>
                     <div class="d-flex gap-2">
                         <button type="button" id="sb-copy-code-btn" class="btn btn-outline-secondary btn-sm">Copy</button>
                         <button type="button" id="sb-reset-code-btn" class="btn btn-outline-secondary btn-sm">Reset Template</button>
@@ -338,7 +340,7 @@
                                 Test Target / Query Argument
                             </label>
                             <input type="text" id="sb-test-arg-input" class="form-control form-control-sm font-monospace"
-                                   value="search=40" placeholder="e.g. search=40 or pop=2" />
+                                   value="search=40" placeholder="e.g. search=40 or start=A" />
                         </div>
                     </div>
 
@@ -394,7 +396,7 @@
                         {
                             <tr id="sb-empty-runs-row">
                                 <td colspan="6" class="text-center text-muted py-4">
-                                    No saved runs in Neon yet. Run a trace above and click <strong>Save Run to Neon</strong>.
+                                    No saved runs yet. Run a trace above and click <strong>Save Run to Neon</strong>.
                                 </td>
                             </tr>
                         }
@@ -440,7 +442,7 @@
             BST: {
                 title: "Binary Search Tree",
                 badge: "Hierarchical Trees",
-                desc: "A Binary Search Tree maintains the invariant that every node in the left subtree has a key strictly less than the parent, and every node in the right subtree has a key greater than the parent.",
+                desc: "Maintains the binary search invariant where left descendants hold smaller keys and right descendants hold larger keys.",
                 time: "Avg O(log n) | Worst O(n)",
                 space: "O(n)",
                 inputLabel: "Node Insertion Sequence",
@@ -448,143 +450,16 @@
                 edgeInput: "10, 20, 30, 40, 50, 60",
                 defaultArg: "search=40",
                 templates: {
-                    cpp: `#include <iostream>
-    #include <vector>
-    using namespace std;
-
-    struct Node {
-        int key;
-        Node* left;
-        Node* right;
-        Node(int k) : key(k), left(nullptr), right(nullptr) {}
-    };
-
-    Node* insert(Node* root, int key) {
-        if (!root) return new Node(key);
-        if (key < root->key) root->left = insert(root->left, key);
-        else if (key > root->key) root->right = insert(root->right, key);
-        return root;
-    }
-
-    bool search(Node* root, int target) {
-        while (root) {
-            if (target == root->key) return true;
-            root = (target < root->key) ? root->left : root->right;
-        }
-        return false;
-    }
-
-    void inorder(Node* root) {
-        if (!root) return;
-        inorder(root->left);
-        cout << root->key << " ";
-        inorder(root->right);
-    }
-
-    int main() {
-        vector<int> values = {50, 30, 70, 20, 40, 60, 80};
-        Node* root = nullptr;
-        for (int v : values) root = insert(root, v);
-        cout << "Inorder: ";
-        inorder(root);
-        cout << "\\nSearch 40: " << (search(root, 40) ? "FOUND" : "NOT FOUND") << endl;
-        return 0;
-    }`,
-                    java: `import java.util.*;
-
-    public class BinarySearchTree {
-        static class Node {
-            int key;
-            Node left, right;
-            Node(int key) { this.key = key; }
-        }
-
-        static Node insert(Node root, int key) {
-            if (root == null) return new Node(key);
-            if (key < root.key) root.left = insert(root.left, key);
-            else if (key > root.key) root.right = insert(root.right, key);
-            return root;
-        }
-
-        static boolean search(Node root, int target) {
-            while (root != null) {
-                if (target == root.key) return true;
-                root = (target < root.key) ? root.left : root.right;
-            }
-            return false;
-        }
-
-        public static void main(String[] args) {
-            int[] values = {50, 30, 70, 20, 40, 60, 80};
-            Node root = null;
-            for (int v : values) root = insert(root, v);
-            System.out.println("Search 40: " + search(root, 40));
-        }
-    }`,
-                    python: `class Node:
-        def __init__(self, key: int):
-            self.key = key
-            self.left = None
-            self.right = None
-
-    def insert(root, key: int):
-        if root is None:
-            return Node(key)
-        if key < root.key:
-            root.left = insert(root.left, key)
-        elif key > root.key:
-            root.right = insert(root.right, key)
-        return root
-
-    def search(root, target: int) -> bool:
-        curr = root
-        while curr:
-            if target == curr.key:
-                return True
-            curr = curr.left if target < curr.key else curr.right
-        return False
-
-    if __name__ == "__main__":
-        root = None
-        for v in [50, 30, 70, 20, 40, 60, 80]:
-            root = insert(root, v)
-        print("Search 40:", search(root, 40))`,
-                    csharp: `using System;
-
-    class Node(int key) {
-        public int Key = key;
-        public Node? Left, Right;
-    }
-
-    class Program {
-        static Node Insert(Node? root, int key) {
-            if (root is null) return new Node(key);
-            if (key < root.Key) root.Left = Insert(root.Left, key);
-            else if (key > root.Key) root.Right = Insert(root.Right, key);
-            return root;
-        }
-
-        static bool Search(Node? root, int target) {
-            while (root is not null) {
-                if (target == root.Key) return true;
-                root = target < root.Key ? root.Left : root.Right;
-            }
-            return false;
-        }
-
-        static void Main() {
-            Node? root = null;
-            foreach (int v in new[] { 50, 30, 70, 20, 40, 60, 80 })
-                root = Insert(root, v);
-            Console.WriteLine($"Search 40: {Search(root, 40)}");
-        }
-    }`
+                    cpp: `#include <iostream>\n#include <vector>\nusing namespace std;\n\nstruct Node {\n    int key;\n    Node* left;\n    Node* right;\n    Node(int k) : key(k), left(nullptr), right(nullptr) {}\n};\n\nNode* insert(Node* root, int key) {\n    if (!root) return new Node(key);\n    if (key < root->key) root->left = insert(root->left, key);\n    else if (key > root->key) root->right = insert(root->right, key);\n    return root;\n}\n\nint main() {\n    Node* root = nullptr;\n    for (int v : {50, 30, 70, 20, 40, 60, 80}) root = insert(root, v);\n    cout << "Root: " << root->key << endl;\n    return 0;\n}`,
+                    java: `public class BinarySearchTree {\n    static class Node {\n        int key; Node left, right;\n        Node(int key) { this.key = key; }\n    }\n    static Node insert(Node root, int key) {\n        if (root == null) return new Node(key);\n        if (key < root.key) root.left = insert(root.left, key);\n        else if (key > root.key) root.right = insert(root.right, key);\n        return root;\n    }\n}`,
+                    python: `class Node:\n    def __init__(self, key: int):\n        self.key = key\n        self.left = None\n        self.right = None\n\ndef insert(root, key: int):\n    if root is None:\n        return Node(key)\n    if key < root.key:\n        root.left = insert(root.left, key)\n    elif key > root.key:\n        root.right = insert(root.right, key)\n    return root`,
+                    csharp: `class Node(int key) {\n    public int Key = key;\n    public Node? Left, Right;\n}\nstatic Node Insert(Node? root, int key) {\n    if (root is null) return new Node(key);\n    if (key < root.Key) root.Left = Insert(root.Left, key);\n    else if (key > root.Key) root.Right = Insert(root.Right, key);\n    return root;\n}`
                 }
             },
             LinkedList: {
                 title: "Singly Linked List",
                 badge: "Linear Pointer Structures",
-                desc: "A Singly Linked List stores elements in heap-allocated nodes connected via unidirectional next references, providing O(1) head insertion and O(n) sequential search.",
+                desc: "Stores elements in heap nodes linked via unidirectional next pointers with O(1) head insertion and O(n) traversal.",
                 time: "Head O(1) | Search O(n)",
                 space: "O(n)",
                 inputLabel: "Append Sequence",
@@ -592,112 +467,33 @@
                 edgeInput: "99",
                 defaultArg: "find=30",
                 templates: {
-                    cpp: `#include <iostream>
-    using namespace std;
-
-    struct Node {
-        int data;
-        Node* next;
-        Node(int d) : data(d), next(nullptr) {}
-    };
-
-    class SinglyLinkedList {
-        Node* head = nullptr;
-        Node* tail = nullptr;
-    public:
-        void addLast(int val) {
-            Node* node = new Node(val);
-            if (!head) { head = tail = node; return; }
-            tail->next = node;
-            tail = node;
-        }
-        bool contains(int target) {
-            for (Node* curr = head; curr; curr = curr->next)
-                if (curr->data == target) return true;
-            return false;
-        }
-    };
-
-    int main() {
-        SinglyLinkedList list;
-        for (int x : {10, 20, 30, 40, 50}) list.addLast(x);
-        cout << "Contains 30: " << list.contains(30) << endl;
-        return 0;
-    }`,
-                    java: `public class SinglyLinkedList<E> {
-        private static class Node<E> {
-            E data;
-            Node<E> next;
-            Node(E data) { this.data = data; }
-        }
-
-        private Node<E> head, tail;
-
-        public void addLast(E val) {
-            Node<E> node = new Node<>(val);
-            if (head == null) { head = tail = node; return; }
-            tail.next = node;
-            tail = node;
-        }
-
-        public boolean contains(E target) {
-            for (Node<E> curr = head; curr != null; curr = curr.next)
-                if (curr.data.equals(target)) return true;
-            return false;
-        }
-    }`,
-                    python: `class Node:
-        def __init__(self, data):
-            self.data = data
-            self.next = None
-
-    class SinglyLinkedList:
-        def __init__(self):
-            self.head = None
-            self.tail = None
-
-        def add_last(self, val):
-            node = Node(val)
-            if not self.head:
-                self.head = self.tail = node
-                return
-            self.tail.next = node
-            self.tail = node
-
-        def contains(self, target) -> bool:
-            curr = self.head
-            while curr:
-                if curr.data == target:
-                    return True
-                curr = curr.next
-            return False`,
-                    csharp: `public class SinglyLinkedList<T> {
-        private class Node(T data) {
-            public T Data = data;
-            public Node? Next;
-        }
-
-        private Node? _head, _tail;
-
-        public void AddLast(T val) {
-            var node = new Node(val);
-            if (_head is null) { _head = _tail = node; return; }
-            _tail!.Next = node;
-            _tail = node;
-        }
-
-        public bool Contains(T target) {
-            for (var curr = _head; curr is not null; curr = curr.Next)
-                if (Equals(curr.Data, target)) return true;
-            return false;
-        }
-    }`
+                    cpp: `#include <iostream>\nusing namespace std;\n\nstruct Node {\n    int data; Node* next;\n    Node(int d) : data(d), next(nullptr) {}\n};\n\nint main() {\n    Node* head = new Node(10);\n    head->next = new Node(20);\n    cout << "Head: " << head->data << endl;\n    return 0;\n}`,
+                    java: `public class SinglyList {\n    static class Node<E> { E data; Node<E> next; Node(E d) { data = d; } }\n    private Node<Integer> head, tail;\n}`,
+                    python: `class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None`,
+                    csharp: `class Node<T>(T data) {\n    public T Data = data;\n    public Node<T>? Next;\n}`
+                }
+            },
+            DoublyLinkedList: {
+                title: "Doubly Linked List",
+                badge: "Bidirectional Pointer Lists",
+                desc: "Each node maintains both prev and next pointers, enabling O(1) tail removal via tail.prev and bidirectional traversal.",
+                time: "Head/Tail O(1) | Search O(n)",
+                space: "O(n)",
+                inputLabel: "Append Sequence",
+                defaultInput: "10, 20, 30, 40",
+                edgeInput: "5, 15",
+                defaultArg: "removeTail",
+                templates: {
+                    cpp: `#include <iostream>\nusing namespace std;\n\nstruct DNode {\n    int data; DNode* prev; DNode* next;\n    DNode(int d) : data(d), prev(nullptr), next(nullptr) {}\n};\n\nint main() {\n    DNode* a = new DNode(10);\n    DNode* b = new DNode(20);\n    a->next = b; b->prev = a;\n    cout << "b->prev: " << b->prev->data << endl;\n    return 0;\n}`,
+                    java: `public class DoublyList<E> {\n    private static class Node<E> { E val; Node<E> prev, next; Node(E v) { val = v; } }\n    private Node<E> head, tail;\n}`,
+                    python: `class DNode:\n    def __init__(self, val):\n        self.val = val\n        self.prev = None\n        self.next = None`,
+                    csharp: `class DNode<T>(T val) {\n    public T Val = val;\n    public DNode<T>? Prev, Next;\n}`
                 }
             },
             Stack: {
                 title: "Stack",
                 badge: "Restricted Linear ADT",
-                desc: "A Last-In, First-Out abstract data type supporting O(1) push, pop, and peek exclusively at the top boundary.",
+                desc: "Last-In, First-Out structure supporting O(1) push, pop, and peek exclusively at the top boundary.",
                 time: "Push / Pop / Peek O(1)",
                 space: "O(n)",
                 inputLabel: "Stack Operations",
@@ -705,56 +501,33 @@
                 edgeInput: "push 10, pop, pop",
                 defaultArg: "peek",
                 templates: {
-                    cpp: `#include <iostream>
-    #include <stack>
-    using namespace std;
-
-    int main() {
-        stack<int> st;
-        st.push(15);
-        st.push(30);
-        st.push(45);
-        st.pop();
-        st.push(60);
-        cout << "Top element: " << st.top() << " | Size: " << st.size() << endl;
-        return 0;
-    }`,
-                    java: `import java.util.*;
-
-    public class StackDemo {
-        public static void main(String[] args) {
-            Deque<Integer> stack = new ArrayDeque<>();
-            stack.push(15);
-            stack.push(30);
-            stack.push(45);
-            stack.pop();
-            stack.push(60);
-            System.out.println("Top: " + stack.peek());
-        }
-    }`,
-                    python: `stack = []
-    stack.append(15)
-    stack.append(30)
-    stack.append(45)
-    stack.pop()
-    stack.append(60)
-    print("Top:", stack[-1], "Size:", len(stack))`,
-                    csharp: `using System;
-    using System.Collections.Generic;
-
-    var stack = new Stack<int>();
-    stack.Push(15);
-    stack.Push(30);
-    stack.Push(45);
-    stack.Pop();
-    stack.Push(60);
-    Console.WriteLine($"Top: {stack.Peek()} | Count: {stack.Count}");`
+                    cpp: `#include <iostream>\n#include <stack>\nusing namespace std;\n\nint main() {\n    stack<int> st;\n    st.push(15); st.push(30); st.pop();\n    cout << "Top: " << st.top() << endl;\n    return 0;\n}`,
+                    java: `import java.util.*;\nvar stack = new ArrayDeque<Integer>();\nstack.push(15); stack.push(30); stack.pop();`,
+                    python: `stack = []\nstack.append(15)\nstack.append(30)\nstack.pop()`,
+                    csharp: `var stack = new Stack<int>();\nstack.Push(15); stack.Push(30); stack.Pop();`
+                }
+            },
+            Queue: {
+                title: "Queue",
+                badge: "Restricted Linear ADT",
+                desc: "First-In, First-Out structure where items enqueue at the rear and dequeue from the front in O(1) amortized time.",
+                time: "Enqueue / Dequeue O(1)",
+                space: "O(n)",
+                inputLabel: "Queue Operations",
+                defaultInput: "enqueue 10, enqueue 20, enqueue 30, dequeue, enqueue 40",
+                edgeInput: "enqueue 5, dequeue, dequeue",
+                defaultArg: "front",
+                templates: {
+                    cpp: `#include <iostream>\n#include <queue>\nusing namespace std;\n\nint main() {\n    queue<int> q;\n    q.push(10); q.push(20); q.pop();\n    cout << "Front: " << q.front() << endl;\n    return 0;\n}`,
+                    java: `import java.util.*;\nQueue<Integer> q = new ArrayDeque<>();\nq.offer(10); q.offer(20); q.poll();`,
+                    python: `from collections import deque\nq = deque([10, 20])\nq.popleft()`,
+                    csharp: `var q = new Queue<int>();\nq.Enqueue(10); q.Enqueue(20); q.Dequeue();`
                 }
             },
             MinHeap: {
                 title: "Binary Min-Heap",
                 badge: "Priority Queues",
-                desc: "A complete binary tree stored in a contiguous array where each parent is less than or equal to its children, guaranteeing O(1) peekMin and O(log n) siftUp/siftDown.",
+                desc: "Complete binary tree backed by an array where every parent is <= its children, giving O(1) peekMin and O(log n) siftUp.",
                 time: "Insert O(log n) | PeekMin O(1)",
                 space: "O(n)",
                 inputLabel: "Heap Insertion Sequence",
@@ -762,45 +535,33 @@
                 edgeInput: "70, 60, 50, 40, 30, 20, 10",
                 defaultArg: "extractMin",
                 templates: {
-                    cpp: `#include <iostream>
-    #include <queue>
-    #include <vector>
-    using namespace std;
-
-    int main() {
-        priority_queue<int, vector<int>, greater<int>> minHeap;
-        for (int x : {40, 25, 60, 10, 30, 50, 15}) minHeap.push(x);
-        cout << "Min root: " << minHeap.top() << endl;
-        return 0;
-    }`,
-                    java: `import java.util.*;
-
-    public class MinHeapDemo {
-        public static void main(String[] args) {
-            PriorityQueue<Integer> pq = new PriorityQueue<>();
-            for (int x : new int[]{40, 25, 60, 10, 30, 50, 15}) pq.offer(x);
-            System.out.println("Min root: " + pq.peek());
-        }
-    }`,
-                    python: `import heapq
-
-    heap = []
-    for x in [40, 25, 60, 10, 30, 50, 15]:
-        heapq.heappush(heap, x)
-    print("Heap array:", heap, "Min:", heap[0])`,
-                    csharp: `using System;
-    using System.Collections.Generic;
-
-    var pq = new PriorityQueue<int, int>();
-    foreach (int x in new[] { 40, 25, 60, 10, 30, 50, 15 })
-        pq.Enqueue(x, x);
-    Console.WriteLine($"Min root: {pq.Peek()}");`
+                    cpp: `#include <iostream>\n#include <queue>\n#include <vector>\nusing namespace std;\n\nint main() {\n    priority_queue<int, vector<int>, greater<int>> pq;\n    for (int x : {40, 25, 60, 10}) pq.push(x);\n    cout << "Min: " << pq.top() << endl;\n    return 0;\n}`,
+                    java: `import java.util.*;\nPriorityQueue<Integer> pq = new PriorityQueue<>();\npq.offer(40); pq.offer(25); pq.offer(10);`,
+                    python: `import heapq\nheap = []\nfor x in [40, 25, 60, 10]:\n    heapq.heappush(heap, x)`,
+                    csharp: `var pq = new PriorityQueue<int, int>();\npq.Enqueue(40, 40); pq.Enqueue(25, 25); pq.Enqueue(10, 10);`
+                }
+            },
+            HashTable: {
+                title: "Hash Table",
+                badge: "Associative Buckets",
+                desc: "Maps integer keys into bucket slots via index = ((key % buckets) + buckets) % buckets with separate chaining.",
+                time: "Avg O(1) | Worst O(n)",
+                space: "O(n + m)",
+                inputLabel: "Keys to Hash (7 Buckets)",
+                defaultInput: "15, 22, 8, 29, 3, 17",
+                edgeInput: "7, 14, 21, 28, 35",
+                defaultArg: "buckets=7",
+                templates: {
+                    cpp: `#include <iostream>\n#include <unordered_map>\nusing namespace std;\n\nint main() {\n    unordered_map<int, int> map;\n    for (int k : {15, 22, 8, 29}) map[k] = k % 7;\n    cout << "Bucket of 15: " << map[15] << endl;\n    return 0;\n}`,
+                    java: `import java.util.*;\nMap<Integer, Integer> map = new HashMap<>();\nfor (int k : new int[]{15, 22, 8, 29}) map.put(k, k % 7);`,
+                    python: `buckets = [[] for _ in range(7)]\nfor k in [15, 22, 8, 29, 3, 17]:\n    buckets[k % 7].append(k)`,
+                    csharp: `var buckets = new Dictionary<int, List<int>>();\nforeach (int k in new[] { 15, 22, 8, 29 }) {\n    int idx = k % 7;\n    if (!buckets.ContainsKey(idx)) buckets[idx] = new();\n    buckets[idx].Add(k);\n}`
                 }
             },
             BFS: {
-                title: "Graph Breadth-First Search",
+                title: "Graph BFS",
                 badge: "Graph Traversals",
-                desc: "Explores a graph level by level from a source vertex using a FIFO Queue, guaranteeing the shortest path measured in number of unweighted edges.",
+                desc: "Explores a graph level by level from a start vertex using a FIFO Queue, finding unweighted shortest hop distances.",
                 time: "O(V + E)",
                 space: "O(V)",
                 inputLabel: "Undirected Edges",
@@ -808,81 +569,33 @@
                 edgeInput: "A-B, B-C, C-D, D-E",
                 defaultArg: "start=A",
                 templates: {
-                    cpp: `#include <iostream>
-    #include <map>
-    #include <queue>
-    #include <set>
-    #include <vector>
-    using namespace std;
-
-    int main() {
-        map<char, vector<char>> adj = {
-            {'A', {'B', 'C'}}, {'B', {'A', 'D', 'E'}}, {'C', {'A', 'F'}},
-            {'D', {'B'}}, {'E', {'B', 'F'}}, {'F', {'C', 'E'}}
-        };
-        queue<char> q;
-        set<char> visited = {'A'};
-        q.push('A');
-        while (!q.empty()) {
-            char u = q.front(); q.pop();
-            cout << u << " ";
-            for (char v : adj[u])
-                if (visited.insert(v).second) q.push(v);
-        }
-        return 0;
-    }`,
-                    java: `import java.util.*;
-
-    public class GraphBFS {
-        public static List<String> bfs(Map<String, List<String>> adj, String start) {
-            List<String> order = new ArrayList<>();
-            Set<String> visited = new HashSet<>(List.of(start));
-            Queue<String> q = new ArrayDeque<>();
-            q.offer(start);
-            while (!q.isEmpty()) {
-                String u = q.poll();
-                order.add(u);
-                for (String v : adj.getOrDefault(u, List.of()))
-                    if (visited.add(v)) q.offer(v);
-            }
-            return order;
-        }
-    }`,
-                    python: `from collections import deque
-
-    def bfs(adj: dict, start: str) -> list[str]:
-        visited = {start}
-        queue = deque([start])
-        order = []
-        while queue:
-            u = queue.popleft()
-            order.append(u)
-            for v in adj.get(u, []):
-                if v not in visited:
-                    visited.add(v)
-                    queue.append(v)
-        return order`,
-                    csharp: `using System.Collections.Generic;
-
-    static List<string> Bfs(Dictionary<string, List<string>> adj, string start) {
-        var order = new List<string>();
-        var visited = new HashSet<string> { start };
-        var queue = new Queue<string>();
-        queue.Enqueue(start);
-        while (queue.Count > 0) {
-            string u = queue.Dequeue();
-            order.Add(u);
-            foreach (string v in adj[u])
-                if (visited.Add(v)) queue.Enqueue(v);
-        }
-        return order;
-    }`
+                    cpp: `#include <iostream>\n#include <map>\n#include <queue>\n#include <set>\n#include <vector>\nusing namespace std;\n\nint main() {\n    map<char, vector<char>> adj = {{'A',{'B','C'}},{'B',{'A','D','E'}},{'C',{'A','F'}},{'D',{'B'}},{'E',{'B','F'}},{'F',{'C','E'}}};\n    queue<char> q; set<char> vis = {'A'}; q.push('A');\n    while (!q.empty()) { char u = q.front(); q.pop(); cout << u << " "; for (char v : adj[u]) if (vis.insert(v).second) q.push(v); }\n    return 0;\n}`,
+                    java: `import java.util.*;\nQueue<String> q = new ArrayDeque<>();\nSet<String> visited = new HashSet<>();`,
+                    python: `from collections import deque\ndef bfs(adj, start):\n    visited, q = {start}, deque([start])\n    while q:\n        u = q.popleft()\n        for v in adj.get(u, []):\n            if v not in visited:\n                visited.add(v); q.append(v)`,
+                    csharp: `var q = new Queue<string>();\nvar visited = new HashSet<string>();`
+                }
+            },
+            DFS: {
+                title: "Graph DFS",
+                badge: "Graph Traversals",
+                desc: "Explores each branch as deeply as possible using a LIFO Stack before backtracking to unvisited neighbors.",
+                time: "O(V + E)",
+                space: "O(V)",
+                inputLabel: "Undirected Edges",
+                defaultInput: "A-B, A-C, B-D, B-E, C-F, E-F",
+                edgeInput: "A-B, B-C, C-D, D-E",
+                defaultArg: "start=A",
+                templates: {
+                    cpp: `#include <iostream>\n#include <map>\n#include <stack>\n#include <set>\n#include <vector>\nusing namespace std;\n\nint main() {\n    map<char, vector<char>> adj = {{'A',{'B','C'}},{'B',{'A','D','E'}},{'C',{'A','F'}},{'D',{'B'}},{'E',{'B','F'}},{'F',{'C','E'}}};\n    stack<char> st; set<char> vis; st.push('A');\n    while (!st.empty()) { char u = st.top(); st.pop(); if (vis.insert(u).second) { cout << u << " "; for (auto it = adj[u].rbegin(); it != adj[u].rend(); ++it) if (!vis.count(*it)) st.push(*it); } }\n    return 0;\n}`,
+                    java: `import java.util.*;\nDeque<String> stack = new ArrayDeque<>();\nSet<String> visited = new HashSet<>();`,
+                    python: `def dfs(adj, start):\n    visited, stack = set(), [start]\n    while stack:\n        u = stack.pop()\n        if u not in visited:\n            visited.add(u)\n            for v in reversed(adj.get(u, [])):\n                if v not in visited: stack.append(v)`,
+                    csharp: `var stack = new Stack<string>();\nvar visited = new HashSet<string>();`
                 }
             },
             Dijkstra: {
                 title: "Dijkstra Shortest Path",
                 badge: "Weighted Graph Algorithms",
-                desc: "Computes single-source shortest paths on non-negatively weighted graphs by greedily relaxing outgoing edges via a Min-Priority Queue.",
+                desc: "Computes single-source shortest paths on non-negative weighted graphs by relaxing edges via a Min-Priority Queue.",
                 time: "O((V + E) log V)",
                 space: "O(V + E)",
                 inputLabel: "Weighted Edges",
@@ -890,105 +603,10 @@
                 edgeInput: "A-B:1, B-C:1, C-D:1, A-D:10",
                 defaultArg: "start=A",
                 templates: {
-                    cpp: `#include <iostream>
-    #include <map>
-    #include <queue>
-    #include <vector>
-    using namespace std;
-
-    int main() {
-        map<char, vector<pair<char, int>>> adj = {
-            {'A', {{'B', 4}, {'C', 2}}},
-            {'B', {{'C', 1}, {'D', 5}}},
-            {'C', {{'D', 8}, {'E', 10}}},
-            {'D', {{'E', 2}}},
-            {'E', {}}
-        };
-        map<char, int> dist;
-        for (auto& [k, _] : adj) dist[k] = 1e9;
-        dist['A'] = 0;
-
-        priority_queue<pair<int, char>, vector<pair<int, char>>, greater<>> pq;
-        pq.push({0, 'A'});
-
-        while (!pq.empty()) {
-            auto [d, u] = pq.top(); pq.pop();
-            if (d > dist[u]) continue;
-            for (auto [v, w] : adj[u]) {
-                if (dist[u] + w < dist[v]) {
-                    dist[v] = dist[u] + w;
-                    pq.push({dist[v], v});
-                }
-            }
-        }
-        for (auto& [k, d] : dist) cout << k << ":" << d << " ";
-        return 0;
-    }`,
-                    java: `import java.util.*;
-
-    public class Dijkstra {
-        record Edge(String to, int weight) {}
-        record State(String node, int dist) {}
-
-        public static Map<String, Integer> shortestPaths(Map<String, List<Edge>> adj, String src) {
-            Map<String, Integer> dist = new HashMap<>();
-            adj.keySet().forEach(k -> dist.put(k, Integer.MAX_VALUE));
-            dist.put(src, 0);
-
-            PriorityQueue<State> pq = new PriorityQueue<>(Comparator.comparingInt(State::dist));
-            pq.offer(new State(src, 0));
-
-            while (!pq.isEmpty()) {
-                State cur = pq.poll();
-                if (cur.dist() > dist.get(cur.node())) continue;
-                for (Edge e : adj.getOrDefault(cur.node(), List.of())) {
-                    int nd = cur.dist() + e.weight();
-                    if (nd < dist.getOrDefault(e.to(), Integer.MAX_VALUE)) {
-                        dist.put(e.to(), nd);
-                        pq.offer(new State(e.to(), nd));
-                    }
-                }
-            }
-            return dist;
-        }
-    }`,
-                    python: `import heapq
-
-    def dijkstra(adj: dict, start: str) -> dict[str, int]:
-        dist = {node: float("inf") for node in adj}
-        dist[start] = 0
-        pq = [(0, start)]
-        while pq:
-            d, u = heapq.heappop(pq)
-            if d > dist[u]:
-                continue
-            for v, w in adj[u]:
-                if dist[u] + w < dist[v]:
-                    dist[v] = dist[u] + w
-                    heapq.heappush(pq, (dist[v], v))
-        return dist`,
-                    csharp: `using System.Collections.Generic;
-
-    static Dictionary<string, int> Dijkstra(Dictionary<string, List<(string To, int W)>> adj, string src) {
-        var dist = new Dictionary<string, int>();
-        foreach (var k in adj.Keys) dist[k] = int.MaxValue;
-        dist[src] = 0;
-
-        var pq = new PriorityQueue<string, int>();
-        pq.Enqueue(src, 0);
-
-        while (pq.TryDequeue(out string? u, out int d)) {
-            if (d > dist[u]) continue;
-            foreach (var (v, w) in adj[u]) {
-                int nd = dist[u] + w;
-                if (nd < dist[v]) {
-                    dist[v] = nd;
-                    pq.Enqueue(v, nd);
-                }
-            }
-        }
-        return dist;
-    }`
+                    cpp: `#include <iostream>\n#include <map>\n#include <queue>\n#include <vector>\nusing namespace std;\n\nint main() {\n    map<char, vector<pair<char,int>>> adj = {{'A',{{'B',4},{'C',2}}},{'B',{{'C',1},{'D',5}}},{'C',{{'D',8},{'E',10}}},{'D',{{'E',2}}},{'E',{}}};\n    map<char,int> dist; for (auto& [k,_] : adj) dist[k] = 1e9; dist['A'] = 0;\n    priority_queue<pair<int,char>, vector<pair<int,char>>, greater<>> pq; pq.push({0,'A'});\n    while (!pq.empty()) { auto [d,u] = pq.top(); pq.pop(); if (d > dist[u]) continue; for (auto [v,w] : adj[u]) if (dist[u]+w < dist[v]) { dist[v] = dist[u]+w; pq.push({dist[v],v}); } }\n    for (auto& [k,d] : dist) cout << k << ":" << d << " ";\n    return 0;\n}`,
+                    java: `import java.util.*;\nrecord Edge(String to, int weight) {}\nrecord State(String node, int dist) {}`,
+                    python: `import heapq\ndef dijkstra(adj, start):\n    dist = {n: float("inf") for n in adj}\n    dist[start] = 0\n    pq = [(0, start)]\n    while pq:\n        d, u = heapq.heappop(pq)\n        if d > dist[u]: continue\n        for v, w in adj[u]:\n            if dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                heapq.heappush(pq, (dist[v], v))\n    return dist`,
+                    csharp: `var dist = new Dictionary<string, int>();\nvar pq = new PriorityQueue<string, int>();`
                 }
             }
         };
@@ -1053,16 +671,13 @@
         function buildFrames(topic, rawInput) {
             if (topic === "BST") {
                 const nums = parseInts(rawInput);
-                if (!nums.length) return [{ type: "BST", root: null, active: null, comparing: [], inserted: [], caption: "Enter at least one integer." }];
+                if (!nums.length) return [{ type: "BST", root: null, active: null, comparing: [], caption: "Enter at least one integer." }];
                 const list = [];
                 let root = null;
-                const inserted = [];
-
                 for (const val of nums) {
                     if (!root) {
                         root = { key: val, left: null, right: null };
-                        inserted.push(val);
-                        list.push({ type: "BST", root: cloneBst(root), active: val, comparing: [], inserted: [...inserted], caption: `Inserted ${val} as root node.` });
+                        list.push({ type: "BST", root: cloneBst(root), active: val, comparing: [], caption: `Inserted ${val} as root node.` });
                         continue;
                     }
                     let curr = root;
@@ -1070,21 +685,19 @@
                     while (curr) {
                         path.push(curr.key);
                         if (val === curr.key) {
-                            list.push({ type: "BST", root: cloneBst(root), active: curr.key, comparing: [...path], inserted: [...inserted], caption: `Duplicate key ${val} ignored.` });
+                            list.push({ type: "BST", root: cloneBst(root), active: curr.key, comparing: [...path], caption: `Duplicate key ${val} ignored.` });
                             break;
                         } else if (val < curr.key) {
                             if (!curr.left) {
                                 curr.left = { key: val, left: null, right: null };
-                                inserted.push(val);
-                                list.push({ type: "BST", root: cloneBst(root), active: val, comparing: [...path], inserted: [...inserted], caption: `${val} < ${curr.key}: inserted ${val} as left child of ${curr.key}.` });
+                                list.push({ type: "BST", root: cloneBst(root), active: val, comparing: [...path], caption: `${val} < ${curr.key}: inserted ${val} as left child of ${curr.key}.` });
                                 break;
                             }
                             curr = curr.left;
                         } else {
                             if (!curr.right) {
                                 curr.right = { key: val, left: null, right: null };
-                                inserted.push(val);
-                                list.push({ type: "BST", root: cloneBst(root), active: val, comparing: [...path], inserted: [...inserted], caption: `${val} > ${curr.key}: inserted ${val} as right child of ${curr.key}.` });
+                                list.push({ type: "BST", root: cloneBst(root), active: val, comparing: [...path], caption: `${val} > ${curr.key}: inserted ${val} as right child of ${curr.key}.` });
                                 break;
                             }
                             curr = curr.right;
@@ -1097,15 +710,32 @@
             if (topic === "LinkedList") {
                 const nums = parseInts(rawInput);
                 if (!nums.length) return [{ type: "LinkedList", items: [], activeIdx: -1, caption: "Empty list." }];
-                const list = [];
-                const items = [];
+                const list = [], items = [];
                 nums.forEach((v, i) => {
                     items.push(v);
                     list.push({
                         type: "LinkedList",
                         items: [...items],
                         activeIdx: i,
-                        caption: i === 0 ? `Created HEAD node with value ${v}.` : `Linked tail.next -> ${v} and updated TAIL pointer.`
+                        caption: i === 0 ? `Created HEAD node with value ${v}.` : `Linked tail.next -> ${v} and updated TAIL.`
+                    });
+                });
+                return list;
+            }
+
+            if (topic === "DoublyLinkedList") {
+                const nums = parseInts(rawInput);
+                if (!nums.length) return [{ type: "DoublyLinkedList", items: [], activeIdx: -1, caption: "Empty doubly linked list." }];
+                const list = [], items = [];
+                nums.forEach((v, i) => {
+                    items.push(v);
+                    list.push({
+                        type: "DoublyLinkedList",
+                        items: [...items],
+                        activeIdx: i,
+                        caption: i === 0
+                            ? `Created HEAD node ${v} with prev = null, next = null.`
+                            : `Linked ${items[i - 1]}.next -> ${v} and ${v}.prev -> ${items[i - 1]}.`
                     });
                 });
                 return list;
@@ -1113,60 +743,95 @@
 
             if (topic === "Stack") {
                 const tokens = rawInput.split(",").map(s => s.trim()).filter(Boolean);
-                const list = [];
-                const stack = [];
+                const list = [], stack = [];
                 for (const tok of tokens) {
-                    const lower = tok.toLowerCase();
-                    if (lower.startsWith("pop")) {
-                        if (stack.length === 0) {
-                            list.push({ type: "Stack", items: [], activeIdx: -1, caption: "Stack Underflow: cannot pop from empty stack." });
+                    if (tok.toLowerCase().startsWith("pop")) {
+                        if (!stack.length) {
+                            list.push({ type: "Stack", items: [], activeIdx: -1, caption: "Stack Underflow: stack is empty." });
                         } else {
                             const popped = stack.pop();
-                            list.push({ type: "Stack", items: [...stack], activeIdx: stack.length - 1, caption: `Popped ${popped} from top. New size = ${stack.length}.` });
+                            list.push({ type: "Stack", items: [...stack], activeIdx: stack.length - 1, caption: `Popped ${popped} from TOP.` });
                         }
                     } else {
                         const num = parseInt(tok.replace(/[^0-9-]/g, ""), 10);
                         if (!Number.isNaN(num)) {
                             stack.push(num);
-                            list.push({ type: "Stack", items: [...stack], activeIdx: stack.length - 1, caption: `Pushed ${num} onto top.` });
+                            list.push({ type: "Stack", items: [...stack], activeIdx: stack.length - 1, caption: `Pushed ${num} onto TOP.` });
                         }
                     }
                 }
                 return list.length ? list : [{ type: "Stack", items: [], activeIdx: -1, caption: "No stack operations parsed." }];
             }
 
+            if (topic === "Queue") {
+                const tokens = rawInput.split(",").map(s => s.trim()).filter(Boolean);
+                const list = [], q = [];
+                for (const tok of tokens) {
+                    if (tok.toLowerCase().startsWith("dequeue") || tok.toLowerCase().startsWith("pop")) {
+                        if (!q.length) {
+                            list.push({ type: "Queue", items: [], activeIdx: -1, caption: "Queue Underflow: queue is empty." });
+                        } else {
+                            const dequeued = q.shift();
+                            list.push({ type: "Queue", items: [...q], activeIdx: 0, caption: `Dequeued ${dequeued} from FRONT.` });
+                        }
+                    } else {
+                        const num = parseInt(tok.replace(/[^0-9-]/g, ""), 10);
+                        if (!Number.isNaN(num)) {
+                            q.push(num);
+                            list.push({ type: "Queue", items: [...q], activeIdx: q.length - 1, caption: `Enqueued ${num} at REAR.` });
+                        }
+                    }
+                }
+                return list.length ? list : [{ type: "Queue", items: [], activeIdx: -1, caption: "No queue operations parsed." }];
+            }
+
             if (topic === "MinHeap") {
                 const nums = parseInts(rawInput);
                 if (!nums.length) return [{ type: "MinHeap", heap: [], activeIdx: -1, swapIdx: -1, caption: "Empty heap." }];
-                const list = [];
-                const heap = [];
+                const list = [], heap = [];
                 for (const val of nums) {
                     heap.push(val);
                     let i = heap.length - 1;
-                    list.push({ type: "MinHeap", heap: [...heap], activeIdx: i, swapIdx: -1, caption: `Appended ${val} at index ${i}.` });
+                    list.push({ type: "MinHeap", heap: [...heap], activeIdx: i, swapIdx: -1, caption: `Inserted ${val} at index ${i}.` });
                     while (i > 0) {
-                        const parent = Math.floor((i - 1) / 2);
-                        if (heap[i] < heap[parent]) {
-                            [heap[i], heap[parent]] = [heap[parent], heap[i]];
-                            list.push({ type: "MinHeap", heap: [...heap], activeIdx: parent, swapIdx: i, caption: `SiftUp: swapped ${heap[parent]} with parent ${heap[i]}.` });
-                            i = parent;
-                        } else {
-                            break;
-                        }
+                        const p = Math.floor((i - 1) / 2);
+                        if (heap[i] < heap[p]) {
+                            [heap[i], heap[p]] = [heap[p], heap[i]];
+                            list.push({ type: "MinHeap", heap: [...heap], activeIdx: p, swapIdx: i, caption: `SiftUp: swapped ${heap[p]} with parent ${heap[i]}.` });
+                            i = p;
+                        } else break;
                     }
                 }
                 return list;
             }
 
-            if (topic === "BFS") {
-                const edges = [];
-                const adj = {};
+            if (topic === "HashTable") {
+                const nums = parseInts(rawInput);
+                const mMatch = (testArgInput.value || "").match(/buckets\s*=\s*(\d+)/i);
+                const bucketsCount = Math.min(Math.max(parseInt(mMatch?.[1] || "7", 10) || 7, 3), 10);
+                const buckets = Array.from({ length: bucketsCount }, () => []);
+                const list = [{ type: "HashTable", buckets: buckets.map(b => [...b]), activeBucket: -1, caption: `Initialized ${bucketsCount} buckets.` }];
+
+                for (const val of nums) {
+                    const idx = ((val % bucketsCount) + bucketsCount) % bucketsCount;
+                    buckets[idx].push(val);
+                    list.push({
+                        type: "HashTable",
+                        buckets: buckets.map(b => [...b]),
+                        activeBucket: idx,
+                        caption: `Key ${val} -> bucket ${idx} (${val} mod ${bucketsCount} = ${idx}).`
+                    });
+                }
+                return list;
+            }
+
+            if (topic === "BFS" || topic === "DFS") {
+                const edges = [], adj = {};
                 rawInput.split(",").map(s => s.trim()).filter(Boolean).forEach(pair => {
                     const [u, v] = pair.split("-").map(x => x.trim().toUpperCase());
                     if (u && v) {
                         edges.push([u, v]);
-                        adj[u] = adj[u] || [];
-                        adj[v] = adj[v] || [];
+                        adj[u] = adj[u] || []; adj[v] = adj[v] || [];
                         if (!adj[u].includes(v)) adj[u].push(v);
                         if (!adj[v].includes(u)) adj[v].push(u);
                     }
@@ -1179,20 +844,33 @@
                 const start = (startMatch && adj[startMatch[1].toUpperCase()]) ? startMatch[1].toUpperCase() : nodes[0];
 
                 const list = [];
-                const visited = new Set([start]);
-                const settled = [];
-                const q = [start];
-                list.push({ type: "Graph", directed: false, nodes, edges, visited: [], frontier: [...q], active: null, caption: `Enqueued start vertex ${start}.` });
-
-                while (q.length) {
-                    const u = q.shift();
-                    settled.push(u);
-                    list.push({ type: "Graph", directed: false, nodes, edges, visited: [...settled], frontier: [...q], active: u, caption: `Dequeued ${u} -> Visited: [${settled.join(", ")}].` });
-                    for (const v of adj[u]) {
-                        if (!visited.has(v)) {
-                            visited.add(v);
-                            q.push(v);
-                            list.push({ type: "Graph", directed: false, nodes, edges, visited: [...settled], frontier: [...q], active: u, caption: `Discovered ${v} from ${u}; enqueued ${v}.` });
+                if (topic === "BFS") {
+                    const visited = new Set([start]), settled = [], q = [start];
+                    list.push({ type: "Graph", nodes, edges, visited: [], frontier: [...q], active: null, caption: `Enqueued start vertex ${start}.` });
+                    while (q.length) {
+                        const u = q.shift();
+                        settled.push(u);
+                        list.push({ type: "Graph", nodes, edges, visited: [...settled], frontier: [...q], active: u, caption: `BFS dequeued ${u} -> Visited: [${settled.join(", ")}].` });
+                        for (const v of adj[u]) {
+                            if (!visited.has(v)) {
+                                visited.add(v); q.push(v);
+                                list.push({ type: "Graph", nodes, edges, visited: [...settled], frontier: [...q], active: u, caption: `Enqueued ${v} from ${u}.` });
+                            }
+                        }
+                    }
+                } else {
+                    const visited = new Set(), settled = [], stack = [start];
+                    list.push({ type: "Graph", nodes, edges, visited: [], frontier: [...stack], active: null, caption: `Pushed start vertex ${start} onto DFS stack.` });
+                    while (stack.length) {
+                        const u = stack.pop();
+                        if (visited.has(u)) continue;
+                        visited.add(u); settled.push(u);
+                        list.push({ type: "Graph", nodes, edges, visited: [...settled], frontier: [...stack], active: u, caption: `DFS popped ${u} -> Visited: [${settled.join(", ")}].` });
+                        for (const v of [...adj[u]].reverse()) {
+                            if (!visited.has(v)) {
+                                stack.push(v);
+                                list.push({ type: "Graph", nodes, edges, visited: [...settled], frontier: [...stack], active: u, caption: `Pushed ${v} onto DFS stack from ${u}.` });
+                            }
                         }
                     }
                 }
@@ -1200,16 +878,14 @@
             }
 
             if (topic === "Dijkstra") {
-                const edges = [];
-                const adj = {};
+                const edges = [], adj = {};
                 rawInput.split(",").map(s => s.trim()).filter(Boolean).forEach(item => {
                     const [pair, wStr] = item.split(":");
                     const [u, v] = (pair || "").split("-").map(x => x.trim().toUpperCase());
                     const w = parseInt((wStr || "1").trim(), 10) || 1;
                     if (u && v) {
                         edges.push([u, v, w]);
-                        adj[u] = adj[u] || [];
-                        adj[v] = adj[v] || [];
+                        adj[u] = adj[u] || []; adj[v] = adj[v] || [];
                         adj[u].push({ to: v, w });
                     }
                 });
@@ -1222,22 +898,20 @@
                 const dist = {};
                 nodes.forEach(n => dist[n] = Infinity);
                 dist[start] = 0;
-                const settled = [];
-                const pq = [{ node: start, d: 0 }];
-                const list = [{ type: "Graph", directed: true, nodes, edges, dist: { ...dist }, visited: [], frontier: [start], active: start, caption: `Initialized dist[${start}] = 0.` }];
+                const settled = [], pq = [{ node: start, d: 0 }];
+                const list = [{ type: "Graph", nodes, edges, dist: { ...dist }, visited: [], frontier: [start], active: start, caption: `Initialized dist[${start}] = 0.` }];
 
                 while (pq.length) {
                     pq.sort((a, b) => a.d - b.d);
                     const { node: u, d } = pq.shift();
                     if (d > dist[u]) continue;
                     if (!settled.includes(u)) settled.push(u);
-                    list.push({ type: "Graph", directed: true, nodes, edges, dist: { ...dist }, visited: [...settled], frontier: pq.map(x => x.node), active: u, caption: `Settled ${u} with shortest distance ${d}.` });
-
+                    list.push({ type: "Graph", nodes, edges, dist: { ...dist }, visited: [...settled], frontier: pq.map(x => x.node), active: u, caption: `Settled ${u} with distance ${d}.` });
                     for (const { to: v, w } of adj[u]) {
                         if (dist[u] + w < dist[v]) {
                             dist[v] = dist[u] + w;
                             pq.push({ node: v, d: dist[v] });
-                            list.push({ type: "Graph", directed: true, nodes, edges, dist: { ...dist }, visited: [...settled], frontier: pq.map(x => x.node), active: u, caption: `Relaxed edge ${u}->${v} with weight ${w}: dist[${v}] = ${dist[v]}.` });
+                            list.push({ type: "Graph", nodes, edges, dist: { ...dist }, visited: [...settled], frontier: pq.map(x => x.node), active: u, caption: `Relaxed ${u}->${v} (w=${w}): dist[${v}] = ${dist[v]}.` });
                         }
                     }
                 }
@@ -1263,21 +937,13 @@
                 function drawTree(node, x, y, dx) {
                     if (!node) return;
                     if (node.left) {
-                        ctx.strokeStyle = "#94a3b8";
-                        ctx.lineWidth = 2;
-                        ctx.beginPath();
-                        ctx.moveTo(x, y);
-                        ctx.lineTo(x - dx, y + 58);
-                        ctx.stroke();
+                        ctx.strokeStyle = "#94a3b8"; ctx.lineWidth = 2;
+                        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - dx, y + 58); ctx.stroke();
                         drawTree(node.left, x - dx, y + 58, Math.max(dx * 0.52, 24));
                     }
                     if (node.right) {
-                        ctx.strokeStyle = "#94a3b8";
-                        ctx.lineWidth = 2;
-                        ctx.beginPath();
-                        ctx.moveTo(x, y);
-                        ctx.lineTo(x + dx, y + 58);
-                        ctx.stroke();
+                        ctx.strokeStyle = "#94a3b8"; ctx.lineWidth = 2;
+                        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + dx, y + 58); ctx.stroke();
                         drawTree(node.right, x + dx, y + 58, Math.max(dx * 0.52, 24));
                     }
                     const isActive = frame.active === node.key;
@@ -1285,62 +951,58 @@
                     ctx.fillStyle = isActive ? "#2563eb" : isComp ? "#fef3c7" : "#dcfce7";
                     ctx.strokeStyle = isActive ? "#1d4ed8" : isComp ? "#d97706" : "#16a34a";
                     ctx.lineWidth = 2.5;
-                    ctx.beginPath();
-                    ctx.arc(x, y, 18, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.stroke();
+                    ctx.beginPath(); ctx.arc(x, y, 18, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
 
                     ctx.fillStyle = isActive ? "#ffffff" : "#0f172a";
                     ctx.font = "bold 12px Consolas, monospace";
-                    ctx.textAlign = "center";
-                    ctx.textBaseline = "middle";
+                    ctx.textAlign = "center"; ctx.textBaseline = "middle";
                     ctx.fillText(String(node.key), x, y);
                 }
                 drawTree(frame.root, w / 2, 42, 120);
-            } else if (frame.type === "LinkedList") {
-                const startX = 24, y = 115, boxW = 68, boxH = 42, gap = 22;
+            } else if (frame.type === "LinkedList" || frame.type === "DoublyLinkedList") {
+                const isDoubly = frame.type === "DoublyLinkedList";
+                const startX = 24, y = 120, boxW = 66, boxH = 40, gap = 24;
                 frame.items.forEach((val, i) => {
                     const x = startX + i * (boxW + gap);
-                    if (x + boxW > w - 40) return;
+                    if (x + boxW > w - 30) return;
                     const active = i === frame.activeIdx;
                     ctx.fillStyle = active ? "#eff6ff" : "#ffffff";
                     ctx.strokeStyle = active ? "#2563eb" : "#475569";
                     ctx.lineWidth = 2;
-                    ctx.fillRect(x, y, boxW, boxH);
-                    ctx.strokeRect(x, y, boxW, boxH);
+                    ctx.fillRect(x, y, boxW, boxH); ctx.strokeRect(x, y, boxW, boxH);
 
                     ctx.fillStyle = "#0f172a";
                     ctx.font = "bold 13px Consolas, monospace";
-                    ctx.textAlign = "center";
-                    ctx.textBaseline = "middle";
+                    ctx.textAlign = "center"; ctx.textBaseline = "middle";
                     ctx.fillText(String(val), x + boxW / 2, y + boxH / 2);
 
                     if (i === 0) {
-                        ctx.fillStyle = "#2563eb";
-                        ctx.font = "bold 10px sans-serif";
-                        ctx.fillText("HEAD", x + boxW / 2, y - 10);
+                        ctx.fillStyle = "#2563eb"; ctx.font = "bold 10px sans-serif";
+                        ctx.fillText("HEAD", x + boxW / 2, y - 11);
                     }
                     if (i === frame.items.length - 1) {
-                        ctx.fillStyle = "#16a34a";
-                        ctx.font = "bold 10px sans-serif";
-                        ctx.fillText("TAIL", x + boxW / 2, y + boxH + 13);
+                        ctx.fillStyle = "#16a34a"; ctx.font = "bold 10px sans-serif";
+                        ctx.fillText("TAIL", x + boxW / 2, y + boxH + 14);
                     }
 
-                    ctx.strokeStyle = "#475569";
-                    ctx.beginPath();
-                    ctx.moveTo(x + boxW, y + boxH / 2);
-                    ctx.lineTo(x + boxW + gap - 4, y + boxH / 2);
-                    ctx.stroke();
+                    if (i < frame.items.length - 1) {
+                        ctx.strokeStyle = "#475569"; ctx.lineWidth = 1.8;
+                        ctx.beginPath(); ctx.moveTo(x + boxW, y + boxH / 2 - (isDoubly ? 4 : 0));
+                        ctx.lineTo(x + boxW + gap - 4, y + boxH / 2 - (isDoubly ? 4 : 0)); ctx.stroke();
+
+                        if (isDoubly) {
+                            ctx.strokeStyle = "#2563eb";
+                            ctx.beginPath(); ctx.moveTo(x + boxW + gap - 4, y + boxH / 2 + 5);
+                            ctx.lineTo(x + boxW + 2, y + boxH / 2 + 5); ctx.stroke();
+                        }
+                    }
                 });
             } else if (frame.type === "Stack") {
                 const boxW = 140, boxH = 34, baseX = (w - boxW) / 2, baseY = 230;
-                ctx.strokeStyle = "#334155";
-                ctx.lineWidth = 3;
+                ctx.strokeStyle = "#334155"; ctx.lineWidth = 3;
                 ctx.beginPath();
-                ctx.moveTo(baseX - 8, 35);
-                ctx.lineTo(baseX - 8, baseY + 6);
-                ctx.lineTo(baseX + boxW + 8, baseY + 6);
-                ctx.lineTo(baseX + boxW + 8, 35);
+                ctx.moveTo(baseX - 8, 35); ctx.lineTo(baseX - 8, baseY + 6);
+                ctx.lineTo(baseX + boxW + 8, baseY + 6); ctx.lineTo(baseX + boxW + 8, 35);
                 ctx.stroke();
 
                 frame.items.forEach((val, idx) => {
@@ -1349,69 +1011,90 @@
                     ctx.fillStyle = isTop ? "#2563eb" : "#dcfce7";
                     ctx.strokeStyle = isTop ? "#1d4ed8" : "#16a34a";
                     ctx.lineWidth = 2;
-                    ctx.fillRect(baseX, y, boxW, boxH);
-                    ctx.strokeRect(baseX, y, boxW, boxH);
+                    ctx.fillRect(baseX, y, boxW, boxH); ctx.strokeRect(baseX, y, boxW, boxH);
 
                     ctx.fillStyle = isTop ? "#ffffff" : "#0f172a";
                     ctx.font = "bold 13px Consolas, monospace";
-                    ctx.textAlign = "center";
-                    ctx.textBaseline = "middle";
+                    ctx.textAlign = "center"; ctx.textBaseline = "middle";
                     ctx.fillText(isTop ? `${val}  TOP` : String(val), baseX + boxW / 2, y + boxH / 2);
                 });
+            } else if (frame.type === "Queue") {
+                const startX = 28, y = 115, boxW = 64, boxH = 42, gap = 12;
+                frame.items.forEach((val, i) => {
+                    const x = startX + i * (boxW + gap);
+                    if (x + boxW > w - 24) return;
+                    const isFront = i === 0;
+                    ctx.fillStyle = isFront ? "#dbeafe" : "#dcfce7";
+                    ctx.strokeStyle = isFront ? "#2563eb" : "#16a34a";
+                    ctx.lineWidth = 2;
+                    ctx.fillRect(x, y, boxW, boxH); ctx.strokeRect(x, y, boxW, boxH);
+
+                    ctx.fillStyle = "#0f172a";
+                    ctx.font = "bold 13px Consolas, monospace";
+                    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                    ctx.fillText(String(val), x + boxW / 2, y + boxH / 2);
+
+                    if (i === 0) {
+                        ctx.fillStyle = "#2563eb"; ctx.font = "bold 10px sans-serif";
+                        ctx.fillText("FRONT", x + boxW / 2, y - 11);
+                    }
+                    if (i === frame.items.length - 1) {
+                        ctx.fillStyle = "#16a34a"; ctx.font = "bold 10px sans-serif";
+                        ctx.fillText("REAR", x + boxW / 2, y + boxH + 14);
+                    }
+                });
             } else if (frame.type === "MinHeap") {
-                const arr = frame.heap || [];
-                const coords = [];
+                const arr = frame.heap || [], coords = [];
                 arr.forEach((_, i) => {
                     const level = Math.floor(Math.log2(i + 1));
                     const posInLevel = i - (Math.pow(2, level) - 1);
                     const slots = Math.pow(2, level);
                     coords[i] = { x: (w / (slots + 1)) * (posInLevel + 1), y: 34 + level * 56 };
                 });
-
                 arr.forEach((_, i) => {
                     if (i === 0) return;
                     const p = Math.floor((i - 1) / 2);
-                    ctx.strokeStyle = "#94a3b8";
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(coords[p].x, coords[p].y);
-                    ctx.lineTo(coords[i].x, coords[i].y);
-                    ctx.stroke();
+                    ctx.strokeStyle = "#94a3b8"; ctx.lineWidth = 2;
+                    ctx.beginPath(); ctx.moveTo(coords[p].x, coords[p].y); ctx.lineTo(coords[i].x, coords[i].y); ctx.stroke();
                 });
-
                 arr.forEach((val, i) => {
-                    const isAct = i === frame.activeIdx;
-                    const isSwap = i === frame.swapIdx;
+                    const isAct = i === frame.activeIdx, isSwap = i === frame.swapIdx;
                     ctx.fillStyle = isAct ? "#2563eb" : isSwap ? "#fef3c7" : "#dcfce7";
                     ctx.strokeStyle = isAct ? "#1d4ed8" : isSwap ? "#d97706" : "#16a34a";
                     ctx.lineWidth = 2.2;
-                    ctx.beginPath();
-                    ctx.arc(coords[i].x, coords[i].y, 17, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.stroke();
+                    ctx.beginPath(); ctx.arc(coords[i].x, coords[i].y, 17, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
 
                     ctx.fillStyle = isAct ? "#ffffff" : "#0f172a";
                     ctx.font = "bold 12px Consolas, monospace";
-                    ctx.textAlign = "center";
-                    ctx.textBaseline = "middle";
+                    ctx.textAlign = "center"; ctx.textBaseline = "middle";
                     ctx.fillText(String(val), coords[i].x, coords[i].y);
                 });
-
-                const cellW = 38, startX = (w - arr.length * cellW) / 2;
-                arr.forEach((val, i) => {
-                    const x = startX + i * cellW;
-                    ctx.fillStyle = i === frame.activeIdx ? "#dbeafe" : "#ffffff";
-                    ctx.strokeStyle = "#64748b";
-                    ctx.lineWidth = 1.5;
-                    ctx.fillRect(x, 224, cellW, 28);
-                    ctx.strokeRect(x, 224, cellW, 28);
-                    ctx.fillStyle = "#0f172a";
+            } else if (frame.type === "HashTable") {
+                const buckets = frame.buckets || [];
+                const rowH = Math.min(34, Math.floor(235 / Math.max(buckets.length, 1)));
+                buckets.forEach((chain, idx) => {
+                    const y = 20 + idx * (rowH + 4);
+                    const active = idx === frame.activeBucket;
+                    ctx.fillStyle = active ? "#2563eb" : "#1e293b";
+                    ctx.fillRect(24, y, 54, rowH - 4);
+                    ctx.fillStyle = "#ffffff";
                     ctx.font = "bold 11px Consolas, monospace";
-                    ctx.fillText(String(val), x + cellW / 2, 238);
+                    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                    ctx.fillText(`[${idx}]`, 51, y + (rowH - 4) / 2);
+
+                    chain.forEach((item, cIdx) => {
+                        const bx = 92 + cIdx * 56;
+                        if (bx + 46 > w - 16) return;
+                        ctx.fillStyle = active && cIdx === chain.length - 1 ? "#dbeafe" : "#ffffff";
+                        ctx.strokeStyle = active ? "#2563eb" : "#64748b";
+                        ctx.lineWidth = 1.5;
+                        ctx.fillRect(bx, y, 46, rowH - 4); ctx.strokeRect(bx, y, 46, rowH - 4);
+                        ctx.fillStyle = "#0f172a";
+                        ctx.fillText(String(item), bx + 23, y + (rowH - 4) / 2);
+                    });
                 });
             } else if (frame.type === "Graph") {
-                const nodes = frame.nodes || [];
-                const pos = {};
+                const nodes = frame.nodes || [], pos = {};
                 const cx = w / 2, cy = 138, rx = 195, ry = 92;
                 nodes.forEach((n, i) => {
                     const angle = Math.PI + (i / Math.max(nodes.length, 1)) * Math.PI * 2;
@@ -1420,22 +1103,13 @@
 
                 (frame.edges || []).forEach(([u, v, weight]) => {
                     if (!pos[u] || !pos[v]) return;
-                    ctx.strokeStyle = "#94a3b8";
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(pos[u].x, pos[u].y);
-                    ctx.lineTo(pos[v].x, pos[v].y);
-                    ctx.stroke();
-
+                    ctx.strokeStyle = "#94a3b8"; ctx.lineWidth = 2;
+                    ctx.beginPath(); ctx.moveTo(pos[u].x, pos[u].y); ctx.lineTo(pos[v].x, pos[v].y); ctx.stroke();
                     if (weight !== undefined) {
-                        const mx = (pos[u].x + pos[v].x) / 2;
-                        const my = (pos[u].y + pos[v].y) / 2;
-                        ctx.fillStyle = "#ffffff";
-                        ctx.fillRect(mx - 10, my - 8, 20, 16);
-                        ctx.fillStyle = "#1e293b";
-                        ctx.font = "bold 11px Consolas, monospace";
-                        ctx.textAlign = "center";
-                        ctx.textBaseline = "middle";
+                        const mx = (pos[u].x + pos[v].x) / 2, my = (pos[u].y + pos[v].y) / 2;
+                        ctx.fillStyle = "#ffffff"; ctx.fillRect(mx - 10, my - 8, 20, 16);
+                        ctx.fillStyle = "#1e293b"; ctx.font = "bold 11px Consolas, monospace";
+                        ctx.textAlign = "center"; ctx.textBaseline = "middle";
                         ctx.fillText(String(weight), mx, my);
                     }
                 });
@@ -1447,15 +1121,11 @@
                     ctx.fillStyle = isAct ? "#2563eb" : isVis ? "#dcfce7" : isFront ? "#fef3c7" : "#ffffff";
                     ctx.strokeStyle = isAct ? "#1d4ed8" : isVis ? "#16a34a" : isFront ? "#d97706" : "#475569";
                     ctx.lineWidth = 2.5;
-                    ctx.beginPath();
-                    ctx.arc(pos[n].x, pos[n].y, 20, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.stroke();
+                    ctx.beginPath(); ctx.arc(pos[n].x, pos[n].y, 20, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
 
                     ctx.fillStyle = isAct ? "#ffffff" : "#0f172a";
                     ctx.font = "bold 13px Consolas, monospace";
-                    ctx.textAlign = "center";
-                    ctx.textBaseline = "middle";
+                    ctx.textAlign = "center"; ctx.textBaseline = "middle";
                     const dVal = frame.dist ? (frame.dist[n] === Infinity ? "∞" : frame.dist[n]) : null;
                     ctx.fillText(dVal !== null ? `${n}:${dVal}` : n, pos[n].x, pos[n].y);
                 });
@@ -1506,9 +1176,7 @@
             regenerateTrace();
         }
 
-        topicBtns.forEach(btn => {
-            btn.addEventListener("click", () => selectTopic(btn.dataset.topic));
-        });
+        topicBtns.forEach(btn => btn.addEventListener("click", () => selectTopic(btn.dataset.topic)));
 
         document.getElementById("sb-preset-balanced").addEventListener("click", () => {
             traceInputEl.value = TOPICS[currentTopic].defaultInput;
@@ -1519,15 +1187,16 @@
             regenerateTrace();
         });
         document.getElementById("sb-preset-random").addEventListener("click", () => {
-            if (currentTopic === "BST" || currentTopic === "LinkedList" || currentTopic === "MinHeap") {
+            if (["BST", "LinkedList", "DoublyLinkedList", "MinHeap", "HashTable"].includes(currentTopic)) {
                 const set = new Set();
-                while (set.size < 7) set.add(Math.floor(Math.random() * 89) + 10);
+                while (set.size < 6) set.add(Math.floor(Math.random() * 89) + 10);
                 traceInputEl.value = Array.from(set).join(", ");
             } else if (currentTopic === "Stack") {
-                const a = Math.floor(Math.random() * 50) + 10;
-                const b = Math.floor(Math.random() * 50) + 10;
-                const c = Math.floor(Math.random() * 50) + 10;
-                traceInputEl.value = `push ${a}, push ${b}, pop, push ${c}`;
+                const a = Math.floor(Math.random() * 50) + 10, b = Math.floor(Math.random() * 50) + 10;
+                traceInputEl.value = `push ${a}, push ${b}, pop, push ${a + 5}`;
+            } else if (currentTopic === "Queue") {
+                const a = Math.floor(Math.random() * 50) + 10, b = Math.floor(Math.random() * 50) + 10;
+                traceInputEl.value = `enqueue ${a}, enqueue ${b}, dequeue, enqueue ${b + 5}`;
             }
             regenerateTrace();
         });
@@ -1540,34 +1209,20 @@
         lastBtn.addEventListener("click", () => { stopAutoPlay(); frameIndex = Math.max(frames.length - 1, 0); updatePlaybackUI(); });
 
         playBtn.addEventListener("click", () => {
-            if (playTimer) {
-                stopAutoPlay();
-                return;
-            }
+            if (playTimer) { stopAutoPlay(); return; }
             if (frameIndex >= frames.length - 1) frameIndex = 0;
             playBtn.textContent = "Pause";
             playTimer = setInterval(() => {
-                if (frameIndex < frames.length - 1) {
-                    frameIndex++;
-                    updatePlaybackUI();
-                } else {
-                    stopAutoPlay();
-                }
+                if (frameIndex < frames.length - 1) { frameIndex++; updatePlaybackUI(); }
+                else stopAutoPlay();
             }, parseInt(speedSelect.value, 10) || 550);
         });
 
         document.addEventListener("keydown", (e) => {
             const tag = (document.activeElement?.tagName || "").toUpperCase();
             if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
-            if (e.key === "ArrowLeft" && frameIndex > 0) {
-                stopAutoPlay();
-                frameIndex--;
-                updatePlaybackUI();
-            } else if (e.key === "ArrowRight" && frameIndex < frames.length - 1) {
-                stopAutoPlay();
-                frameIndex++;
-                updatePlaybackUI();
-            }
+            if (e.key === "ArrowLeft" && frameIndex > 0) { stopAutoPlay(); frameIndex--; updatePlaybackUI(); }
+            else if (e.key === "ArrowRight" && frameIndex < frames.length - 1) { stopAutoPlay(); frameIndex++; updatePlaybackUI(); }
         });
 
         langSelect.addEventListener("change", () => {
@@ -1579,8 +1234,7 @@
         codeEditor.addEventListener("keydown", (e) => {
             if (e.key === "Tab") {
                 e.preventDefault();
-                const start = codeEditor.selectionStart;
-                const end = codeEditor.selectionEnd;
+                const start = codeEditor.selectionStart, end = codeEditor.selectionEnd;
                 codeEditor.value = codeEditor.value.substring(0, start) + "    " + codeEditor.value.substring(end);
                 codeEditor.selectionStart = codeEditor.selectionEnd = start + 4;
             }
@@ -1591,9 +1245,7 @@
                 await navigator.clipboard.writeText(codeEditor.value);
                 copyCodeBtn.textContent = "Copied!";
                 setTimeout(() => copyCodeBtn.textContent = "Copy", 1400);
-            } catch {
-                copyCodeBtn.textContent = "Failed";
-            }
+            } catch { copyCodeBtn.textContent = "Failed"; }
         });
 
         resetCodeBtn.addEventListener("click", () => {
@@ -1605,7 +1257,7 @@
             const summaryLines = frames.map((f, idx) => `[Step ${idx + 1}] ${f.caption}`);
             const arg = testArgInput.value.trim();
             const header = `=== ${TOPICS[currentTopic].title} | ${currentLang.toUpperCase()} | Arg: ${arg || "none"} ===`;
-            const result = `${header}\n${summaryLines.join("\n")}\n\nCompleted ${frames.length} trace frames in 0.${Math.floor(Math.random() * 8) + 1}ms.`;
+            const result = `${header}\n${summaryLines.join("\n")}\n\nCompleted ${frames.length} trace frames.`;
             consoleOutput.textContent = result;
             return result;
         }
@@ -1613,10 +1265,7 @@
         simulateBtn.addEventListener("click", runSimulation);
 
         saveNeonBtn.addEventListener("click", async () => {
-            const outputSummary = frames.length
-                ? frames[frames.length - 1].caption
-                : runSimulation().split("\n")[1] || "Executed trace";
-
+            const outputSummary = frames.length ? frames[frames.length - 1].caption : runSimulation().split("\n")[1] || "Executed trace";
             const tokenInput = document.querySelector("#sb-antiforgery-form input[name='__RequestVerificationToken']");
             const antiForgeryToken = tokenInput ? tokenInput.value : "";
 
@@ -1641,25 +1290,17 @@
                     },
                     body: JSON.stringify(payload)
                 });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json().catch(() => ({}));
-                const savedId = data.id || data.Id || "";
-                const savedAt = data.createdAt || data.CreatedAt || new Date().toLocaleString();
-
                 appendRunRow({
-                    id: savedId,
+                    id: data.id || data.Id || "",
                     topic: payload.topic,
                     language: payload.language,
                     input: payload.input,
                     output: payload.output,
                     code: payload.code,
-                    createdAt: savedAt
+                    createdAt: data.createdAt || data.CreatedAt || new Date().toLocaleString()
                 });
-
                 neonFeedback.className = "small mt-2 fw-semibold text-success";
                 neonFeedback.textContent = "Saved to Neon PostgreSQL.";
             } catch (err) {
@@ -1701,8 +1342,7 @@
             tr.children[4].textContent = run.createdAt;
 
             tbody.prepend(tr);
-            const badge = document.getElementById("sb-run-count-badge");
-            badge.textContent = String(tbody.querySelectorAll("tr").length);
+            document.getElementById("sb-run-count-badge").textContent = String(tbody.querySelectorAll("tr").length);
         }
 
         document.getElementById("sb-runs-tbody").addEventListener("click", async (e) => {
@@ -1749,7 +1389,7 @@
                     const remaining = tbody.querySelectorAll("tr").length;
                     document.getElementById("sb-run-count-badge").textContent = String(remaining);
                     if (remaining === 0) {
-                        tbody.innerHTML = `<tr id="sb-empty-runs-row"><td colspan="6" class="text-center text-muted py-4">No saved runs in Neon yet. Run a trace above and click <strong>Save Run to Neon</strong>.</td></tr>`;
+                        tbody.innerHTML = `<tr id="sb-empty-runs-row"><td colspan="6" class="text-center text-muted py-4">No saved runs yet. Run a trace above and click <strong>Save Run to Neon</strong>.</td></tr>`;
                     }
                 } catch (err) {
                     neonFeedback.className = "small mt-2 fw-semibold text-danger";
