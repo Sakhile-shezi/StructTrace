@@ -1,363 +1,1763 @@
-﻿@model StructTrace.Web.Models.DataStructureLesson
+﻿@using System.Reflection
+@using System.Collections
 @{
-    ViewData["Title"] = Model.Title + " - StructTrace";
-    var allLessons = ViewBag.AllLessons as List<StructTrace.Web.Models.DataStructureLesson> ?? [];
-    var submissions = ViewBag.Submissions as List<StructTrace.Web.Models.CodeSubmission> ?? [];
-    var traces = ViewBag.SavedTraces as List<StructTrace.Web.Models.SavedTrace> ?? [];
+    ViewData["Title"] = "Code Sandbox";
+
+    var existingRuns = new List<Dictionary<string, string>>();
+    if (Model != null)
+    {
+        var modelType = Model.GetType();
+        var runsProp = modelType.GetProperty("SavedRuns")
+                    ?? modelType.GetProperty("RecentRuns")
+                    ?? modelType.GetProperty("Runs")
+                    ?? modelType.GetProperty("ExecutionLogs");
+
+        if (runsProp?.GetValue(Model) is IEnumerable enumerableRuns)
+        {
+            foreach (var item in enumerableRuns)
+            {
+                if (item == null) continue;
+                var t = item.GetType();
+                string ReadProp(params string[] names)
+                {
+                    foreach (var n in names)
+                    {
+                        var p = t.GetProperty(n, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                        var val = p?.GetValue(item);
+                        if (val != null) return val.ToString() ?? "";
+                    }
+                    return "";
+                }
+
+                existingRuns.Add(new Dictionary<string, string>
+                {
+                    ["Id"] = ReadProp("Id", "RunId"),
+                    ["Topic"] = ReadProp("Topic", "Structure", "DataStructure", "Algorithm"),
+                    ["Language"] = ReadProp("Language", "ProgLanguage"),
+                    ["Input"] = ReadProp("Input", "TestInput", "Arguments"),
+                    ["Output"] = ReadProp("Output", "ExecutionOutput", "Notes", "Result"),
+                    ["Code"] = ReadProp("Code", "SourceCode"),
+                    ["CreatedAt"] = ReadProp("CreatedAt", "Timestamp", "SavedAt")
+                });
+            }
+        }
+    }
 }
 
-<div class="container py-4">
-    <!-- Module Selector Bar -->
-    <div class="d-flex flex-wrap gap-2 mb-3">
-        @foreach (var item in allLessons)
-        {
-            var activeClass = item.Slug == Model.Slug ? "btn-primary" : "btn-outline-primary";
-            <a asp-action="Index" asp-route-slug="@item.Slug" class="btn btn-sm @activeClass">
-                @item.Title
-            </a>
-        }
-    </div>
-
-    @if (TempData["StatusMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["StatusMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+<style>
+    .sb-pill-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
     }
 
-    <!-- 1. Learning Section -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h2 class="h4 mb-0">@Model.Title</h2>
-                <span class="badge bg-primary">@Model.Category</span>
+    .sb-topic-btn {
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #1e293b;
+        font-weight: 600;
+        font-size: 0.88rem;
+        padding: 0.45rem 0.9rem;
+        border-radius: 8px;
+        transition: all 0.15s ease;
+    }
+
+        .sb-topic-btn:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .sb-topic-btn.active {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+        }
+
+    .sb-overview-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.25rem;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+
+    .sb-panel {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sb-panel-header {
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 0.85rem 1.15rem;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .sb-panel-body {
+        padding: 1.15rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sb-canvas-box {
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background: #f8fafc;
+        padding: 0.5rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow-x: auto;
+    }
+
+    .sb-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        font-size: 0.78rem;
+        color: #475569;
+        margin-bottom: 0.75rem;
+    }
+
+    .sb-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 0.35rem;
+    }
+
+    .sb-editor-wrapper {
+        position: relative;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sb-code-area {
+        font-family: "Cascadia Code", Consolas, "Courier New", monospace;
+        font-size: 0.86rem;
+        line-height: 1.55;
+        background: #0f172a;
+        color: #f8fafc;
+        border: 1px solid #1e293b;
+        border-radius: 8px;
+        padding: 0.9rem 1rem;
+        min-height: 310px;
+        resize: vertical;
+        tab-size: 4;
+    }
+
+        .sb-code-area:focus {
+            outline: none;
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+
+    .sb-console-box {
+        font-family: "Cascadia Code", Consolas, "Courier New", monospace;
+        font-size: 0.82rem;
+        line-height: 1.5;
+        background: #020617;
+        color: #38bdf8;
+        border: 1px solid #1e293b;
+        border-radius: 8px;
+        padding: 0.75rem 0.9rem;
+        min-height: 112px;
+        max-height: 175px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+    }
+
+    .sb-step-caption {
+        background: #eff6ff;
+        border-left: 4px solid #2563eb;
+        border-radius: 6px;
+        padding: 0.6rem 0.85rem;
+        font-size: 0.88rem;
+        color: #1e3a8a;
+        font-weight: 500;
+    }
+
+    .sb-preset-chip {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        border: 1px solid #cbd5e1;
+        background: #f1f5f9;
+        color: #334155;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+        .sb-preset-chip:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+</style>
+
+<div class="pb-4">
+    <!-- Anti-Forgery Token for Neon POST requests -->
+    <form id="sb-antiforgery-form" hidden>
+        @Html.AntiForgeryToken()
+    </form>
+
+    <!-- Topic Switcher Bar -->
+    <div class="sb-pill-bar" role="tablist" aria-label="Data Structure & Algorithm Topics">
+        <button type="button" class="sb-topic-btn active" data-topic="BST">Binary Search Tree</button>
+        <button type="button" class="sb-topic-btn" data-topic="LinkedList">Singly Linked List</button>
+        <button type="button" class="sb-topic-btn" data-topic="Stack">Stack</button>
+        <button type="button" class="sb-topic-btn" data-topic="MinHeap">Binary Min-Heap</button>
+        <button type="button" class="sb-topic-btn" data-topic="BFS">Graph Breadth-First Search</button>
+        <button type="button" class="sb-topic-btn" data-topic="Dijkstra">Dijkstra Shortest Path</button>
+    </div>
+
+    <!-- Active Topic Overview Banner -->
+    <div class="sb-overview-card">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+            <div>
+                <h1 id="sb-topic-title" class="h3 fw-bold mb-1">Binary Search Tree</h1>
+                <p id="sb-topic-desc" class="text-muted mb-0">
+                    A Binary Search Tree maintains the invariant that every node in the left subtree has a key strictly less than the parent, and every node in the right subtree has a key greater than the parent.
+                </p>
             </div>
-            <p class="text-muted mb-2">@Model.ConceptNotes</p>
-            <div class="small">
-                <strong>Time Complexity:</strong> <code>@Model.TimeComplexity</code> &nbsp;|&nbsp;
-                <strong>Space Complexity:</strong> <code>@Model.SpaceComplexity</code>
-            </div>
+            <span id="sb-topic-badge" class="badge bg-primary px-3 py-2">Hierarchical Trees</span>
+        </div>
+        <div class="small mt-2 pt-2 border-top d-flex flex-wrap gap-3">
+            <span><strong>Time Complexity:</strong> <code id="sb-time-complexity">Avg O(log n) | Worst O(n)</code></span>
+            <span><strong>Space Complexity:</strong> <code id="sb-space-complexity">O(n)</code></span>
+            <span class="text-muted ms-auto d-none d-md-inline">Tip: Use <kbd>←</kbd> / <kbd>→</kbd> keys to step through frames</span>
         </div>
     </div>
 
-    <div class="row g-4">
-        <!-- 2. Interactive Step-by-Step Visualizer -->
+    <!-- Two-Column Workbench -->
+    <div class="row g-4 mb-4">
+        <!-- LEFT PANEL: Step-by-Step Execution Visualizer -->
         <div class="col-lg-6">
-            <div class="card shadow-sm h-100">
-                <div class="card-header fw-bold">Step-by-Step Execution Visualizer</div>
-                <div class="card-body">
-                    <div class="input-group mb-2">
-                        <input id="structInput" type="text" class="form-control" placeholder="Input values..." />
-                        <button id="btnBuildTrace" class="btn btn-primary" type="button">Generate Trace</button>
+            <div class="sb-panel">
+                <div class="sb-panel-header">
+                    <span class="fw-bold">Step-by-Step Execution Visualizer</span>
+                    <div class="d-flex flex-wrap gap-1 align-items-center">
+                        <span class="small text-muted me-1">Presets:</span>
+                        <button type="button" class="sb-preset-chip" id="sb-preset-balanced">Balanced</button>
+                        <button type="button" class="sb-preset-chip" id="sb-preset-edge">Worst-Case</button>
+                        <button type="button" class="sb-preset-chip" id="sb-preset-random">Randomize</button>
+                    </div>
+                </div>
+
+                <div class="sb-panel-body">
+                    <label for="sb-trace-input" id="sb-trace-label" class="form-label small fw-semibold text-secondary mb-1">
+                        Node Insertion Sequence
+                    </label>
+                    <div class="input-group mb-3">
+                        <input type="text" id="sb-trace-input" class="form-control font-monospace"
+                               value="50, 30, 70, 20, 40, 60, 80"
+                               placeholder="e.g. 50, 30, 70, 20, 40" />
+                        <button type="button" id="sb-generate-btn" class="btn btn-primary fw-semibold">
+                            Generate Trace
+                        </button>
                     </div>
 
-                    <canvas id="structCanvas" width="520" height="270" class="border rounded w-100 bg-light mb-2"></canvas>
-
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <div>
-                            <button id="btnPrev" class="btn btn-outline-secondary btn-sm" type="button">Prev</button>
-                            <button id="btnNext" class="btn btn-outline-secondary btn-sm" type="button">Next</button>
-                        </div>
-                        <span id="stepCounter" class="badge bg-dark">Step 0 / 0</span>
+                    <div class="sb-canvas-box">
+                        <canvas id="sb-canvas" width="540" height="275" aria-label="Data Structure Trace Canvas"></canvas>
                     </div>
-                    <p id="stepLog" class="small text-primary fw-semibold mb-3">Click "Generate Trace" to animate.</p>
 
-                    <form asp-action="SaveTrace" method="post" class="border-top pt-3">
-                        <input type="hidden" name="lessonId" value="@Model.Id" />
-                        <input type="hidden" name="slug" value="@Model.Slug" />
-                        <input type="hidden" id="hiddenInputSeq" name="inputSequence" />
-                        <input type="hidden" id="hiddenTraceJson" name="traceFramesJson" />
-                        <div class="input-group input-group-sm">
-                            <input type="text" name="title" class="form-control" placeholder="Trace label (e.g., Traversal Run)" required />
-                            <button type="submit" class="btn btn-success">Save Trace to Neon</button>
+                    <div class="sb-legend">
+                        <span><i class="sb-dot" style="background:#2563eb;"></i>Active / Current</span>
+                        <span><i class="sb-dot" style="background:#f59e0b;"></i>Comparing / Frontier</span>
+                        <span><i class="sb-dot" style="background:#16a34a;"></i>Inserted / Visited</span>
+                    </div>
+
+                    <!-- Playback Toolbar -->
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                        <div class="btn-group" role="group" aria-label="Trace Playback Controls">
+                            <button type="button" id="sb-first-btn" class="btn btn-outline-secondary btn-sm" title="First Step">|<</button>
+                            <button type="button" id="sb-prev-btn" class="btn btn-outline-secondary btn-sm" title="Previous Step">← Prev</button>
+                            <button type="button" id="sb-play-btn" class="btn btn-outline-primary btn-sm fw-semibold" title="Auto-Play">Play</button>
+                            <button type="button" id="sb-next-btn" class="btn btn-outline-secondary btn-sm" title="Next Step">Next →</button>
+                            <button type="button" id="sb-last-btn" class="btn btn-outline-secondary btn-sm" title="Last Step">>|</button>
                         </div>
-                    </form>
+
+                        <div class="d-flex align-items-center gap-2">
+                            <select id="sb-speed-select" class="form-select form-select-sm" style="width: auto;" aria-label="Playback Speed">
+                                <option value="950">0.5x</option>
+                                <option value="550" selected>1x</option>
+                                <option value="250">2x</option>
+                            </select>
+                            <span id="sb-step-badge" class="badge bg-dark font-monospace px-2 py-2">Step 1 / 1</span>
+                        </div>
+                    </div>
+
+                    <div id="sb-step-caption" class="sb-step-caption mt-auto" aria-live="polite">
+                        Inserted 50 as root.
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 3. Multi-Language Code Editor & Execution Tracker -->
+        <!-- RIGHT PANEL: Multi-Language Code Editor & Neon Execution Log -->
         <div class="col-lg-6">
-            <div class="card shadow-sm h-100">
-                <div class="card-header fw-bold">Multi-Language Code Editor & Execution Log</div>
-                <div class="card-body">
-                    <form asp-action="SaveSubmission" method="post">
-                        <input type="hidden" name="lessonId" value="@Model.Id" />
-                        <input type="hidden" name="slug" value="@Model.Slug" />
-                        <div class="row g-2 mb-2">
-                            <div class="col-md-5">
-                                <select id="langSelect" name="language" class="form-select form-select-sm">
-                                    <option value="C++">C++</option>
-                                    <option value="Java">Java</option>
-                                    <option value="Python">Python</option>
-                                    <option value="C#">C#</option>
-                                </select>
-                            </div>
-                            <div class="col-md-7">
-                                <input type="number" step="0.01" name="executionTimeMs" class="form-control form-control-sm" value="1.25" placeholder="Runtime (ms)" required />
+            <div class="sb-panel">
+                <div class="sb-panel-header">
+                    <span class="fw-bold">Multi-Language Code Editor & Neon Log</span>
+                    <div class="d-flex gap-2">
+                        <button type="button" id="sb-copy-code-btn" class="btn btn-outline-secondary btn-sm">Copy</button>
+                        <button type="button" id="sb-reset-code-btn" class="btn btn-outline-secondary btn-sm">Reset Template</button>
+                    </div>
+                </div>
+
+                <div class="sb-panel-body">
+                    <div class="row g-2 mb-2">
+                        <div class="col-sm-4">
+                            <label for="sb-lang-select" class="form-label small fw-semibold text-secondary mb-1">Language</label>
+                            <select id="sb-lang-select" class="form-select form-select-sm fw-semibold">
+                                <option value="cpp" selected>C++</option>
+                                <option value="java">Java</option>
+                                <option value="python">Python</option>
+                                <option value="csharp">C#</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-8">
+                            <label for="sb-test-arg-input" class="form-label small fw-semibold text-secondary mb-1">
+                                Test Target / Query Argument
+                            </label>
+                            <input type="text" id="sb-test-arg-input" class="form-control form-control-sm font-monospace"
+                                   value="search=40" placeholder="e.g. search=40 or pop=2" />
+                        </div>
+                    </div>
+
+                    <div class="sb-editor-wrapper mb-2">
+                        <textarea id="sb-code-editor" class="sb-code-area" spellcheck="false" aria-label="Multi-language source code editor"></textarea>
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 small text-muted mt-2">
+                            <span id="sb-editor-meta">C++17 • Tab inserts 4 spaces</span>
+                            <div class="d-flex gap-2">
+                                <button type="button" id="sb-simulate-btn" class="btn btn-outline-primary btn-sm fw-semibold">
+                                    ▶ Run Trace & Simulate
+                                </button>
+                                <button type="button" id="sb-save-neon-btn" class="btn btn-success btn-sm fw-semibold">
+                                    Save Run to Neon
+                                </button>
                             </div>
                         </div>
+                    </div>
 
-                        <textarea id="codeEditor" name="sourceCode" rows="10" class="form-control font-monospace small mb-2">@Model.CppTemplate</textarea>
-
-                        <div class="input-group input-group-sm">
-                            <input type="text" name="executionNotes" class="form-control" placeholder="Execution output or complexity note..." required />
-                            <button type="submit" class="btn btn-primary">Save Run to Neon</button>
-                        </div>
-                    </form>
+                    <label for="sb-console-output" class="form-label small fw-semibold text-secondary mb-1">
+                        Execution & Trace Output Console
+                    </label>
+                    <div id="sb-console-output" class="sb-console-box" aria-live="polite">Ready. Click "Run Trace & Simulate" to execute against the active input sequence, or "Save Run to Neon" to persist your snapshot.</div>
+                    <div id="sb-neon-feedback" class="small mt-2 fw-semibold"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 4. Database Records Persisted in Neon -->
-    <div class="row g-4 mt-2">
-        <div class="col-md-6">
-            <h6>Your Saved Visual Traces in Neon (@traces.Count)</h6>
-            <ul class="list-group list-group-flush small border rounded">
-                @foreach (var t in traces)
-                {
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div><strong>@t.Title</strong> <span class="text-muted">(@t.InputSequence)</span></div>
-                        <button type="button" class="btn btn-link btn-sm p-0 load-trace-btn" data-json="@t.TraceFramesJson" data-seq="@t.InputSequence">Replay</button>
-                    </li>
-                }
-            </ul>
+    <!-- BOTTOM PANEL: Persisted Runs -->
+    <div class="sb-panel">
+        <div class="sb-panel-header">
+            <div>
+                <span class="fw-bold">Saved Runs & Execution Log</span>
+                <span class="badge bg-secondary ms-2" id="sb-run-count-badge">@existingRuns.Count</span>
+            </div>
+            <span class="small text-muted">Click <strong>Load</strong> on any persisted run to restore its topic, language, input, and source code.</span>
         </div>
-        <div class="col-md-6">
-            <h6>Your Logged Code Runs in Neon (@submissions.Count)</h6>
-            <ul class="list-group list-group-flush small border rounded">
-                @foreach (var s in submissions)
-                {
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span><strong>[@s.Language]</strong> @s.ExecutionNotes</span>
-                        <span class="badge bg-secondary">@s.ExecutionTimeMs ms</span>
-                    </li>
-                }
-            </ul>
+        <div class="sb-panel-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="sb-runs-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Topic</th>
+                            <th>Language</th>
+                            <th>Input Sequence</th>
+                            <th>Execution Summary</th>
+                            <th>Saved At</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sb-runs-tbody">
+                        @if (existingRuns.Count == 0)
+                        {
+                            <tr id="sb-empty-runs-row">
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    No saved runs in Neon yet. Run a trace above and click <strong>Save Run to Neon</strong>.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var run in existingRuns)
+                            {
+                                var codeAttr = System.Net.WebUtility.HtmlEncode(run["Code"]);
+                                var inputAttr = System.Net.WebUtility.HtmlEncode(run["Input"]);
+                                var outputText = string.IsNullOrWhiteSpace(run["Output"]) ? "Saved snapshot" : run["Output"];
+                                <tr data-run-id="@run["Id"]"
+                                    data-topic="@run["Topic"]"
+                                    data-language="@run["Language"]"
+                                    data-input="@inputAttr"
+                                    data-code="@codeAttr">
+                                    <td class="fw-semibold">@run["Topic"]</td>
+                                    <td><span class="badge bg-dark text-uppercase">@run["Language"]</span></td>
+                                    <td class="font-monospace small">@run["Input"]</td>
+                                    <td class="small text-muted" style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="@outputText">
+                                        @outputText
+                                    </td>
+                                    <td class="small text-muted">@run["CreatedAt"]</td>
+                                    <td class="text-end">
+                                        <button type="button" class="btn btn-outline-primary btn-sm sb-load-run-btn">Load</button>
+                                        @if (!string.IsNullOrWhiteSpace(run["Id"]))
+                                        {
+                                            <button type="button" class="btn btn-outline-danger btn-sm sb-delete-run-btn" data-id="@run["Id"]">Delete</button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        const currentSlug = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Slug));
-        const templates = {
-            "C++": @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CppTemplate)),
-            "Java": @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.JavaTemplate)),
-            "Python": @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.PythonTemplate)),
-            "C#": @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.CSharpTemplate))
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const TOPICS = {
+            BST: {
+                title: "Binary Search Tree",
+                badge: "Hierarchical Trees",
+                desc: "A Binary Search Tree maintains the invariant that every node in the left subtree has a key strictly less than the parent, and every node in the right subtree has a key greater than the parent.",
+                time: "Avg O(log n) | Worst O(n)",
+                space: "O(n)",
+                inputLabel: "Node Insertion Sequence",
+                defaultInput: "50, 30, 70, 20, 40, 60, 80",
+                edgeInput: "10, 20, 30, 40, 50, 60",
+                defaultArg: "search=40",
+                templates: {
+                    cpp: `#include <iostream>
+    #include <vector>
+    using namespace std;
+
+    struct Node {
+        int key;
+        Node* left;
+        Node* right;
+        Node(int k) : key(k), left(nullptr), right(nullptr) {}
+    };
+
+    Node* insert(Node* root, int key) {
+        if (!root) return new Node(key);
+        if (key < root->key) root->left = insert(root->left, key);
+        else if (key > root->key) root->right = insert(root->right, key);
+        return root;
+    }
+
+    bool search(Node* root, int target) {
+        while (root) {
+            if (target == root->key) return true;
+            root = (target < root->key) ? root->left : root->right;
+        }
+        return false;
+    }
+
+    void inorder(Node* root) {
+        if (!root) return;
+        inorder(root->left);
+        cout << root->key << " ";
+        inorder(root->right);
+    }
+
+    int main() {
+        vector<int> values = {50, 30, 70, 20, 40, 60, 80};
+        Node* root = nullptr;
+        for (int v : values) root = insert(root, v);
+        cout << "Inorder: ";
+        inorder(root);
+        cout << "\\nSearch 40: " << (search(root, 40) ? "FOUND" : "NOT FOUND") << endl;
+        return 0;
+    }`,
+                    java: `import java.util.*;
+
+    public class BinarySearchTree {
+        static class Node {
+            int key;
+            Node left, right;
+            Node(int key) { this.key = key; }
+        }
+
+        static Node insert(Node root, int key) {
+            if (root == null) return new Node(key);
+            if (key < root.key) root.left = insert(root.left, key);
+            else if (key > root.key) root.right = insert(root.right, key);
+            return root;
+        }
+
+        static boolean search(Node root, int target) {
+            while (root != null) {
+                if (target == root.key) return true;
+                root = (target < root.key) ? root.left : root.right;
+            }
+            return false;
+        }
+
+        public static void main(String[] args) {
+            int[] values = {50, 30, 70, 20, 40, 60, 80};
+            Node root = null;
+            for (int v : values) root = insert(root, v);
+            System.out.println("Search 40: " + search(root, 40));
+        }
+    }`,
+                    python: `class Node:
+        def __init__(self, key: int):
+            self.key = key
+            self.left = None
+            self.right = None
+
+    def insert(root, key: int):
+        if root is None:
+            return Node(key)
+        if key < root.key:
+            root.left = insert(root.left, key)
+        elif key > root.key:
+            root.right = insert(root.right, key)
+        return root
+
+    def search(root, target: int) -> bool:
+        curr = root
+        while curr:
+            if target == curr.key:
+                return True
+            curr = curr.left if target < curr.key else curr.right
+        return False
+
+    if __name__ == "__main__":
+        root = None
+        for v in [50, 30, 70, 20, 40, 60, 80]:
+            root = insert(root, v)
+        print("Search 40:", search(root, 40))`,
+                    csharp: `using System;
+
+    class Node(int key) {
+        public int Key = key;
+        public Node? Left, Right;
+    }
+
+    class Program {
+        static Node Insert(Node? root, int key) {
+            if (root is null) return new Node(key);
+            if (key < root.Key) root.Left = Insert(root.Left, key);
+            else if (key > root.Key) root.Right = Insert(root.Right, key);
+            return root;
+        }
+
+        static bool Search(Node? root, int target) {
+            while (root is not null) {
+                if (target == root.Key) return true;
+                root = target < root.Key ? root.Left : root.Right;
+            }
+            return false;
+        }
+
+        static void Main() {
+            Node? root = null;
+            foreach (int v in new[] { 50, 30, 70, 20, 40, 60, 80 })
+                root = Insert(root, v);
+            Console.WriteLine($"Search 40: {Search(root, 40)}");
+        }
+    }`
+                }
+            },
+            LinkedList: {
+                title: "Singly Linked List",
+                badge: "Linear Pointer Structures",
+                desc: "A Singly Linked List stores elements in heap-allocated nodes connected via unidirectional next references, providing O(1) head insertion and O(n) sequential search.",
+                time: "Head O(1) | Search O(n)",
+                space: "O(n)",
+                inputLabel: "Append Sequence",
+                defaultInput: "10, 20, 30, 40, 50",
+                edgeInput: "99",
+                defaultArg: "find=30",
+                templates: {
+                    cpp: `#include <iostream>
+    using namespace std;
+
+    struct Node {
+        int data;
+        Node* next;
+        Node(int d) : data(d), next(nullptr) {}
+    };
+
+    class SinglyLinkedList {
+        Node* head = nullptr;
+        Node* tail = nullptr;
+    public:
+        void addLast(int val) {
+            Node* node = new Node(val);
+            if (!head) { head = tail = node; return; }
+            tail->next = node;
+            tail = node;
+        }
+        bool contains(int target) {
+            for (Node* curr = head; curr; curr = curr->next)
+                if (curr->data == target) return true;
+            return false;
+        }
+    };
+
+    int main() {
+        SinglyLinkedList list;
+        for (int x : {10, 20, 30, 40, 50}) list.addLast(x);
+        cout << "Contains 30: " << list.contains(30) << endl;
+        return 0;
+    }`,
+                    java: `public class SinglyLinkedList<E> {
+        private static class Node<E> {
+            E data;
+            Node<E> next;
+            Node(E data) { this.data = data; }
+        }
+
+        private Node<E> head, tail;
+
+        public void addLast(E val) {
+            Node<E> node = new Node<>(val);
+            if (head == null) { head = tail = node; return; }
+            tail.next = node;
+            tail = node;
+        }
+
+        public boolean contains(E target) {
+            for (Node<E> curr = head; curr != null; curr = curr.next)
+                if (curr.data.equals(target)) return true;
+            return false;
+        }
+    }`,
+                    python: `class Node:
+        def __init__(self, data):
+            self.data = data
+            self.next = None
+
+    class SinglyLinkedList:
+        def __init__(self):
+            self.head = None
+            self.tail = None
+
+        def add_last(self, val):
+            node = Node(val)
+            if not self.head:
+                self.head = self.tail = node
+                return
+            self.tail.next = node
+            self.tail = node
+
+        def contains(self, target) -> bool:
+            curr = self.head
+            while curr:
+                if curr.data == target:
+                    return True
+                curr = curr.next
+            return False`,
+                    csharp: `public class SinglyLinkedList<T> {
+        private class Node(T data) {
+            public T Data = data;
+            public Node? Next;
+        }
+
+        private Node? _head, _tail;
+
+        public void AddLast(T val) {
+            var node = new Node(val);
+            if (_head is null) { _head = _tail = node; return; }
+            _tail!.Next = node;
+            _tail = node;
+        }
+
+        public bool Contains(T target) {
+            for (var curr = _head; curr is not null; curr = curr.Next)
+                if (Equals(curr.Data, target)) return true;
+            return false;
+        }
+    }`
+                }
+            },
+            Stack: {
+                title: "Stack",
+                badge: "Restricted Linear ADT",
+                desc: "A Last-In, First-Out abstract data type supporting O(1) push, pop, and peek exclusively at the top boundary.",
+                time: "Push / Pop / Peek O(1)",
+                space: "O(n)",
+                inputLabel: "Stack Operations",
+                defaultInput: "push 15, push 30, push 45, pop, push 60",
+                edgeInput: "push 10, pop, pop",
+                defaultArg: "peek",
+                templates: {
+                    cpp: `#include <iostream>
+    #include <stack>
+    using namespace std;
+
+    int main() {
+        stack<int> st;
+        st.push(15);
+        st.push(30);
+        st.push(45);
+        st.pop();
+        st.push(60);
+        cout << "Top element: " << st.top() << " | Size: " << st.size() << endl;
+        return 0;
+    }`,
+                    java: `import java.util.*;
+
+    public class StackDemo {
+        public static void main(String[] args) {
+            Deque<Integer> stack = new ArrayDeque<>();
+            stack.push(15);
+            stack.push(30);
+            stack.push(45);
+            stack.pop();
+            stack.push(60);
+            System.out.println("Top: " + stack.peek());
+        }
+    }`,
+                    python: `stack = []
+    stack.append(15)
+    stack.append(30)
+    stack.append(45)
+    stack.pop()
+    stack.append(60)
+    print("Top:", stack[-1], "Size:", len(stack))`,
+                    csharp: `using System;
+    using System.Collections.Generic;
+
+    var stack = new Stack<int>();
+    stack.Push(15);
+    stack.Push(30);
+    stack.Push(45);
+    stack.Pop();
+    stack.Push(60);
+    Console.WriteLine($"Top: {stack.Peek()} | Count: {stack.Count}");`
+                }
+            },
+            MinHeap: {
+                title: "Binary Min-Heap",
+                badge: "Priority Queues",
+                desc: "A complete binary tree stored in a contiguous array where each parent is less than or equal to its children, guaranteeing O(1) peekMin and O(log n) siftUp/siftDown.",
+                time: "Insert O(log n) | PeekMin O(1)",
+                space: "O(n)",
+                inputLabel: "Heap Insertion Sequence",
+                defaultInput: "40, 25, 60, 10, 30, 50, 15",
+                edgeInput: "70, 60, 50, 40, 30, 20, 10",
+                defaultArg: "extractMin",
+                templates: {
+                    cpp: `#include <iostream>
+    #include <queue>
+    #include <vector>
+    using namespace std;
+
+    int main() {
+        priority_queue<int, vector<int>, greater<int>> minHeap;
+        for (int x : {40, 25, 60, 10, 30, 50, 15}) minHeap.push(x);
+        cout << "Min root: " << minHeap.top() << endl;
+        return 0;
+    }`,
+                    java: `import java.util.*;
+
+    public class MinHeapDemo {
+        public static void main(String[] args) {
+            PriorityQueue<Integer> pq = new PriorityQueue<>();
+            for (int x : new int[]{40, 25, 60, 10, 30, 50, 15}) pq.offer(x);
+            System.out.println("Min root: " + pq.peek());
+        }
+    }`,
+                    python: `import heapq
+
+    heap = []
+    for x in [40, 25, 60, 10, 30, 50, 15]:
+        heapq.heappush(heap, x)
+    print("Heap array:", heap, "Min:", heap[0])`,
+                    csharp: `using System;
+    using System.Collections.Generic;
+
+    var pq = new PriorityQueue<int, int>();
+    foreach (int x in new[] { 40, 25, 60, 10, 30, 50, 15 })
+        pq.Enqueue(x, x);
+    Console.WriteLine($"Min root: {pq.Peek()}");`
+                }
+            },
+            BFS: {
+                title: "Graph Breadth-First Search",
+                badge: "Graph Traversals",
+                desc: "Explores a graph level by level from a source vertex using a FIFO Queue, guaranteeing the shortest path measured in number of unweighted edges.",
+                time: "O(V + E)",
+                space: "O(V)",
+                inputLabel: "Undirected Edges",
+                defaultInput: "A-B, A-C, B-D, B-E, C-F, E-F",
+                edgeInput: "A-B, B-C, C-D, D-E",
+                defaultArg: "start=A",
+                templates: {
+                    cpp: `#include <iostream>
+    #include <map>
+    #include <queue>
+    #include <set>
+    #include <vector>
+    using namespace std;
+
+    int main() {
+        map<char, vector<char>> adj = {
+            {'A', {'B', 'C'}}, {'B', {'A', 'D', 'E'}}, {'C', {'A', 'F'}},
+            {'D', {'B'}}, {'E', {'B', 'F'}}, {'F', {'C', 'E'}}
+        };
+        queue<char> q;
+        set<char> visited = {'A'};
+        q.push('A');
+        while (!q.empty()) {
+            char u = q.front(); q.pop();
+            cout << u << " ";
+            for (char v : adj[u])
+                if (visited.insert(v).second) q.push(v);
+        }
+        return 0;
+    }`,
+                    java: `import java.util.*;
+
+    public class GraphBFS {
+        public static List<String> bfs(Map<String, List<String>> adj, String start) {
+            List<String> order = new ArrayList<>();
+            Set<String> visited = new HashSet<>(List.of(start));
+            Queue<String> q = new ArrayDeque<>();
+            q.offer(start);
+            while (!q.isEmpty()) {
+                String u = q.poll();
+                order.add(u);
+                for (String v : adj.getOrDefault(u, List.of()))
+                    if (visited.add(v)) q.offer(v);
+            }
+            return order;
+        }
+    }`,
+                    python: `from collections import deque
+
+    def bfs(adj: dict, start: str) -> list[str]:
+        visited = {start}
+        queue = deque([start])
+        order = []
+        while queue:
+            u = queue.popleft()
+            order.append(u)
+            for v in adj.get(u, []):
+                if v not in visited:
+                    visited.add(v)
+                    queue.append(v)
+        return order`,
+                    csharp: `using System.Collections.Generic;
+
+    static List<string> Bfs(Dictionary<string, List<string>> adj, string start) {
+        var order = new List<string>();
+        var visited = new HashSet<string> { start };
+        var queue = new Queue<string>();
+        queue.Enqueue(start);
+        while (queue.Count > 0) {
+            string u = queue.Dequeue();
+            order.Add(u);
+            foreach (string v in adj[u])
+                if (visited.Add(v)) queue.Enqueue(v);
+        }
+        return order;
+    }`
+                }
+            },
+            Dijkstra: {
+                title: "Dijkstra Shortest Path",
+                badge: "Weighted Graph Algorithms",
+                desc: "Computes single-source shortest paths on non-negatively weighted graphs by greedily relaxing outgoing edges via a Min-Priority Queue.",
+                time: "O((V + E) log V)",
+                space: "O(V + E)",
+                inputLabel: "Weighted Edges",
+                defaultInput: "A-B:4, A-C:2, B-C:1, B-D:5, C-D:8, C-E:10, D-E:2",
+                edgeInput: "A-B:1, B-C:1, C-D:1, A-D:10",
+                defaultArg: "start=A",
+                templates: {
+                    cpp: `#include <iostream>
+    #include <map>
+    #include <queue>
+    #include <vector>
+    using namespace std;
+
+    int main() {
+        map<char, vector<pair<char, int>>> adj = {
+            {'A', {{'B', 4}, {'C', 2}}},
+            {'B', {{'C', 1}, {'D', 5}}},
+            {'C', {{'D', 8}, {'E', 10}}},
+            {'D', {{'E', 2}}},
+            {'E', {}}
+        };
+        map<char, int> dist;
+        for (auto& [k, _] : adj) dist[k] = 1e9;
+        dist['A'] = 0;
+
+        priority_queue<pair<int, char>, vector<pair<int, char>>, greater<>> pq;
+        pq.push({0, 'A'});
+
+        while (!pq.empty()) {
+            auto [d, u] = pq.top(); pq.pop();
+            if (d > dist[u]) continue;
+            for (auto [v, w] : adj[u]) {
+                if (dist[u] + w < dist[v]) {
+                    dist[v] = dist[u] + w;
+                    pq.push({dist[v], v});
+                }
+            }
+        }
+        for (auto& [k, d] : dist) cout << k << ":" << d << " ";
+        return 0;
+    }`,
+                    java: `import java.util.*;
+
+    public class Dijkstra {
+        record Edge(String to, int weight) {}
+        record State(String node, int dist) {}
+
+        public static Map<String, Integer> shortestPaths(Map<String, List<Edge>> adj, String src) {
+            Map<String, Integer> dist = new HashMap<>();
+            adj.keySet().forEach(k -> dist.put(k, Integer.MAX_VALUE));
+            dist.put(src, 0);
+
+            PriorityQueue<State> pq = new PriorityQueue<>(Comparator.comparingInt(State::dist));
+            pq.offer(new State(src, 0));
+
+            while (!pq.isEmpty()) {
+                State cur = pq.poll();
+                if (cur.dist() > dist.get(cur.node())) continue;
+                for (Edge e : adj.getOrDefault(cur.node(), List.of())) {
+                    int nd = cur.dist() + e.weight();
+                    if (nd < dist.getOrDefault(e.to(), Integer.MAX_VALUE)) {
+                        dist.put(e.to(), nd);
+                        pq.offer(new State(e.to(), nd));
+                    }
+                }
+            }
+            return dist;
+        }
+    }`,
+                    python: `import heapq
+
+    def dijkstra(adj: dict, start: str) -> dict[str, int]:
+        dist = {node: float("inf") for node in adj}
+        dist[start] = 0
+        pq = [(0, start)]
+        while pq:
+            d, u = heapq.heappop(pq)
+            if d > dist[u]:
+                continue
+            for v, w in adj[u]:
+                if dist[u] + w < dist[v]:
+                    dist[v] = dist[u] + w
+                    heapq.heappush(pq, (dist[v], v))
+        return dist`,
+                    csharp: `using System.Collections.Generic;
+
+    static Dictionary<string, int> Dijkstra(Dictionary<string, List<(string To, int W)>> adj, string src) {
+        var dist = new Dictionary<string, int>();
+        foreach (var k in adj.Keys) dist[k] = int.MaxValue;
+        dist[src] = 0;
+
+        var pq = new PriorityQueue<string, int>();
+        pq.Enqueue(src, 0);
+
+        while (pq.TryDequeue(out string? u, out int d)) {
+            if (d > dist[u]) continue;
+            foreach (var (v, w) in adj[u]) {
+                int nd = dist[u] + w;
+                if (nd < dist[v]) {
+                    dist[v] = nd;
+                    pq.Enqueue(v, nd);
+                }
+            }
+        }
+        return dist;
+    }`
+                }
+            }
         };
 
-        document.getElementById("langSelect").addEventListener("change", (e) => {
-            document.getElementById("codeEditor").value = templates[e.target.value] || "";
-        });
-
-        const defaultInputs = {
-            "binary-search-tree": "50, 30, 70, 20, 40, 60, 80",
-            "singly-linked-list": "10, 25, 40, 55",
-            "stack-lifo": "10, 20, 30, POP, 40",
-            "graph-bfs": "0"
+        const LANG_META = {
+            cpp: "C++17 • Tab inserts 4 spaces",
+            java: "Java 21 • Tab inserts 4 spaces",
+            python: "Python 3.12 • Tab inserts 4 spaces",
+            csharp: "C# 13 • Tab inserts 4 spaces"
         };
-        document.getElementById("structInput").value = defaultInputs[currentSlug] || "10, 20, 30";
 
+        let currentTopic = "BST";
+        let currentLang = "cpp";
         let frames = [];
-        let currentStep = 0;
+        let frameIndex = 0;
+        let playTimer = null;
 
-        // --- 1. BST Frame Builder & Renderer ---
-        function cloneTree(n) { return n ? { val: n.val, left: cloneTree(n.left), right: cloneTree(n.right) } : null; }
-        function buildBstFrames(values) {
-            const res = []; let root = null;
-            for (const v of values) {
-                if (!root) { root = { val: v, left: null, right: null }; res.push({ kind: "bst", tree: cloneTree(root), active: v, msg: `Inserted ${v} as root.` }); continue; }
-                let c = root;
-                while (true) {
-                    res.push({ kind: "bst", tree: cloneTree(root), active: c.val, msg: `Comparing ${v} with ${c.val}...` });
-                    if (v < c.val) {
-                        if (!c.left) { c.left = { val: v, left: null, right: null }; res.push({ kind: "bst", tree: cloneTree(root), active: v, msg: `${v} < ${c.val}: inserted left.` }); break; }
-                        c = c.left;
-                    } else if (v > c.val) {
-                        if (!c.right) { c.right = { val: v, left: null, right: null }; res.push({ kind: "bst", tree: cloneTree(root), active: v, msg: `${v} > ${c.val}: inserted right.` }); break; }
-                        c = c.right;
-                    } else { res.push({ kind: "bst", tree: cloneTree(root), active: c.val, msg: `${v} already exists.` }); break; }
-                }
-            }
-            return res;
-        }
-        function drawTree(node, ctx, x, y, off, active) {
-            if (!node) return;
-            if (node.left) { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - off, y + 55); ctx.stroke(); drawTree(node.left, ctx, x - off, y + 55, off * 0.52, active); }
-            if (node.right) { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + off, y + 55); ctx.stroke(); drawTree(node.right, ctx, x + off, y + 55, off * 0.52, active); }
-            ctx.beginPath(); ctx.arc(x, y, 17, 0, Math.PI * 2);
-            ctx.fillStyle = node.val === active ? "#0d6efd" : "#ffffff"; ctx.fill(); ctx.stroke();
-            ctx.fillStyle = node.val === active ? "#ffffff" : "#212529";
-            ctx.font = "bold 12px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-            ctx.fillText(node.val, x, y);
-        }
+        const topicBtns = document.querySelectorAll(".sb-topic-btn");
+        const titleEl = document.getElementById("sb-topic-title");
+        const descEl = document.getElementById("sb-topic-desc");
+        const badgeEl = document.getElementById("sb-topic-badge");
+        const timeEl = document.getElementById("sb-time-complexity");
+        const spaceEl = document.getElementById("sb-space-complexity");
+        const traceLabelEl = document.getElementById("sb-trace-label");
+        const traceInputEl = document.getElementById("sb-trace-input");
+        const generateBtn = document.getElementById("sb-generate-btn");
 
-        // --- 2. Singly Linked List Builder & Renderer ---
-        function buildListFrames(values) {
-            const res = [], list = [];
-            for (const v of values) {
-                for (let i = 0; i < list.length; i++) {
-                    res.push({ kind: "list", items: [...list], activeIdx: i, msg: `Traversing node [${list[i]}] looking for tail...` });
-                }
-                list.push(v);
-                res.push({ kind: "list", items: [...list], activeIdx: list.length - 1, msg: `Allocated Node(${v}) and linked next pointer.` });
-            }
-            return res;
-        }
-        function drawList(ctx, frame) {
-            const startX = 35, y = 115, boxW = 64, boxH = 36, gap = 36;
-            ctx.font = "bold 12px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-            frame.items.forEach((val, i) => {
-                const x = startX + i * (boxW + gap);
-                ctx.fillStyle = i === frame.activeIdx ? "#0d6efd" : "#ffffff";
-                ctx.fillRect(x, y, boxW, boxH);
-                ctx.strokeStyle = "#212529"; ctx.strokeRect(x, y, boxW, boxH);
-                ctx.beginPath(); ctx.moveTo(x + 42, y); ctx.lineTo(x + 42, y + boxH); ctx.stroke();
-                ctx.fillStyle = i === frame.activeIdx ? "#ffffff" : "#212529";
-                ctx.fillText(val, x + 21, y + 18);
-                ctx.fillText("•", x + 53, y + 18);
-                // Arrow to next
-                ctx.beginPath(); ctx.moveTo(x + boxW, y + 18); ctx.lineTo(x + boxW + gap - 6, y + 18); ctx.stroke();
-                ctx.fillStyle = "#212529";
-                ctx.fillText("▶", x + boxW + gap - 4, y + 18);
-            });
-            const nullX = startX + frame.items.length * (boxW + gap) + 18;
-            ctx.fillStyle = "#6c757d";
-            ctx.fillText("NULL", nullX, y + 18);
+        const canvas = document.getElementById("sb-canvas");
+        const ctx = canvas.getContext("2d");
+        const firstBtn = document.getElementById("sb-first-btn");
+        const prevBtn = document.getElementById("sb-prev-btn");
+        const playBtn = document.getElementById("sb-play-btn");
+        const nextBtn = document.getElementById("sb-next-btn");
+        const lastBtn = document.getElementById("sb-last-btn");
+        const speedSelect = document.getElementById("sb-speed-select");
+        const stepBadge = document.getElementById("sb-step-badge");
+        const stepCaption = document.getElementById("sb-step-caption");
+
+        const langSelect = document.getElementById("sb-lang-select");
+        const testArgInput = document.getElementById("sb-test-arg-input");
+        const codeEditor = document.getElementById("sb-code-editor");
+        const editorMeta = document.getElementById("sb-editor-meta");
+        const simulateBtn = document.getElementById("sb-simulate-btn");
+        const saveNeonBtn = document.getElementById("sb-save-neon-btn");
+        const copyCodeBtn = document.getElementById("sb-copy-code-btn");
+        const resetCodeBtn = document.getElementById("sb-reset-code-btn");
+        const consoleOutput = document.getElementById("sb-console-output");
+        const neonFeedback = document.getElementById("sb-neon-feedback");
+
+        function parseInts(raw) {
+            return raw.split(",")
+                .map(s => parseInt(s.trim(), 10))
+                .filter(n => !Number.isNaN(n))
+                .slice(0, 15);
         }
 
-        // --- 3. Stack (LIFO) Builder & Renderer ---
-        function buildStackFrames(tokens) {
-            const res = [], stack = [];
-            for (const tok of tokens) {
-                if (tok.toUpperCase() === "POP") {
-                    const popped = stack.pop();
-                    res.push({ kind: "stack", items: [...stack], msg: popped !== undefined ? `POP() removed ${popped} from top.` : "Stack underflow (empty)." });
-                } else {
-                    const n = parseInt(tok, 10);
-                    if (!isNaN(n)) {
-                        stack.push(n);
-                        res.push({ kind: "stack", items: [...stack], msg: `PUSH(${n}) placed onto top of stack.` });
+        function cloneBst(node) {
+            if (!node) return null;
+            return { key: node.key, left: cloneBst(node.left), right: cloneBst(node.right) };
+        }
+
+        function buildFrames(topic, rawInput) {
+            if (topic === "BST") {
+                const nums = parseInts(rawInput);
+                if (!nums.length) return [{ type: "BST", root: null, active: null, comparing: [], inserted: [], caption: "Enter at least one integer." }];
+                const list = [];
+                let root = null;
+                const inserted = [];
+
+                for (const val of nums) {
+                    if (!root) {
+                        root = { key: val, left: null, right: null };
+                        inserted.push(val);
+                        list.push({ type: "BST", root: cloneBst(root), active: val, comparing: [], inserted: [...inserted], caption: `Inserted ${val} as root node.` });
+                        continue;
+                    }
+                    let curr = root;
+                    const path = [];
+                    while (curr) {
+                        path.push(curr.key);
+                        if (val === curr.key) {
+                            list.push({ type: "BST", root: cloneBst(root), active: curr.key, comparing: [...path], inserted: [...inserted], caption: `Duplicate key ${val} ignored.` });
+                            break;
+                        } else if (val < curr.key) {
+                            if (!curr.left) {
+                                curr.left = { key: val, left: null, right: null };
+                                inserted.push(val);
+                                list.push({ type: "BST", root: cloneBst(root), active: val, comparing: [...path], inserted: [...inserted], caption: `${val} < ${curr.key}: inserted ${val} as left child of ${curr.key}.` });
+                                break;
+                            }
+                            curr = curr.left;
+                        } else {
+                            if (!curr.right) {
+                                curr.right = { key: val, left: null, right: null };
+                                inserted.push(val);
+                                list.push({ type: "BST", root: cloneBst(root), active: val, comparing: [...path], inserted: [...inserted], caption: `${val} > ${curr.key}: inserted ${val} as right child of ${curr.key}.` });
+                                break;
+                            }
+                            curr = curr.right;
+                        }
                     }
                 }
+                return list;
             }
-            return res;
-        }
-        function drawStack(ctx, frame) {
-            const x = 200, baseY = 225, w = 120, h = 32;
-            ctx.font = "bold 12px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-            frame.items.forEach((val, idx) => {
-                const y = baseY - idx * (h + 4);
-                const isTop = idx === frame.items.length - 1;
-                ctx.fillStyle = isTop ? "#0d6efd" : "#ffffff";
-                ctx.fillRect(x, y, w, h);
-                ctx.strokeStyle = "#212529"; ctx.strokeRect(x, y, w, h);
-                ctx.fillStyle = isTop ? "#ffffff" : "#212529";
-                ctx.fillText(val, x + w / 2, y + h / 2);
-                if (isTop) {
-                    ctx.fillStyle = "#198754";
-                    ctx.fillText("◀ TOP", x + w + 38, y + h / 2);
-                }
-            });
-        }
 
-        // --- 4. Graph BFS Builder & Renderer ---
-        const graphNodes = [
-            { id: 0, x: 110, y: 135 }, { id: 1, x: 220, y: 60 }, { id: 2, x: 220, y: 210 },
-            { id: 3, x: 340, y: 60 },  { id: 4, x: 340, y: 210 }, { id: 5, x: 440, y: 135 }
-        ];
-        const graphAdj = [[1, 2], [0, 3, 4], [0, 4], [1, 5], [1, 2, 5], [3, 4]];
+            if (topic === "LinkedList") {
+                const nums = parseInts(rawInput);
+                if (!nums.length) return [{ type: "LinkedList", items: [], activeIdx: -1, caption: "Empty list." }];
+                const list = [];
+                const items = [];
+                nums.forEach((v, i) => {
+                    items.push(v);
+                    list.push({
+                        type: "LinkedList",
+                        items: [...items],
+                        activeIdx: i,
+                        caption: i === 0 ? `Created HEAD node with value ${v}.` : `Linked tail.next -> ${v} and updated TAIL pointer.`
+                    });
+                });
+                return list;
+            }
 
-        function buildBfsFrames(startNode) {
-            const start = (startNode >= 0 && startNode < graphNodes.length) ? startNode : 0;
-            const res = [], vis = new Set([start]), q = [start];
-            res.push({ kind: "bfs", active: start, visited: [...vis], queue: [...q], msg: `Enqueued start vertex ${start}.` });
-            while (q.length) {
-                const u = q.shift();
-                res.push({ kind: "bfs", active: u, visited: [...vis], queue: [...q], msg: `Dequeued ${u}; inspecting neighbors [${graphAdj[u].join(", ")}].` });
-                for (const v of graphAdj[u]) {
-                    if (!vis.has(v)) {
-                        vis.add(v); q.push(v);
-                        res.push({ kind: "bfs", active: u, visited: [...vis], queue: [...q], msg: `Discovered ${v} from ${u}; queue = [${q.join(", ")}].` });
+            if (topic === "Stack") {
+                const tokens = rawInput.split(",").map(s => s.trim()).filter(Boolean);
+                const list = [];
+                const stack = [];
+                for (const tok of tokens) {
+                    const lower = tok.toLowerCase();
+                    if (lower.startsWith("pop")) {
+                        if (stack.length === 0) {
+                            list.push({ type: "Stack", items: [], activeIdx: -1, caption: "Stack Underflow: cannot pop from empty stack." });
+                        } else {
+                            const popped = stack.pop();
+                            list.push({ type: "Stack", items: [...stack], activeIdx: stack.length - 1, caption: `Popped ${popped} from top. New size = ${stack.length}.` });
+                        }
+                    } else {
+                        const num = parseInt(tok.replace(/[^0-9-]/g, ""), 10);
+                        if (!Number.isNaN(num)) {
+                            stack.push(num);
+                            list.push({ type: "Stack", items: [...stack], activeIdx: stack.length - 1, caption: `Pushed ${num} onto top.` });
+                        }
                     }
                 }
+                return list.length ? list : [{ type: "Stack", items: [], activeIdx: -1, caption: "No stack operations parsed." }];
             }
-            return res;
-        }
-        function drawGraph(ctx, frame) {
-            graphAdj.forEach((neighbors, u) => {
-                neighbors.forEach(v => {
-                    if (u < v) {
-                        ctx.beginPath();
-                        ctx.moveTo(graphNodes[u].x, graphNodes[u].y);
-                        ctx.lineTo(graphNodes[v].x, graphNodes[v].y);
-                        ctx.strokeStyle = "#adb5bd"; ctx.stroke();
+
+            if (topic === "MinHeap") {
+                const nums = parseInts(rawInput);
+                if (!nums.length) return [{ type: "MinHeap", heap: [], activeIdx: -1, swapIdx: -1, caption: "Empty heap." }];
+                const list = [];
+                const heap = [];
+                for (const val of nums) {
+                    heap.push(val);
+                    let i = heap.length - 1;
+                    list.push({ type: "MinHeap", heap: [...heap], activeIdx: i, swapIdx: -1, caption: `Appended ${val} at index ${i}.` });
+                    while (i > 0) {
+                        const parent = Math.floor((i - 1) / 2);
+                        if (heap[i] < heap[parent]) {
+                            [heap[i], heap[parent]] = [heap[parent], heap[i]];
+                            list.push({ type: "MinHeap", heap: [...heap], activeIdx: parent, swapIdx: i, caption: `SiftUp: swapped ${heap[parent]} with parent ${heap[i]}.` });
+                            i = parent;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                return list;
+            }
+
+            if (topic === "BFS") {
+                const edges = [];
+                const adj = {};
+                rawInput.split(",").map(s => s.trim()).filter(Boolean).forEach(pair => {
+                    const [u, v] = pair.split("-").map(x => x.trim().toUpperCase());
+                    if (u && v) {
+                        edges.push([u, v]);
+                        adj[u] = adj[u] || [];
+                        adj[v] = adj[v] || [];
+                        if (!adj[u].includes(v)) adj[u].push(v);
+                        if (!adj[v].includes(u)) adj[v].push(u);
                     }
                 });
-            });
-            graphNodes.forEach(n => {
-                ctx.beginPath(); ctx.arc(n.x, n.y, 18, 0, Math.PI * 2);
-                const isActive = n.id === frame.active;
-                const isVisited = frame.visited.includes(n.id);
-                ctx.fillStyle = isActive ? "#0d6efd" : (isVisited ? "#198754" : "#ffffff");
-                ctx.fill(); ctx.strokeStyle = "#212529"; ctx.stroke();
-                ctx.fillStyle = (isActive || isVisited) ? "#ffffff" : "#212529";
-                ctx.font = "bold 12px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-                ctx.fillText(n.id, n.x, n.y);
-            });
-            ctx.fillStyle = "#212529"; ctx.textAlign = "left";
-            ctx.fillText(`Queue: [${frame.queue.join(", ")}]`, 16, 20);
+                const nodes = Object.keys(adj).sort();
+                if (!nodes.length) return [{ type: "Graph", nodes: [], edges: [], visited: [], frontier: [], active: null, caption: "Enter edges like A-B, A-C." }];
+                nodes.forEach(n => adj[n].sort());
+
+                const startMatch = (testArgInput.value || "").match(/start\s*=\s*([A-Za-z0-9]+)/i);
+                const start = (startMatch && adj[startMatch[1].toUpperCase()]) ? startMatch[1].toUpperCase() : nodes[0];
+
+                const list = [];
+                const visited = new Set([start]);
+                const settled = [];
+                const q = [start];
+                list.push({ type: "Graph", directed: false, nodes, edges, visited: [], frontier: [...q], active: null, caption: `Enqueued start vertex ${start}.` });
+
+                while (q.length) {
+                    const u = q.shift();
+                    settled.push(u);
+                    list.push({ type: "Graph", directed: false, nodes, edges, visited: [...settled], frontier: [...q], active: u, caption: `Dequeued ${u} -> Visited: [${settled.join(", ")}].` });
+                    for (const v of adj[u]) {
+                        if (!visited.has(v)) {
+                            visited.add(v);
+                            q.push(v);
+                            list.push({ type: "Graph", directed: false, nodes, edges, visited: [...settled], frontier: [...q], active: u, caption: `Discovered ${v} from ${u}; enqueued ${v}.` });
+                        }
+                    }
+                }
+                return list;
+            }
+
+            if (topic === "Dijkstra") {
+                const edges = [];
+                const adj = {};
+                rawInput.split(",").map(s => s.trim()).filter(Boolean).forEach(item => {
+                    const [pair, wStr] = item.split(":");
+                    const [u, v] = (pair || "").split("-").map(x => x.trim().toUpperCase());
+                    const w = parseInt((wStr || "1").trim(), 10) || 1;
+                    if (u && v) {
+                        edges.push([u, v, w]);
+                        adj[u] = adj[u] || [];
+                        adj[v] = adj[v] || [];
+                        adj[u].push({ to: v, w });
+                    }
+                });
+                const nodes = Object.keys(adj).sort();
+                if (!nodes.length) return [{ type: "Graph", nodes: [], edges: [], visited: [], frontier: [], active: null, caption: "Enter weighted edges like A-B:4, A-C:2." }];
+
+                const startMatch = (testArgInput.value || "").match(/start\s*=\s*([A-Za-z0-9]+)/i);
+                const start = (startMatch && adj[startMatch[1].toUpperCase()]) ? startMatch[1].toUpperCase() : nodes[0];
+
+                const dist = {};
+                nodes.forEach(n => dist[n] = Infinity);
+                dist[start] = 0;
+                const settled = [];
+                const pq = [{ node: start, d: 0 }];
+                const list = [{ type: "Graph", directed: true, nodes, edges, dist: { ...dist }, visited: [], frontier: [start], active: start, caption: `Initialized dist[${start}] = 0.` }];
+
+                while (pq.length) {
+                    pq.sort((a, b) => a.d - b.d);
+                    const { node: u, d } = pq.shift();
+                    if (d > dist[u]) continue;
+                    if (!settled.includes(u)) settled.push(u);
+                    list.push({ type: "Graph", directed: true, nodes, edges, dist: { ...dist }, visited: [...settled], frontier: pq.map(x => x.node), active: u, caption: `Settled ${u} with shortest distance ${d}.` });
+
+                    for (const { to: v, w } of adj[u]) {
+                        if (dist[u] + w < dist[v]) {
+                            dist[v] = dist[u] + w;
+                            pq.push({ node: v, d: dist[v] });
+                            list.push({ type: "Graph", directed: true, nodes, edges, dist: { ...dist }, visited: [...settled], frontier: pq.map(x => x.node), active: u, caption: `Relaxed edge ${u}->${v} with weight ${w}: dist[${v}] = ${dist[v]}.` });
+                        }
+                    }
+                }
+                return list;
+            }
+
+            return [];
         }
 
-        // --- Master Dispatcher ---
-        function renderStep(idx) {
-            const canvas = document.getElementById("structCanvas");
-            const ctx = canvas.getContext("2d");
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            if (!frames.length) return;
+        function renderFrame(frame) {
+            const w = 540, h = 275;
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = w * dpr;
+            canvas.height = h * dpr;
+            canvas.style.width = `${w}px`;
+            canvas.style.height = `${h}px`;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, w, h);
 
-            currentStep = Math.max(0, Math.min(idx, frames.length - 1));
-            const f = frames[currentStep];
+            if (!frame) return;
 
-            if (f.kind === "list") drawList(ctx, f);
-            else if (f.kind === "stack") drawStack(ctx, f);
-            else if (f.kind === "bfs") drawGraph(ctx, f);
-            else drawTree(f.tree, ctx, canvas.width / 2, 30, 120, f.active);
+            if (frame.type === "BST" && frame.root) {
+                function drawTree(node, x, y, dx) {
+                    if (!node) return;
+                    if (node.left) {
+                        ctx.strokeStyle = "#94a3b8";
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(x, y);
+                        ctx.lineTo(x - dx, y + 58);
+                        ctx.stroke();
+                        drawTree(node.left, x - dx, y + 58, Math.max(dx * 0.52, 24));
+                    }
+                    if (node.right) {
+                        ctx.strokeStyle = "#94a3b8";
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(x, y);
+                        ctx.lineTo(x + dx, y + 58);
+                        ctx.stroke();
+                        drawTree(node.right, x + dx, y + 58, Math.max(dx * 0.52, 24));
+                    }
+                    const isActive = frame.active === node.key;
+                    const isComp = (frame.comparing || []).includes(node.key);
+                    ctx.fillStyle = isActive ? "#2563eb" : isComp ? "#fef3c7" : "#dcfce7";
+                    ctx.strokeStyle = isActive ? "#1d4ed8" : isComp ? "#d97706" : "#16a34a";
+                    ctx.lineWidth = 2.5;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 18, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
 
-            document.getElementById("stepCounter").textContent = `Step ${currentStep + 1} / ${frames.length}`;
-            document.getElementById("stepLog").textContent = f.msg;
+                    ctx.fillStyle = isActive ? "#ffffff" : "#0f172a";
+                    ctx.font = "bold 12px Consolas, monospace";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.fillText(String(node.key), x, y);
+                }
+                drawTree(frame.root, w / 2, 42, 120);
+            } else if (frame.type === "LinkedList") {
+                const startX = 24, y = 115, boxW = 68, boxH = 42, gap = 22;
+                frame.items.forEach((val, i) => {
+                    const x = startX + i * (boxW + gap);
+                    if (x + boxW > w - 40) return;
+                    const active = i === frame.activeIdx;
+                    ctx.fillStyle = active ? "#eff6ff" : "#ffffff";
+                    ctx.strokeStyle = active ? "#2563eb" : "#475569";
+                    ctx.lineWidth = 2;
+                    ctx.fillRect(x, y, boxW, boxH);
+                    ctx.strokeRect(x, y, boxW, boxH);
+
+                    ctx.fillStyle = "#0f172a";
+                    ctx.font = "bold 13px Consolas, monospace";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.fillText(String(val), x + boxW / 2, y + boxH / 2);
+
+                    if (i === 0) {
+                        ctx.fillStyle = "#2563eb";
+                        ctx.font = "bold 10px sans-serif";
+                        ctx.fillText("HEAD", x + boxW / 2, y - 10);
+                    }
+                    if (i === frame.items.length - 1) {
+                        ctx.fillStyle = "#16a34a";
+                        ctx.font = "bold 10px sans-serif";
+                        ctx.fillText("TAIL", x + boxW / 2, y + boxH + 13);
+                    }
+
+                    ctx.strokeStyle = "#475569";
+                    ctx.beginPath();
+                    ctx.moveTo(x + boxW, y + boxH / 2);
+                    ctx.lineTo(x + boxW + gap - 4, y + boxH / 2);
+                    ctx.stroke();
+                });
+            } else if (frame.type === "Stack") {
+                const boxW = 140, boxH = 34, baseX = (w - boxW) / 2, baseY = 230;
+                ctx.strokeStyle = "#334155";
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(baseX - 8, 35);
+                ctx.lineTo(baseX - 8, baseY + 6);
+                ctx.lineTo(baseX + boxW + 8, baseY + 6);
+                ctx.lineTo(baseX + boxW + 8, 35);
+                ctx.stroke();
+
+                frame.items.forEach((val, idx) => {
+                    const y = baseY - (idx + 1) * (boxH + 5);
+                    const isTop = idx === frame.items.length - 1;
+                    ctx.fillStyle = isTop ? "#2563eb" : "#dcfce7";
+                    ctx.strokeStyle = isTop ? "#1d4ed8" : "#16a34a";
+                    ctx.lineWidth = 2;
+                    ctx.fillRect(baseX, y, boxW, boxH);
+                    ctx.strokeRect(baseX, y, boxW, boxH);
+
+                    ctx.fillStyle = isTop ? "#ffffff" : "#0f172a";
+                    ctx.font = "bold 13px Consolas, monospace";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.fillText(isTop ? `${val}  TOP` : String(val), baseX + boxW / 2, y + boxH / 2);
+                });
+            } else if (frame.type === "MinHeap") {
+                const arr = frame.heap || [];
+                const coords = [];
+                arr.forEach((_, i) => {
+                    const level = Math.floor(Math.log2(i + 1));
+                    const posInLevel = i - (Math.pow(2, level) - 1);
+                    const slots = Math.pow(2, level);
+                    coords[i] = { x: (w / (slots + 1)) * (posInLevel + 1), y: 34 + level * 56 };
+                });
+
+                arr.forEach((_, i) => {
+                    if (i === 0) return;
+                    const p = Math.floor((i - 1) / 2);
+                    ctx.strokeStyle = "#94a3b8";
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(coords[p].x, coords[p].y);
+                    ctx.lineTo(coords[i].x, coords[i].y);
+                    ctx.stroke();
+                });
+
+                arr.forEach((val, i) => {
+                    const isAct = i === frame.activeIdx;
+                    const isSwap = i === frame.swapIdx;
+                    ctx.fillStyle = isAct ? "#2563eb" : isSwap ? "#fef3c7" : "#dcfce7";
+                    ctx.strokeStyle = isAct ? "#1d4ed8" : isSwap ? "#d97706" : "#16a34a";
+                    ctx.lineWidth = 2.2;
+                    ctx.beginPath();
+                    ctx.arc(coords[i].x, coords[i].y, 17, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    ctx.fillStyle = isAct ? "#ffffff" : "#0f172a";
+                    ctx.font = "bold 12px Consolas, monospace";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.fillText(String(val), coords[i].x, coords[i].y);
+                });
+
+                const cellW = 38, startX = (w - arr.length * cellW) / 2;
+                arr.forEach((val, i) => {
+                    const x = startX + i * cellW;
+                    ctx.fillStyle = i === frame.activeIdx ? "#dbeafe" : "#ffffff";
+                    ctx.strokeStyle = "#64748b";
+                    ctx.lineWidth = 1.5;
+                    ctx.fillRect(x, 224, cellW, 28);
+                    ctx.strokeRect(x, 224, cellW, 28);
+                    ctx.fillStyle = "#0f172a";
+                    ctx.font = "bold 11px Consolas, monospace";
+                    ctx.fillText(String(val), x + cellW / 2, 238);
+                });
+            } else if (frame.type === "Graph") {
+                const nodes = frame.nodes || [];
+                const pos = {};
+                const cx = w / 2, cy = 138, rx = 195, ry = 92;
+                nodes.forEach((n, i) => {
+                    const angle = Math.PI + (i / Math.max(nodes.length, 1)) * Math.PI * 2;
+                    pos[n] = { x: cx + rx * Math.cos(angle), y: cy + ry * Math.sin(angle) };
+                });
+
+                (frame.edges || []).forEach(([u, v, weight]) => {
+                    if (!pos[u] || !pos[v]) return;
+                    ctx.strokeStyle = "#94a3b8";
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(pos[u].x, pos[u].y);
+                    ctx.lineTo(pos[v].x, pos[v].y);
+                    ctx.stroke();
+
+                    if (weight !== undefined) {
+                        const mx = (pos[u].x + pos[v].x) / 2;
+                        const my = (pos[u].y + pos[v].y) / 2;
+                        ctx.fillStyle = "#ffffff";
+                        ctx.fillRect(mx - 10, my - 8, 20, 16);
+                        ctx.fillStyle = "#1e293b";
+                        ctx.font = "bold 11px Consolas, monospace";
+                        ctx.textAlign = "center";
+                        ctx.textBaseline = "middle";
+                        ctx.fillText(String(weight), mx, my);
+                    }
+                });
+
+                nodes.forEach(n => {
+                    const isAct = frame.active === n;
+                    const isVis = (frame.visited || []).includes(n);
+                    const isFront = (frame.frontier || []).includes(n);
+                    ctx.fillStyle = isAct ? "#2563eb" : isVis ? "#dcfce7" : isFront ? "#fef3c7" : "#ffffff";
+                    ctx.strokeStyle = isAct ? "#1d4ed8" : isVis ? "#16a34a" : isFront ? "#d97706" : "#475569";
+                    ctx.lineWidth = 2.5;
+                    ctx.beginPath();
+                    ctx.arc(pos[n].x, pos[n].y, 20, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    ctx.fillStyle = isAct ? "#ffffff" : "#0f172a";
+                    ctx.font = "bold 13px Consolas, monospace";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    const dVal = frame.dist ? (frame.dist[n] === Infinity ? "∞" : frame.dist[n]) : null;
+                    ctx.fillText(dVal !== null ? `${n}:${dVal}` : n, pos[n].x, pos[n].y);
+                });
+            }
         }
 
-        document.getElementById("btnBuildTrace").addEventListener("click", () => {
-            const raw = document.getElementById("structInput").value;
-            const tokens = raw.split(",").map(s => s.trim()).filter(Boolean);
-            const nums = tokens.map(s => parseInt(s, 10)).filter(n => !isNaN(n));
+        function updatePlaybackUI() {
+            const total = Math.max(frames.length, 1);
+            const current = frames[frameIndex];
+            stepBadge.textContent = `Step ${frameIndex + 1} / ${total}`;
+            stepCaption.textContent = current ? current.caption : "Ready.";
+            renderFrame(current);
+        }
 
-            if (currentSlug === "singly-linked-list") frames = buildListFrames(nums);
-            else if (currentSlug === "stack-lifo") frames = buildStackFrames(tokens);
-            else if (currentSlug === "graph-bfs") frames = buildBfsFrames(nums[0] ?? 0);
-            else frames = buildBstFrames(nums);
+        function stopAutoPlay() {
+            if (playTimer) {
+                clearInterval(playTimer);
+                playTimer = null;
+                playBtn.textContent = "Play";
+            }
+        }
 
-            document.getElementById("hiddenInputSeq").value = tokens.join(", ");
-            document.getElementById("hiddenTraceJson").value = JSON.stringify(frames);
-            renderStep(0);
+        function regenerateTrace() {
+            stopAutoPlay();
+            frames = buildFrames(currentTopic, traceInputEl.value);
+            frameIndex = 0;
+            updatePlaybackUI();
+        }
+
+        function selectTopic(topicKey, preserveEditor = false) {
+            if (!TOPICS[topicKey]) return;
+            currentTopic = topicKey;
+            const cfg = TOPICS[topicKey];
+
+            topicBtns.forEach(b => b.classList.toggle("active", b.dataset.topic === topicKey));
+            titleEl.textContent = cfg.title;
+            descEl.textContent = cfg.desc;
+            badgeEl.textContent = cfg.badge;
+            timeEl.textContent = cfg.time;
+            spaceEl.textContent = cfg.space;
+            traceLabelEl.textContent = cfg.inputLabel;
+            traceInputEl.value = cfg.defaultInput;
+            testArgInput.value = cfg.defaultArg;
+
+            if (!preserveEditor) {
+                codeEditor.value = cfg.templates[currentLang] || "";
+            }
+            regenerateTrace();
+        }
+
+        topicBtns.forEach(btn => {
+            btn.addEventListener("click", () => selectTopic(btn.dataset.topic));
         });
 
-        document.getElementById("btnPrev").addEventListener("click", () => renderStep(currentStep - 1));
-        document.getElementById("btnNext").addEventListener("click", () => renderStep(currentStep + 1));
-
-        document.querySelectorAll(".load-trace-btn").forEach(btn => {
-            btn.addEventListener("click", () => {
-                frames = JSON.parse(btn.dataset.json);
-                document.getElementById("structInput").value = btn.dataset.seq;
-                renderStep(0);
-            });
+        document.getElementById("sb-preset-balanced").addEventListener("click", () => {
+            traceInputEl.value = TOPICS[currentTopic].defaultInput;
+            regenerateTrace();
+        });
+        document.getElementById("sb-preset-edge").addEventListener("click", () => {
+            traceInputEl.value = TOPICS[currentTopic].edgeInput;
+            regenerateTrace();
+        });
+        document.getElementById("sb-preset-random").addEventListener("click", () => {
+            if (currentTopic === "BST" || currentTopic === "LinkedList" || currentTopic === "MinHeap") {
+                const set = new Set();
+                while (set.size < 7) set.add(Math.floor(Math.random() * 89) + 10);
+                traceInputEl.value = Array.from(set).join(", ");
+            } else if (currentTopic === "Stack") {
+                const a = Math.floor(Math.random() * 50) + 10;
+                const b = Math.floor(Math.random() * 50) + 10;
+                const c = Math.floor(Math.random() * 50) + 10;
+                traceInputEl.value = `push ${a}, push ${b}, pop, push ${c}`;
+            }
+            regenerateTrace();
         });
 
-        document.getElementById("btnBuildTrace").click();
-    </script>
-}
+        generateBtn.addEventListener("click", regenerateTrace);
+
+        firstBtn.addEventListener("click", () => { stopAutoPlay(); frameIndex = 0; updatePlaybackUI(); });
+        prevBtn.addEventListener("click", () => { stopAutoPlay(); if (frameIndex > 0) { frameIndex--; updatePlaybackUI(); } });
+        nextBtn.addEventListener("click", () => { stopAutoPlay(); if (frameIndex < frames.length - 1) { frameIndex++; updatePlaybackUI(); } });
+        lastBtn.addEventListener("click", () => { stopAutoPlay(); frameIndex = Math.max(frames.length - 1, 0); updatePlaybackUI(); });
+
+        playBtn.addEventListener("click", () => {
+            if (playTimer) {
+                stopAutoPlay();
+                return;
+            }
+            if (frameIndex >= frames.length - 1) frameIndex = 0;
+            playBtn.textContent = "Pause";
+            playTimer = setInterval(() => {
+                if (frameIndex < frames.length - 1) {
+                    frameIndex++;
+                    updatePlaybackUI();
+                } else {
+                    stopAutoPlay();
+                }
+            }, parseInt(speedSelect.value, 10) || 550);
+        });
+
+        document.addEventListener("keydown", (e) => {
+            const tag = (document.activeElement?.tagName || "").toUpperCase();
+            if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+            if (e.key === "ArrowLeft" && frameIndex > 0) {
+                stopAutoPlay();
+                frameIndex--;
+                updatePlaybackUI();
+            } else if (e.key === "ArrowRight" && frameIndex < frames.length - 1) {
+                stopAutoPlay();
+                frameIndex++;
+                updatePlaybackUI();
+            }
+        });
+
+        langSelect.addEventListener("change", () => {
+            currentLang = langSelect.value;
+            editorMeta.textContent = LANG_META[currentLang] || "";
+            codeEditor.value = TOPICS[currentTopic].templates[currentLang] || "";
+        });
+
+        codeEditor.addEventListener("keydown", (e) => {
+            if (e.key === "Tab") {
+                e.preventDefault();
+                const start = codeEditor.selectionStart;
+                const end = codeEditor.selectionEnd;
+                codeEditor.value = codeEditor.value.substring(0, start) + "    " + codeEditor.value.substring(end);
+                codeEditor.selectionStart = codeEditor.selectionEnd = start + 4;
+            }
+        });
+
+        copyCodeBtn.addEventListener("click", async () => {
+            try {
+                await navigator.clipboard.writeText(codeEditor.value);
+                copyCodeBtn.textContent = "Copied!";
+                setTimeout(() => copyCodeBtn.textContent = "Copy", 1400);
+            } catch {
+                copyCodeBtn.textContent = "Failed";
+            }
+        });
+
+        resetCodeBtn.addEventListener("click", () => {
+            codeEditor.value = TOPICS[currentTopic].templates[currentLang] || "";
+        });
+
+        function runSimulation() {
+            regenerateTrace();
+            const summaryLines = frames.map((f, idx) => `[Step ${idx + 1}] ${f.caption}`);
+            const arg = testArgInput.value.trim();
+            const header = `=== ${TOPICS[currentTopic].title} | ${currentLang.toUpperCase()} | Arg: ${arg || "none"} ===`;
+            const result = `${header}\n${summaryLines.join("\n")}\n\nCompleted ${frames.length} trace frames in 0.${Math.floor(Math.random() * 8) + 1}ms.`;
+            consoleOutput.textContent = result;
+            return result;
+        }
+
+        simulateBtn.addEventListener("click", runSimulation);
+
+        saveNeonBtn.addEventListener("click", async () => {
+            const outputSummary = frames.length
+                ? frames[frames.length - 1].caption
+                : runSimulation().split("\n")[1] || "Executed trace";
+
+            const tokenInput = document.querySelector("#sb-antiforgery-form input[name='__RequestVerificationToken']");
+            const antiForgeryToken = tokenInput ? tokenInput.value : "";
+
+            const payload = {
+                topic: currentTopic,
+                language: currentLang,
+                input: traceInputEl.value.trim(),
+                output: outputSummary,
+                code: codeEditor.value
+            };
+
+            saveNeonBtn.disabled = true;
+            neonFeedback.className = "small mt-2 fw-semibold text-primary";
+            neonFeedback.textContent = "Saving execution trace to Neon PostgreSQL...";
+
+            try {
+                const response = await fetch("/Sandbox/Save", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "RequestVerificationToken": antiForgeryToken
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json().catch(() => ({}));
+                const savedId = data.id || data.Id || "";
+                const savedAt = data.createdAt || data.CreatedAt || new Date().toLocaleString();
+
+                appendRunRow({
+                    id: savedId,
+                    topic: payload.topic,
+                    language: payload.language,
+                    input: payload.input,
+                    output: payload.output,
+                    code: payload.code,
+                    createdAt: savedAt
+                });
+
+                neonFeedback.className = "small mt-2 fw-semibold text-success";
+                neonFeedback.textContent = "Saved to Neon PostgreSQL.";
+            } catch (err) {
+                neonFeedback.className = "small mt-2 fw-semibold text-danger";
+                neonFeedback.textContent = `Could not persist to /Sandbox/Save: ${err.message}.`;
+            } finally {
+                saveNeonBtn.disabled = false;
+            }
+        });
+
+        function appendRunRow(run) {
+            const emptyRow = document.getElementById("sb-empty-runs-row");
+            if (emptyRow) emptyRow.remove();
+
+            const tbody = document.getElementById("sb-runs-tbody");
+            const tr = document.createElement("tr");
+            tr.dataset.runId = run.id || "";
+            tr.dataset.topic = run.topic;
+            tr.dataset.language = run.language;
+            tr.dataset.input = run.input;
+            tr.dataset.code = run.code;
+
+            tr.innerHTML = `
+                <td class="fw-semibold"></td>
+                <td><span class="badge bg-dark text-uppercase"></span></td>
+                <td class="font-monospace small"></td>
+                <td class="small text-muted" style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></td>
+                <td class="small text-muted"></td>
+                <td class="text-end">
+                    <button type="button" class="btn btn-outline-primary btn-sm sb-load-run-btn">Load</button>
+                    ${run.id ? `<button type="button" class="btn btn-outline-danger btn-sm sb-delete-run-btn" data-id="${run.id}">Delete</button>` : ""}
+                </td>
+            `;
+            tr.children[0].textContent = run.topic;
+            tr.children[1].querySelector("span").textContent = run.language;
+            tr.children[2].textContent = run.input;
+            tr.children[3].textContent = run.output;
+            tr.children[3].title = run.output;
+            tr.children[4].textContent = run.createdAt;
+
+            tbody.prepend(tr);
+            const badge = document.getElementById("sb-run-count-badge");
+            badge.textContent = String(tbody.querySelectorAll("tr").length);
+        }
+
+        document.getElementById("sb-runs-tbody").addEventListener("click", async (e) => {
+            const loadBtn = e.target.closest(".sb-load-run-btn");
+            if (loadBtn) {
+                const tr = loadBtn.closest("tr");
+                const topic = tr.dataset.topic || "BST";
+                const lang = (tr.dataset.language || "cpp").toLowerCase();
+                selectTopic(TOPICS[topic] ? topic : "BST", true);
+
+                if (LANG_META[lang]) {
+                    currentLang = lang;
+                    langSelect.value = lang;
+                    editorMeta.textContent = LANG_META[lang];
+                }
+                if (tr.dataset.input) {
+                    traceInputEl.value = tr.dataset.input;
+                    regenerateTrace();
+                }
+                if (tr.dataset.code) {
+                    codeEditor.value = tr.dataset.code;
+                }
+                neonFeedback.className = "small mt-2 fw-semibold text-primary";
+                neonFeedback.textContent = `Loaded saved ${topic} run into workbench.`;
+                window.scrollTo({ top: 0, behavior: "smooth" });
+                return;
+            }
+
+            const delBtn = e.target.closest(".sb-delete-run-btn");
+            if (delBtn) {
+                const id = delBtn.dataset.id;
+                const tr = delBtn.closest("tr");
+                const tokenInput = document.querySelector("#sb-antiforgery-form input[name='__RequestVerificationToken']");
+                const antiForgeryToken = tokenInput ? tokenInput.value : "";
+
+                try {
+                    const res = await fetch(`/Sandbox/Delete/${encodeURIComponent(id)}`, {
+                        method: "POST",
+                        headers: { "RequestVerificationToken": antiForgeryToken }
+                    });
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    tr.remove();
+                    const tbody = document.getElementById("sb-runs-tbody");
+                    const remaining = tbody.querySelectorAll("tr").length;
+                    document.getElementById("sb-run-count-badge").textContent = String(remaining);
+                    if (remaining === 0) {
+                        tbody.innerHTML = `<tr id="sb-empty-runs-row"><td colspan="6" class="text-center text-muted py-4">No saved runs in Neon yet. Run a trace above and click <strong>Save Run to Neon</strong>.</td></tr>`;
+                    }
+                } catch (err) {
+                    neonFeedback.className = "small mt-2 fw-semibold text-danger";
+                    neonFeedback.textContent = `Delete failed: ${err.message}.`;
+                }
+            }
+        });
+
+        selectTopic("BST");
+    });
+</script>

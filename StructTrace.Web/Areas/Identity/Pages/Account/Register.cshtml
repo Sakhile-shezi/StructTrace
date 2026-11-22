@@ -1,0 +1,207 @@
+﻿@page
+@model StructTrace.Web.Areas.Identity.Pages.Account.RegisterModel
+
+@{
+    ViewData["Title"] = "Create Account";
+}
+
+<style>
+    .auth-shell {
+        min-height: calc(100vh - 150px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem 0;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 940px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+    }
+
+    .auth-brand-panel {
+        background: linear-gradient(160deg, #0f172a 0%, #1e293b 100%);
+        color: #f8fafc;
+        padding: 2.5rem 2.25rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+    }
+
+    .auth-pill {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #38bdf8;
+        background: rgba(56, 189, 248, 0.12);
+        border: 1px solid rgba(56, 189, 248, 0.28);
+        padding: 0.3rem 0.75rem;
+        border-radius: 999px;
+        margin-bottom: 1.25rem;
+    }
+
+    .auth-feature-list {
+        list-style: none;
+        padding: 0;
+        margin: 1.5rem 0 0 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+        font-size: 0.9rem;
+        color: #cbd5e1;
+    }
+
+        .auth-feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+        }
+
+    .auth-check {
+        color: #38bdf8;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .auth-form-panel {
+        padding: 2.5rem 2.25rem;
+    }
+
+    .auth-input {
+        border-radius: 9px;
+        border: 1px solid #cbd5e1;
+        padding: 0.65rem 0.9rem;
+        font-size: 0.95rem;
+    }
+
+        .auth-input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
+        }
+
+    .auth-submit-btn {
+        background: #2563eb;
+        border: none;
+        border-radius: 9px;
+        padding: 0.72rem 1rem;
+        font-weight: 600;
+        font-size: 0.98rem;
+    }
+
+        .auth-submit-btn:hover {
+            background: #1d4ed8;
+        }
+
+    .auth-links a {
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+</style>
+
+<div class="auth-shell">
+    <div class="auth-card">
+        <div class="row g-0">
+            <div class="col-lg-5">
+                <div class="auth-brand-panel">
+                    <div>
+                        <span class="auth-pill">StructTrace.Web</span>
+                        <h2 class="h4 fw-bold text-white mb-2">Build Intuition for Algorithms</h2>
+                        <p class="small mb-0" style="color: #94a3b8;">
+                            Create an account to save Code Sandbox execution runs and explore interactive data structures.
+                        </p>
+
+                        <ul class="auth-feature-list">
+                            <li>
+                                <span class="auth-check">✓</span>
+                                <span>Visual state transitions for Trees, Lists, Stacks, Heaps, and Graphs</span>
+                            </li>
+                            <li>
+                                <span class="auth-check">✓</span>
+                                <span>Code templates and complexity breakdowns across 4 languages</span>
+                            </li>
+                            <li>
+                                <span class="auth-check">✓</span>
+                                <span>Persist and reload test inputs and execution summaries</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="pt-4 mt-4 border-top border-secondary border-opacity-25 small" style="color: #94a3b8;">
+                        Instant access upon registration.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="auth-form-panel">
+                    <h1 class="h3 fw-bold text-dark mb-1">Create your account</h1>
+                    <p class="text-muted small mb-4">Fill in your details below to get started.</p>
+
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Email" class="form-label fw-semibold small text-secondary">Email address</label>
+                            <input asp-for="Input.Email" class="form-control auth-input" autocomplete="username" aria-required="true" placeholder="you@example.com" />
+                            <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Password" class="form-label fw-semibold small text-secondary">Password</label>
+                            <div class="input-group">
+                                <input asp-for="Input.Password" id="reg-password-input" class="form-control auth-input" autocomplete="new-password" aria-required="true" placeholder="Create a password" />
+                                <button type="button" class="btn btn-outline-secondary px-3" id="toggle-reg-pwd">Show</button>
+                            </div>
+                            <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Input.ConfirmPassword" class="form-label fw-semibold small text-secondary">Confirm password</label>
+                            <input asp-for="Input.ConfirmPassword" id="reg-confirm-input" class="form-control auth-input" autocomplete="new-password" aria-required="true" placeholder="Re-enter your password" />
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                        </div>
+
+                        <button id="registerSubmit" type="submit" class="btn btn-primary w-100 auth-submit-btn mb-3">
+                            Create Account
+                        </button>
+
+                        <div class="auth-links text-center small pt-2 border-top">
+                            <p class="mb-0 text-muted">
+                                Already have an account?
+                                <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">Sign in</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById("toggle-reg-pwd")?.addEventListener("click", function () {
+            const pwd = document.getElementById("reg-password-input");
+            const confirm = document.getElementById("reg-confirm-input");
+            if (!pwd) return;
+            const isHidden = pwd.type === "password";
+            pwd.type = isHidden ? "text" : "password";
+            if (confirm) confirm.type = isHidden ? "text" : "password";
+            this.textContent = isHidden ? "Hide" : "Show";
+        });
+    </script>
+}

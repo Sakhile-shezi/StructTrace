@@ -1,0 +1,230 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Module 9: Dijkstra & Classic Algorithms | Java DSA</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav-container" aria-label="Module Navigation">
+            <a href="../index.html" class="brand">DSA<span>Visual</span></a>
+            <ul class="nav-links">
+                <li><a href="../module-01-foundations/index.html">1. Big-O</a></li>
+                <li><a href="../module-02-linked-lists/index.html">2. Linked Lists</a></li>
+                <li><a href="../module-03-stacks-queues/index.html">3. Stacks & Queues</a></li>
+                <li><a href="../module-04-heaps/index.html">4. Heaps</a></li>
+                <li><a href="../module-05-bst/index.html">5. BST</a></li>
+                <li><a href="../module-06-balanced-trees/index.html">6. Balanced Trees</a></li>
+                <li><a href="../module-07-hashing/index.html">7. Hashing</a></li>
+                <li><a href="../module-08-graphs/index.html">8. Graphs</a></li>
+                <li><a href="index.html" class="active">9. Algorithms</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="module-hero">
+            <p class="module-tag">Module 09 • Shortest Paths & Algorithmic Paradigms</p>
+            <h1>Dijkstra's Shortest Path & Classic Sorting</h1>
+            <p class="subtitle">
+                Compute minimum-cost paths in weighted graphs using a <strong>Min-PriorityQueue</strong>
+                in <code>O(E log V)</code> time, and benchmark <code>O(n²)</code> vs. <code>O(n log n)</code> sorting algorithms.
+            </p>
+        </section>
+
+        <section class="card">
+            <h2>1. Interactive Dijkstra & Sorting Workbench</h2>
+            <p>
+                In <strong>Dijkstra Mode</strong>, watch how edge relaxation discovers that <code>A → C → B → D → E → F</code>
+                costs <strong>13</strong> (beating the 3-hop path <code>A → B → D → F</code> of cost <strong>15</strong>).
+                Switch to <strong>Sorting Mode</strong> to compare Insertion, Merge, and Quick Sort.
+            </p>
+
+            <div class="visualizer-controls">
+                <div class="mode-switcher" role="group" aria-label="Select Algorithm Mode">
+                    <button type="button" class="mode-btn active" data-mode="dijkstra">Dijkstra Shortest Path</button>
+                    <button type="button" class="mode-btn" data-mode="sort">Sorting Algorithms</button>
+                </div>
+
+                <div id="controls-dijkstra" class="op-group">
+                    <label for="m9-start-select" style="align-self: center; font-weight: 600;">Source:</label>
+                    <select id="m9-start-select" class="select-control">
+                        <option value="A" selected>A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                        <option value="E">E</option>
+                        <option value="F">F</option>
+                    </select>
+                    <button type="button" id="m9-dijkstra-btn" class="btn primary">Run Dijkstra (O(E log V))</button>
+                    <button type="button" id="m9-graph-reset-btn" class="btn secondary">Reset</button>
+                </div>
+
+                <div id="controls-sort" class="op-group" hidden>
+                    <button type="button" id="m9-insertion-btn" class="btn primary">Insertion Sort</button>
+                    <button type="button" id="m9-merge-btn" class="btn primary">Merge Sort</button>
+                    <button type="button" id="m9-quick-btn" class="btn primary">Quick Sort</button>
+                    <button type="button" id="m9-shuffle-btn" class="btn secondary">Shuffle</button>
+                </div>
+            </div>
+
+            <div class="canvas-wrapper">
+                <canvas id="m9-canvas" width="760" height="310" aria-label="Dijkstra and Sorting Visualizer Canvas"></canvas>
+            </div>
+
+            <p id="m9-status-msg" class="status-banner" aria-live="polite" style="margin-top: 1rem;">
+                Weighted graph loaded (<code>|V| = 6, |E| = 9</code>). Click <strong>Run Dijkstra</strong> to relax edges.
+            </p>
+
+            <div class="readout-grid" aria-live="polite">
+                <div class="readout-item">
+                    <span>Active Algorithm</span>
+                    <strong id="m9-algo-readout">Ready</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #2563eb;">
+                    <span>Time Complexity</span>
+                    <strong id="m9-time-readout">O(E log V)</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #7c3aed;">
+                    <span>Auxiliary Structure</span>
+                    <strong id="m9-ds-readout">Min-PriorityQueue</strong>
+                </div>
+                <div class="readout-item" style="border-left-color: #d97706;">
+                    <span>Operations</span>
+                    <strong id="m9-ops-readout">0 relaxations</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>2. Shortest Path & Sorting Complexity Cheat Sheet</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Algorithm</th>
+                            <th>Best</th>
+                            <th>Average</th>
+                            <th>Worst</th>
+                            <th>Space</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Dijkstra (Min-Heap)</strong></td>
+                            <td><code>O(E log V)</code></td>
+                            <td><code>O(E log V)</code></td>
+                            <td><code>O(E log V)</code></td>
+                            <td><code>O(V)</code></td>
+                            <td>Requires non-negative weights (<code>w ≥ 0</code>)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Insertion Sort</strong></td>
+                            <td><code>O(n)</code></td>
+                            <td><code>O(n²)</code></td>
+                            <td><code>O(n²)</code></td>
+                            <td><code>O(1)</code></td>
+                            <td>Stable; fast on nearly sorted inputs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Merge Sort</strong></td>
+                            <td><code>O(n log n)</code></td>
+                            <td><code>O(n log n)</code></td>
+                            <td><code>O(n log n)</code></td>
+                            <td><code>O(n)</code></td>
+                            <td>Stable; guaranteed worst-case bound</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Quick Sort</strong></td>
+                            <td><code>O(n log n)</code></td>
+                            <td><code>O(n log n)</code></td>
+                            <td><code>O(n²)</code></td>
+                            <td><code>O(log n)</code></td>
+                            <td>In-place; Dual-Pivot used for Java primitives</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>3. Java Implementation: Dijkstra & MergeSort</h2>
+            <div class="code-header">
+                <div class="tab-buttons" role="tablist">
+                    <button type="button" class="tab-btn active" data-tab="dijkstra" role="tab" aria-selected="true">Dijkstra Shortest Path</button>
+                    <button type="button" class="tab-btn" data-tab="mergesort" role="tab" aria-selected="false">MergeSort<T></button>
+                </div>
+                <button type="button" id="copy-code-btn" class="btn small">Copy Code</button>
+            </div>
+
+            <div id="code-dijkstra" class="code-panel active">
+<pre><code>import java.util.*;
+
+public class DijkstraSolver<V> {
+    public record Edge<V>(V target, int weight) {}
+    private record State<V>(V vertex, int dist) implements Comparable<State<V>> {
+        public int compareTo(State<V> other) {
+            return Integer.compare(this.dist, other.dist);
+        }
+    }
+
+    public Map<V, Integer> shortestPaths(Map<V, List<Edge<V>>> adj, V source) {
+        Map<V, Integer> dist = new HashMap<>();
+        for (V v : adj.keySet()) dist.put(v, Integer.MAX_VALUE);
+        dist.put(source, 0);
+
+        PriorityQueue<State<V>> pq = new PriorityQueue<>();
+        pq.offer(new State<>(source, 0));
+
+        while (!pq.isEmpty()) {
+            State<V> curr = pq.poll();
+            if (curr.dist() > dist.get(curr.vertex())) continue;
+
+            for (Edge<V> e : adj.getOrDefault(curr.vertex(), List.of())) {
+                int candidate = curr.dist() + e.weight();
+                if (candidate < dist.get(e.target())) {
+                    dist.put(e.target(), candidate);
+                    pq.offer(new State<>(e.target(), candidate));
+                }
+            }
+        }
+        return dist;
+    }
+}</code></pre>
+            </div>
+
+            <div id="code-mergesort" class="code-panel" hidden>
+<pre><code>import java.util.Arrays;
+
+public class MergeSort {
+    public static void sort(int[] arr) {
+        if (arr.length < 2) return;
+        int mid = arr.length / 2;
+        int[] left = Arrays.copyOfRange(arr, 0, mid);
+        int[] right = Arrays.copyOfRange(arr, mid, arr.length);
+
+        sort(left);
+        sort(right);
+        merge(arr, left, right);
+    }
+
+    private static void merge(int[] dest, int[] left, int[] right) {
+        int i = 0, j = 0, k = 0;
+        while (i < left.length && j < right.length) {
+            dest[k++] = (left[i] <= right[j]) ? left[i++] : right[j++];
+        }
+        while (i < left.length) dest[k++] = left[i++];
+        while (j < right.length) dest[k++] = right[j++];
+    }
+}</code></pre>
+            </div>
+        </section>
+    </main>
+
+    <script src="../js/shared-nav.js"></script>
+    <script src="module9.js"></script>
+</body>
+</html>

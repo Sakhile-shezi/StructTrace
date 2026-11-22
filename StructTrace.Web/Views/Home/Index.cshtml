@@ -1,8 +1,52 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="py-4">
+    <div class="p-4 p-md-5 mb-4 rounded-3 text-white" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
+        <div class="col-lg-9 px-0">
+            <span class="badge bg-info text-dark mb-2">Interactive DSA & Multi-Language Execution Platform</span>
+            <h1 class="display-5 fw-bold">Master Data Structures & Algorithms Visually</h1>
+            <p class="lead my-3 text-light opacity-75">
+                Step through pointer mutations, tree rotations, hash collisions, and shortest-path relaxations,
+                then test your implementations in C++, Java, Python, and C# backed by Neon PostgreSQL.
+            </p>
+            <div class="d-flex flex-wrap gap-2 mt-4">
+                <a href="~/dsa-visualizer/index.html" class="btn btn-primary btn-lg fw-semibold">
+                    Explore 9-Module Curriculum →
+                </a>
+                <a href="/Sandbox" class="btn btn-outline-light btn-lg">
+                    Open Multi-Language Sandbox
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm border-0 bg-light">
+                <div class="card-body p-4">
+                    <h2 class="h4 fw-bold">9-Module Java & Pseudocode Curriculum</h2>
+                    <p class="text-muted">
+                        Interactive visualizers, complexity cheat sheets, precondition/postcondition pseudocode,
+                        and edge-case checklists covering Big-O, Singly/Doubly/Circular Linked Lists, Stacks & Queues,
+                        Heaps, BSTs, AVL Trees, Hashing, Graphs, and Dijkstra's Algorithm.
+                    </p>
+                    <a href="~/dsa-visualizer/index.html" class="btn btn-sm btn-primary">Launch DSAVisual →</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm border-0 bg-light">
+                <div class="card-body p-4">
+                    <h2 class="h4 fw-bold">Multi-Language Sandbox & Neon Trace Log</h2>
+                    <p class="text-muted">
+                        Generate step-by-step execution traces for BST, Linked Lists, Stacks, and BFS, write
+                        solutions in C++, Java, Python, or C#, and persist your runs to Neon PostgreSQL.
+                    </p>
+                    <a href="/Sandbox" class="btn btn-sm btn-dark">Go to Code Sandbox →</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
