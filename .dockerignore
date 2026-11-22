@@ -1,0 +1,34 @@
+﻿# ==========================================
+# STRUCTTRACE - DOCKER IGNORE
+# ==========================================
+
+# Git
+.git/
+.github/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Build artifacts
+**/bin/
+**/obj/
+**/TestResults/
+
+# Development configuration
+**/appsettings.Development.json
+**/appsettings.Production.json
+**/secrets.json
+
+# Deployment credentials
+**/Properties/PublishProfiles/*.pubxml
+
+# Environment variables
+.env
+.env.*
+
+# Temporary files
+*.log
+*.tmp
+.DS_Store
