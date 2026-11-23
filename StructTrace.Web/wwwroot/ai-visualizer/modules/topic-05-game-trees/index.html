@@ -1,0 +1,2468 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <!-- sign-in guard: must load first -->
+    <script src="/js/visualizer-guard.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Module 05 | Game Trees - Minimax and Alpha-Beta - AIVisual</title>
+    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=6" />
+    <link rel="stylesheet" href="../../css/topic-base.css?v=6" />
+    <link rel="stylesheet" href="../../css/topic-pages.css?v=6" />
+
+    <script src="../../js/ai-core.js?v=6" defer></script>
+    <script src="../../js/ai-visualizer.js?v=6" defer></script>
+    <script src="./topic05.js?v=6" defer></script>
+
+</head>
+
+<body class="aiv-topic topic05-page">
+
+    <header class="ai-header">
+        <nav class="ai-nav">
+            <a href="../../index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <button class="mobile-menu-btn" id="mobile-menu-btn" type="button"
+                    aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">☰</button>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="../../index.html?v=6">Course Home</a></li>
+                <li><a href="../topic-04-heuristic-search/index.html?v=6">← 04. Heuristic Search</a></li>
+                <li><a href="#game-model" class="active" aria-current="page">05. Game Trees</a></li>
+                <li><a href="../topic-06-genetic-algorithms/index.html?v=6">06. Genetic Algorithms →</a></li>
+                <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
+                <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+    <main class="topic-container">
+
+        <!-- =====================================================
+             MODULE HERO
+             ===================================================== -->
+
+        <section class="topic-hero">
+
+            <div class="topic-breadcrumb">
+                <a href="../../index.html?v=6">AIVisual</a>
+                <span>/</span>
+                <span>COMP304</span>
+                <span>/</span>
+                <span>Module 05</span>
+            </div>
+
+            <div class="topic-hero-content">
+
+                <div>
+
+                    <div class="topic-badges">
+                        <span class="topic-label">MODULE 05</span>
+                        <span class="topic-exam-badge">ADVERSARIAL SEARCH</span>
+                    </div>
+
+                    <h1>
+                        Game Trees
+                        <span>Minimax · Alpha-Beta Pruning</span>
+                    </h1>
+
+                    <p>
+                        Understand how an AI makes decisions when
+                        competing against an opponent. Calculate
+                        minimax values from terminal states,
+                        trace MAX and MIN decisions, apply
+                        alpha-beta pruning, and implement the
+                        algorithms in Python.
+                    </p>
+
+                    <div class="topic-meta">
+                        <span>Game trees</span>
+                        <span>MAX and MIN</span>
+                        <span>Minimax values</span>
+                        <span>Alpha-beta pruning</span>
+                        <span>Python</span>
+                    </div>
+
+                </div>
+
+                <div class="topic-hero-symbol">
+                    <div class="topic-symbol-circle">α β</div>
+                    <span>MINIMAX + PRUNING</span>
+                </div>
+
+            </div>
+
+            <div class="topic-hero-footer">
+                <span>ASSUME BOTH PLAYERS MAKE THEIR BEST DECISIONS</span>
+                <span>COMP304 · ADVERSARIAL SEARCH</span>
+            </div>
+
+        </section>
+
+
+        <div class="topic-layout">
+
+            <!-- =================================================
+                 SIDEBAR
+                 ================================================= -->
+
+            <aside class="topic-sidebar">
+
+                <div class="sidebar-heading">
+                    <span>MODULE CONTENT</span>
+                    <span class="sidebar-module-number">05</span>
+                </div>
+
+                <nav class="topic-navigation">
+
+                    <a href="#game-model" class="topic-nav-link active">
+                        <span>01</span> Game model
+                    </a>
+
+                    <a href="#game-tree" class="topic-nav-link">
+                        <span>02</span> Game trees
+                    </a>
+
+                    <a href="#minimax" class="topic-nav-link">
+                        <span>03</span> Minimax algorithm
+                    </a>
+
+                    <a href="#minimax-trace" class="topic-nav-link">
+                        <span>04</span> Worked minimax trace
+                    </a>
+
+                    <a href="#interactive-tree" class="topic-nav-link">
+                        <span>05</span> Interactive visualizer
+                    </a>
+
+                    <a href="#alpha-beta" class="topic-nav-link">
+                        <span>06</span> Alpha-beta pruning
+                    </a>
+
+                    <a href="#python" class="topic-nav-link">
+                        <span>07</span> Python implementation
+                    </a>
+
+                    <a href="#complexity" class="topic-nav-link">
+                        <span>08</span> Complexity
+                    </a>
+
+                    <a href="#extensions" class="topic-nav-link">
+                        <span>09</span> Further lecture topics
+                    </a>
+
+                    <a href="#practice" class="topic-nav-link">
+                        <span>10</span> Exam practice
+                    </a>
+
+                    <a href="#checklist" class="topic-nav-link">
+                        <span>11</span> Verification checklist
+                    </a>
+
+                </nav>
+
+                <div class="sidebar-progress">
+                    <span>MODULE PROGRESS</span>
+
+                    <div class="sidebar-progress-track">
+                        <div id="lesson-progress-bar"></div>
+                    </div>
+
+                    <p id="lesson-progress-text">0% viewed</p>
+                </div>
+
+                <a href="../../index.html?v=6" class="back-course-link">
+                    ← Back to AIVisual
+                </a>
+
+            </aside>
+
+
+            <!-- =================================================
+                 MAIN LESSON CONTENT
+                 ================================================= -->
+
+            <article class="topic-content">
+
+
+                <!-- =================================================
+                     01. GAME MODEL
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="game-model"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">01</span>
+
+                        <div>
+                            <p class="section-kicker">ADVERSARIAL SEARCH</p>
+                            <h2>What are Game-Playing Problems?</h2>
+                        </div>
+
+                    </div>
+
+                    <p class="lead-text">
+                        In a normal search problem, an agent searches
+                        for a sequence of actions that reaches a goal.
+                        In adversarial search, another player is
+                        actively trying to prevent the agent from
+                        achieving its objective.
+                    </p>
+
+                    <h3>1.1 Characteristics of the games studied</h3>
+
+                    <p>
+                        The Chapter 5 lecture focuses on:
+                    </p>
+
+                    <ul>
+                        <li>Two-player games.</li>
+                        <li>Zero-sum games.</li>
+                        <li>Deterministic game mechanics.</li>
+                        <li>Perfect information, meaning the environment is fully observable.</li>
+                    </ul>
+
+                    <h3>1.2 The two players</h3>
+
+                    <div class="player-cards">
+
+                        <div class="player-card max-player">
+                            <div class="player-symbol">MAX</div>
+                            <h4>Maximizer</h4>
+                            <p>
+                                Tries to obtain the highest possible
+                                utility or score.
+                            </p>
+                            <span>Chooses the maximum value.</span>
+                        </div>
+
+                        <div class="player-card min-player">
+                            <div class="player-symbol">MIN</div>
+                            <h4>Minimizer</h4>
+                            <p>
+                                Tries to obtain the lowest possible
+                                utility for Max.
+                            </p>
+                            <span>Chooses the minimum value.</span>
+                        </div>
+
+                    </div>
+
+                    <div class="definition-card">
+
+                        <div class="definition-icon">0</div>
+
+                        <div>
+                            <span class="definition-label">
+                                ZERO-SUM GAME
+                            </span>
+
+                            <p>
+                                The players' interests are directly
+                                opposed. Min tries to minimize
+                                Max's utility while Max tries
+                                to maximize it.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <h3>1.3 Tic-tac-toe example</h3>
+
+                    <p>
+                        Consider a game where X is Max and O
+                        is Min. The utility is defined only
+                        for terminal states.
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Terminal outcome</th>
+                                    <th>Utility for Max</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>X wins</td>
+                                    <td class="positive-value">+1</td>
+                                </tr>
+
+                                <tr>
+                                    <td>O wins</td>
+                                    <td class="negative-value">−1</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Draw</td>
+                                    <td>0</td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <div class="important-note">
+                        <span>REMEMBER</span>
+                        <p>
+                            All utility values are expressed from
+                            Max's perspective. A negative value
+                            is bad for Max and good for Min.
+                        </p>
+                    </div>
+
+                    <h3>1.4 Formal definition of a game</h3>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Component</th>
+                                    <th>Meaning</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>s₀</td>
+                                    <td>Initial state: board, position or hand.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Actions(s)</td>
+                                    <td>Legal moves available in state s.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Result(s, a)</td>
+                                    <td>Transition model: state after action a.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Terminal(s)</td>
+                                    <td>Test that identifies terminal states.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Utility(s)</td>
+                                    <td>Utility for player Max at a terminal state.</td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     02. GAME TREES
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="game-tree"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">02</span>
+
+                        <div>
+                            <p class="section-kicker">STATE-SPACE REPRESENTATION</p>
+                            <h2>Understanding Game Trees</h2>
+                        </div>
+
+                    </div>
+
+                    <p class="lead-text">
+                        A game tree represents the possible sequences
+                        of moves from the current state until the
+                        game reaches a terminal state.
+                    </p>
+
+                    <h3>2.1 How a game tree is organized</h3>
+
+                    <ul>
+                        <li>Each node represents a state or game position.</li>
+                        <li>Each edge represents an action leading to another state.</li>
+                        <li>MAX and MIN levels alternate.</li>
+                        <li>Terminal nodes contain known utility values.</li>
+                    </ul>
+
+                    <div class="game-level-example">
+
+                        <div class="game-level max-level">
+                            <span>LEVEL 0</span>
+                            <strong>MAX</strong>
+                            <p>Chooses the largest child value.</p>
+                        </div>
+
+                        <div class="level-arrow">↓</div>
+
+                        <div class="game-level min-level">
+                            <span>LEVEL 1</span>
+                            <strong>MIN</strong>
+                            <p>Chooses the smallest child value.</p>
+                        </div>
+
+                        <div class="level-arrow">↓</div>
+
+                        <div class="game-level max-level">
+                            <span>LEVEL 2</span>
+                            <strong>MAX</strong>
+                            <p>Chooses the largest child value.</p>
+                        </div>
+
+                        <div class="level-arrow">↓</div>
+
+                        <div class="game-level terminal-level">
+                            <span>TERMINAL LEVEL</span>
+                            <strong>UTILITY</strong>
+                            <p>Contains the final scores.</p>
+                        </div>
+
+                    </div>
+
+                    <h3>2.2 Game tree versus state space</h3>
+
+                    <p>
+                        The lecture uses tic-tac-toe to explain
+                        that the same board state can be reached
+                        through different sequences of moves.
+                        Therefore, a game tree may contain
+                        repeated states along different paths.
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>State space</th>
+                                    <th>Game tree</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>Represents reachable states.</td>
+                                    <td>Represents possible sequences of moves.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>A state can be represented once in a graph.</td>
+                                    <td>The same state can occur in multiple branches.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Connected by state transitions.</td>
+                                    <td>Organized according to possible plays.</td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <h3>2.3 Why game trees become large</h3>
+
+                    <p>
+                        Every possible move can create further
+                        possible moves. As depth increases,
+                        the tree can become extremely large.
+                        This is why the lecture introduces
+                        pruning techniques.
+                    </p>
+
+                </section>
+
+
+                <!-- =================================================
+                     03. MINIMAX
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="minimax"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">03</span>
+
+                        <div>
+                            <p class="section-kicker">EXACT GAME-TREE SEARCH</p>
+                            <h2>The Minimax Algorithm</h2>
+                        </div>
+
+                    </div>
+
+                    <p class="lead-text">
+                        Minimax assigns a value to each state.
+                        The value represents the result that
+                        will be achieved if both players play
+                        optimally from that state until the
+                        end of the game.
+                    </p>
+
+                    <h3>3.1 The decision rule</h3>
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">
+                            MAX NODE
+                        </span>
+
+                        <div class="formula-equation">
+                            MV(s) = max { MV(child) }
+                        </div>
+
+                        <p>
+                            MAX selects the largest value among
+                            its child states.
+                        </p>
+
+                    </div>
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">
+                            MIN NODE
+                        </span>
+
+                        <div class="formula-equation">
+                            MV(s) = min { MV(child) }
+                        </div>
+
+                        <p>
+                            MIN selects the smallest value among
+                            its child states.
+                        </p>
+
+                    </div>
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">
+                            TERMINAL NODE
+                        </span>
+
+                        <div class="formula-equation">
+                            MV(s) = Utility(s)
+                        </div>
+
+                        <p>
+                            If the state is terminal, its
+                            minimax value is its known utility.
+                        </p>
+
+                    </div>
+
+                    <h3>3.2 Complete recursive definition</h3>
+
+                    <div class="formula-card">
+
+                        <div class="formula-equation formula-definition">
+                            MV(s) =
+                        </div>
+
+                        <div class="formula-case">
+                            <div class="formula-case-expression">
+                                Utility(s)
+                            </div>
+                            <div class="formula-case-condition">
+                                if s is terminal
+                            </div>
+                        </div>
+
+                        <div class="formula-case">
+                            <div class="formula-case-expression">
+                                max MV(Result(s,a))
+                            </div>
+                            <div class="formula-case-condition">
+                                if it is MAX's turn
+                            </div>
+                        </div>
+
+                        <div class="formula-case">
+                            <div class="formula-case-expression">
+                                min MV(Result(s,a))
+                            </div>
+                            <div class="formula-case-condition">
+                                if it is MIN's turn
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <p>
+                        The algorithm is recursive. It reaches
+                        terminal states, obtains their utility
+                        values and then backs those values up
+                        towards the root.
+                    </p>
+
+                    <h3>3.3 How minimax works</h3>
+
+                    <ol>
+                        <li>Start at the root of the game tree.</li>
+                        <li>Explore the tree down to terminal states.</li>
+                        <li>Assign each terminal state its utility.</li>
+                        <li>At each MAX node, take the largest child value.</li>
+                        <li>At each MIN node, take the smallest child value.</li>
+                        <li>Continue backing up values until the root is evaluated.</li>
+                    </ol>
+
+                    <div class="important-note">
+                        <span>IMPORTANT</span>
+                        <p>
+                            Minimax uses depth-first search and
+                            evaluates the complete game tree
+                            when no depth cut-off is applied.
+                            Its optimal decision assumes both
+                            players make the best possible moves.
+                        </p>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     04. WORKED MINIMAX EXAMPLE
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="minimax-trace"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">04</span>
+
+                        <div>
+                            <p class="section-kicker">STEP-BY-STEP CALCULATION</p>
+                            <h2>Worked Minimax Example</h2>
+                        </div>
+
+                    </div>
+
+                    <p class="lead-text">
+                        Use the tree from the Chapter 5 lecture.
+                        The root is MAX, its two children are MIN,
+                        and the next level consists of MAX nodes.
+                    </p>
+
+                    <h3>4.1 Given game tree</h3>
+
+                    <div class="static-tree-example">
+
+                        <div class="static-tree-row">
+                            <div class="static-game-node max-node">A<br />MAX</div>
+                        </div>
+
+                        <div class="static-tree-connectors">
+                            <span></span><span></span>
+                        </div>
+
+                        <div class="static-tree-row two-nodes">
+                            <div class="static-game-node min-node">B<br />MIN</div>
+                            <div class="static-game-node min-node">C<br />MIN</div>
+                        </div>
+
+                        <div class="static-tree-connectors four-branches">
+                            <span></span><span></span>
+                            <span></span><span></span>
+                        </div>
+
+                        <div class="static-tree-row four-nodes">
+                            <div class="static-game-node max-node">D</div>
+                            <div class="static-game-node max-node">E</div>
+                            <div class="static-game-node max-node">F</div>
+                            <div class="static-game-node max-node">G</div>
+                        </div>
+
+                        <div class="static-tree-row leaf-values">
+                            <span>2</span>
+                            <span>3</span>
+                            <span>5</span>
+                            <span>9</span>
+                            <span>0</span>
+                            <span>1</span>
+                            <span>7</span>
+                            <span>5</span>
+                        </div>
+
+                    </div>
+
+                    <h3>4.2 Step 1 — Evaluate the MAX nodes</h3>
+
+                    <p>
+                        MAX chooses the largest utility value
+                        among its children.
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Node</th>
+                                    <th>Terminal values</th>
+                                    <th>Calculation</th>
+                                    <th>Minimax value</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>D (MAX)</td>
+                                    <td>2, 3</td>
+                                    <td>max(2, 3)</td>
+                                    <td>3</td>
+                                </tr>
+
+                                <tr>
+                                    <td>E (MAX)</td>
+                                    <td>5, 9</td>
+                                    <td>max(5, 9)</td>
+                                    <td>9</td>
+                                </tr>
+
+                                <tr>
+                                    <td>F (MAX)</td>
+                                    <td>0, 1</td>
+                                    <td>max(0, 1)</td>
+                                    <td>1</td>
+                                </tr>
+
+                                <tr>
+                                    <td>G (MAX)</td>
+                                    <td>7, 5</td>
+                                    <td>max(7, 5)</td>
+                                    <td>7</td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <h3>4.3 Step 2 — Evaluate the MIN nodes</h3>
+
+                    <p>
+                        MIN now selects the smallest value
+                        returned by each of its children.
+                    </p>
+
+                    <div class="formula-card">
+                        <span class="definition-label">NODE B</span>
+                        <div class="formula-equation">
+                            MV(B) = min(3, 9) = 3
+                        </div>
+                    </div>
+
+                    <div class="formula-card">
+                        <span class="definition-label">NODE C</span>
+                        <div class="formula-equation">
+                            MV(C) = min(1, 7) = 1
+                        </div>
+                    </div>
+
+                    <h3>4.4 Step 3 — Evaluate the root MAX node</h3>
+
+                    <div class="formula-card">
+                        <span class="definition-label">ROOT A</span>
+                        <div class="formula-equation">
+                            MV(A) = max(3, 1) = 3
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>Final result</strong>
+                        <p>Root minimax value = 3.</p>
+                        <p>MAX selects branch B.</p>
+                        <p>Within B, MIN selects branch D.</p>
+                        <p>Within D, MAX selects terminal value 3.</p>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     05. INTERACTIVE GAME TREE
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="interactive-tree"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">05</span>
+
+                        <div>
+                            <p class="section-kicker">INTERACTIVE VISUALIZER</p>
+                            <h2>Minimax and Alpha-Beta Workbench</h2>
+                        </div>
+
+                    </div>
+
+                    <p class="lead-text">
+                        Select a game tree and an algorithm.
+                        Execute the evaluation one step at a time.
+                        Watch internal node values update and see
+                        exactly when alpha-beta pruning skips
+                        unvisited branches.
+                    </p>
+
+
+                    <div class="game-tree-lab">
+
+                        <div class="game-lab-header">
+
+                            <div>
+                                <h3>Game Tree Simulator</h3>
+
+                                <p>
+                                    Values are calculated from the
+                                    terminal leaves towards the root.
+                                </p>
+                            </div>
+
+                            <label class="gt-speed-control">
+                                Execution speed
+
+                                <select id="gt-speed">
+                                    <option value="0.5">0.5x - Slow</option>
+                                    <option value="1" selected>1x - Normal</option>
+                                    <option value="1.5">1.5x - Fast</option>
+                                    <option value="2">2x - Very fast</option>
+                                </select>
+                            </label>
+
+                        </div>
+
+
+                        <!-- SELECTORS -->
+
+                        <div class="gt-controls">
+
+                            <label>
+                                Game tree
+
+                                <select id="gt-tree-select">
+
+                                    <option value="lecture">
+                                        Chapter 5 lecture example
+                                    </option>
+
+                                    <option value="exam-q1">
+                                        Exam Guide Question 1
+                                    </option>
+
+                                    <option value="exam-q3">
+                                        Exam Guide Question 3
+                                    </option>
+
+                                </select>
+                            </label>
+
+
+                            <label>
+                                Algorithm
+
+                                <select id="gt-algorithm">
+
+                                    <option value="minimax">
+                                        Minimax
+                                    </option>
+
+                                    <option value="alphabeta">
+                                        Alpha-Beta Pruning
+                                    </option>
+
+                                </select>
+                            </label>
+
+
+                            <button type="button"
+                                    class="btn primary"
+                                    id="gt-step">
+                                Next Step →
+                            </button>
+
+
+                            <button type="button"
+                                    class="btn secondary"
+                                    id="gt-run">
+                                Run
+                            </button>
+
+
+                            <button type="button"
+                                    class="btn danger"
+                                    id="gt-reset">
+                                Reset
+                            </button>
+
+                        </div>
+
+
+                        <div class="gt-rule-banner"
+                             id="gt-rule">
+                            Minimax: MAX selects the largest child value.
+                            MIN selects the smallest child value.
+                        </div>
+
+
+                        <!-- LEGEND -->
+
+                        <div class="gt-legend">
+
+                            <span>
+                                <i class="gt-legend-max"></i>
+                                MAX node
+                            </span>
+
+                            <span>
+                                <i class="gt-legend-min"></i>
+                                MIN node
+                            </span>
+
+                            <span>
+                                <i class="gt-legend-leaf"></i>
+                                Terminal utility
+                            </span>
+
+                            <span>
+                                <i class="gt-legend-active"></i>
+                                Current node
+                            </span>
+
+                            <span>
+                                <i class="gt-legend-pruned"></i>
+                                Pruned branch
+                            </span>
+
+                            <span>
+                                <i class="gt-legend-best"></i>
+                                MAX's selected move
+                            </span>
+
+                        </div>
+
+
+                        <!-- TREE DISPLAY -->
+
+                        <div class="gt-tree-container">
+
+                            <svg id="game-tree-svg"
+                                 class="game-tree-svg"
+                                 viewBox="0 0 900 500"
+                                 role="img"
+                                 aria-label="Interactive minimax game tree">
+
+                                <text x="450"
+                                      y="250"
+                                      text-anchor="middle"
+                                      fill="#94a3b8">
+                                    Initialising game tree...
+                                </text>
+
+                            </svg>
+
+                        </div>
+
+
+                        <!-- CURRENT STEP -->
+
+                        <div class="gt-current-panel">
+
+                            <span class="gt-panel-label">
+                                CURRENT OPERATION
+                            </span>
+
+                            <strong id="gt-current-action">
+                                Ready to start.
+                            </strong>
+
+                            <p id="gt-current-explanation">
+                                Select Next Step to begin evaluating the tree.
+                            </p>
+
+                        </div>
+
+
+                        <!-- METRICS -->
+
+                        <div class="gt-metrics">
+
+                            <div class="gt-metric">
+                                <span>NODES VISITED</span>
+                                <strong id="gt-visited">0</strong>
+                            </div>
+
+                            <div class="gt-metric">
+                                <span>LEAVES EVALUATED</span>
+                                <strong id="gt-leaves">0</strong>
+                            </div>
+
+                            <div class="gt-metric">
+                                <span>NODES PRUNED</span>
+                                <strong id="gt-pruned">0</strong>
+                            </div>
+
+                            <div class="gt-metric">
+                                <span>ROOT VALUE</span>
+                                <strong id="gt-root-value">—</strong>
+                            </div>
+
+                        </div>
+
+
+                        <!-- BOUNDS -->
+
+                        <div class="gt-bounds">
+
+                            <div>
+                                <span>ALPHA (α)</span>
+                                <strong id="gt-alpha">−∞</strong>
+                                <p>Best value Max can guarantee.</p>
+                            </div>
+
+                            <div>
+                                <span>BETA (β)</span>
+                                <strong id="gt-beta">+∞</strong>
+                                <p>Best value Min can guarantee.</p>
+                            </div>
+
+                            <div>
+                                <span>PRUNING CONDITION</span>
+                                <strong id="gt-pruning-condition">α &lt; β</strong>
+                                <p>Prune when α ≥ β.</p>
+                            </div>
+
+                        </div>
+
+
+                        <!-- STATUS -->
+
+                        <div class="status-banner gt-status"
+                             id="gt-status"
+                             aria-live="polite">
+                            Ready. Select Next Step to begin.
+                        </div>
+
+
+                        <!-- EXECUTION LOG -->
+
+                        <div class="gt-log-heading">
+
+                            <h4>Execution Trace</h4>
+
+                            <span id="gt-log-count">0 operations</span>
+
+                        </div>
+
+                        <div class="table-responsive">
+
+                            <table class="learning-comparison gt-log-table">
+
+                                <thead>
+                                    <tr>
+                                        <th>Step</th>
+                                        <th>Node</th>
+                                        <th>Operation</th>
+                                        <th>Node value</th>
+                                        <th>Alpha</th>
+                                        <th>Beta</th>
+                                        <th>Pruning</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="gt-log-body">
+
+                                    <tr>
+                                        <td colspan="7">
+                                            No operations performed.
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                        <!-- FINAL RESULT -->
+
+                        <div class="gt-result"
+                             id="gt-result"
+                             hidden>
+
+                            <h4>Final Search Result</h4>
+
+                            <p id="gt-result-value"></p>
+
+                            <p id="gt-result-move"></p>
+
+                            <p id="gt-result-performance"></p>
+
+                        </div>
+
+                    </div>
+
+
+                    <h3>5.1 What should you observe?</h3>
+
+                    <ul>
+                        <li>Minimax evaluates all required terminal leaves.</li>
+                        <li>Alpha-Beta can stop evaluating a subtree when its result cannot change an ancestor's decision.</li>
+                        <li>Both algorithms return the same root minimax value.</li>
+                        <li>Alpha and beta are passed down to child nodes.</li>
+                        <li>The node value is backed up to its parent.</li>
+                    </ul>
+
+                </section>
+
+
+                <!-- =================================================
+                     06. ALPHA-BETA PRUNING
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="alpha-beta"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">06</span>
+
+                        <div>
+                            <p class="section-kicker">REDUCING GAME TREE SEARCH</p>
+                            <h2>Alpha-Beta Pruning</h2>
+                        </div>
+
+                    </div>
+
+                    <p class="lead-text">
+                        Alpha-Beta Pruning improves minimax by
+                        avoiding branches that cannot influence
+                        the final decision. It returns the same
+                        root value as minimax but may examine
+                        fewer nodes.
+                    </p>
+
+                    <h3>6.1 What are alpha and beta?</h3>
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">ALPHA (α)</span>
+
+                        <div class="formula-equation">
+                            α = best value Max can guarantee so far
+                        </div>
+
+                        <p>
+                            Alpha is a lower bound on the minimax
+                            value available to Max along the
+                            current path.
+                        </p>
+
+                    </div>
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">BETA (β)</span>
+
+                        <div class="formula-equation">
+                            β = best value Min can guarantee so far
+                        </div>
+
+                        <p>
+                            Beta is an upper bound on the minimax
+                            value available to Min along the
+                            current path.
+                        </p>
+
+                    </div>
+
+
+                    <h3>6.2 Initial values</h3>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Variable</th>
+                                    <th>Initial value</th>
+                                    <th>Updated by</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>α</td>
+                                    <td>−∞</td>
+                                    <td>MAX</td>
+                                </tr>
+
+                                <tr>
+                                    <td>β</td>
+                                    <td>+∞</td>
+                                    <td>MIN</td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>6.3 Update rules</h3>
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">AT A MAX NODE</span>
+
+                        <div class="formula-equation">
+                            α = max(α, v)
+                        </div>
+
+                        <p>
+                            MAX updates alpha whenever it finds
+                            a better value.
+                        </p>
+
+                    </div>
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">AT A MIN NODE</span>
+
+                        <div class="formula-equation">
+                            β = min(β, v)
+                        </div>
+
+                        <p>
+                            MIN updates beta whenever it finds
+                            a lower value.
+                        </p>
+
+                    </div>
+
+
+                    <h3>6.4 The pruning condition</h3>
+
+                    <div class="formula-card pruning-formula">
+
+                        <span class="definition-label">MOST IMPORTANT CONDITION</span>
+
+                        <div class="formula-equation">
+                            α ≥ β
+                        </div>
+
+                        <p>
+                            Once alpha becomes greater than or
+                            equal to beta, the remaining children
+                            of the current node do not need to
+                            be evaluated.
+                        </p>
+
+                    </div>
+
+
+                    <h3>6.5 Why can we prune?</h3>
+
+                    <p>
+                        Suppose Max already has a guaranteed
+                        value of 3 from a previous branch.
+                        Max will never choose a different branch
+                        that Min can force to a value of 2 or less.
+                    </p>
+
+                    <div class="example-box">
+
+                        <p>Current alpha = 3.</p>
+
+                        <p>A MIN node evaluates its first child and gets 2.</p>
+
+                        <p>Beta becomes 2.</p>
+
+                        <p>Since 3 ≥ 2, alpha-beta pruning applies.</p>
+
+                        <p><strong>The remaining children can be skipped.</strong></p>
+
+                    </div>
+
+
+                    <h3>6.6 Exact pruning rules</h3>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Node type</th>
+                                    <th>Update</th>
+                                    <th>Prune condition</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>MAX</td>
+                                    <td>α = max(α, v)</td>
+                                    <td>α ≥ β</td>
+                                </tr>
+
+                                <tr>
+                                    <td>MIN</td>
+                                    <td>β = min(β, v)</td>
+                                    <td>α ≥ β</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>6.7 Important facts</h3>
+
+                    <ul>
+                        <li>Alpha is updated by MAX.</li>
+                        <li>Beta is updated by MIN.</li>
+                        <li>Alpha and beta are passed down to child nodes.</li>
+                        <li>Node minimax values are returned upwards.</li>
+                        <li>Pruning never changes the final root minimax value.</li>
+                        <li>The amount of pruning depends on the order in which children are examined.</li>
+                    </ul>
+
+                    <div class="important-note">
+                        <span>EXAM WARNING</span>
+                        <p>
+                            Do not confuse the values passed
+                            down with the minimax values returned
+                            upwards. Alpha and beta are bounds;
+                            the node's value is backed up to
+                            its parent.
+                        </p>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     07. PYTHON IMPLEMENTATION
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="python"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">07</span>
+
+                        <div>
+                            <p class="section-kicker">PYTHON PROGRAMMING</p>
+                            <h2>Implementing Minimax and Alpha-Beta</h2>
+                        </div>
+
+                    </div>
+
+                    <p class="lead-text">
+                        The exam preparation guide represents a
+                        game tree using nested Python lists.
+                        An integer represents a terminal utility,
+                        and a list represents a node with children.
+                    </p>
+
+
+                    <h3>7.1 Minimax in Python</h3>
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>MINIMAX ALGORITHM</span>
+                        </div>
+
+<pre><code>def minimax(node, is_max):
+
+    # Terminal node: return its utility value
+    if not isinstance(node, list):
+        return node
+
+    if is_max:
+
+        best = float("-inf")
+
+        for child in node:
+
+            score = minimax(child, False)
+
+            if score > best:
+                best = score
+
+        return best
+
+    else:
+
+        best = float("inf")
+
+        for child in node:
+
+            score = minimax(child, True)
+
+            if score < best:
+                best = score
+
+        return best</code></pre>
+
+                    </div>
+
+
+                    <h3>7.2 Understand the parameters</h3>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Meaning</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>node</td>
+                                    <td>The current game-tree node or terminal utility.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>is_max</td>
+                                    <td>True when the current node belongs to MAX; False for MIN.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>best</td>
+                                    <td>Stores the best value found at the current node.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>score</td>
+                                    <td>Value returned by recursively evaluating a child.</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>7.3 Alpha-Beta Pruning in Python</h3>
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>ALPHA-BETA PRUNING</span>
+                        </div>
+
+<pre><code>def minimax_alpha_beta(node, alpha, beta, is_max):
+
+    # Terminal node
+    if not isinstance(node, list):
+        return node
+
+    if is_max:
+
+        best = float("-inf")
+
+        for child in node:
+
+            score = minimax_alpha_beta(
+                child, alpha, beta, False
+            )
+
+            best = max(best, score)
+
+            alpha = max(alpha, best)
+
+            # Prune the remaining children
+            if alpha >= beta:
+                break
+
+        return best
+
+    else:
+
+        best = float("inf")
+
+        for child in node:
+
+            score = minimax_alpha_beta(
+                child, alpha, beta, True
+            )
+
+            best = min(best, score)
+
+            beta = min(beta, best)
+
+            # Prune the remaining children
+            if alpha >= beta:
+                break
+
+        return best</code></pre>
+
+                    </div>
+
+
+                    <h3>7.4 Starting the algorithm</h3>
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>INITIAL CALL</span>
+                        </div>
+
+<pre><code>tree = [[5, 3, 9], [2, 8, 7], [6, 1, 4]]
+
+result = minimax_alpha_beta(
+    tree,
+    float("-inf"),
+    float("inf"),
+    True
+)
+
+print(result)</code></pre>
+
+                    </div>
+
+                    <p>
+                        The initial player is MAX, so the final
+                        argument is True. Alpha starts at
+                        negative infinity and beta at
+                        positive infinity.
+                    </p>
+
+
+                    <h3>7.5 Finding the best move at the root</h3>
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>BEST MOVE</span>
+                        </div>
+
+<pre><code>def best_move(tree):
+
+    best_index = None
+
+    best_score = float("-inf")
+
+    for i in range(len(tree)):
+
+        score = minimax(tree[i], False)
+
+        if score > best_score:
+
+            best_score = score
+
+            best_index = i
+
+    return best_index</code></pre>
+
+                    </div>
+
+                    <p>
+                        This function assumes that the root
+                        is MAX and that its direct children
+                        are MIN nodes. It returns the index
+                        of the child MAX should choose.
+                    </p>
+
+
+                    <h3>7.6 Common programming mistakes</h3>
+
+                    <div class="mistake-card">
+
+                        <strong>Mistake 1 — Wrong initial value at MIN</strong>
+
+<pre><code># Incorrect
+best = float("-inf")
+
+# Correct
+best = float("inf")</code></pre>
+
+                        <p>
+                            MIN searches for a smaller value,
+                            so its initial value must be positive
+                            infinity.
+                        </p>
+
+                    </div>
+
+                    <div class="mistake-card">
+
+                        <strong>Mistake 2 — Not alternating players</strong>
+
+<pre><code># Incorrect
+score = minimax(child, is_max)
+
+# Correct
+score = minimax(child, not is_max)</code></pre>
+
+                        <p>
+                            Every level switches between MAX
+                            and MIN.
+                        </p>
+
+                    </div>
+
+                    <div class="mistake-card">
+
+                        <strong>Mistake 3 — Updating the wrong bound</strong>
+
+<pre><code># MAX node
+alpha = max(alpha, best)
+
+# MIN node
+beta = min(beta, best)</code></pre>
+
+                        <p>
+                            MAX updates alpha and MIN updates
+                            beta. Both players use the same
+                            pruning condition: alpha ≥ beta.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     08. COMPLEXITY
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="complexity"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">08</span>
+
+                        <div>
+                            <p class="section-kicker">ALGORITHM ANALYSIS</p>
+                            <h2>Minimax and Alpha-Beta Complexity</h2>
+                        </div>
+
+                    </div>
+
+                    <p class="lead-text">
+                        The game-tree branching factor and maximum
+                        depth determine how many nodes may need
+                        to be evaluated.
+                    </p>
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">SEARCH TREE PARAMETERS</span>
+
+                        <div class="formula-equation">
+                            b = maximum branching factor
+                        </div>
+
+                        <div class="formula-equation">
+                            m = maximum search depth
+                        </div>
+
+                    </div>
+
+                    <h3>8.1 Minimax complexity</h3>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Measure</th>
+                                    <th>Complexity</th>
+                                    <th>Reason</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>Time</td>
+                                    <td>O(b<sup>m</sup>)</td>
+                                    <td>Minimax explores the complete game tree.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Space</td>
+                                    <td>O(bm)</td>
+                                    <td>Depth-first search stores the current path and unexplored siblings.</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <h3>8.2 Why pruning is useful</h3>
+
+                    <p>
+                        Alpha-Beta Pruning can reduce the
+                        number of nodes that must be evaluated.
+                        The exact savings depend on the order
+                        in which children are examined.
+                    </p>
+
+                    <div class="important-note">
+                        <span>MOVE ORDERING</span>
+                        <p>
+                            Alpha-Beta prunes more effectively
+                            when promising moves are examined
+                            earlier. Reordering can change the
+                            number of leaves visited, but it
+                            does not change the minimax root value.
+                        </p>
+                    </div>
+
+                    <h3>8.3 Exam points</h3>
+
+                    <ul>
+                        <li>Minimax traverses the game tree using depth-first search.</li>
+                        <li>Alpha-Beta avoids evaluating branches that cannot alter the decision.</li>
+                        <li>The root value remains the same with and without pruning.</li>
+                        <li>Pruning efficiency depends on move ordering.</li>
+                    </ul>
+
+                </section>
+
+
+                <!-- =================================================
+                     09. ADDITIONAL CHAPTER 5 TOPICS
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="extensions"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">09</span>
+
+                        <div>
+                            <p class="section-kicker">CHAPTER 5 EXTENSIONS</p>
+                            <h2>Beyond Complete Minimax Search</h2>
+                        </div>
+
+                    </div>
+
+                    <p class="lead-text">
+                        The Chapter 5 slides also discuss what happens
+                        when the complete game tree is too large
+                        or when random events influence the game.
+                        These are additional lecture concepts beyond
+                        the core Minimax and Alpha-Beta skills
+                        highlighted in the exam guide.
+                    </p>
+
+
+                    <h3>9.1 Heuristic Alpha-Beta Tree Search</h3>
+
+                    <p>
+                        Instead of searching all the way to
+                        terminal states, the algorithm can
+                        stop at a chosen depth and use a
+                        heuristic evaluation function.
+                    </p>
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">CUTOFF EVALUATION</span>
+
+                        <div class="formula-equation">
+                            Eval(s) ≈ estimated utility of state s
+                        </div>
+
+                        <p>
+                            The evaluation estimates how
+                            promising a non-terminal state is.
+                        </p>
+
+                    </div>
+
+                    <p>
+                        The lecture specifies that the evaluation
+                        function should be:
+                    </p>
+
+                    <ul>
+                        <li>Fast to compute.</li>
+                        <li>Within the utility range of a loss to a win.</li>
+                        <li>Correlated with the actual chance of winning.</li>
+                    </ul>
+
+                    <h3>9.2 Linear evaluation function</h3>
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">WEIGHTED FEATURES</span>
+
+                        <div class="formula-equation">
+                            Eval(s) = Σ wᵢfᵢ(s)
+                        </div>
+
+                        <p>
+                            Each fᵢ(s) represents a feature of
+                            the current game state, and each
+                            wᵢ is the weight assigned to it.
+                            The lecture gives pieces captured
+                            in chess as an example of a feature.
+                        </p>
+
+                    </div>
+
+                    <h3>9.3 Forward pruning</h3>
+
+                    <p>
+                        Forward pruning ignores moves that
+                        appear poor according to a heuristic.
+                        The lecture lists possible ways to
+                        estimate move quality:
+                    </p>
+
+                    <ul>
+                        <li>Low heuristic value.</li>
+                        <li>Low evaluation value after a shallow search.</li>
+                        <li>Past experience.</li>
+                    </ul>
+
+                    <div class="important-note">
+                        <span>RISK OF FORWARD PRUNING</span>
+                        <p>
+                            A move that appears poor may actually
+                            be important. Forward pruning can
+                            therefore discard a move that would
+                            have led to a better decision.
+                        </p>
+                    </div>
+
+
+                    <h3>9.4 Monte Carlo Tree Search (MCTS)</h3>
+
+                    <p>
+                        Monte Carlo methods estimate the value
+                        of a game state by simulating complete
+                        games, also called playouts, and
+                        averaging the resulting utilities.
+                    </p>
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">AVERAGE PLAYOUT UTILITY</span>
+
+                        <div class="formula-equation">
+                            Estimated utility =
+                            Total utility / Number of playouts
+                        </div>
+
+                    </div>
+
+                    <p>
+                        The lecture describes four main ideas
+                        associated with MCTS:
+                    </p>
+
+                    <ol>
+                        <li>Selection of a node in the existing partial tree.</li>
+                        <li>Expansion of the selected node.</li>
+                        <li>Simulation of a game to a terminal state.</li>
+                        <li>Back-propagation of the outcome through the selected path.</li>
+                    </ol>
+
+
+                    <h3>9.5 Exploration and exploitation</h3>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Exploration</th>
+                                    <th>Exploitation</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>Try states or moves that have received few simulations.</td>
+                                    <td>Use more simulations on moves that have performed well.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Discover potentially better alternatives.</td>
+                                    <td>Improve confidence in promising choices.</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>9.6 UCB1 selection formula</h3>
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">UPPER CONFIDENCE BOUND</span>
+
+                        <div class="formula-equation">
+                            UCB1(n) =
+                        </div>
+
+                        <div class="formula-equation">
+                            U(n) / N(n)
+                            + C √(log N(parent(n)) / N(n))
+                        </div>
+
+                        <p>
+                            U(n) is the total utility of playouts
+                            through node n. N(n) is the number
+                            of those playouts. N(parent(n)) is
+                            the parent's playout count. C is the
+                            exploration constant.
+                        </p>
+
+                        <p>
+                            The first term represents exploitation.
+                            The second term encourages exploration.
+                            The lecture gives approximately 2 as
+                            a typical value for C.
+                        </p>
+
+                    </div>
+
+
+                    <h3>9.7 Stochastic games and Expectiminimax</h3>
+
+                    <p>
+                        Some games contain random events such
+                        as dice rolls or dealt cards. These
+                        games require chance nodes in addition
+                        to MAX and MIN nodes.
+                    </p>
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">CHANCE NODE EXPECTED VALUE</span>
+
+                        <div class="formula-equation">
+                            Value(s) = Σ P(r) × Value(Result(s,r))
+                        </div>
+
+                        <p>
+                            Each possible random outcome r is
+                            weighted by its probability P(r).
+                            The resulting expected values are
+                            combined.
+                        </p>
+
+                    </div>
+
+                    <div class="important-note">
+                        <span>CORE EXAM PRIORITY</span>
+                        <p>
+                            Your 2026 examination guide identifies
+                            Minimax and Alpha-Beta tracing and
+                            Python implementation as the game-tree
+                            requirements. The MCTS and stochastic
+                            game topics above are included because
+                            they appear in the Chapter 5 lecture
+                            slides, not because the guide lists
+                            them as a separate assessed topic.
+                        </p>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     10. EXAM PRACTICE
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="practice"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">10</span>
+
+                        <div>
+                            <p class="section-kicker">COMP304 EXAM PREPARATION GUIDE</p>
+                            <h2>Game Tree Examination Practice</h2>
+                        </div>
+
+                    </div>
+
+                    <p class="lead-text">
+                        These questions are based on the
+                        tracing, debugging and Python-writing
+                        exercises in your 2026 examination guide.
+                    </p>
+
+
+                    <h3>Question 1 — Minimax tracing</h3>
+
+                    <p>Given:</p>
+
+<pre class="exam-tree-code"><code>tree = [
+    [5, 3, 9],
+    [2, 8, 7],
+    [6, 1, 4]
+]</code></pre>
+
+                    <p>
+                        The root is MAX and its three children
+                        are MIN nodes. Calculate the value
+                        returned by Minimax.
+                    </p>
+
+                    <details>
+                        <summary>Show worked solution</summary>
+
+                        <p>First MIN node:</p>
+                        <p>min(5, 3, 9) = 3.</p>
+
+                        <p>Second MIN node:</p>
+                        <p>min(2, 8, 7) = 2.</p>
+
+                        <p>Third MIN node:</p>
+                        <p>min(6, 1, 4) = 1.</p>
+
+                        <p>Root MAX:</p>
+                        <p>max(3, 2, 1) = 3.</p>
+
+                        <p><strong>Final answer: 3.</strong></p>
+                    </details>
+
+
+                    <h3>Question 2 — Alpha-Beta pruning</h3>
+
+                    <p>
+                        Apply Alpha-Beta to the tree in
+                        Question 1. Assume left-to-right
+                        evaluation.
+                    </p>
+
+                    <details>
+                        <summary>Show worked solution</summary>
+
+                        <div class="comparison-table-wrapper">
+                            <table class="learning-comparison">
+                                <thead>
+                                    <tr>
+                                        <th>Step</th>
+                                        <th>Evaluation</th>
+                                        <th>Result</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>First MIN node: 5, 3, 9</td>
+                                        <td>Returns 3; root alpha = 3.</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>2</td>
+                                        <td>Second MIN node reads 2</td>
+                                        <td>2 ≤ 3, so prune 8 and 7.</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>3</td>
+                                        <td>Third MIN reads 6 and then 1</td>
+                                        <td>1 ≤ 3, so prune 4.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <p>Leaves examined: 5, 3, 9, 2, 6, 1.</p>
+
+                        <p>Leaves pruned: 8, 7, 4.</p>
+
+                        <p><strong>Root value remains 3.</strong></p>
+
+                    </details>
+
+
+                    <h3>Question 3 — Three-level tree</h3>
+
+                    <p>Given:</p>
+
+<pre class="exam-tree-code"><code>tree = [
+    [[4, 6], [7, 9]],
+    [[1, 2], [0, 5]]
+]</code></pre>
+
+                    <p>
+                        The levels are MAX, MIN, MAX and then
+                        terminal leaves. Find the minimax
+                        value of each internal node.
+                    </p>
+
+                    <details>
+                        <summary>Show worked solution</summary>
+
+                        <p>MAX node a = max(4, 6) = 6.</p>
+                        <p>MAX node b = max(7, 9) = 9.</p>
+                        <p>MIN node L = min(6, 9) = 6.</p>
+
+                        <p>MAX node c = max(1, 2) = 2.</p>
+                        <p>MAX node d = max(0, 5) = 5.</p>
+                        <p>MIN node R = min(2, 5) = 2.</p>
+
+                        <p>Root MAX = max(6, 2) = 6.</p>
+
+                        <p><strong>Final root value: 6.</strong></p>
+
+                    </details>
+
+
+                    <h3>Question 4 — Debugging Minimax</h3>
+
+                    <p>
+                        A student's MIN branch starts
+                        <code>best = float("-inf")</code>.
+                        The function returns negative infinity.
+                        Identify the error and correct it.
+                    </p>
+
+                    <details>
+                        <summary>Show suggested answer</summary>
+
+                        <p>
+                            MIN tries to find the smallest child
+                            value. It must start with the largest
+                            possible initial value:
+                        </p>
+
+<pre><code>best = float("inf")</code></pre>
+
+                        <p>
+                            Starting at negative infinity means
+                            no ordinary child value will be
+                            smaller, so best is never updated.
+                        </p>
+
+                    </details>
+
+
+                    <h3>Question 5 — Best move</h3>
+
+                    <p>
+                        A Minimax function returns only the
+                        value. Explain how to return the index
+                        of the child that Max should select.
+                    </p>
+
+                    <details>
+                        <summary>Show suggested answer</summary>
+
+<pre><code>def best_move(tree):
+
+    best_index = None
+    best_score = float("-inf")
+
+    for i in range(len(tree)):
+
+        score = minimax(tree[i], False)
+
+        if score > best_score:
+            best_score = score
+            best_index = i
+
+    return best_index</code></pre>
+
+                        <p>
+                            For Question 1, this returns index 0.
+                        </p>
+
+                    </details>
+
+
+                    <h3>Question 6 — Why does order matter?</h3>
+
+                    <p>
+                        Reordering children can change how many
+                        leaves Alpha-Beta evaluates. Does this
+                        change the answer?
+                    </p>
+
+                    <details>
+                        <summary>Show suggested answer</summary>
+
+                        <p>
+                            No. Alpha-Beta pruning never changes
+                            the root minimax value. The order
+                            matters because better early values
+                            create tighter alpha and beta
+                            bounds, allowing more branches
+                            to be pruned.
+                        </p>
+
+                    </details>
+
+                </section>
+
+
+                <!-- =================================================
+                     11. CHECKLIST
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="checklist"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">11</span>
+
+                        <div>
+                            <p class="section-kicker">EXAM VERIFICATION</p>
+                            <h2>Game Tree Checklist</h2>
+                        </div>
+
+                    </div>
+
+                    <ul class="checklist aiv-checklist">
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="gt-check-1" />
+                                <span>
+                                    <strong>Players:</strong>
+                                    Can I identify which nodes belong to MAX
+                                    and which belong to MIN?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="gt-check-2" />
+                                <span>
+                                    <strong>Terminal values:</strong>
+                                    Can I identify the utilities at all leaves?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="gt-check-3" />
+                                <span>
+                                    <strong>Minimax:</strong>
+                                    Do I choose max at MAX nodes and
+                                    min at MIN nodes?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="gt-check-4" />
+                                <span>
+                                    <strong>Back-up values:</strong>
+                                    Can I calculate node values
+                                    from the leaves to the root?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="gt-check-5" />
+                                <span>
+                                    <strong>Alpha:</strong>
+                                    Do I update alpha at MAX nodes?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="gt-check-6" />
+                                <span>
+                                    <strong>Beta:</strong>
+                                    Do I update beta at MIN nodes?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="gt-check-7" />
+                                <span>
+                                    <strong>Pruning:</strong>
+                                    Do I stop exploring when alpha ≥ beta?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="gt-check-8" />
+                                <span>
+                                    <strong>Move ordering:</strong>
+                                    Do I understand why examining strong
+                                    moves early can increase pruning?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="gt-check-9" />
+                                <span>
+                                    <strong>Python:</strong>
+                                    Can I write and debug both recursive
+                                    algorithms independently?
+                                </span>
+                            </label>
+                        </li>
+
+                    </ul>
+
+                    <button type="button"
+                            class="btn secondary"
+                            id="gt-reset-checklist">
+                        Reset Checklist
+                    </button>
+
+                </section>
+
+
+                <!-- =================================================
+                     COMPLETION
+                     ================================================= -->
+
+                <section class="lesson-completion">
+
+                    <div>
+
+                        <span class="completion-label">
+                            MODULE 05
+                        </span>
+
+                        <h2>Can you evaluate a game tree?</h2>
+
+                        <p>
+                            Complete both Minimax and
+                            Alpha-Beta demonstrations. You
+                            should be able to calculate the
+                            root value, explain all cuts and
+                            implement the algorithms in Python.
+                        </p>
+
+                    </div>
+
+                    <button type="button"
+                            class="btn btn-primary"
+                            id="gt-complete-module"
+                            disabled>
+                        Mark Module Complete
+                    </button>
+
+                    <p id="gt-completion-message"
+                       class="completion-message"
+                       aria-live="polite">
+                        Complete both algorithm demonstrations first.
+                    </p>
+
+                </section>
+
+
+                <!-- =================================================
+                     BOTTOM NAVIGATION
+                     ================================================= -->
+
+                <div class="topic-bottom-navigation">
+                    <a href="../topic-04-heuristic-search/index.html?v=6" class="topic-previous-link">← Previous: Heuristic Search</a>
+                    <a href="../topic-06-genetic-algorithms/index.html?v=6" class="topic-next-link">Next: Genetic Algorithms →</a>
+                </div>
+
+            </article>
+
+        </div>
+
+    </main>
+
+
+    <footer class="ai-footer">
+
+        <div class="footer-content">
+
+            <a href="../../index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <p>
+                COMP304 Artificial Intelligence · Learn, reason and implement.
+            </p>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>© <span id="current-year"></span> StructTrace.</p>
+            <a href="../../index.html?v=6">Back to AIVisual</a>
+        </div>
+
+    </footer>
+
+</body>
+</html>

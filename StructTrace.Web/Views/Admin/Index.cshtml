@@ -1,0 +1,196 @@
+﻿@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Administrator";
+}
+
+<section class="st-page-hero">
+    <div>
+        <div class="st-crumbs"><a asp-controller="Home" asp-action="Index">StructTrace</a><span>/</span><span>Administrator</span></div>
+        <span class="st-kicker">Administrator</span>
+        <h1>Platform <span>dashboard</span></h1>
+        <p>Manage accounts and roles, and review the learning data stored in Neon.</p>
+    </div>
+    <div class="st-hero-stats">
+        <div class="st-hero-stat"><strong>@Model.UserCount</strong><span>Users</span></div>
+        <div class="st-hero-stat"><strong>@Model.TraceCount</strong><span>Saved traces</span></div>
+        <div class="st-hero-stat"><strong>@Model.LessonCount</strong><span>Lessons</span></div>
+    </div>
+</section>
+
+<partial name="_AdminFlash" />
+
+<div class="st-metrics">
+    <div class="st-metric"><span>Users</span><strong>@Model.UserCount</strong><small>registered accounts</small></div>
+    <div class="st-metric st-metric--amber"><span>Admins</span><strong>@Model.AdminCount</strong><small>full access</small></div>
+    <div class="st-metric st-metric--green"><span>Students</span><strong>@Model.StudentCount</strong><small>learner accounts</small></div>
+    <div class="st-metric st-metric--red"><span>Locked</span><strong>@Model.LockedCount</strong><small>cannot sign in</small></div>
+    <div class="st-metric st-metric--purple"><span>No name set</span><strong>@Model.MissingNameCount</strong><small>profiles to complete</small></div>
+    <div class="st-metric st-metric--cyan"><span>Code submissions</span><strong>@Model.SubmissionCount</strong><small>stored in Neon</small></div>
+</div>
+
+<!-- USERS -->
+<div class="st-card mb-4">
+    <div class="st-card-header">
+        <h2>Users</h2>
+        <input type="search" class="st-search" id="adm-user-search" placeholder="Search name or e-mail…" aria-label="Search users" />
+    </div>
+    <div class="st-table-wrap">
+        <table class="st-table" id="adm-users">
+            <thead>
+                <tr><th>User</th><th>Joined</th><th>Roles</th><th>Traces</th><th class="text-end">Actions</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model.Users)
+                {
+                    <tr data-search="@($"{u.DisplayName} {u.Email}".ToLowerInvariant())">
+                        <td>
+                            <div class="st-user-cell">
+                                <span class="st-avatar">@UserDisplay.Initials(u.DisplayName, u.Email)</span>
+                                <div>
+                                    <strong>
+                                        @(string.IsNullOrWhiteSpace(u.DisplayName) ? "— no name —" : u.DisplayName)
+                                        @if (u.IsCurrentUser) { <span class="st-badge st-badge--you">You</span> }
+                                    </strong>
+                                    <small>@u.Email</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="st-mono">@u.Joined</td>
+                        <td>
+                            @if (u.IsAdmin) { <span class="st-badge st-badge--admin">Admin</span> }
+                            @if (u.IsStudent) { <span class="st-badge st-badge--student">Student</span> }
+                            @if (!u.IsAdmin && !u.IsStudent) { <span class="st-badge st-badge--muted">No role</span> }
+                            @if (u.IsLocked) { <span class="st-badge st-badge--locked">Locked</span> }
+                        </td>
+                        <td class="st-mono">@u.TraceCount</td>
+                        <td>
+                            <div class="st-actions">
+                                <a class="st-btn st-btn--secondary st-btn--sm" href="/Admin/User/@u.Id">Details</a>
+
+                                @if (!u.IsCurrentUser)
+                                {
+                                    <form asp-action="SetRole" method="post">
+                                        <input type="hidden" name="userId" value="@u.Id" />
+                                        <input type="hidden" name="role" value="@AppRoles.Admin" />
+                                        <input type="hidden" name="add" value="@(u.IsAdmin ? "false" : "true")" />
+                                        <button type="submit" class="st-btn st-btn--amber st-btn--sm"
+                                                onclick="return confirm('@(u.IsAdmin ? "Remove the Admin role from this user?" : "Give this user the Admin role?")');">
+                                            @(u.IsAdmin ? "Remove admin" : "Make admin")
+                                        </button>
+                                    </form>
+
+                                    <form asp-action="SetLock" method="post">
+                                        <input type="hidden" name="userId" value="@u.Id" />
+                                        <input type="hidden" name="locked" value="@(u.IsLocked ? "false" : "true")" />
+                                        <button type="submit" class="st-btn @(u.IsLocked ? "st-btn--secondary" : "st-btn--danger") st-btn--sm"
+                                                onclick="return confirm('@(u.IsLocked ? "Unlock this account?" : "Lock this account? The user will be signed out.")');">
+                                            @(u.IsLocked ? "Unlock" : "Lock")
+                                        </button>
+                                    </form>
+
+                                    <a class="st-btn st-btn--delete st-btn--sm" href="/Admin/User/@u.Id#delete-account">Delete…</a>
+                                }
+
+                                @if (!u.IsStudent)
+                                {
+                                    <form asp-action="SetRole" method="post">
+                                        <input type="hidden" name="userId" value="@u.Id" />
+                                        <input type="hidden" name="role" value="@AppRoles.Student" />
+                                        <input type="hidden" name="add" value="true" />
+                                        <button type="submit" class="st-btn st-btn--secondary st-btn--sm">Add Student</button>
+                                    </form>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+                <tr id="adm-no-match" hidden><td colspan="5" class="st-empty">No users match your search.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="st-grid">
+
+    <!-- RECENT TRACES -->
+    <div class="st-card st-col-7">
+        <div class="st-card-header">
+            <h2>Recent saved traces</h2>
+            <small>Latest 10 of @Model.TraceCount</small>
+        </div>
+        <div class="st-table-wrap">
+            <table class="st-table">
+                <thead><tr><th>#</th><th>Title</th><th>Lesson</th><th>Owner</th><th class="text-end"></th></tr></thead>
+                <tbody>
+                    @if (!Model.RecentTraces.Any())
+                    {
+                        <tr><td colspan="5" class="st-empty">No saved traces yet.</td></tr>
+                    }
+                    @foreach (var t in Model.RecentTraces)
+                    {
+                        <tr>
+                            <td class="st-mono">@t.Id</td>
+                            <td><strong>@t.Title</strong><br /><small class="st-mono text-muted">@t.Input</small></td>
+                            <td>@t.Lesson</td>
+                            <td><a href="/Admin/User/@t.OwnerId">@t.OwnerEmail</a></td>
+                            <td>
+                                <div class="st-actions">
+                                    <form asp-action="DeleteTrace" method="post">
+                                        <input type="hidden" name="id" value="@t.Id" />
+                                        <button type="submit" class="st-btn st-btn--danger st-btn--sm"
+                                                onclick="return confirm('Delete saved trace #@t.Id? This cannot be undone.');">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- LESSONS -->
+    <div class="st-card st-col-5">
+        <div class="st-card-header">
+            <h2>Lessons</h2>
+            <small>@Model.LessonCount in the database</small>
+        </div>
+        <div class="st-table-wrap">
+            <table class="st-table" style="min-width: 420px;">
+                <thead><tr><th>#</th><th>Lesson</th><th>Category</th><th>Traces</th></tr></thead>
+                <tbody>
+                    @if (!Model.Lessons.Any())
+                    {
+                        <tr><td colspan="4" class="st-empty">No lessons found.</td></tr>
+                    }
+                    @foreach (var l in Model.Lessons)
+                    {
+                        <tr>
+                            <td class="st-mono">@l.Id</td>
+                            <td><strong>@l.Title</strong><br /><small class="st-mono text-muted">@l.Slug</small></td>
+                            <td>@l.Category</td>
+                            <td class="st-mono">@l.TraceCount</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const input = document.getElementById("adm-user-search");
+            const rows = [...document.querySelectorAll("#adm-users tbody tr[data-search]")];
+            const none = document.getElementById("adm-no-match");
+            input.addEventListener("input", () => {
+                const q = input.value.trim().toLowerCase();
+                let shown = 0;
+                rows.forEach(r => { const hit = r.dataset.search.includes(q); r.hidden = !hit; if (hit) shown++; });
+                none.hidden = shown !== 0;
+            });
+        })();
+    </script>
+}

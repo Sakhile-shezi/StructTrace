@@ -1,0 +1,188 @@
+@model ProfileViewModel
+@{
+    ViewData["Title"] = "My Profile";
+    var isAdmin = Model.Roles.Contains(AppRoles.Admin);
+}
+
+<section class="st-page-hero">
+    <div>
+        <div class="st-crumbs"><a asp-controller="Home" asp-action="Index">StructTrace</a><span>/</span><span>Profile</span></div>
+        <div class="st-profile-id">
+            <span class="st-avatar st-avatar--xl">@Model.Initials</span>
+            <div>
+                <h1>@(Model.HasDisplayName ? Model.DisplayName : "Your profile")</h1>
+                <p>@Model.Email</p>
+                <div class="st-hero-meta">
+                    @foreach (var role in Model.Roles)
+                    {
+                        <span class="st-badge @(role == AppRoles.Admin ? "st-badge--admin" : "")">@role</span>
+                    }
+                    <span class="st-badge">Joined @Model.Joined</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="st-hero-stats">
+        <div class="st-hero-stat"><strong>@Model.Traces.Count</strong><span>Saved traces</span></div>
+        <div class="st-hero-stat"><strong id="pf-ai-count">0/10</strong><span>AIVisual modules</span></div>
+    </div>
+</section>
+
+@if (TempData["ProfileMessage"] is string message)
+{
+    <div class="st-alert st-alert--success">@message</div>
+}
+
+@if (!Model.HasDisplayName)
+{
+    <div class="st-alert st-alert--warning">
+        <strong>Add your full name.</strong> It is shown in the navigation bar and to administrators instead of your e-mail address.
+    </div>
+}
+
+<div class="st-grid">
+
+    <!-- PERSONAL DETAILS -->
+    <div class="st-card st-col-7">
+        <div class="st-card-header">
+            <h2>Personal details</h2>
+            <small>Only your name can be changed here</small>
+        </div>
+        <div class="st-card-body">
+            <form asp-controller="Profile" asp-action="Update" method="post" novalidate>
+                <div class="st-field">
+                    <label asp-for="Edit.DisplayName">Full name</label>
+                    <input asp-for="Edit.DisplayName" class="st-input" maxlength="80"
+                           placeholder="e.g. Thando Mkhize" autocomplete="name" autofocus="@(!Model.HasDisplayName)" />
+                    <span asp-validation-for="Edit.DisplayName" class="st-validation"></span>
+                    <div class="st-help">2–80 characters. This is how you appear across StructTrace.</div>
+                </div>
+
+                <div class="st-field">
+                    <label for="pf-email">E-mail address</label>
+                    <input id="pf-email" class="st-input" value="@Model.Email" readonly />
+                    <div class="st-help">
+                        To change your e-mail or password, use
+                        <a asp-area="Identity" asp-page="/Account/Manage/Index">account settings</a>.
+                    </div>
+                </div>
+
+                <button type="submit" class="st-btn st-btn--primary">Save changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ACCOUNT -->
+    <div class="st-card st-col-5">
+        <div class="st-card-header">
+            <h2>Account</h2>
+        </div>
+        <div class="st-card-body">
+            <dl class="st-dl">
+                <dt>Name</dt>
+                <dd>@(Model.HasDisplayName ? Model.DisplayName : "— not set —")</dd>
+                <dt>E-mail</dt>
+                <dd>@Model.Email</dd>
+                <dt>Member since</dt>
+                <dd>@Model.Joined</dd>
+                <dt>Role</dt>
+                <dd>@(Model.Roles.Any() ? string.Join(", ", Model.Roles) : "None yet")</dd>
+            </dl>
+
+            <hr />
+
+            <ul class="st-link-list">
+                <li><a asp-area="Identity" asp-page="/Account/Manage/ChangePassword">Change password <span>→</span></a></li>
+                <li><a asp-area="Identity" asp-page="/Account/Manage/Index">Account settings <span>Identity</span></a></li>
+                @if (isAdmin)
+                {
+                    <li><a asp-controller="Admin" asp-action="Index">Administrator dashboard <span>Admin</span></a></li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <!-- AIVISUAL PROGRESS -->
+    <div class="st-card st-col-5">
+        <div class="st-card-header">
+            <h2>AIVisual progress</h2>
+            <small>Saved in this browser</small>
+        </div>
+        <div class="st-card-body">
+            <div class="st-progress" aria-hidden="true"><div id="pf-ai-bar"></div></div>
+            <p class="st-help" id="pf-ai-text">No AIVisual modules completed yet.</p>
+            <ul class="st-link-list" id="pf-ai-list"></ul>
+        </div>
+    </div>
+
+    <!-- SAVED TRACES -->
+    <div class="st-card st-col-7">
+        <div class="st-card-header">
+            <h2>My saved traces</h2>
+            <a class="st-btn st-btn--secondary st-btn--sm" href="/Sandbox">Open Code Sandbox →</a>
+        </div>
+        <div class="st-table-wrap">
+            <table class="st-table">
+                <thead>
+                    <tr><th>#</th><th>Title</th><th>Lesson</th><th>Input sequence</th></tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Traces.Any())
+                    {
+                        <tr><td colspan="4" class="st-empty">No saved traces yet. Run a trace in the Code Sandbox and save it.</td></tr>
+                    }
+                    @foreach (var trace in Model.Traces)
+                    {
+                        <tr>
+                            <td class="st-mono">@trace.Id</td>
+                            <td><strong>@trace.Title</strong></td>
+                            <td>@trace.Lesson</td>
+                            <td class="st-mono">@trace.Input</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // AIVisual stores module completion in this browser (key: aivisual_progress_v1).
+        (function () {
+            const modules = [
+                ["topic-01-introduction", "Introduction to AI"],
+                ["topic-02-problem-formulation", "Problem Formulation"],
+                ["topic-03-uninformed-search", "Uninformed Search"],
+                ["topic-04-heuristic-search", "Heuristic Search"],
+                ["topic-05-game-trees", "Game Trees"],
+                ["topic-06-genetic-algorithms", "Genetic Algorithms"],
+                ["topic-07-machine-learning", "Machine Learning"],
+                ["topic-08-perceptron", "Perceptron"],
+                ["topic-09-logic", "Logic"],
+                ["topic-10-csp", "Constraint Satisfaction"]
+            ];
+            let progress = {};
+            try { progress = JSON.parse(localStorage.getItem("aivisual_progress_v1") || "{}") || {}; } catch (e) { }
+            const done = modules.filter(([id]) => progress[id] === true);
+            const pct = Math.round(done.length / modules.length * 100);
+            document.getElementById("pf-ai-count").textContent = `${done.length}/${modules.length}`;
+            document.getElementById("pf-ai-bar").style.width = pct + "%";
+            document.getElementById("pf-ai-text").textContent = done.length
+                ? `${done.length} of ${modules.length} modules completed (${pct}%).`
+                : "No AIVisual modules completed yet. Finish a module and press “Mark Module Complete”.";
+            const next = modules.find(([id]) => progress[id] !== true);
+            const list = document.getElementById("pf-ai-list");
+            if (next) {
+                const li = document.createElement("li");
+                const a = document.createElement("a");
+                a.href = `/ai-visualizer/modules/${next[0]}/index.html`;
+                a.textContent = `Continue: ${next[1]} `;
+                const span = document.createElement("span"); span.textContent = "→";
+                a.appendChild(span); li.appendChild(a); list.appendChild(li);
+            }
+        })();
+    </script>
+}

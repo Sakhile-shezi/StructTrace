@@ -1,0 +1,2410 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <!-- sign-in guard: must load first -->
+    <script src="/js/visualizer-guard.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Module 02 | Problem Formulation & State Spaces - AIVisual</title>
+    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=6" />
+    <link rel="stylesheet" href="../../css/topic-base.css?v=6" />
+    <link rel="stylesheet" href="../../css/topic-pages.css?v=6" />
+
+    <script src="../../js/ai-core.js?v=6" defer></script>
+    <script src="../../js/ai-visualizer.js?v=6" defer></script>
+    <script src="./topic02.js?v=6" defer></script>
+    <script src="./topic02-colour-swap.js?v=6" defer></script>
+
+</head>
+
+<body class="aiv-topic topic02-page">
+
+    <header class="ai-header">
+        <nav class="ai-nav">
+            <a href="../../index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <button class="mobile-menu-btn" id="mobile-menu-btn" type="button"
+                    aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">☰</button>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="../../index.html?v=6">Course Home</a></li>
+                <li><a href="../topic-01-introduction/index.html?v=6">← 01. Introduction</a></li>
+                <li><a href="#problem-workbench" class="active" aria-current="page">02. Problem Formulation</a></li>
+                <li><a href="../topic-03-uninformed-search/index.html?v=6">03. Uninformed Search →</a></li>
+                <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
+                <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+    <main class="topic-container">
+
+        <!-- =====================================================
+             MODULE HERO
+             ===================================================== -->
+
+        <section class="topic-hero">
+
+            <div class="topic-breadcrumb">
+                <a href="../../index.html?v=6">AIVisual</a>
+                <span>/</span>
+                <span>COMP304</span>
+                <span>/</span>
+                <span>Module 02</span>
+            </div>
+
+            <div class="topic-hero-content">
+
+                <div>
+
+                    <div class="topic-badges">
+                        <span class="topic-label">MODULE 02</span>
+                        <span class="topic-exam-badge">SEARCH FOUNDATIONS</span>
+                    </div>
+
+                    <h1>
+                        Problem Formulation &
+                        <span>State-Space Representation</span>
+                    </h1>
+
+                    <p>
+                        Learn how to convert a real-world problem into a
+                        formal search problem. Represent states, define
+                        legal actions, construct successor states, test
+                        goals and calculate path costs.
+                    </p>
+
+                    <div class="topic-meta">
+                        <span>Problem modelling</span>
+                        <span>State representation</span>
+                        <span>Python classes</span>
+                        <span>Worked traces</span>
+                    </div>
+
+                </div>
+
+                <div class="topic-hero-symbol">
+                    <div class="topic-symbol-circle">S₀</div>
+                    <span>STATE → ACTION → STATE</span>
+                </div>
+
+            </div>
+
+            <div class="topic-hero-footer">
+                <span>MODEL THE PROBLEM BEFORE SEARCHING</span>
+                <span>COMP304 · SEARCH IN PYTHON</span>
+            </div>
+
+        </section>
+
+
+        <div class="topic-layout">
+
+            <!-- =================================================
+                 SIDEBAR
+                 ================================================= -->
+
+            <aside class="topic-sidebar">
+
+                <div class="sidebar-heading">
+                    <span>MODULE CONTENT</span>
+                    <span class="sidebar-module-number">02</span>
+                </div>
+
+                <nav class="topic-navigation">
+
+                    <a href="#formulation" class="topic-nav-link active">
+                        <span>01</span> Problem formulation
+                    </a>
+
+                    <a href="#components" class="topic-nav-link">
+                        <span>02</span> Six components
+                    </a>
+
+                    <a href="#problem-workbench" class="topic-nav-link">
+                        <span>03</span> Water-jug workbench
+                    </a>
+
+                    <a href="#worked-solution" class="topic-nav-link">
+                        <span>04</span> Six-move solution
+                    </a>
+
+                    <a href="#representations" class="topic-nav-link">
+                        <span>05</span> State representations
+                    </a>
+
+                    <a href="#successors" class="topic-nav-link">
+                        <span>06</span> Successor generation
+                    </a>
+
+                    <a href="#arc-path" class="topic-nav-link">
+                        <span>07</span> Arc and Path
+                    </a>
+
+                    <a href="#search-problem" class="topic-nav-link">
+                        <span>08</span> Python problem class
+                    </a>
+
+                    <a href="#colour-swap" class="topic-nav-link">
+                        <span>09</span> Colour-swap game (Test 1)
+                    </a>
+
+                    <a href="#practice" class="topic-nav-link">
+                        <span>10</span> Exam practice
+                    </a>
+
+                    <a href="#edge-cases" class="topic-nav-link">
+                        <span>11</span> Edge cases
+                    </a>
+
+                </nav>
+
+                <div class="sidebar-progress">
+                    <span>MODULE PROGRESS</span>
+                    <div class="sidebar-progress-track">
+                        <div id="lesson-progress-bar"></div>
+                    </div>
+                    <p id="lesson-progress-text">0% viewed</p>
+                </div>
+
+                <a href="../../index.html?v=6" class="back-course-link">
+                    ← Back to AIVisual
+                </a>
+
+            </aside>
+
+
+            <!-- =================================================
+                 MAIN CONTENT
+                 ================================================= -->
+
+            <article class="topic-content">
+
+
+                <!-- =================================================
+                     01. PROBLEM FORMULATION
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="formulation"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">01</span>
+                        <div>
+                            <p class="section-kicker">FOUNDATION OF SEARCH</p>
+                            <h2>What is Problem Formulation?</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        Before an AI agent can search for a solution,
+                        the problem must be represented in a form that
+                        a computer can understand and process.
+                    </p>
+
+                    <h3>1.1 From a real-world problem to a search problem</h3>
+
+                    <p>
+                        Consider a robot that must move from its current
+                        location to a destination. A human might simply
+                        say, "Move the robot to the destination."
+                        However, a search algorithm requires more
+                        precise information.
+                    </p>
+
+                    <p>We need to determine:</p>
+
+                    <ul>
+                        <li>Where does the robot start?</li>
+                        <li>What possible locations can it occupy?</li>
+                        <li>Which movements are legal?</li>
+                        <li>What happens when a movement is performed?</li>
+                        <li>How do we recognise that the destination has been reached?</li>
+                        <li>How much does each movement cost?</li>
+                    </ul>
+
+                    <div class="important-note">
+                        <span>CORE IDEA</span>
+                        <p>
+                            Problem formulation converts an informal
+                            problem into a precise model containing
+                            states, actions, transitions, a start state,
+                            goal conditions and costs.
+                        </p>
+                    </div>
+
+                    <h3>1.2 What is a state?</h3>
+
+                    <p>
+                        A state is a representation of the information
+                        about the environment that is necessary to
+                        determine what actions are possible and whether
+                        the goal has been achieved.
+                    </p>
+
+                    <p>
+                        A good state representation contains everything
+                        that matters, but avoids unnecessary information.
+                        It does not need to record the history of how the
+                        agent reached that state.
+                    </p>
+
+                    <div class="example-box">
+                        <strong>Example: Two water jugs</strong>
+                        <p>
+                            Suppose we have a 4-litre jug and a 3-litre jug.
+                            The state can be represented as:
+                        </p>
+                        <p><code>(a, b)</code></p>
+                        <p>
+                            Where <code>a</code> is the quantity of water
+                            in the 4-litre jug and <code>b</code> is the
+                            quantity in the 3-litre jug.
+                        </p>
+                        <p>
+                            The state <code>(2, 3)</code> means the
+                            4-litre jug contains 2 litres and the
+                            3-litre jug contains 3 litres.
+                        </p>
+                    </div>
+
+                    <h3>1.3 State versus path</h3>
+
+                    <p>
+                        These two terms must not be confused.
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>State</th>
+                                    <th>Path</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Describes the current configuration.</td>
+                                    <td>Describes a sequence of states connected by actions.</td>
+                                </tr>
+                                <tr>
+                                    <td>Does not need to record how the state was reached.</td>
+                                    <td>Records the route from the initial state.</td>
+                                </tr>
+                                <tr>
+                                    <td>Example: (2, 3)</td>
+                                    <td>Example: (0,0) → (4,0) → (1,3) → ...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="exam-note">
+                        In the COMP304 guide, states are represented
+                        using tuples so that they can be compared,
+                        stored in sets and used as dictionary keys.
+                        Remember: the state represents the configuration,
+                        not the history.
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     02. COMPONENTS OF A SEARCH PROBLEM
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="components"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">02</span>
+                        <div>
+                            <p class="section-kicker">FORMAL MODEL</p>
+                            <h2>Components of a Search Problem</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        A search problem must describe the starting
+                        configuration, possible states, available
+                        actions, resulting states, goal conditions
+                        and the cost of a solution.
+                    </p>
+
+                    <h3>2.1 State space</h3>
+
+                    <p>
+                        The state space is the collection of possible
+                        states that can be considered for a problem.
+                        Transitions between states are represented
+                        by connections or arcs.
+                    </p>
+
+                    <h3>2.2 Initial state</h3>
+
+                    <p>
+                        The initial state describes the configuration
+                        in which the search begins.
+                    </p>
+
+                    <p>
+                        For the water-jug problem:
+                        <code>(0, 0)</code>, because both jugs start empty.
+                    </p>
+
+                    <h3>2.3 Actions</h3>
+
+                    <p>
+                        Actions describe the operations that an agent
+                        is allowed to perform in a state.
+                    </p>
+
+                    <p>For the water-jug problem:</p>
+
+                    <ul>
+                        <li>Fill the 4-litre jug.</li>
+                        <li>Fill the 3-litre jug.</li>
+                        <li>Empty the 4-litre jug.</li>
+                        <li>Empty the 3-litre jug.</li>
+                        <li>Pour water from the 4-litre jug into the 3-litre jug.</li>
+                        <li>Pour water from the 3-litre jug into the 4-litre jug.</li>
+                    </ul>
+
+                    <h3>2.4 Transition model</h3>
+
+                    <p>
+                        The transition model specifies the result of
+                        applying an action to a state.
+                    </p>
+
+                    <div class="formula-card">
+                        <span class="definition-label">TRANSITION NOTATION</span>
+                        <div class="formula-main-text">
+                            Result(state, action) = new state
+                        </div>
+                        <p>
+                            This notation describes the state produced
+                            after an action is applied. It is a
+                            supplementary mathematical notation for
+                            the transition model.
+                        </p>
+                    </div>
+
+                    <h3>2.5 Goal test</h3>
+
+                    <p>
+                        The goal test determines whether a state
+                        satisfies the objective of the problem.
+                    </p>
+
+                    <p>
+                        For our water-jug problem, the objective is
+                        exactly 2 litres in the 4-litre jug.
+                    </p>
+
+                    <div class="formula-card">
+                        <span class="definition-label">GOAL CONDITION</span>
+                        <div class="formula-main-text">
+                            Goal(a, b) = (a = 2)
+                        </div>
+                        <p>
+                            The amount in the 3-litre jug does not
+                            affect the goal condition.
+                        </p>
+                    </div>
+
+                    <h3>2.6 Action cost and path cost</h3>
+
+                    <p>
+                        Each action can have an associated cost.
+                        The path cost is the sum of the costs of
+                        all actions along a path.
+                    </p>
+
+                    <div class="formula-card">
+                        <span class="definition-label">CUMULATIVE PATH COST</span>
+                        <div class="formula-main-text">
+                            g(path) = Σ cost(arcᵢ)
+                        </div>
+                        <p>
+                            Where each arc represents one transition.
+                            The cost of a complete path is the
+                            accumulated cost of its transitions.
+                        </p>
+                    </div>
+
+                    <p>
+                        In the water-jug example, every action costs 1.
+                        A solution containing six actions therefore
+                        has a path cost of 6.
+                    </p>
+
+                    <h3>2.7 Complete problem formulation</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Component</th>
+                                    <th>Water-jug problem</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>State representation</td>
+                                    <td><code>(a, b)</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Initial state</td>
+                                    <td><code>(0, 0)</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Actions</td>
+                                    <td>Fill, empty and pour.</td>
+                                </tr>
+                                <tr>
+                                    <td>Transition model</td>
+                                    <td>Update jug quantities after a legal action.</td>
+                                </tr>
+                                <tr>
+                                    <td>Goal test</td>
+                                    <td><code>a == 2</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Action cost</td>
+                                    <td>1 for every action.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     03. INTERACTIVE WATER JUG WORKBENCH
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="problem-workbench"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">03</span>
+                        <div>
+                            <p class="section-kicker">INTERACTIVE PROBLEM WORKBENCH</p>
+                            <h2>Model the 4-Litre and 3-Litre Jug Problem</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        You have two unmarked jugs. The 4-litre jug
+                        and 3-litre jug both start empty. Your objective
+                        is to obtain exactly 2 litres in the 4-litre jug.
+                    </p>
+
+                    <div class="problem-workbench">
+
+                        <div class="workbench-heading">
+                            <div>
+                                <h3>Water-Jug State Simulator</h3>
+                                <p>
+                                    Select a legal action and observe
+                                    how the state changes.
+                                </p>
+                            </div>
+
+                            <label class="speed-control">
+                                Speed
+                                <select class="aiv-speed-select"
+                                        id="jug-speed">
+                                    <option value="0.5">0.5x</option>
+                                    <option value="1" selected>1x</option>
+                                    <option value="1.5">1.5x</option>
+                                    <option value="2">2x</option>
+                                </select>
+                            </label>
+                        </div>
+
+
+                        <!-- CURRENT STATE -->
+
+                        <div class="state-summary">
+
+                            <div>
+                                <span>CURRENT STATE</span>
+                                <strong id="jug-current-state">(0, 0)</strong>
+                            </div>
+
+                            <div>
+                                <span>PATH COST</span>
+                                <strong id="jug-path-cost">0</strong>
+                            </div>
+
+                            <div>
+                                <span>GOAL STATUS</span>
+                                <strong id="jug-goal-status">Not reached</strong>
+                            </div>
+
+                        </div>
+
+
+                        <!-- JUG VISUALS -->
+
+                        <div class="jug-display">
+
+                            <div class="jug-column">
+
+                                <div class="jug-label">
+                                    <strong>4-LITRE JUG</strong>
+                                    <span id="jug-a-text">0 / 4 L</span>
+                                </div>
+
+                                <div class="jug-tank jug-four">
+                                    <div class="jug-water"
+                                         id="jug-a-water"></div>
+                                </div>
+
+                                <div class="jug-scale">
+                                    <span>4 L</span>
+                                    <span>3 L</span>
+                                    <span>2 L</span>
+                                    <span>1 L</span>
+                                    <span>0 L</span>
+                                </div>
+
+                            </div>
+
+
+                            <div class="jug-column">
+
+                                <div class="jug-label">
+                                    <strong>3-LITRE JUG</strong>
+                                    <span id="jug-b-text">0 / 3 L</span>
+                                </div>
+
+                                <div class="jug-tank jug-three">
+                                    <div class="jug-water"
+                                         id="jug-b-water"></div>
+                                </div>
+
+                                <div class="jug-scale">
+                                    <span>3 L</span>
+                                    <span>2 L</span>
+                                    <span>1 L</span>
+                                    <span>0 L</span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ACTIONS -->
+
+                        <div class="workbench-actions">
+
+                            <div class="workbench-subheading">
+                                <h4>Legal actions in the current state</h4>
+                                <span id="jug-action-count">0 actions</span>
+                            </div>
+
+                            <div id="jug-action-buttons"
+                                 class="jug-action-buttons"></div>
+
+                            <p class="workbench-hint">
+                                Only legal actions are displayed.
+                                For example, you cannot fill a jug
+                                that is already full.
+                            </p>
+
+                        </div>
+
+
+                        <!-- SIMULATION CONTROLS -->
+
+                        <div class="workbench-controls">
+
+                            <button type="button"
+                                    class="btn primary"
+                                    id="jug-next-solution">
+                                Next Sample Solution Step →
+                            </button>
+
+                            <button type="button"
+                                    class="btn secondary"
+                                    id="jug-play-solution">
+                                Play Sample Solution
+                            </button>
+
+                            <button type="button"
+                                    class="btn secondary"
+                                    id="jug-undo">
+                                Undo
+                            </button>
+
+                            <button type="button"
+                                    class="btn danger"
+                                    id="jug-reset">
+                                Reset
+                            </button>
+
+                        </div>
+
+
+                        <!-- STATUS -->
+
+                        <div id="jug-status"
+                             class="status-banner"
+                             aria-live="polite">
+
+                            Initial state loaded: (0, 0).
+
+                        </div>
+
+
+                        <!-- CURRENT TRACE -->
+
+                        <h4>Live State Transition Log</h4>
+
+                        <div class="table-responsive">
+
+                            <table class="learning-comparison jug-trace-table">
+                                <thead>
+                                    <tr>
+                                        <th>Step</th>
+                                        <th>Action</th>
+                                        <th>Previous State</th>
+                                        <th>New State</th>
+                                        <th>Cost</th>
+                                        <th>Total Cost</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="jug-trace-body">
+                                    <tr>
+                                        <td>0</td>
+                                        <td>Initialise</td>
+                                        <td>—</td>
+                                        <td>(0, 0)</td>
+                                        <td>0</td>
+                                        <td>0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+
+                        <div class="solution-progress">
+                            <span>Sample solution progress</span>
+
+                            <strong id="jug-solution-progress">
+                                0 / 6
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <h3>What are you actually observing?</h3>
+
+                    <p>
+                        Every time you select an action, the simulator
+                        performs the transition model. It checks whether
+                        the action is legal, calculates the new jug
+                        quantities and records the cost.
+                    </p>
+
+                    <p>
+                        Notice that the simulator is not yet performing
+                        BFS or A*. You are manually exploring the
+                        problem's state transitions. We will implement
+                        the search strategies in their own modules.
+                    </p>
+
+                </section>
+
+
+                <!-- =================================================
+                     04. WORKED WATER-JUG SOLUTION
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="worked-solution"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">04</span>
+                        <div>
+                            <p class="section-kicker">COMPLETE WORKED EXAMPLE</p>
+                            <h2>Trace the Six-Move Solution</h2>
+                        </div>
+                    </div>
+
+                    <p>
+                        The COMP304 Exam Preparation Guide gives the
+                        following six-move solution to the water-jug
+                        problem. We will calculate each transition
+                        carefully.
+                    </p>
+
+                    <h3>4.1 Understand the pouring operation</h3>
+
+                    <p>
+                        Pouring continues until either the source
+                        jug becomes empty or the destination jug
+                        becomes full.
+                    </p>
+
+                    <div class="formula-card">
+                        <span class="definition-label">AMOUNT TRANSFERRED</span>
+                        <div class="formula-main-text">
+                            t = min(source, destination capacity − destination)
+                        </div>
+                        <p>
+                            This supplementary formula determines
+                            the maximum amount that can be transferred
+                            without overflowing the destination jug.
+                        </p>
+                    </div>
+
+                    <h3>4.2 Initial state</h3>
+
+                    <div class="example-box">
+                        State = <code>(0, 0)</code>
+                        <p>
+                            4-litre jug: 0 litres. 3-litre jug: 0 litres.
+                            Both are empty.
+                        </p>
+                        <p>
+                            Goal test: Is <code>a == 2</code>?
+                            No, because <code>0 != 2</code>.
+                        </p>
+                    </div>
+
+
+                    <h3>4.3 Step-by-step execution</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Step</th>
+                                    <th>Action</th>
+                                    <th>Calculation</th>
+                                    <th>Resulting state</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>0</td>
+                                    <td>Initialise</td>
+                                    <td>Both jugs empty</td>
+                                    <td><code>(0, 0)</code></td>
+                                </tr>
+
+                                <tr>
+                                    <td>1</td>
+                                    <td>Fill 4</td>
+                                    <td>4-litre jug becomes full</td>
+                                    <td><code>(4, 0)</code></td>
+                                </tr>
+
+                                <tr>
+                                    <td>2</td>
+                                    <td>Pour 4 into 3</td>
+                                    <td>
+                                        t = min(4, 3 − 0) = 3
+                                    </td>
+                                    <td><code>(1, 3)</code></td>
+                                </tr>
+
+                                <tr>
+                                    <td>3</td>
+                                    <td>Empty 3</td>
+                                    <td>3-litre jug becomes empty</td>
+                                    <td><code>(1, 0)</code></td>
+                                </tr>
+
+                                <tr>
+                                    <td>4</td>
+                                    <td>Pour 4 into 3</td>
+                                    <td>
+                                        t = min(1, 3 − 0) = 1
+                                    </td>
+                                    <td><code>(0, 1)</code></td>
+                                </tr>
+
+                                <tr>
+                                    <td>5</td>
+                                    <td>Fill 4</td>
+                                    <td>4-litre jug becomes full</td>
+                                    <td><code>(4, 1)</code></td>
+                                </tr>
+
+                                <tr>
+                                    <td>6</td>
+                                    <td>Pour 4 into 3</td>
+                                    <td>
+                                        t = min(4, 3 − 1) = 2
+                                    </td>
+                                    <td><code>(2, 3)</code></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <h3>4.4 Detailed calculation of the final pour</h3>
+
+                    <p>
+                        Before the final pour, the state is
+                        <code>(4, 1)</code>.
+                    </p>
+
+                    <p>
+                        The 4-litre jug contains 4 litres, while
+                        the 3-litre jug contains 1 litre.
+                    </p>
+
+                    <div class="example-box">
+                        Step 1: Calculate the empty space in jug 3.
+
+                        <p>3 − 1 = 2 litres.</p>
+
+                        Step 2: Determine how much can be poured.
+
+                        <p>t = min(4, 2) = 2 litres.</p>
+
+                        Step 3: Update both jugs.
+
+                        <p>
+                            New jug 4 = 4 − 2 = 2 litres.
+                        </p>
+
+                        <p>
+                            New jug 3 = 1 + 2 = 3 litres.
+                        </p>
+
+                        <p><strong>New state = (2, 3).</strong></p>
+                    </div>
+
+
+                    <h3>4.5 Verify the goal condition</h3>
+
+                    <div class="formula-card">
+                        <span class="definition-label">GOAL TEST</span>
+
+                        <div class="formula-main-text">
+                            a == 2
+                        </div>
+
+                        <p>
+                            At state (2, 3), the 4-litre jug
+                            contains exactly 2 litres. Therefore,
+                            the goal test returns True.
+                        </p>
+                    </div>
+
+
+                    <h3>4.6 Calculate the total path cost</h3>
+
+                    <p>
+                        Every action has cost 1.
+                    </p>
+
+                    <div class="example-box">
+                        g(path) = 1 + 1 + 1 + 1 + 1 + 1
+
+                        <p><strong>Total path cost = 6.</strong></p>
+                    </div>
+
+                    <div class="important-note">
+                        <span>KEY EXAM LESSON</span>
+                        <p>
+                            Always show the resulting state after
+                            every action. For pouring operations,
+                            show the amount transferred. Do not
+                            simply write the final state without
+                            demonstrating the calculation.
+                        </p>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     05. STATE REPRESENTATION
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="representations"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">05</span>
+                        <div>
+                            <p class="section-kicker">REPRESENTING STATES</p>
+                            <h2>Choosing a State Representation</h2>
+                        </div>
+                    </div>
+
+                    <h3>5.1 The 8-puzzle</h3>
+
+                    <p>
+                        The 8-puzzle contains eight numbered tiles
+                        and one empty square. The empty square
+                        is represented by 0.
+                    </p>
+
+                    <p>
+                        A state is represented as a tuple of nine
+                        numbers, read from left to right and
+                        top to bottom.
+                    </p>
+
+                    <div class="example-box">
+                        <strong>Example state</strong>
+                        <p><code>(7, 2, 4, 5, 0, 6, 8, 3, 1)</code></p>
+                    </div>
+
+                    <div class="puzzle-board" id="puzzle-start-board">
+                        <div>7</div><div>2</div><div>4</div>
+                        <div>5</div><div class="blank">0</div><div>6</div>
+                        <div>8</div><div>3</div><div>1</div>
+                    </div>
+
+                    <h3>5.2 Why is a tuple used?</h3>
+
+                    <p>
+                        Python tuples are immutable. This means
+                        their elements cannot be changed after
+                        creation.
+                    </p>
+
+                    <p>
+                        A search algorithm often needs to store
+                        visited states in a set or use states as
+                        dictionary keys. A tuple containing
+                        hashable values can be used for these
+                        purposes.
+                    </p>
+
+                    <p>
+                        When generating a successor, we therefore
+                        create a temporary list, change its values,
+                        and convert it back into a tuple.
+                    </p>
+
+                    <h3>5.3 Towers of Hanoi</h3>
+
+                    <p>
+                        The Towers of Hanoi state can be represented
+                        using a tuple containing three tuples,
+                        one for each peg.
+                    </p>
+
+                    <p>
+                        Discs are listed from bottom to top.
+                        The first element of each peg tuple is
+                        its bottom disc.
+                    </p>
+
+                    <div class="example-box">
+                        <strong>Example representation</strong>
+
+                        <p><code>((3, 2, 1), (), ())</code></p>
+
+                        <p>
+                            Peg 0 has discs 3, 2 and 1.
+                            Peg 1 is empty. Peg 2 is empty.
+                        </p>
+                    </div>
+
+                    <h3>5.4 State representation rules</h3>
+
+                    <ul>
+                        <li>Include every variable that affects legal actions and goal testing.</li>
+                        <li>Do not include information that never changes during the search if it can be stored as fixed problem data.</li>
+                        <li>Do not record the path history inside the state.</li>
+                        <li>Use a representation that supports comparison and storage.</li>
+                        <li>Make sure different configurations have different state representations.</li>
+                    </ul>
+
+                    <div class="exam-note">
+                        Your examination guide specifically uses
+                        the 8-puzzle tuple and Towers of Hanoi
+                        nested-tuple representations. Practise
+                        explaining why the state must contain
+                        the necessary configuration and no
+                        unnecessary history.
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     06. SUCCESSOR GENERATION
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="successors"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">06</span>
+                        <div>
+                            <p class="section-kicker">GENERATING LEGAL STATES</p>
+                            <h2>Successor Generation in the 8-Puzzle</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        A successor is a state that can be reached
+                        from the current state by applying one
+                        legal action.
+                    </p>
+
+                    <h3>6.1 Understand the index calculation</h3>
+
+                    <p>
+                        The 8-puzzle is a 3 × 3 grid stored as a
+                        one-dimensional tuple. We need to convert
+                        the blank's index into a row and column.
+                    </p>
+
+                    <div class="formula-card">
+                        <span class="definition-label">ROW AND COLUMN</span>
+                        <div class="formula-main-text">
+                            row, col = divmod(blank, size)
+                        </div>
+                        <p>
+                            In a grid of width 3, index 4 corresponds
+                            to row 1, column 1.
+                        </p>
+                        <p>
+                            The inverse conversion is:
+                            <code>index = row × size + col</code>.
+                        </p>
+                    </div>
+
+                    <h3>6.2 A worked successor trace</h3>
+
+                    <p>
+                        Consider the state supplied in the
+                        COMP304 Exam Preparation Guide:
+                    </p>
+
+                    <div class="example-box">
+                        <code>(0, 1, 2, 3, 4, 5, 6, 7, 8)</code>
+
+                        <p>
+                            The blank is at index 0.
+                        </p>
+
+                        <p>
+                            row, col = divmod(0, 3) = (0, 0).
+                        </p>
+                    </div>
+
+                    <p>
+                        We test four possible directions.
+                        A movement is legal only if the new
+                        row and column are inside the board.
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Direction tested</th>
+                                    <th>New position</th>
+                                    <th>Legal?</th>
+                                    <th>Reason</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Up</td>
+                                    <td>(-1, 0)</td>
+                                    <td>No</td>
+                                    <td>Row is outside the board.</td>
+                                </tr>
+                                <tr>
+                                    <td>Down</td>
+                                    <td>(1, 0)</td>
+                                    <td>Yes</td>
+                                    <td>Inside the board.</td>
+                                </tr>
+                                <tr>
+                                    <td>Left</td>
+                                    <td>(0, -1)</td>
+                                    <td>No</td>
+                                    <td>Column is outside the board.</td>
+                                </tr>
+                                <tr>
+                                    <td>Right</td>
+                                    <td>(0, 1)</td>
+                                    <td>Yes</td>
+                                    <td>Inside the board.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>6.3 Calculate the first successor</h3>
+
+                    <p>
+                        The blank swaps with the tile at index
+                        <code>1 × 3 + 0 = 3</code>.
+                    </p>
+
+                    <div class="example-box">
+                        Original:
+
+                        <p><code>(0, 1, 2, 3, 4, 5, 6, 7, 8)</code></p>
+
+                        Swap index 0 and index 3:
+
+                        <p><code>(3, 1, 2, 0, 4, 5, 6, 7, 8)</code></p>
+
+                        Action:
+
+                        <p><strong>slide 3 up</strong></p>
+                    </div>
+
+                    <h3>6.4 Calculate the second successor</h3>
+
+                    <p>
+                        The blank swaps with the tile at index
+                        <code>0 × 3 + 1 = 1</code>.
+                    </p>
+
+                    <div class="example-box">
+                        Original:
+
+                        <p><code>(0, 1, 2, 3, 4, 5, 6, 7, 8)</code></p>
+
+                        Swap index 0 and index 1:
+
+                        <p><code>(1, 0, 2, 3, 4, 5, 6, 7, 8)</code></p>
+
+                        Action:
+
+                        <p><strong>slide 1 left</strong></p>
+                    </div>
+
+                    <div class="important-note">
+                        <span>COMMON EXAM TRAP</span>
+                        <p>
+                            In the guide's code, the action name
+                            describes the direction in which the
+                            tile moves. This is the opposite of
+                            the blank's movement.
+                        </p>
+                    </div>
+
+                    <h3>6.5 Complete Python successor method</h3>
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>8-PUZZLE NEIGHBORS</span>
+                        </div>
+
+<pre><code>def neighbors(self, node):
+
+    # Find the blank (0)
+    blank = node.index(0)
+
+    # Convert index into row and column
+    row, col = divmod(blank, self.size)
+
+    result = []
+
+    # Directions describe the tile's movement
+    directions = [
+        (-1, 0, "down"),
+        (1, 0, "up"),
+        (0, -1, "right"),
+        (0, 1, "left")
+    ]
+
+    for dr, dc, name in directions:
+
+        nr = row + dr
+        nc = col + dc
+
+        # Check whether the new position is legal
+        if 0 &lt;= nr &lt; self.size and 0 &lt;= nc &lt; self.size:
+
+            # Convert row and column into index
+            swap = nr * self.size + nc
+
+            # Copy the original immutable tuple
+            grid = list(node)
+
+            # Swap blank with the selected tile
+            grid[blank], grid[swap] = grid[swap], grid[blank]
+
+            # Create a new immutable state
+            new_state = tuple(grid)
+
+            # Record the transition
+            result.append(
+                Arc(
+                    node,
+                    new_state,
+                    1,
+                    action=f"slide {node[swap]} {name}"
+                )
+            )
+
+    return result</code></pre>
+
+                    </div>
+
+                    <h3>6.6 Why copy to a list and convert back?</h3>
+
+                    <ol>
+                        <li><code>node</code> is a tuple and cannot be modified.</li>
+                        <li><code>list(node)</code> creates a mutable copy.</li>
+                        <li>The two values can now be swapped.</li>
+                        <li><code>tuple(grid)</code> creates a new immutable state.</li>
+                        <li>The original state remains unchanged.</li>
+                    </ol>
+
+                </section>
+
+
+                <!-- =================================================
+                     07. ARC AND PATH
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="arc-path"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">07</span>
+                        <div>
+                            <p class="section-kicker">PYTHON SEARCH FRAMEWORK</p>
+                            <h2>Understanding Arc and Path</h2>
+                        </div>
+                    </div>
+
+                    <h3>7.1 What is an Arc?</h3>
+
+                    <p>
+                        An Arc represents a transition from one
+                        state to another. It contains the starting
+                        state, resulting state, transition cost
+                        and optionally the action that caused it.
+                    </p>
+
+                    <div class="formula-card">
+                        <span class="definition-label">ARC CONSTRUCTOR</span>
+                        <div class="formula-main-text">
+                            Arc(from_node, to_node, cost=1, action=None)
+                        </div>
+                        <ul>
+                            <li><strong>from_node:</strong> State before the action.</li>
+                            <li><strong>to_node:</strong> State after the action.</li>
+                            <li><strong>cost:</strong> Cost of that transition.</li>
+                            <li><strong>action:</strong> Description of the operation.</li>
+                        </ul>
+                    </div>
+
+                    <p>
+                        According to the COMP304 guide, arc costs
+                        default to 1 and must not be negative,
+                        because negative costs break lowest-cost-first search.
+                    </p>
+
+                    <h3>7.2 What is a Path?</h3>
+
+                    <p>
+                        A Path represents a sequence of connected
+                        transitions. In the course's Python
+                        implementation, paths are linked backwards.
+                    </p>
+
+                    <p>
+                        A path is either:
+                    </p>
+
+                    <ul>
+                        <li>A single initial node with no arc.</li>
+                        <li>An existing shorter path followed by one additional arc.</li>
+                    </ul>
+
+                    <h3>7.3 How cumulative path cost works</h3>
+
+                    <div class="example-box">
+                        Suppose we have:
+
+                        <p>Depot → Market, cost = 1</p>
+                        <p>Market → Station, cost = 3</p>
+
+                        The path cost is:
+
+                        <p>0 + 1 + 3 = <strong>4</strong></p>
+                    </div>
+
+                    <h3>7.4 Complete Path implementation</h3>
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>PATH CLASS</span>
+                        </div>
+
+<pre><code>class Path:
+
+    def __init__(self, initial, arc=None):
+
+        self.initial = initial
+        self.arc = arc
+
+        if arc is None:
+
+            # Initial path: no transitions
+            self.cost = 0
+
+        else:
+
+            # Accumulate the previous path cost
+            # and the new arc cost
+            self.cost = initial.cost + arc.cost
+
+
+    def end(self):
+
+        if self.arc is None:
+            return self.initial
+
+        return self.arc.to_node
+
+
+    def nodes(self):
+
+        current = self
+
+        while current.arc is not None:
+
+            yield current.arc.to_node
+
+            current = current.initial
+
+        yield current.initial</code></pre>
+
+                    </div>
+
+                    <h3>7.5 Trace the Path constructor</h3>
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>PATH TRACE QUESTION</span>
+                        </div>
+
+<pre><code>p = Path(
+        Path(
+            Path("depot"),
+            Arc("depot", "market", 1)
+        ),
+        Arc("market", "station", 3)
+    )
+
+print(p.cost)
+print(p.end())
+print(list(p.nodes()))</code></pre>
+
+                    </div>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Construction</th>
+                                    <th>Arc</th>
+                                    <th>Cumulative cost</th>
+                                    <th>End node</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Initial path</td>
+                                    <td>None</td>
+                                    <td>0</td>
+                                    <td>depot</td>
+                                </tr>
+                                <tr>
+                                    <td>Second path</td>
+                                    <td>depot → market (1)</td>
+                                    <td>0 + 1 = 1</td>
+                                    <td>market</td>
+                                </tr>
+                                <tr>
+                                    <td>Final path</td>
+                                    <td>market → station (3)</td>
+                                    <td>1 + 3 = 4</td>
+                                    <td>station</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>7.6 Expected output</h3>
+
+                    <div class="example-box">
+<pre><code>4
+station
+['station', 'market', 'depot']</code></pre>
+                    </div>
+
+                    <p>
+                        Notice that <code>nodes()</code> yields
+                        nodes backwards, beginning with the final
+                        node. This is because the Path object
+                        stores a reference to its previous path.
+                    </p>
+
+                    <h3>7.7 Important debugging question</h3>
+
+                    <p>
+                        Consider this incorrect line in the
+                        Path constructor:
+                    </p>
+
+                    <div class="python-code-card">
+                        <pre><code>self.cost = arc.cost</code></pre>
+                    </div>
+
+                    <p>
+                        The problem is that this stores only the
+                        cost of the most recent arc. It does not
+                        include the cost of the earlier transitions.
+                    </p>
+
+                    <div class="example-box">
+                        Correct:
+
+                        <p><code>initial.cost + arc.cost</code></p>
+
+                        Incorrect:
+
+                        <p><code>arc.cost</code></p>
+                    </div>
+
+                    <p>
+                        This bug affects lowest-cost-first and
+                        A*, because both use path cost to order
+                        the frontier. Depth-first and breadth-first
+                        ignore path cost when selecting paths.
+                    </p>
+
+                </section>
+
+
+                <!-- =================================================
+                     08. SEARCH PROBLEM CLASS
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="search-problem"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">08</span>
+                        <div>
+                            <p class="section-kicker">IMPLEMENTING THE MODEL</p>
+                            <h2>Implementing a Search Problem in Python</h2>
+                        </div>
+                    </div>
+
+                    <h3>8.1 Four methods of Search_problem</h3>
+
+                    <p>
+                        According to your COMP304 Exam Preparation
+                        Guide, the searcher asks the problem four
+                        questions:
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Method</th>
+                                    <th>Purpose</th>
+                                    <th>Returns</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>start_node()</code></td>
+                                    <td>Returns the initial state.</td>
+                                    <td>A state</td>
+                                </tr>
+                                <tr>
+                                    <td><code>is_goal(node)</code></td>
+                                    <td>Checks whether a state satisfies the goal.</td>
+                                    <td>True / False</td>
+                                </tr>
+                                <tr>
+                                    <td><code>neighbors(node)</code></td>
+                                    <td>Generates legal outgoing transitions.</td>
+                                    <td>A list of Arc objects</td>
+                                </tr>
+                                <tr>
+                                    <td><code>heuristic(node)</code></td>
+                                    <td>Estimates the remaining cost to a goal.</td>
+                                    <td>A numerical estimate</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        The guide states that the heuristic defaults
+                        to zero. We will study the calculation of
+                        useful heuristics in the later search modules.
+                    </p>
+
+                    <h3>8.2 Two ways to define a problem</h3>
+
+                    <div class="concept-grid">
+
+                        <div class="concept-card">
+                            <h4>Explicit graph</h4>
+                            <p>
+                                Every node and arc is supplied
+                                directly when the problem is created.
+                            </p>
+                            <div class="concept-example">
+                                <code>Search_problem_from_explicit_graph(name, nodes, arcs, start=..., goals={...})</code>
+                            </div>
+                        </div>
+
+                        <div class="concept-card">
+                            <h4>Subclassed problem</h4>
+                            <p>
+                                The programmer defines the legal
+                                moves inside <code>neighbors()</code>.
+                                Successor states are created when
+                                the search reaches them.
+                            </p>
+                            <div class="concept-example">
+                                <code>class Jugs(Search_problem):</code>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <h3>8.3 Complete water-jug problem class</h3>
+
+                    <p>
+                        This is the Python formulation from the
+                        COMP304 Exam Preparation Guide. It uses
+                        the state tuple <code>(a, b)</code>.
+                    </p>
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>JUGS SEARCH PROBLEM</span>
+                        </div>
+
+<pre><code>class Jugs(Search_problem):
+
+    def start_node(self):
+        return (0, 0)
+
+
+    def is_goal(self, node):
+        return node[0] == 2
+
+
+    def neighbors(self, node):
+
+        a, b = node
+
+        arcs = []
+
+        # Fill the 4-litre jug
+        if a &lt; 4:
+            arcs.append(
+                Arc(node, (4, b), 1, action="fill 4")
+            )
+
+        # Fill the 3-litre jug
+        if b &lt; 3:
+            arcs.append(
+                Arc(node, (a, 3), 1, action="fill 3")
+            )
+
+        # Empty the 4-litre jug
+        if a &gt; 0:
+            arcs.append(
+                Arc(node, (0, b), 1, action="empty 4")
+            )
+
+        # Empty the 3-litre jug
+        if b &gt; 0:
+            arcs.append(
+                Arc(node, (a, 0), 1, action="empty 3")
+            )
+
+        # Pour from 4 litres into 3 litres
+        t = min(a, 3 - b)
+
+        if t &gt; 0:
+            arcs.append(
+                Arc(
+                    node,
+                    (a - t, b + t),
+                    1,
+                    action="pour 4 into 3"
+                )
+            )
+
+        # Pour from 3 litres into 4 litres
+        t = min(b, 4 - a)
+
+        if t &gt; 0:
+            arcs.append(
+                Arc(
+                    node,
+                    (a + t, b - t),
+                    1,
+                    action="pour 3 into 4"
+                )
+            )
+
+        return arcs</code></pre>
+
+                    </div>
+
+                    <h3>8.4 Understand the pouring calculations in code</h3>
+
+                    <p>
+                        For pouring from jug 4 into jug 3:
+                    </p>
+
+                    <div class="formula-card">
+                        <div class="formula-main-text">
+                            t = min(a, 3 − b)
+                        </div>
+                        <p>
+                            The first argument is how much water
+                            is available in jug 4. The second is
+                            the remaining capacity of jug 3.
+                        </p>
+                    </div>
+
+                    <p>
+                        For pouring from jug 3 into jug 4:
+                    </p>
+
+                    <div class="formula-card">
+                        <div class="formula-main-text">
+                            t = min(b, 4 − a)
+                        </div>
+                        <p>
+                            This time, the available water comes
+                            from jug 3 and the available space
+                            is in jug 4.
+                        </p>
+                    </div>
+
+                    <h3>8.5 Why do we check whether t is greater than zero?</h3>
+
+                    <p>
+                        If <code>t == 0</code>, no water can be
+                        transferred. Adding a transition that
+                        changes nothing would create a pointless
+                        successor.
+                    </p>
+
+                    <p>
+                        The condition <code>t &gt; 0</code>
+                        ensures that only meaningful pouring
+                        actions are generated.
+                    </p>
+
+                </section>
+
+
+                <!-- =================================================
+                     09. TEST 1: TWO-GRID COLOUR-SWAP GAME
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="colour-swap"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">09</span>
+                        <div>
+                            <p class="section-kicker">TEST 1 · STATE-SPACE QUESTION</p>
+                            <h2>Two-Grid Colour-Swap Game</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        Two 4 × 4 grids sit side by side. Each grid has 16 cells
+                        in four colours (green, yellow, orange and blue), with
+                        exactly four cells of each colour. You win when the two
+                        grids match.
+                    </p>
+
+                    <div class="formula-card">
+                        <span class="definition-label">RULES OF THE GAME</span>
+                        <ul>
+                            <li><strong>Valid move:</strong> select two cells in the <em>same</em> grid (left or right) and swap their colours.</li>
+                            <li><strong>Goal:</strong> every cell in the left grid has the same colour as the cell in the same position in the right grid.</li>
+                            <li><strong>Goal states are not unique:</strong> any arrangement counts, as long as both grids are identical.</li>
+                        </ul>
+                    </div>
+
+                    <!-- INTERACTIVE LAB -->
+
+                    <div class="xlab" id="cs-lab">
+
+                        <div class="xlab-heading">
+                            <div>
+                                <span class="xlab-eyebrow">INTERACTIVE STATE-SPACE LAB</span>
+                                <h3>Colour-Swap Simulator</h3>
+                                <p>Click two cells in the same grid to swap them. Dashed red cells are mismatched; they are numbered like the memo's heuristic figure.</p>
+                            </div>
+                            <span class="xlab-badge">2 GRIDS · 192 MOVES PER STATE</span>
+                        </div>
+
+                        <div class="xlab-controls">
+                            <button type="button" class="xlab-btn primary" id="cs-load-start">Load Test 1 start state</button>
+                            <button type="button" class="xlab-btn secondary" id="cs-load-goal1">Goal example 1</button>
+                            <button type="button" class="xlab-btn secondary" id="cs-load-goal2">Goal example 2</button>
+                            <label class="xlab-inline">Swaps
+                                <input type="number" id="cs-depth" min="1" max="8" value="3" />
+                            </label>
+                            <button type="button" class="xlab-btn secondary" id="cs-scramble">Scramble a goal</button>
+                            <button type="button" class="xlab-btn danger" id="cs-undo">Undo</button>
+                        </div>
+
+                        <div class="cs-boards">
+                            <div class="cs-board-wrap">
+                                <span>LEFT GRID</span>
+                                <div class="cs-board" id="cs-left" role="group" aria-label="Left grid"></div>
+                            </div>
+                            <div class="cs-board-wrap">
+                                <span>RIGHT GRID</span>
+                                <div class="cs-board" id="cs-right" role="group" aria-label="Right grid"></div>
+                            </div>
+                        </div>
+
+                        <div class="xlab-metrics">
+                            <div><span>MISMATCHED CELLS (m)</span><strong id="cs-m">0</strong></div>
+                            <div><span>HEURISTIC h = m ÷ 2</span><strong id="cs-h">0</strong></div>
+                            <div><span>MOVES MADE (g)</span><strong id="cs-g">0</strong></div>
+                            <div><span>GOAL TEST</span><strong id="cs-goal">FALSE</strong></div>
+                            <div><span>VALID SUCCESSORS</span><strong id="cs-succ">192</strong></div>
+                        </div>
+
+                        <div class="xlab-status" id="cs-status" aria-live="polite">Loading…</div>
+
+                        <div class="xlab-grid-2">
+                            <div class="xlab-box">
+                                <h4>The state as two 2-D char arrays</h4>
+                                <pre class="xlab-code" id="cs-code"></pre>
+                            </div>
+                            <div class="xlab-box">
+                                <h4>Why the heuristic is admissible</h4>
+                                <p>A move changes exactly two cells in one grid, so it can fix <strong>at most two</strong> mismatched positions. If m positions are wrong, you need at least m ÷ 2 moves, so h never overestimates.</p>
+                                <div class="xlab-result" id="cs-admissible">h(start) = 4.5</div>
+                            </div>
+                        </div>
+
+                        <div class="xlab-subheading">
+                            <h4>Move log</h4>
+                            <span id="cs-log-count">0 move(s)</span>
+                        </div>
+                        <div class="xlab-table-wrap">
+                            <table class="xlab-table">
+                                <thead>
+                                    <tr><th>#</th><th>Grid</th><th>Swap (row, col)</th><th>Mismatches</th><th>h</th></tr>
+                                </thead>
+                                <tbody id="cs-log-body"></tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                    <div class="important-note">
+                        <span>USEFUL NUMBERS FOR WRITTEN ANSWERS</span>
+                        <p>
+                            In one grid, 120 pairs of cells can be chosen, but 4 × C(4,2) = 24 of them are same-colour pairs.
+                            That leaves 96 valid swaps per grid, so <strong>every state has exactly 192 successors</strong> (branching factor b = 192).
+                            Each grid can be arranged in 16! ÷ (4!)<sup>4</sup> = 63,063,000 ways.
+                        </p>
+                    </div>
+
+                    <h3>Memo answers, question by question</h3>
+
+                    <p>
+                        Try each question first, then open the answer. The answers follow
+                        the Test 1 memo; the notes add the reasoning that earns full marks.
+                    </p>
+
+                    <details>
+                        <summary>1) Data structure to represent the game [4]</summary>
+                        <p>
+                            Use <strong>two 2-dimensional char arrays</strong>, <code>leftGrid[4][4]</code> and
+                            <code>rightGrid[4][4]</code>. Each element stores the first letter of its colour:
+                            <code>'G'</code> green, <code>'Y'</code> yellow, <code>'O'</code> orange and <code>'B'</code> blue.
+                        </p>
+                        <p>
+                            In Python (aipython) the state must be hashable, so store it as a tuple of two
+                            tuples of strings, e.g. <code>(("BOOB", "BOOY", ...), ("BBBO", ...))</code>.
+                        </p>
+                    </details>
+
+                    <details>
+                        <summary>2) An example state [2]</summary>
+<pre><code>leftGrid  = [['B','O','O','B'],      rightGrid = [['B','B','B','O'],
+             ['B','O','O','Y'],                   ['B','G','O','O'],
+             ['G','B','Y','Y'],                   ['G','G','O','Y'],
+             ['G','G','G','Y']]                   ['G','Y','Y','Y']]</code></pre>
+                        <p>This is the state the simulator loads with <em>Load Test 1 start state</em>.</p>
+                    </details>
+
+                    <details>
+                        <summary>3) Algorithm that produces a new state from a given state [8]</summary>
+<pre><code>bool swapped(string grid1stSel, int row1stSel, int col1stSel,
+             string grid2ndSel, int row2ndSel, int col2ndSel) {
+    bool swappedColours = false;
+
+    if (grid1stSel == grid2ndSel) {                 // both cells in the same grid
+        char[][] g = (grid1stSel == "leftGrid") ? leftGrid : rightGrid;
+
+        if (g[row1stSel][col1stSel] != g[row2ndSel][col2ndSel]) {   // colours differ
+            char temp = g[row1stSel][col1stSel];
+            g[row1stSel][col1stSel] = g[row2ndSel][col2ndSel];
+            g[row2ndSel][col2ndSel] = temp;
+            swappedColours = true;
+        }
+    }
+    return swappedColours;
+}</code></pre>
+                        <p>
+                            The memo writes the left-grid and right-grid branches out in full; using
+                            <code>g</code> as a reference to the chosen grid is the same algorithm.
+                            The marks are for: checking that both cells are in the same grid, checking
+                            that the colours differ, and the three-step swap with a temporary variable.
+                        </p>
+                    </details>
+
+                    <details>
+                        <summary>4) Algorithm that tests whether a state is a goal state [8]</summary>
+<pre><code>bool isGoalState() {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (leftGrid[i][j] != rightGrid[i][j]) {
+                return false;          // one mismatch is enough
+            }
+        }
+    }
+    return true;                       // every cell matched
+}</code></pre>
+                    </details>
+
+                    <details>
+                        <summary>5) A heuristic for this problem [5]</summary>
+                        <p>
+                            Count the cells in the left grid whose colour differs from the cell in the same
+                            position of the right grid, then divide by 2, the number of cells one valid move swaps:
+                        </p>
+                        <div class="formula-main-text">h(n) = (number of mismatched positions) ÷ 2</div>
+                        <p>
+                            For the start state there are 9 mismatched positions, so h = 9 ÷ 2 = <strong>4.5</strong>.
+                            Load the start state above to see the nine numbered cells.
+                        </p>
+                    </details>
+
+                    <details>
+                        <summary>6) Is the heuristic admissible? [2]</summary>
+                        <p>
+                            Yes. A valid move swaps two cells in one grid, so it changes the match status of
+                            at most two positions. A state with m mismatched positions therefore needs at least
+                            m ÷ 2 moves, so h = m ÷ 2 can never overestimate the real number of moves to the goal.
+                            Often more than one move is needed per mismatched pair, which makes h an underestimate.
+                        </p>
+                        <p>
+                            A definition of admissibility alone earns no marks; the argument "one move fixes at
+                            most two cells" is what the marks are for. Rounding up, ⌈m ÷ 2⌉, is also admissible
+                            and slightly more informed.
+                        </p>
+                    </details>
+
+                    <h3>The same problem as an aipython search problem</h3>
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>COLOUR-SWAP SEARCH PROBLEM</span>
+                        </div>
+
+<pre><code>from searchProblem import Search_problem, Arc
+
+class ColourSwap(Search_problem):
+    """State = (left, right); each grid is a tuple of 4 row strings."""
+
+    def __init__(self, left, right):
+        self.start = (tuple(left), tuple(right))
+
+    def start_node(self):
+        return self.start
+
+    def is_goal(self, node):
+        left, right = node
+        return left == right                      # cell-for-cell match
+
+    def neighbors(self, node):
+        arcs = []
+        for g in (0, 1):                          # 0 = left grid, 1 = right grid
+            cells = [c for row in node[g] for c in row]
+            for a in range(16):
+                for b in range(a + 1, 16):
+                    if cells[a] != cells[b]:      # same colour = no new state
+                        new = cells[:]
+                        new[a], new[b] = new[b], new[a]
+                        rows = tuple("".join(new[r*4:r*4+4]) for r in range(4))
+                        state = (rows, node[1]) if g == 0 else (node[0], rows)
+                        arcs.append(Arc(node, state, 1, f"swap {a}&lt;-&gt;{b} in {'LR'[g]}"))
+        return arcs                               # always 192 arcs
+
+    def heuristic(self, node):
+        left, right = node
+        m = sum(l != r for lr, rr in zip(left, right) for l, r in zip(lr, rr))
+        return m / 2</code></pre>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     10. EXAMINATION PRACTICE
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="practice"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">10</span>
+                        <div>
+                            <p class="section-kicker">EXAMINATION PRACTICE</p>
+                            <h2>Test Your Problem Formulation Skills</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        These questions are based on the style of
+                        the COMP304 Python and state-space questions.
+                        Work them out before opening the solutions.
+                    </p>
+
+                    <h3>Question 1 — State representation</h3>
+
+                    <p>
+                        An agent operates in a world containing
+                        a robot and three crates. The grid size
+                        and target positions never change. The
+                        robot and crates can move.
+                    </p>
+
+                    <p>
+                        Propose a suitable state representation
+                        and explain why the fixed grid size and
+                        target locations do not need to be stored
+                        in every state.
+                    </p>
+
+                    <details>
+                        <summary>Show suggested solution</summary>
+                        <p>
+                            One possible representation is
+                            <code>(robot, crates)</code>, where
+                            robot is its row and column and crates
+                            is a tuple of their positions.
+                        </p>
+                        <p>
+                            The grid size and target positions
+                            are fixed problem data. They do not
+                            change as the search progresses,
+                            so they can be stored once in the
+                            problem object rather than repeated
+                            in every state.
+                        </p>
+                    </details>
+
+
+                    <h3>Question 2 — Path tracing</h3>
+
+                    <p>Given:</p>
+
+                    <div class="python-code-card">
+<pre><code>p = Path(
+        Path(
+            Path("start"),
+            Arc("start", "middle", 2)
+        ),
+        Arc("middle", "goal", 5)
+    )</code></pre>
+                    </div>
+
+                    <p>Determine:</p>
+
+                    <ol>
+                        <li><code>p.cost</code></li>
+                        <li><code>p.end()</code></li>
+                        <li><code>list(p.nodes())</code></li>
+                    </ol>
+
+                    <details>
+                        <summary>Show worked solution</summary>
+                        <p>
+                            Cost: 0 + 2 + 5 = 7.
+                        </p>
+                        <p>
+                            End node: <code>"goal"</code>.
+                        </p>
+                        <p>
+                            Nodes:
+                            <code>['goal', 'middle', 'start']</code>.
+                        </p>
+                        <p>
+                            The generator walks from the last
+                            arc backwards through the linked
+                            path references.
+                        </p>
+                    </details>
+
+
+                    <h3>Question 3 — Successor generation</h3>
+
+                    <p>
+                        Given the 8-puzzle state:
+                    </p>
+
+                    <p><code>(0,1,2, 3,4,5, 6,7,8)</code></p>
+
+                    <p>
+                        The blank is at index 0 and the grid
+                        size is 3. How many legal successors
+                        are produced? Give each state and action.
+                    </p>
+
+                    <details>
+                        <summary>Show worked solution</summary>
+
+                        <p>
+                            <code>row, col = divmod(0,3) = (0,0)</code>.
+                        </p>
+
+                        <p>
+                            Moving above or left is illegal.
+                            Moving down and right is legal.
+                        </p>
+
+                        <p>
+                            First successor:
+                            <code>(3,1,2, 0,4,5, 6,7,8)</code>,
+                            action <code>slide 3 up</code>.
+                        </p>
+
+                        <p>
+                            Second successor:
+                            <code>(1,0,2, 3,4,5, 6,7,8)</code>,
+                            action <code>slide 1 left</code>.
+                        </p>
+
+                        <p>There are two legal successors.</p>
+
+                    </details>
+
+
+                    <h3>Question 4 — Debugging</h3>
+
+                    <p>
+                        A student implements Path using
+                        <code>self.cost = arc.cost</code>.
+                        Explain the problem and identify which
+                        search strategies are affected.
+                    </p>
+
+                    <details>
+                        <summary>Show suggested solution</summary>
+
+                        <p>
+                            The path cost should accumulate all
+                            previous arc costs. Assigning only
+                            <code>arc.cost</code> loses the
+                            cost of earlier transitions.
+                        </p>
+
+                        <p>
+                            Lowest-cost-first and A* are affected
+                            because they order the frontier
+                            using path cost. DFS and BFS do not
+                            use path cost when selecting paths.
+                        </p>
+
+                    </details>
+
+
+                    <h3>Question 5 — Write a problem class</h3>
+
+                    <p>
+                        Two jugs hold 4 litres and 3 litres.
+                        Both start empty. You may fill a jug,
+                        empty a jug or pour one jug into the other.
+                        The goal is exactly 2 litres in the
+                        4-litre jug. Every action costs 1.
+                    </p>
+
+                    <p>
+                        Write the state representation,
+                        <code>start_node()</code>,
+                        <code>is_goal()</code> and
+                        <code>neighbors()</code>.
+                    </p>
+
+                    <details>
+                        <summary>Show marking guide</summary>
+
+                        <ul>
+                            <li>State tuple: <code>(a, b)</code>.</li>
+                            <li>Initial state: <code>(0, 0)</code>.</li>
+                            <li>Goal condition: <code>node[0] == 2</code>.</li>
+                            <li>Generate fill and empty actions only when legal.</li>
+                            <li>Use <code>min()</code> to calculate each pouring amount.</li>
+                            <li>Return a list of <code>Arc</code> objects.</li>
+                            <li>Give every action cost 1.</li>
+                        </ul>
+
+                    </details>
+
+
+                    <div class="exam-note">
+                        These exercises cover state design,
+                        Path tracing, successor generation,
+                        debugging and writing a search-problem
+                        subclass—the skills identified in your
+                        examination guide.
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     11. EDGE CASES
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="edge-cases"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">11</span>
+                        <div>
+                            <p class="section-kicker">VERIFICATION</p>
+                            <h2>Problem Modelling Verification Checklist</h2>
+                        </div>
+                    </div>
+
+                    <p>
+                        Use this checklist when implementing any
+                        search problem in Python.
+                    </p>
+
+                    <ul class="checklist aiv-checklist">
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="p2-check-state" />
+                                <span>
+                                    <strong>Complete state representation:</strong>
+                                    Have I included everything required
+                                    to determine legal moves and test
+                                    the goal?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="p2-check-history" />
+                                <span>
+                                    <strong>No unnecessary history:</strong>
+                                    Have I kept the route and number
+                                    of moves out of the state itself?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="p2-check-start" />
+                                <span>
+                                    <strong>Correct initial state:</strong>
+                                    Does <code>start_node()</code>
+                                    return the exact starting configuration?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="p2-check-goal" />
+                                <span>
+                                    <strong>Correct goal test:</strong>
+                                    Does <code>is_goal()</code>
+                                    test the intended condition rather
+                                    than an unrelated property?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="p2-check-legal" />
+                                <span>
+                                    <strong>Legal actions only:</strong>
+                                    Have I prevented moves that exceed
+                                    capacities or leave the grid?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="p2-check-copy" />
+                                <span>
+                                    <strong>Immutable state safety:</strong>
+                                    Have I copied tuples before
+                                    modifying their contents?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="p2-check-arc" />
+                                <span>
+                                    <strong>Correct arc construction:</strong>
+                                    Does every successor have the
+                                    correct source, destination,
+                                    cost and action?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="p2-check-cost" />
+                                <span>
+                                    <strong>Correct cumulative cost:</strong>
+                                    Does each extended Path add
+                                    the new arc cost to the existing
+                                    path cost?
+                                </span>
+                            </label>
+                        </li>
+
+                    </ul>
+
+                    <button type="button"
+                            class="btn secondary"
+                            id="reset-checklist">
+                        Reset Checklist
+                    </button>
+
+                </section>
+
+
+                <!-- =================================================
+                     MODULE COMPLETION
+                     ================================================= -->
+
+                <section class="lesson-completion">
+
+                    <div>
+                        <span class="completion-label">MODULE 02</span>
+
+                        <h2>Can you formulate a search problem?</h2>
+
+                        <p>
+                            You should now be able to define a state,
+                            initial state, legal actions, transition
+                            model, goal test and path cost, then
+                            implement the problem in Python.
+                        </p>
+                    </div>
+
+                    <button type="button"
+                            class="btn btn-primary"
+                            id="complete-module">
+                        Mark Module Complete
+                    </button>
+
+                    <p id="module-completion-message"
+                       class="completion-message"
+                       aria-live="polite"></p>
+
+                </section>
+
+
+                <div class="topic-bottom-navigation">
+                    <a href="../topic-01-introduction/index.html?v=6" class="topic-previous-link">← Previous: Introduction to AI</a>
+                    <a href="../topic-03-uninformed-search/index.html?v=6" class="topic-next-link">Next: Uninformed Search →</a>
+                </div>
+
+            </article>
+
+        </div>
+
+    </main>
+
+
+    <footer class="ai-footer">
+        <div class="footer-content">
+            <a href="../../index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+            <p>COMP304 Artificial Intelligence · Learn, reason and implement.</p>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© <span id="current-year"></span> StructTrace.</p>
+            <a href="../../index.html?v=6">Back to AIVisual</a>
+        </div>
+    </footer>
+
+</body>
+</html>

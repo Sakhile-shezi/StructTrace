@@ -1,0 +1,2787 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- sign-in guard: must load first -->
+    <script src="/js/visualizer-guard.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Module 09 | Logic - AIVisual</title>
+    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=6" />
+    <link rel="stylesheet" href="../../css/topic-base.css?v=6" />
+    <link rel="stylesheet" href="../../css/topic-pages.css?v=6" />
+
+    <script src="../../js/ai-core.js?v=6" defer></script>
+    <script src="../../js/ai-visualizer.js?v=6" defer></script>
+    <script src="./topic09.js?v=6" defer></script>
+
+</head>
+
+<body class="aiv-topic topic09-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <header class="ai-header">
+        <nav class="ai-nav">
+
+            <a href="../../index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <button class="mobile-menu-btn" id="mobile-menu-btn" type="button"
+                    aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">☰</button>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="../../index.html?v=6">Course Home</a></li>
+                <li><a href="../topic-08-perceptron/index.html?v=6">← 08. Perceptron</a></li>
+                <li><a href="#logic-introduction" class="active" aria-current="page">09. Logic</a></li>
+                <li><a href="../topic-10-csp/index.html?v=6">10. CSP →</a></li>
+                <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
+                <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
+            </ul>
+
+        </nav>
+    </header>
+
+
+    <main class="topic-container">
+
+        <!-- =========================================================
+             HERO
+             ========================================================= -->
+
+        <section class="topic-hero">
+
+            <div class="topic-breadcrumb">
+                <a href="../../index.html?v=6">AIVisual</a>
+                <span>/</span>
+                <span>COMP304</span>
+                <span>/</span>
+                <span>Module 09</span>
+            </div>
+
+
+            <div class="topic-hero-content">
+
+                <div>
+
+                    <div class="topic-badges">
+                        <span class="topic-label">MODULE 09</span>
+                        <span class="topic-exam-badge">KNOWLEDGE REPRESENTATION</span>
+                    </div>
+
+                    <h1>
+                        Logic and Automated Reasoning
+                        <span>Translate · Convert · Prove</span>
+                    </h1>
+
+                    <p>
+                        Learn how to translate English statements
+                        into first-order logic, convert formulas
+                        into clause form, perform Skolemisation,
+                        and prove conclusions using resolution.
+                        Every proof includes the substitutions
+                        and intermediate clauses needed for
+                        examination working.
+                    </p>
+
+                    <div class="topic-meta">
+                        <span>Predicate logic</span>
+                        <span>Quantifiers</span>
+                        <span>Implications</span>
+                        <span>CNF</span>
+                        <span>Skolemisation</span>
+                        <span>Resolution</span>
+                    </div>
+
+                </div>
+
+
+                <div class="topic-hero-symbol">
+
+                    <div class="topic-symbol-circle">
+                        ∀x
+                    </div>
+
+                    <span>LOGIC · PROOF · REASONING</span>
+
+                </div>
+
+            </div>
+
+
+            <div class="topic-hero-footer">
+                <span>TRANSLATE · STANDARDISE · SKOLEMise · RESOLVE</span>
+                <span>COMP304 · LOGIC</span>
+            </div>
+
+        </section>
+
+
+
+        <div class="topic-layout">
+
+
+            <!-- =========================================================
+                 SIDEBAR
+                 ========================================================= -->
+
+            <aside class="topic-sidebar">
+
+                <div class="sidebar-heading">
+                    <span>MODULE CONTENT</span>
+                    <span class="sidebar-module-number">09</span>
+                </div>
+
+
+                <nav class="topic-navigation">
+
+                    <a href="#logic-introduction" class="topic-nav-link active">
+                        <span>01</span>
+                        First-order logic
+                    </a>
+
+                    <a href="#logic-translation" class="topic-nav-link">
+                        <span>02</span>
+                        English translation
+                    </a>
+
+                    <a href="#logic-quantifiers" class="topic-nav-link">
+                        <span>03</span>
+                        Quantifiers and scope
+                    </a>
+
+                    <a href="#logic-cnf" class="topic-nav-link">
+                        <span>04</span>
+                        Clause form process
+                    </a>
+
+                    <a href="#logic-skolem" class="topic-nav-link">
+                        <span>05</span>
+                        Skolemisation
+                    </a>
+
+                    <a href="#logic-cnf-examples" class="topic-nav-link">
+                        <span>06</span>
+                        Worked CNF examples
+                    </a>
+
+                    <a href="#logic-resolution" class="topic-nav-link">
+                        <span>07</span>
+                        Resolution method
+                    </a>
+
+                    <a href="#logic-peanuts" class="topic-nav-link">
+                        <span>08</span>
+                        Peanuts proof
+                    </a>
+
+                    <a href="#logic-west" class="topic-nav-link">
+                        <span>09</span>
+                        West criminal proof
+                    </a>
+
+                    <a href="#logic-practice" class="topic-nav-link">
+                        <span>10</span>
+                        Interactive exam practice
+                    </a>
+
+                    <a href="#logic-mistakes" class="topic-nav-link">
+                        <span>11</span>
+                        Common mistakes
+                    </a>
+
+                    <a href="#logic-checklist" class="topic-nav-link">
+                        <span>12</span>
+                        Verification checklist
+                    </a>
+
+                </nav>
+
+
+                <div class="sidebar-progress">
+
+                    <span>MODULE PROGRESS</span>
+
+                    <div class="sidebar-progress-track">
+                        <div id="lesson-progress-bar"></div>
+                    </div>
+
+                    <p id="lesson-progress-text">0% viewed</p>
+
+                </div>
+
+
+                <a href="../../index.html?v=6" class="back-course-link">
+                    ← Back to AIVisual
+                </a>
+
+            </aside>
+
+
+
+            <!-- =========================================================
+                 MAIN CONTENT
+                 ========================================================= -->
+
+            <article class="topic-content">
+
+
+                <!-- =========================================================
+                     01. INTRODUCTION
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="logic-introduction"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">01</span>
+
+                        <div>
+                            <p class="section-kicker">KNOWLEDGE REPRESENTATION</p>
+                            <h2>Introduction to First-Order Logic</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        First-order logic is a formal language used
+                        to represent objects, properties, relationships
+                        and statements about the world. It allows an
+                        AI system to represent facts and reason from
+                        those facts to reach conclusions.
+                    </p>
+
+
+                    <p>
+                        In COMP304, the logic question focuses on three
+                        main tasks:
+                    </p>
+
+
+                    <div class="pc-logic-task-grid">
+
+                        <div>
+                            <span>01</span>
+                            <h4>Translation</h4>
+                            <p>
+                                Convert an English statement into
+                                first-order logic.
+                            </p>
+                        </div>
+
+                        <div>
+                            <span>02</span>
+                            <h4>Clause form</h4>
+                            <p>
+                                Convert logical statements into
+                                clauses in conjunctive normal form.
+                            </p>
+                        </div>
+
+                        <div>
+                            <span>03</span>
+                            <h4>Resolution</h4>
+                            <p>
+                                Prove a conclusion by resolving
+                                clauses until the empty clause appears.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <h3>1.1 The building blocks of first-order logic</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Element</th>
+                                    <th>Meaning</th>
+                                    <th>Example</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>Constant</td>
+                                    <td>A specific object or individual.</td>
+                                    <td>John, Anil, Peanuts, UKZN</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Variable</td>
+                                    <td>A symbol representing an object.</td>
+                                    <td>x, y, z</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Predicate</td>
+                                    <td>A property or relationship.</td>
+                                    <td>Student(x), Loves(x,y)</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Function</td>
+                                    <td>Maps an object to another object.</td>
+                                    <td>MotherOf(x), f(x)</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Universal quantifier</td>
+                                    <td>For all objects.</td>
+                                    <td>∀x P(x)</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Existential quantifier</td>
+                                    <td>There exists at least one object.</td>
+                                    <td>∃x P(x)</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>1.2 Logical operators</h3>
+
+
+                    <div class="pc-logic-operator-grid">
+
+                        <div>
+                            <strong>¬</strong>
+                            <span>NOT</span>
+                            <p>Negation</p>
+                        </div>
+
+                        <div>
+                            <strong>∧</strong>
+                            <span>AND</span>
+                            <p>Conjunction</p>
+                        </div>
+
+                        <div>
+                            <strong>∨</strong>
+                            <span>OR</span>
+                            <p>Disjunction</p>
+                        </div>
+
+                        <div>
+                            <strong>→</strong>
+                            <span>IMPLIES</span>
+                            <p>Implication</p>
+                        </div>
+
+                        <div>
+                            <strong>↔</strong>
+                            <span>IF AND ONLY IF</span>
+                            <p>Biconditional</p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>IMPORTANT DISTINCTION</span>
+                        <p>
+                            A predicate such as Student(x) is not
+                            a complete statement until its variable
+                            is assigned or quantified. For example,
+                            ∀x Student(x) says that every object is
+                            a student, while ∃x Student(x) says that
+                            at least one object is a student.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     02. TRANSLATION
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="logic-translation"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">02</span>
+
+                        <div>
+                            <p class="section-kicker">ENGLISH TO LOGIC</p>
+                            <h2>Translating English into First-Order Logic</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        The first step is to identify who the statement
+                        talks about, what condition must hold, and
+                        what conclusion is being made.
+                    </p>
+
+
+                    <h3>2.1 The most important translation rules</h3>
+
+
+                    <div class="pc-translation-rule-grid">
+
+                        <div class="pc-translation-rule">
+                            <span>EVERY / ALL / EACH</span>
+                            <strong>∀x (P(x) → Q(x))</strong>
+                            <p>
+                                If every object satisfying P also satisfies Q,
+                                use universal quantification and implication.
+                            </p>
+                        </div>
+
+
+                        <div class="pc-translation-rule">
+                            <span>SOME / AT LEAST ONE</span>
+                            <strong>∃x (P(x) ∧ Q(x))</strong>
+                            <p>
+                                If at least one object has both properties,
+                                use existential quantification and AND.
+                            </p>
+                        </div>
+
+
+                        <div class="pc-translation-rule">
+                            <span>NO ONE / NONE</span>
+                            <strong>∀x (P(x) → ¬Q(x))</strong>
+                            <p>
+                                No object satisfying P has property Q.
+                            </p>
+                        </div>
+
+
+                        <div class="pc-translation-rule">
+                            <span>EVERYONE IS RELATED TO SOMEONE</span>
+                            <strong>∀x ∃y R(x,y)</strong>
+                            <p>
+                                For each x, there is at least one y
+                                related to that x.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <h3>2.2 Worked translations from your exam guide</h3>
+
+
+                    <div class="pc-logic-example">
+
+                        <span>EXAMPLE 1 — EVERY STUDENT WHO STUDIES PASSES</span>
+
+                        <p>Identify the conditions:</p>
+
+                        <div class="pc-equation">
+                            Student(x) ∧ Studies(x)
+                        </div>
+
+                        <p>The conclusion is:</p>
+
+                        <div class="pc-equation">
+                            Passes(x)
+                        </div>
+
+                        <p>Because the statement says every student who studies:</p>
+
+                        <div class="pc-equation pc-equation-answer">
+                            ∀x ((Student(x) ∧ Studies(x)) → Passes(x))
+                        </div>
+
+                    </div>
+
+
+                    <div class="pc-logic-example">
+
+                        <span>EXAMPLE 2 — SOME STUDENT PASSED</span>
+
+                        <p>We need at least one object that is both a student and passed.</p>
+
+                        <div class="pc-equation">
+                            ∃x (Student(x) ∧ Passed(x))
+                        </div>
+
+                    </div>
+
+
+                    <div class="pc-logic-example">
+
+                        <span>EXAMPLE 3 — NO STUDENT LIKES EXAMS</span>
+
+                        <p>We are talking about every student, but the conclusion is negated.</p>
+
+                        <div class="pc-equation">
+                            ∀x (Student(x) → ¬Likes(x, Exams))
+                        </div>
+
+                        <p>An equivalent form is:</p>
+
+                        <div class="pc-equation">
+                            ¬∃x (Student(x) ∧ Likes(x, Exams))
+                        </div>
+
+                    </div>
+
+
+                    <h3>2.3 The UKZN examples</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>English statement</th>
+                                    <th>First-order logic</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>Everyone at UKZN is smart.</td>
+                                    <td>
+                                        ∀x (At(x, UKZN) → Smart(x))
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>Someone at UKZN is smart.</td>
+                                    <td>
+                                        ∃x (At(x, UKZN) ∧ Smart(x))
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>No one at UKZN is lazy.</td>
+                                    <td>
+                                        ∀x (At(x, UKZN) → ¬Lazy(x))
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>COMMON TRANSLATION MISTAKES</span>
+
+                        <p>
+                            ∀x (At(x, UKZN) ∧ Smart(x)) says everyone
+                            is at UKZN and everyone is smart. That is
+                            different from saying everyone at UKZN is smart.
+                        </p>
+
+                        <p>
+                            ∃x (At(x, UKZN) → Smart(x)) is also wrong
+                            for "someone at UKZN is smart". The implication
+                            can be true simply because the person is not
+                            at UKZN.
+                        </p>
+                    </div>
+
+
+                    <h3>2.4 Interactive translation practice</h3>
+
+
+                    <div class="pc-logic-workbench">
+
+                        <div class="pc-workbench-heading">
+                            <span>TRANSLATION CHALLENGE</span>
+                            <span>SELECT THE CORRECT FORMULA</span>
+                        </div>
+
+
+                        <div class="pc-logic-question-card">
+
+                            <span id="pc-translation-number">
+                                QUESTION 1
+                            </span>
+
+                            <h4 id="pc-translation-question">
+                                Every student who studies passes.
+                            </h4>
+
+                        </div>
+
+
+                        <label for="pc-translation-answer">
+                            Choose the correct first-order logic expression
+                        </label>
+
+
+                        <select id="pc-translation-answer">
+
+                            <option value="">Select an answer</option>
+
+                        </select>
+
+
+                        <button type="button"
+                                id="pc-translation-check"
+                                class="pc-btn primary">
+                            Check Answer
+                        </button>
+
+
+                        <button type="button"
+                                id="pc-translation-next"
+                                class="pc-btn secondary"
+                                disabled>
+                            Next Question →
+                        </button>
+
+
+                        <div id="pc-translation-feedback"
+                             class="pc-result"
+                             aria-live="polite">
+                            Select a formula and check your answer.
+                        </div>
+
+
+                        <div class="pc-score-line">
+                            <span>Score</span>
+                            <strong id="pc-translation-score">0 / 5</strong>
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     03. QUANTIFIERS
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="logic-quantifiers"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">03</span>
+
+                        <div>
+                            <p class="section-kicker">QUANTIFIER SCOPE</p>
+                            <h2>Quantifier Order and Meaning</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        The order of quantifiers can change the meaning
+                        of a statement. This is especially important
+                        when translating statements involving
+                        "everyone" and "someone".
+                    </p>
+
+
+                    <h3>3.1 Two different statements</h3>
+
+
+                    <div class="pc-quantifier-comparison">
+
+                        <div>
+
+                            <span>STATEMENT A</span>
+
+                            <div class="pc-equation">
+                                ∀x ∃y Loves(x,y)
+                            </div>
+
+                            <h4>Everyone loves someone.</h4>
+
+                            <p>
+                                For each person x, there is at least
+                                one person y whom x loves.
+                            </p>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>STATEMENT B</span>
+
+                            <div class="pc-equation">
+                                ∃y ∀x Loves(x,y)
+                            </div>
+
+                            <h4>There is someone whom everyone loves.</h4>
+
+                            <p>
+                                There is one particular person y
+                                whom every person x loves.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <h3>3.2 Why they are different</h3>
+
+
+                    <p>
+                        In Statement A, the person being loved can
+                        change depending on who is doing the loving.
+                        In Statement B, one individual must be loved
+                        by everybody.
+                    </p>
+
+
+                    <div class="important-note">
+                        <span>EXAM RULE</span>
+                        <p>
+                            ∀x ∀y is equivalent to ∀y ∀x, and
+                            ∃x ∃y is equivalent to ∃y ∃x.
+                            But ∃x ∀y is not equivalent to ∀y ∃x.
+                        </p>
+                    </div>
+
+
+                    <h3>3.3 Quantifier duality</h3>
+
+
+                    <div class="pc-formula-card">
+
+                        <span>UNIVERSAL QUANTIFIER DUALITY</span>
+
+                        <div class="pc-formula-equation">
+                            ∀x P(x) ≡ ¬∃x ¬P(x)
+                        </div>
+
+                        <p>
+                            "Everything has property P" is equivalent
+                            to saying "there does not exist an object
+                            that lacks property P".
+                        </p>
+
+                    </div>
+
+
+                    <div class="pc-formula-card">
+
+                        <span>EXISTENTIAL QUANTIFIER DUALITY</span>
+
+                        <div class="pc-formula-equation">
+                            ∃x P(x) ≡ ¬∀x ¬P(x)
+                        </div>
+
+                        <p>
+                            "Something has property P" is equivalent
+                            to saying "it is not true that everything
+                            lacks property P".
+                        </p>
+
+                    </div>
+
+
+                    <h3>3.4 Interactive quantifier-order challenge</h3>
+
+
+                    <div class="pc-logic-workbench">
+
+                        <div class="pc-workbench-heading">
+                            <span>QUANTIFIER ORDER</span>
+                            <span>UNDERSTAND THE SCOPE</span>
+                        </div>
+
+
+                        <div class="pc-logic-question-card">
+
+                            <span>WHAT DOES THIS MEAN?</span>
+
+                            <h4>
+                                ∃y ∀x Loves(x,y)
+                            </h4>
+
+                        </div>
+
+
+                        <div class="pc-answer-options" id="pc-quantifier-options">
+
+                            <label>
+                                <input type="radio"
+                                       name="pc-quantifier-answer"
+                                       value="A" />
+                                <span>Everyone loves at least one person, possibly a different person.</span>
+                            </label>
+
+
+                            <label>
+                                <input type="radio"
+                                       name="pc-quantifier-answer"
+                                       value="B" />
+                                <span>There is one person whom everyone loves.</span>
+                            </label>
+
+
+                            <label>
+                                <input type="radio"
+                                       name="pc-quantifier-answer"
+                                       value="C" />
+                                <span>There is someone who loves everyone.</span>
+                            </label>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="pc-quantifier-check"
+                                class="pc-btn primary">
+                            Check Meaning
+                        </button>
+
+
+                        <div id="pc-quantifier-feedback"
+                             class="pc-result"
+                             aria-live="polite">
+                            Select the correct meaning.
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     04. CLAUSE FORM
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="logic-cnf"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">04</span>
+
+                        <div>
+                            <p class="section-kicker">CONJUNCTIVE NORMAL FORM</p>
+                            <h2>Converting Logic into Clause Form</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        Clause form, also known as conjunctive normal
+                        form (CNF), represents a logical statement
+                        as a conjunction of clauses. A clause is a
+                        disjunction of literals.
+                    </p>
+
+
+                    <h3>4.1 What is a literal and a clause?</h3>
+
+
+                    <div class="pc-cnf-example-grid">
+
+                        <div>
+                            <span>LITERAL</span>
+                            <div class="pc-equation">P(x)</div>
+                            <p>A predicate or its negation.</p>
+                        </div>
+
+
+                        <div>
+                            <span>CLAUSE</span>
+                            <div class="pc-equation">¬P(x) ∨ Q(x)</div>
+                            <p>A disjunction of literals.</p>
+                        </div>
+
+
+                        <div>
+                            <span>CNF</span>
+                            <div class="pc-equation">
+                                (A ∨ B) ∧ (C ∨ D)
+                            </div>
+                            <p>Conjunction of clauses.</p>
+                        </div>
+
+                    </div>
+
+
+                    <h3>4.2 The six-step conversion procedure</h3>
+
+
+                    <div class="pc-cnf-steps">
+
+                        <div>
+                            <span>01</span>
+                            <div>
+                                <h4>Eliminate implications and biconditionals</h4>
+                                <p>Replace → and ↔ using logical equivalences.</p>
+                                <div class="pc-equation">
+                                    P → Q ≡ ¬P ∨ Q
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <span>02</span>
+                            <div>
+                                <h4>Move negations inward</h4>
+                                <p>Apply De Morgan's laws and quantifier negation rules.</p>
+                                <div class="pc-equation">
+                                    ¬∀x P ≡ ∃x ¬P
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <span>03</span>
+                            <div>
+                                <h4>Standardise variables</h4>
+                                <p>Give each quantifier its own variable name.</p>
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <span>04</span>
+                            <div>
+                                <h4>Skolemise</h4>
+                                <p>Replace existential variables with Skolem constants or functions.</p>
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <span>05</span>
+                            <div>
+                                <h4>Drop universal quantifiers</h4>
+                                <p>Universal quantifiers are understood implicitly in clauses.</p>
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <span>06</span>
+                            <div>
+                                <h4>Distribute OR over AND</h4>
+                                <p>Separate the resulting conjunction into individual clauses.</p>
+                                <div class="pc-equation">
+                                    A ∨ (B ∧ C) ≡ (A ∨ B) ∧ (A ∨ C)
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>KEEP THIS ORDER</span>
+                        <p>
+                            Follow the six steps in order. Do not
+                            Skolemise before removing implications,
+                            moving negations inward and standardising
+                            the variables.
+                        </p>
+                    </div>
+
+
+                    <h3>4.3 Logical equivalences to remember</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Original form</th>
+                                    <th>Equivalent form</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>P → Q</td>
+                                    <td>¬P ∨ Q</td>
+                                </tr>
+
+                                <tr>
+                                    <td>P ↔ Q</td>
+                                    <td>(P → Q) ∧ (Q → P)</td>
+                                </tr>
+
+                                <tr>
+                                    <td>¬∀x P(x)</td>
+                                    <td>∃x ¬P(x)</td>
+                                </tr>
+
+                                <tr>
+                                    <td>¬∃x P(x)</td>
+                                    <td>∀x ¬P(x)</td>
+                                </tr>
+
+                                <tr>
+                                    <td>¬(P ∧ Q)</td>
+                                    <td>¬P ∨ ¬Q</td>
+                                </tr>
+
+                                <tr>
+                                    <td>¬(P ∨ Q)</td>
+                                    <td>¬P ∧ ¬Q</td>
+                                </tr>
+
+                                <tr>
+                                    <td>¬¬P</td>
+                                    <td>P</td>
+                                </tr>
+
+                                <tr>
+                                    <td>P ∨ (Q ∧ R)</td>
+                                    <td>(P ∨ Q) ∧ (P ∨ R)</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     05. SKOLEMISATION
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="logic-skolem"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">05</span>
+
+                        <div>
+                            <p class="section-kicker">EXISTENTIAL ELIMINATION</p>
+                            <h2>Skolemisation: Constants and Functions</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        Skolemisation removes existential quantifiers
+                        by replacing their variables with new symbols.
+                        The correct replacement depends on whether
+                        the existential variable is inside the scope
+                        of a universal quantifier.
+                    </p>
+
+
+                    <h3>5.1 When to use a Skolem constant</h3>
+
+
+                    <div class="pc-skolem-card">
+
+                        <span>NO DEPENDENT UNIVERSAL VARIABLE</span>
+
+                        <div class="pc-equation">
+                            ∃x Student(x)
+                        </div>
+
+                        <p>
+                            There exists at least one student. We can
+                            represent this unknown individual using a
+                            new constant, such as A.
+                        </p>
+
+                        <div class="pc-equation pc-equation-answer">
+                            Student(A)
+                        </div>
+
+                    </div>
+
+
+                    <h3>5.2 When to use a Skolem function</h3>
+
+
+                    <div class="pc-skolem-card">
+
+                        <span>EXISTENTIAL VARIABLE INSIDE A UNIVERSAL SCOPE</span>
+
+                        <div class="pc-equation">
+                            ∀x ∃y Loves(x,y)
+                        </div>
+
+                        <p>
+                            For every x, some y is loved by x.
+                            The object y may be different for each x.
+                        </p>
+
+                        <p>
+                            Therefore, replace y with a function of x:
+                        </p>
+
+                        <div class="pc-equation pc-equation-answer">
+                            ∀x Loves(x, f(x))
+                        </div>
+
+                    </div>
+
+
+                    <h3>5.3 Compare the two cases</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Expression</th>
+                                    <th>Replacement</th>
+                                    <th>Reason</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>∃x P(x)</td>
+                                    <td>P(A)</td>
+                                    <td>No preceding universal variable.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>∀x ∃y R(x,y)</td>
+                                    <td>R(x, f(x))</td>
+                                    <td>y can depend on x.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>∀x ∀z ∃y R(x,z,y)</td>
+                                    <td>R(x,z, f(x,z))</td>
+                                    <td>y can depend on both x and z.</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>IMPORTANT EXAM MISTAKE</span>
+                        <p>
+                            Do not replace an existential variable
+                            inside ∀x with a constant if its value
+                            depends on x. Use a Skolem function f(x).
+                            Otherwise, you incorrectly force the same
+                            object to serve every x.
+                        </p>
+                    </div>
+
+
+                    <h3>5.4 Interactive Skolemisation challenge</h3>
+
+
+                    <div class="pc-logic-workbench">
+
+                        <div class="pc-workbench-heading">
+                            <span>CHOOSE THE SKOLEM SYMBOL</span>
+                            <span>CONSTANT OR FUNCTION?</span>
+                        </div>
+
+
+                        <div class="pc-logic-question-card">
+
+                            <span>EXPRESSION</span>
+
+                            <h4 id="pc-skolem-expression">
+                                ∀x ∃y Helps(x,y)
+                            </h4>
+
+                        </div>
+
+
+                        <div class="pc-answer-options">
+
+                            <label>
+                                <input type="radio"
+                                       name="pc-skolem-answer"
+                                       value="A" />
+                                <span>Replace y with a new constant A.</span>
+                            </label>
+
+                            <label>
+                                <input type="radio"
+                                       name="pc-skolem-answer"
+                                       value="B" />
+                                <span>Replace y with a Skolem function f(x).</span>
+                            </label>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="pc-skolem-check"
+                                class="pc-btn primary">
+                            Check Answer
+                        </button>
+
+
+                        <div id="pc-skolem-feedback"
+                             class="pc-result"
+                             aria-live="polite">
+                            Select the correct replacement.
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     06. WORKED CNF EXAMPLES
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="logic-cnf-examples"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">06</span>
+
+                        <div>
+                            <p class="section-kicker">STEP-BY-STEP CONVERSION</p>
+                            <h2>Worked Clause-Form Examples</h2>
+                        </div>
+
+                    </div>
+
+
+                    <h3>Example 1 — Remove an implication and distribute</h3>
+
+
+                    <div class="pc-logic-example">
+
+                        <span>GIVEN</span>
+
+                        <div class="pc-equation">
+                            ∀x ((P(x) ∨ Q(x)) → R(x))
+                        </div>
+
+
+                        <span>STEP 1 — REMOVE IMPLICATION</span>
+
+                        <div class="pc-equation">
+                            ¬(P(x) ∨ Q(x)) ∨ R(x)
+                        </div>
+
+
+                        <span>STEP 2 — APPLY DE MORGAN'S LAW</span>
+
+                        <div class="pc-equation">
+                            (¬P(x) ∧ ¬Q(x)) ∨ R(x)
+                        </div>
+
+
+                        <span>STEP 3 — DISTRIBUTE OR OVER AND</span>
+
+                        <div class="pc-equation">
+                            (¬P(x) ∨ R(x)) ∧ (¬Q(x) ∨ R(x))
+                        </div>
+
+
+                        <span>FINAL CLAUSES</span>
+
+                        <div class="pc-equation pc-equation-answer">
+                            C1: ¬P(x) ∨ R(x)
+                        </div>
+
+                        <div class="pc-equation pc-equation-answer">
+                            C2: ¬Q(x) ∨ R(x)
+                        </div>
+
+                    </div>
+
+
+                    <h3>Example 2 — Student takes a course</h3>
+
+
+                    <div class="pc-logic-example">
+
+                        <span>GIVEN</span>
+
+                        <div class="pc-equation">
+                            ∀x (Student(x) → ∃y (Course(y) ∧ Takes(x,y)))
+                        </div>
+
+
+                        <span>STEP 1 — REMOVE IMPLICATION</span>
+
+                        <div class="pc-equation">
+                            ∀x (¬Student(x) ∨ ∃y (Course(y) ∧ Takes(x,y)))
+                        </div>
+
+
+                        <span>STEP 2 — SKOLEMISE</span>
+
+                        <p>
+                            Because y occurs within the scope of ∀x,
+                            use a Skolem function f(x).
+                        </p>
+
+                        <div class="pc-equation">
+                            ¬Student(x) ∨ (Course(f(x)) ∧ Takes(x,f(x)))
+                        </div>
+
+
+                        <span>STEP 3 — DISTRIBUTE</span>
+
+                        <div class="pc-equation pc-equation-answer">
+                            C1: ¬Student(x) ∨ Course(f(x))
+                        </div>
+
+                        <div class="pc-equation pc-equation-answer">
+                            C2: ¬Student(x) ∨ Takes(x,f(x))
+                        </div>
+
+                    </div>
+
+
+                    <h3>Example 3 — Every bird flies</h3>
+
+
+                    <div class="pc-logic-example">
+
+                        <span>GIVEN</span>
+
+                        <div class="pc-equation">
+                            ¬∃x (Bird(x) ∧ ¬Flies(x))
+                        </div>
+
+
+                        <span>STEP 1 — MOVE NEGATION INWARD</span>
+
+                        <div class="pc-equation">
+                            ∀x ¬(Bird(x) ∧ ¬Flies(x))
+                        </div>
+
+
+                        <span>STEP 2 — APPLY DE MORGAN'S LAW</span>
+
+                        <div class="pc-equation pc-equation-answer">
+                            ∀x (¬Bird(x) ∨ Flies(x))
+                        </div>
+
+
+                        <span>FINAL CLAUSE</span>
+
+                        <div class="pc-equation pc-equation-answer">
+                            ¬Bird(x) ∨ Flies(x)
+                        </div>
+
+                    </div>
+
+
+                    <h3>6.1 The lecture's longer Skolemisation example</h3>
+
+
+                    <div class="pc-logic-example">
+
+                        <span>EXPRESSION FROM THE EXAM GUIDE</span>
+
+                        <div class="pc-equation">
+                            ∀x [∀y (Animal(y) → Loves(x,y))]
+                            →
+                            [∃y Loves(y,x)]
+                        </div>
+
+                        <p>
+                            The guide's final clause-form result is:
+                        </p>
+
+                        <div class="pc-equation pc-equation-answer">
+                            C1: Animal(F(x)) ∨ Loves(G(x), x)
+                        </div>
+
+                        <div class="pc-equation pc-equation-answer">
+                            C2: ¬Loves(x, F(x)) ∨ Loves(G(x), x)
+                        </div>
+
+                        <p>
+                            The Skolem functions are dependent on x
+                            because the existential choices occur
+                            within the scope of the universal variable.
+                        </p>
+
+                    </div>
+
+
+                    <h3>6.2 Interactive conversion sequence</h3>
+
+
+                    <div class="pc-logic-workbench">
+
+                        <div class="pc-workbench-heading">
+                            <span>CNF CONVERSION TRACER</span>
+                            <span>FOLLOW THE SIX STEPS</span>
+                        </div>
+
+
+                        <label for="pc-cnf-example">
+                            Select an example
+                        </label>
+
+
+                        <select id="pc-cnf-example">
+
+                            <option value="implication">
+                                Example 1 — Implication and distribution
+                            </option>
+
+                            <option value="student">
+                                Example 2 — Student and course
+                            </option>
+
+                            <option value="bird">
+                                Example 3 — Bird and negation
+                            </option>
+
+                        </select>
+
+
+                        <div class="pc-cnf-trace-controls">
+
+                            <button type="button"
+                                    id="pc-cnf-previous"
+                                    class="pc-btn secondary"
+                                    disabled>
+                                ← Previous
+                            </button>
+
+                            <button type="button"
+                                    id="pc-cnf-next"
+                                    class="pc-btn primary">
+                                Next Step →
+                            </button>
+
+                            <button type="button"
+                                    id="pc-cnf-reset"
+                                    class="pc-btn secondary">
+                                Reset
+                            </button>
+
+                        </div>
+
+
+                        <div class="pc-cnf-progress">
+                            <span id="pc-cnf-step-number">Step 1 of 4</span>
+                            <div>
+                                <div id="pc-cnf-progress-bar"></div>
+                            </div>
+                        </div>
+
+
+                        <div class="pc-cnf-current-step">
+
+                            <span id="pc-cnf-step-title">
+                                Original expression
+                            </span>
+
+                            <div id="pc-cnf-step-expression"
+                                 class="pc-equation">
+                                Select an example to begin.
+                            </div>
+
+                            <p id="pc-cnf-step-explanation">
+                                The conversion explanation appears here.
+                            </p>
+
+                        </div>
+
+
+                        <div id="pc-cnf-final-clauses"
+                             class="pc-cnf-final-clauses">
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     07. RESOLUTION METHOD
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="logic-resolution"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">07</span>
+
+                        <div>
+                            <p class="section-kicker">AUTOMATED THEOREM PROVING</p>
+                            <h2>Resolution: Proving a Statement</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        Resolution is an inference rule used to prove
+                        whether a conclusion follows from a set of
+                        facts. It works by adding the negation of the
+                        goal and deriving a contradiction.
+                    </p>
+
+
+                    <h3>7.1 The resolution principle</h3>
+
+
+                    <div class="pc-formula-card">
+
+                        <span>RESOLUTION RULE</span>
+
+                        <div class="pc-formula-equation">
+                            (P ∨ A), (¬P ∨ B)
+                        </div>
+
+                        <div class="pc-formula-equation">
+                            Therefore: (A ∨ B)
+                        </div>
+
+                        <p>
+                            The complementary literals P and ¬P are
+                            eliminated. The remaining literals are
+                            combined into a new clause.
+                        </p>
+
+                    </div>
+
+
+                    <h3>7.2 What is unification?</h3>
+
+
+                    <p>
+                        Before two clauses can be resolved, their
+                        complementary predicates may need to be
+                        made identical by substituting variables.
+                        This process is called unification.
+                    </p>
+
+
+                    <div class="pc-logic-example">
+
+                        <span>EXAMPLE</span>
+
+                        <div class="pc-equation">
+                            Likes(x, Peanuts)
+                        </div>
+
+                        <div class="pc-equation">
+                            ¬Likes(John, y)
+                        </div>
+
+                        <p>Substitution:</p>
+
+                        <div class="pc-equation pc-equation-answer">
+                            {x/John, y/Peanuts}
+                        </div>
+
+                        <p>
+                            After substitution, the literals become
+                            Likes(John, Peanuts) and
+                            ¬Likes(John, Peanuts), so they are
+                            complementary.
+                        </p>
+
+                    </div>
+
+
+                    <h3>7.3 The four main proof stages</h3>
+
+
+                    <div class="pc-resolution-stages">
+
+                        <div>
+                            <span>01</span>
+                            <h4>Represent the facts</h4>
+                            <p>Write the facts and rules in first-order logic.</p>
+                        </div>
+
+                        <div>
+                            <span>02</span>
+                            <h4>Convert to clauses</h4>
+                            <p>Put all facts and rules into clause form.</p>
+                        </div>
+
+                        <div>
+                            <span>03</span>
+                            <h4>Negate the goal</h4>
+                            <p>Add the negation of what you want to prove.</p>
+                        </div>
+
+                        <div>
+                            <span>04</span>
+                            <h4>Resolve</h4>
+                            <p>Unify complementary literals and derive the empty clause.</p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>THE EMPTY CLAUSE</span>
+                        <p>
+                            The empty clause, written as □, represents
+                            a contradiction. If resolution produces □,
+                            the negated goal is inconsistent with the
+                            facts. Therefore, the original goal follows
+                            from the facts.
+                        </p>
+                    </div>
+
+
+                    <h3>7.4 How to record a resolution proof</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Step</th>
+                                    <th>Resolve</th>
+                                    <th>Substitution</th>
+                                    <th>Result</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>1</td>
+                                    <td>Clause A with Clause B</td>
+                                    <td>{x/John}</td>
+                                    <td>New resolvent</td>
+                                </tr>
+
+                                <tr>
+                                    <td>2</td>
+                                    <td>Previous result with Clause C</td>
+                                    <td>{y/Peanuts}</td>
+                                    <td>New resolvent</td>
+                                </tr>
+
+                                <tr>
+                                    <td>3</td>
+                                    <td>Previous result with Clause D</td>
+                                    <td>—</td>
+                                    <td>□</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>EXAM MARKS</span>
+                        <p>
+                            Always show which clauses you resolve,
+                            the substitution used and the resulting
+                            clause. Your guide specifically warns
+                            against leaving out substitutions.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     08. JOHN LIKES PEANUTS
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="logic-peanuts"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">08</span>
+
+                        <div>
+                            <p class="section-kicker">LECTURE WORKED PROOF</p>
+                            <h2>Resolution Example: John Likes Peanuts</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        This is the worked resolution example
+                        from your COMP304 Exam Preparation Guide.
+                        We will follow each clause and substitution
+                        until we derive the empty clause.
+                    </p>
+
+
+                    <h3>8.1 Goal</h3>
+
+
+                    <div class="pc-final-goal">
+                        <span>PROVE</span>
+                        <strong>Likes(John, Peanuts)</strong>
+                    </div>
+
+
+                    <h3>8.2 Clauses after conversion</h3>
+
+
+                    <div class="pc-clause-list">
+
+                        <div><strong>a</strong><span>¬food(x) ∨ likes(John,x)</span></div>
+                        <div><strong>b</strong><span>food(Apple)</span></div>
+                        <div><strong>c</strong><span>food(Vegetables)</span></div>
+                        <div><strong>d</strong><span>¬eats(y,z) ∨ killed(y) ∨ food(z)</span></div>
+                        <div><strong>e</strong><span>eats(Anil,Peanuts)</span></div>
+                        <div><strong>f</strong><span>alive(Anil)</span></div>
+                        <div><strong>g</strong><span>¬eats(Anil,w) ∨ eats(Harry,w)</span></div>
+                        <div><strong>h</strong><span>killed(g) ∨ alive(g)</span></div>
+                        <div><strong>i</strong><span>¬alive(k) ∨ ¬killed(k)</span></div>
+
+                    </div>
+
+
+                    <h3>8.3 Negate the goal</h3>
+
+
+                    <div class="pc-equation">
+                        ¬Likes(John, Peanuts)
+                    </div>
+
+
+                    <h3>8.4 Step-by-step resolution proof</h3>
+
+
+                    <div class="pc-logic-workbench">
+
+                        <div class="pc-workbench-heading">
+                            <span>LIVE RESOLUTION TRACE</span>
+                            <span>JOHN LIKES PEANUTS</span>
+                        </div>
+
+
+                        <div class="pc-resolution-status">
+
+                            <div>
+                                <span>PROOF STEP</span>
+                                <strong id="pc-peanut-step-count">0 / 5</strong>
+                            </div>
+
+                            <div>
+                                <span>PROOF STATUS</span>
+                                <strong id="pc-peanut-status">Ready</strong>
+                            </div>
+
+                        </div>
+
+
+                        <div class="pc-resolution-current">
+
+                            <span>CURRENT STEP</span>
+
+                            <h4 id="pc-peanut-step-title">
+                                Negate the goal
+                            </h4>
+
+                            <div id="pc-peanut-resolution-work"
+                                 class="pc-equation">
+                                ¬Likes(John, Peanuts)
+                            </div>
+
+                            <p id="pc-peanut-resolution-explanation">
+                                Add the negated goal to the clause set.
+                            </p>
+
+                        </div>
+
+
+                        <div class="pc-resolution-controls">
+
+                            <button type="button"
+                                    id="pc-peanut-previous"
+                                    class="pc-btn secondary"
+                                    disabled>
+                                ← Previous
+                            </button>
+
+                            <button type="button"
+                                    id="pc-peanut-next"
+                                    class="pc-btn primary">
+                                Resolve Next →
+                            </button>
+
+                            <button type="button"
+                                    id="pc-peanut-reset"
+                                    class="pc-btn secondary">
+                                Reset Proof
+                            </button>
+
+                        </div>
+
+
+                        <div class="pc-proof-table-wrapper">
+
+                            <table class="pc-proof-table">
+
+                                <thead>
+                                    <tr>
+                                        <th>Step</th>
+                                        <th>Resolve</th>
+                                        <th>Substitution</th>
+                                        <th>Result</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="pc-peanut-proof-body">
+
+                                    <tr>
+                                        <td colspan="4">
+                                            No resolution steps completed.
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                        <div id="pc-peanut-conclusion"
+                             class="pc-proof-conclusion"
+                             aria-live="polite">
+                            Follow the proof until the empty clause appears.
+                        </div>
+
+                    </div>
+
+
+                    <h3>8.5 Final conclusion</h3>
+
+
+                    <div class="important-note">
+                        <span>WHY THE PROOF WORKS</span>
+                        <p>
+                            Resolution derives the empty clause after
+                            adding the negated goal. The negated goal
+                            is therefore false, so the original
+                            statement follows: John likes peanuts.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     09. WEST IS A CRIMINAL
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="logic-west"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">09</span>
+
+                        <div>
+                            <p class="section-kicker">PAST EXAM REVISION QUESTION</p>
+                            <h2>Resolution Proof: West Is a Criminal</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        This is the longer resolution problem in
+                        your exam guide. It combines facts, rules,
+                        an existential statement, Skolemisation,
+                        clause conversion and a multi-step proof.
+                    </p>
+
+
+                    <h3>9.1 The problem statement</h3>
+
+
+                    <div class="pc-problem-statement">
+
+                        The law says it is a crime for an American
+                        to sell weapons to hostile nations.
+
+                        Nono is an enemy of America. Nono owns
+                        missiles, and all of Nono's missiles were
+                        sold to it by Colonel West, who is American.
+
+                        An enemy of America counts as hostile.
+
+                        <strong>Prove that West is a criminal.</strong>
+
+                    </div>
+
+
+                    <h3>9.2 First-order logic facts</h3>
+
+
+                    <div class="pc-clause-list">
+
+                        <div>
+                            <strong>1</strong>
+                            <span>
+                                ∀x∀y∀z
+                                ((American(x) ∧ Weapon(y) ∧ Sells(x,y,z)
+                                ∧ Hostile(z)) → Criminal(x))
+                            </span>
+                        </div>
+
+                        <div>
+                            <strong>2–3</strong>
+                            <span>
+                                ∃x (Owns(Nono,x) ∧ Missile(x))
+                            </span>
+                        </div>
+
+                        <div>
+                            <strong>4</strong>
+                            <span>
+                                ∀x ((Missile(x) ∧ Owns(Nono,x))
+                                → Sells(West,x,Nono))
+                            </span>
+                        </div>
+
+                        <div>
+                            <strong>5</strong>
+                            <span>
+                                ∀x (Enemy(x,America) → Hostile(x))
+                            </span>
+                        </div>
+
+                        <div>
+                            <strong>6</strong>
+                            <span>American(West)</span>
+                        </div>
+
+                        <div>
+                            <strong>7</strong>
+                            <span>Enemy(Nono,America)</span>
+                        </div>
+
+                        <div>
+                            <strong>8</strong>
+                            <span>
+                                ∀x (Missile(x) → Weapon(x))
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <h3>9.3 Skolemise the existential statement</h3>
+
+
+                    <div class="pc-equation">
+                        ∃x (Owns(Nono,x) ∧ Missile(x))
+                    </div>
+
+
+                    <p>
+                        There is an object owned by Nono that is a
+                        missile. Since there is no preceding universal
+                        variable, introduce a Skolem constant M1.
+                    </p>
+
+
+                    <div class="pc-equation pc-equation-answer">
+                        Owns(Nono,M1)
+                    </div>
+
+                    <div class="pc-equation pc-equation-answer">
+                        Missile(M1)
+                    </div>
+
+
+                    <h3>9.4 Clause form</h3>
+
+
+                    <div class="pc-clause-list">
+
+                        <div>
+                            <strong>C1</strong>
+                            <span>
+                                ¬American(x) ∨ ¬Weapon(y) ∨
+                                ¬Sells(x,y,z) ∨ ¬Hostile(z) ∨ Criminal(x)
+                            </span>
+                        </div>
+
+                        <div><strong>C2</strong><span>Owns(Nono,M1)</span></div>
+
+                        <div><strong>C3</strong><span>Missile(M1)</span></div>
+
+                        <div>
+                            <strong>C4</strong>
+                            <span>
+                                ¬Missile(x) ∨ ¬Owns(Nono,x) ∨ Sells(West,x,Nono)
+                            </span>
+                        </div>
+
+                        <div>
+                            <strong>C5</strong>
+                            <span>
+                                ¬Enemy(x,America) ∨ Hostile(x)
+                            </span>
+                        </div>
+
+                        <div><strong>C6</strong><span>American(West)</span></div>
+
+                        <div><strong>C7</strong><span>Enemy(Nono,America)</span></div>
+
+                        <div>
+                            <strong>C8</strong>
+                            <span>¬Missile(x) ∨ Weapon(x)</span>
+                        </div>
+
+                    </div>
+
+
+                    <h3>9.5 Negate the goal</h3>
+
+
+                    <p>
+                        The goal is Criminal(West). Add its negation:
+                    </p>
+
+
+                    <div class="pc-equation">
+                        C9: ¬Criminal(West)
+                    </div>
+
+
+                    <h3>9.6 Interactive resolution proof</h3>
+
+
+                    <div class="pc-logic-workbench">
+
+                        <div class="pc-workbench-heading">
+                            <span>LIVE RESOLUTION TRACE</span>
+                            <span>WEST IS A CRIMINAL</span>
+                        </div>
+
+
+                        <div class="pc-resolution-status">
+
+                            <div>
+                                <span>PROOF STEP</span>
+                                <strong id="pc-west-step-count">0 / 9</strong>
+                            </div>
+
+                            <div>
+                                <span>PROOF STATUS</span>
+                                <strong id="pc-west-status">Ready</strong>
+                            </div>
+
+                        </div>
+
+
+                        <div class="pc-resolution-current">
+
+                            <span>CURRENT RESOLUTION STEP</span>
+
+                            <h4 id="pc-west-step-title">
+                                Negate the goal
+                            </h4>
+
+                            <div id="pc-west-resolution-work"
+                                 class="pc-equation">
+                                C9: ¬Criminal(West)
+                            </div>
+
+                            <p id="pc-west-resolution-explanation">
+                                Add the negated goal to the clause set.
+                            </p>
+
+                        </div>
+
+
+                        <div class="pc-resolution-controls">
+
+                            <button type="button"
+                                    id="pc-west-previous"
+                                    class="pc-btn secondary"
+                                    disabled>
+                                ← Previous
+                            </button>
+
+                            <button type="button"
+                                    id="pc-west-next"
+                                    class="pc-btn primary">
+                                Resolve Next →
+                            </button>
+
+                            <button type="button"
+                                    id="pc-west-reset"
+                                    class="pc-btn secondary">
+                                Reset Proof
+                            </button>
+
+                        </div>
+
+
+                        <div class="pc-proof-table-wrapper">
+
+                            <table class="pc-proof-table">
+
+                                <thead>
+                                    <tr>
+                                        <th>Step</th>
+                                        <th>Resolve</th>
+                                        <th>Substitution</th>
+                                        <th>Result</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="pc-west-proof-body">
+
+                                    <tr>
+                                        <td colspan="4">
+                                            No resolution steps completed.
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                        <div id="pc-west-conclusion"
+                             class="pc-proof-conclusion"
+                             aria-live="polite">
+                            Follow all nine resolution steps to prove the goal.
+                        </div>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>FINAL LOGIC CONCLUSION</span>
+                        <p>
+                            The resolution proof derives the empty
+                            clause. Therefore, the negation of
+                            Criminal(West) is false, and West is
+                            a criminal.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     10. EXAM PRACTICE
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="logic-practice"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">10</span>
+
+                        <div>
+                            <p class="section-kicker">COMP304 EXAM PREPARATION</p>
+                            <h2>Interactive Logic Exam Practice</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        Answer the questions independently before
+                        revealing the solutions. The questions follow
+                        the exercises in your exam preparation guide.
+                    </p>
+
+
+                    <h3>Question 1 — Translate into first-order logic</h3>
+
+
+                    <div class="pc-practice-question">
+                        <span>Q1.1</span>
+                        Every student who studies passes.
+                        <details>
+                            <summary>Show answer</summary>
+                            <div class="pc-equation">
+                                ∀x ((Student(x) ∧ Studies(x)) → Passes(x))
+                            </div>
+                        </details>
+                    </div>
+
+
+                    <div class="pc-practice-question">
+                        <span>Q1.2</span>
+                        Some student passed.
+                        <details>
+                            <summary>Show answer</summary>
+                            <div class="pc-equation">
+                                ∃x (Student(x) ∧ Passed(x))
+                            </div>
+                        </details>
+                    </div>
+
+
+                    <div class="pc-practice-question">
+                        <span>Q1.3</span>
+                        No student likes exams.
+                        <details>
+                            <summary>Show answer</summary>
+                            <div class="pc-equation">
+                                ∀x (Student(x) → ¬Likes(x,Exams))
+                            </div>
+                        </details>
+                    </div>
+
+
+                    <div class="pc-practice-question">
+                        <span>Q1.4</span>
+                        Everyone loves someone.
+                        <details>
+                            <summary>Show answer</summary>
+                            <div class="pc-equation">
+                                ∀x ∃y Loves(x,y)
+                            </div>
+                        </details>
+                    </div>
+
+
+                    <div class="pc-practice-question">
+                        <span>Q1.5</span>
+                        There is someone whom everyone loves.
+                        <details>
+                            <summary>Show answer</summary>
+                            <div class="pc-equation">
+                                ∃y ∀x Loves(x,y)
+                            </div>
+                        </details>
+                    </div>
+
+
+                    <h3>Question 2 — Convert into clause form</h3>
+
+
+                    <div class="pc-practice-question">
+                        <span>Q2.1</span>
+                        ∀x ((P(x) ∨ Q(x)) → R(x))
+
+                        <details>
+                            <summary>Show answer</summary>
+
+                            <div class="pc-equation">
+                                C1: ¬P(x) ∨ R(x)
+                            </div>
+
+                            <div class="pc-equation">
+                                C2: ¬Q(x) ∨ R(x)
+                            </div>
+
+                        </details>
+                    </div>
+
+
+                    <div class="pc-practice-question">
+                        <span>Q2.2</span>
+                        ∀x (Student(x) → ∃y (Course(y) ∧ Takes(x,y)))
+
+                        <details>
+                            <summary>Show answer</summary>
+
+                            <p>Skolem function: f(x)</p>
+
+                            <div class="pc-equation">
+                                C1: ¬Student(x) ∨ Course(f(x))
+                            </div>
+
+                            <div class="pc-equation">
+                                C2: ¬Student(x) ∨ Takes(x,f(x))
+                            </div>
+
+                        </details>
+                    </div>
+
+
+                    <div class="pc-practice-question">
+                        <span>Q2.3</span>
+                        ¬∃x (Bird(x) ∧ ¬Flies(x))
+
+                        <details>
+                            <summary>Show answer</summary>
+
+                            <div class="pc-equation">
+                                ¬Bird(x) ∨ Flies(x)
+                            </div>
+
+                        </details>
+                    </div>
+
+
+                    <h3>Question 3 — Translate logic into English</h3>
+
+
+                    <div class="pc-practice-question">
+                        <span>Q3</span>
+                        ∀x ∀y ((Parent(x,y) ∧ Female(x)) → Mother(x,y))
+
+                        <details>
+                            <summary>Show answer</summary>
+
+                            <p>
+                                Every female parent of someone is that
+                                person's mother.
+                            </p>
+
+                        </details>
+                    </div>
+
+
+                    <h3>Question 4 — Resolution and substitutions</h3>
+
+
+                    <div class="pc-practice-question">
+                        <span>Q4</span>
+                        Explain why the negated goal must be added
+                        before carrying out resolution.
+
+                        <details>
+                            <summary>Show answer</summary>
+
+                            <p>
+                                Resolution uses proof by contradiction.
+                                Negating the goal allows us to show
+                                that the facts and the negated goal
+                                produce an inconsistency. The empty
+                                clause demonstrates that the negated
+                                goal cannot be true.
+                            </p>
+
+                        </details>
+                    </div>
+
+
+                    <div class="pc-practice-question">
+                        <span>Q5</span>
+                        Why must substitutions be recorded in a
+                        first-order resolution proof?
+
+                        <details>
+                            <summary>Show answer</summary>
+
+                            <p>
+                                Substitutions unify complementary
+                                predicates so that resolution can be
+                                applied correctly. They also show
+                                how variables are matched at each
+                                proof step.
+                            </p>
+
+                        </details>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     11. COMMON MISTAKES
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="logic-mistakes"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">11</span>
+
+                        <div>
+                            <p class="section-kicker">EXAM ERROR PREVENTION</p>
+                            <h2>Common Logic Mistakes</h2>
+                        </div>
+
+                    </div>
+
+
+                    <div class="pc-mistake-card">
+                        <strong>Mistake 1 — Using AND for every universal statement</strong>
+
+                        <div class="pc-wrong-expression">
+                            ∀x (Student(x) ∧ Passes(x))
+                        </div>
+
+                        <div class="pc-correct-expression">
+                            ∀x (Student(x) → Passes(x))
+                        </div>
+
+                        <p>
+                            The universal statement normally uses
+                            implication to express "every student
+                            who satisfies the condition also passes".
+                        </p>
+                    </div>
+
+
+                    <div class="pc-mistake-card">
+                        <strong>Mistake 2 — Using implication for an existential statement</strong>
+
+                        <div class="pc-wrong-expression">
+                            ∃x (Student(x) → Passed(x))
+                        </div>
+
+                        <div class="pc-correct-expression">
+                            ∃x (Student(x) ∧ Passed(x))
+                        </div>
+
+                        <p>
+                            The existential statement requires an
+                            object that satisfies both conditions.
+                        </p>
+                    </div>
+
+
+                    <div class="pc-mistake-card">
+                        <strong>Mistake 3 — Using a constant when a function is required</strong>
+
+                        <div class="pc-wrong-expression">
+                            ∀x ∃y Loves(x,y) → Loves(x,A)
+                        </div>
+
+                        <div class="pc-correct-expression">
+                            ∀x Loves(x,f(x))
+                        </div>
+
+                        <p>
+                            The existential choice may depend on x.
+                            Use a Skolem function when it is inside
+                            the universal scope.
+                        </p>
+                    </div>
+
+
+                    <div class="pc-mistake-card">
+                        <strong>Mistake 4 — Forgetting to negate the goal</strong>
+
+                        <p>
+                            Add the negation of the conclusion
+                            before resolving. Otherwise, the proof
+                            does not follow the resolution-by-
+                            contradiction method.
+                        </p>
+                    </div>
+
+
+                    <div class="pc-mistake-card">
+                        <strong>Mistake 5 — Leaving out substitutions</strong>
+
+                        <p>
+                            Write the variable bindings beside the
+                            resolution step, for example
+                            {x/Peanuts}, {y/Anil}.
+                        </p>
+                    </div>
+
+
+                    <div class="pc-mistake-card">
+                        <strong>Mistake 6 — Stopping before the empty clause</strong>
+
+                        <p>
+                            A proof is complete when the resolvents
+                            produce the empty clause □.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     12. CHECKLIST
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="logic-checklist"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">12</span>
+
+                        <div>
+                            <p class="section-kicker">EXAM VERIFICATION</p>
+                            <h2>Logic Revision Checklist</h2>
+                        </div>
+
+                    </div>
+
+
+                    <ul class="aiv-checklist">
+
+                        <li>
+                            <label>
+                                <input id="t09-check-01" type="checkbox" />
+                                <span>Identify constants, variables, predicates and functions.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t09-check-02" type="checkbox" />
+                                <span>Translate universal statements using the correct implication structure.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t09-check-03" type="checkbox" />
+                                <span>Translate existential statements using conjunction where appropriate.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t09-check-04" type="checkbox" />
+                                <span>Distinguish ∀x ∃y from ∃y ∀x.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t09-check-05" type="checkbox" />
+                                <span>Eliminate implications and biconditionals.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t09-check-06" type="checkbox" />
+                                <span>Apply De Morgan's laws and quantifier negation correctly.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t09-check-07" type="checkbox" />
+                                <span>Standardise bound variables.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t09-check-08" type="checkbox" />
+                                <span>Choose between a Skolem constant and a Skolem function.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t09-check-09" type="checkbox" />
+                                <span>Drop universal quantifiers and distribute OR over AND.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t09-check-10" type="checkbox" />
+                                <span>Negate the goal before beginning resolution.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t09-check-11" type="checkbox" />
+                                <span>Unify complementary literals and write substitutions.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t09-check-12" type="checkbox" />
+                                <span>Continue resolution until the empty clause appears.</span>
+                            </label>
+                        </li>
+
+                    </ul>
+
+
+                    <button type="button"
+                            class="pc-btn secondary"
+                            id="pc-reset-checklist">
+                        Reset Checklist
+                    </button>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     NEXT TOPIC NOTE
+                     ========================================================= -->
+
+                <section class="pc-next-topic-note">
+
+                    <span>COMING NEXT</span>
+
+                    <h2>Constraint Satisfaction Problems</h2>
+
+                    <p>
+                        We will cover variables, domains, constraints,
+                        constraint graphs, backtracking search,
+                        forward checking, domain reduction and
+                        step-by-step search traces.
+                    </p>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     COMPLETION
+                     ========================================================= -->
+
+                <section class="lesson-completion">
+
+                    <div>
+
+                        <span class="completion-label">MODULE 09</span>
+
+                        <h2>Can you translate, convert and prove?</h2>
+
+                        <p>
+                            Complete the translation and quantifier
+                            challenges, trace the CNF conversions,
+                            and finish both resolution proofs.
+                        </p>
+
+                    </div>
+
+
+                    <button type="button"
+                            class="pc-btn primary"
+                            id="pc-complete-module"
+                            disabled>
+                        Mark Module Complete
+                    </button>
+
+
+                    <p id="pc-completion-message"
+                       class="completion-message"
+                       aria-live="polite">
+                        Complete the interactive activities first.
+                    </p>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     BOTTOM NAVIGATION
+                     ========================================================= -->
+
+                <div class="topic-bottom-navigation">
+                    <a href="../topic-08-perceptron/index.html?v=6" class="topic-previous-link">← Previous: Perceptron Training</a>
+                    <a href="../topic-10-csp/index.html?v=6" class="topic-next-link">Next: Constraint Satisfaction Problems →</a>
+                </div>
+
+
+            </article>
+        </div>
+
+    </main>
+
+
+
+    <!-- =========================================================
+         FOOTER
+         ========================================================= -->
+
+    <footer class="ai-footer">
+
+        <div class="footer-content">
+
+            <a href="../../index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <p>
+                COMP304 Artificial Intelligence · Learn, reason and implement.
+            </p>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <p>
+                © <span id="current-year"></span> StructTrace.
+            </p>
+
+            <a href="../../index.html?v=6">Back to AIVisual</a>
+
+        </div>
+
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,3458 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- sign-in guard: must load first -->
+    <script src="/js/visualizer-guard.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Module 08 | Perceptron Training - AIVisual</title>
+    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=6" />
+    <link rel="stylesheet" href="../../css/topic-base.css?v=6" />
+    <link rel="stylesheet" href="../../css/topic-pages.css?v=6" />
+
+    <script src="../../js/ai-core.js?v=6" defer></script>
+    <script src="../../js/ai-visualizer.js?v=6" defer></script>
+    <script src="./topic08.js?v=6" defer></script>
+
+</head>
+
+<body class="aiv-topic topic08-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <header class="ai-header">
+
+        <nav class="ai-nav">
+
+            <a href="../../index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <button class="mobile-menu-btn" id="mobile-menu-btn" type="button"
+                    aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">☰</button>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="../../index.html?v=6">Course Home</a></li>
+                <li><a href="../topic-07-machine-learning/index.html?v=6">← 07. Machine Learning</a></li>
+                <li><a href="#perceptron-introduction" class="active" aria-current="page">08. Perceptron</a></li>
+                <li><a href="../topic-09-logic/index.html?v=6">09. Logic →</a></li>
+                <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
+                <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
+            </ul>
+
+        </nav>
+
+    </header>
+
+
+    <main class="topic-container">
+
+
+        <!-- =========================================================
+             HERO
+             ========================================================= -->
+
+        <section class="topic-hero">
+
+            <div class="topic-breadcrumb">
+                <a href="../../index.html?v=6">AIVisual</a>
+                <span>/</span>
+                <span>COMP304</span>
+                <span>/</span>
+                <span>Module 08</span>
+            </div>
+
+
+            <div class="topic-hero-content">
+
+                <div>
+
+                    <div class="topic-badges">
+                        <span class="topic-label">MODULE 08</span>
+                        <span class="topic-exam-badge">NEURAL NETWORKS</span>
+                    </div>
+
+                    <h1>
+                        Perceptron Training
+                        <span>Calculate · Update · Trace · Converge</span>
+                    </h1>
+
+                    <p>
+                        Master perceptron training through complete
+                        numerical examples. Calculate net input,
+                        apply the threshold activation, determine
+                        prediction errors, update weights and bias,
+                        and trace every training row across multiple
+                        epochs using Python.
+                    </p>
+
+                    <div class="topic-meta">
+                        <span>Net input</span>
+                        <span>Threshold</span>
+                        <span>Learning rate</span>
+                        <span>Weight updates</span>
+                        <span>Epoch tracing</span>
+                        <span>Python</span>
+                    </div>
+
+                </div>
+
+
+                <div class="topic-hero-symbol">
+
+                    <div class="topic-symbol-circle">
+                        Σw
+                    </div>
+
+                    <span>LEARN THROUGH WEIGHT UPDATES</span>
+
+                </div>
+
+            </div>
+
+
+            <div class="topic-hero-footer">
+                <span>CALCULATE · CLASSIFY · UPDATE · REPEAT</span>
+                <span>COMP304 · PERCEPTRON TRAINING</span>
+            </div>
+
+        </section>
+
+
+
+        <div class="topic-layout">
+
+
+            <!-- =========================================================
+                 SIDEBAR
+                 ========================================================= -->
+
+            <aside class="topic-sidebar">
+
+                <div class="sidebar-heading">
+                    <span>MODULE CONTENT</span>
+                    <span class="sidebar-module-number">08</span>
+                </div>
+
+
+                <nav class="topic-navigation">
+
+                    <a href="#perceptron-introduction" class="topic-nav-link active">
+                        <span>01</span>
+                        Perceptron model
+                    </a>
+
+                    <a href="#perceptron-formulas" class="topic-nav-link">
+                        <span>02</span>
+                        Important formulas
+                    </a>
+
+                    <a href="#activation" class="topic-nav-link">
+                        <span>03</span>
+                        Threshold activation
+                    </a>
+
+                    <a href="#weight-update" class="topic-nav-link">
+                        <span>04</span>
+                        Weight and bias update
+                    </a>
+
+                    <a href="#and-worked-example" class="topic-nav-link">
+                        <span>05</span>
+                        AND worked example
+                    </a>
+
+                    <a href="#interactive-trainer" class="topic-nav-link">
+                        <span>06</span>
+                        Interactive trainer
+                    </a>
+
+                    <a href="#or-example" class="topic-nav-link">
+                        <span>07</span>
+                        OR function
+                    </a>
+
+                    <a href="#multi-input-example" class="topic-nav-link">
+                        <span>08</span>
+                        Three-input problem
+                    </a>
+
+                    <a href="#spam-example" class="topic-nav-link">
+                        <span>09</span>
+                        2025 spam example
+                    </a>
+
+                    <a href="#python-implementation" class="topic-nav-link">
+                        <span>10</span>
+                        Python implementation
+                    </a>
+
+                    <a href="#xor-limitations" class="topic-nav-link">
+                        <span>11</span>
+                        XOR limitation
+                    </a>
+
+                    <a href="#exam-practice" class="topic-nav-link">
+                        <span>12</span>
+                        Exam practice
+                    </a>
+
+                    <a href="#checklist" class="topic-nav-link">
+                        <span>13</span>
+                        Verification checklist
+                    </a>
+
+                </nav>
+
+
+                <div class="sidebar-progress">
+
+                    <span>MODULE PROGRESS</span>
+
+                    <div class="sidebar-progress-track">
+                        <div id="lesson-progress-bar"></div>
+                    </div>
+
+                    <p id="lesson-progress-text">0% viewed</p>
+
+                </div>
+
+
+                <a href="../../index.html?v=6" class="back-course-link">
+                    ← Back to AIVisual
+                </a>
+
+            </aside>
+
+
+
+            <!-- =========================================================
+                 MAIN CONTENT
+                 ========================================================= -->
+
+            <article class="topic-content">
+
+
+                <!-- =========================================================
+                     01. PERCEPTRON MODEL
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="perceptron-introduction"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">01</span>
+
+                        <div>
+                            <p class="section-kicker">NEURAL NETWORK FOUNDATIONS</p>
+                            <h2>What is a Perceptron?</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        A perceptron is a simple artificial neuron
+                        that receives input values, multiplies them
+                        by weights, adds a bias and produces an output
+                        using an activation function.
+                    </p>
+
+
+                    <p>
+                        During training, the perceptron compares its
+                        predicted output with the target output.
+                        When they differ, the weights and bias are
+                        adjusted so that the neuron can improve
+                        its predictions.
+                    </p>
+
+
+                    <h3>1.1 Structure of a perceptron</h3>
+
+
+                    <div class="pc-neuron-diagram">
+
+                        <svg viewBox="0 0 850 390"
+                             role="img"
+                             aria-label="Perceptron network showing inputs, weights, bias, summation and activation">
+
+                            <defs>
+                                <marker id="pc-arrow"
+                                        markerWidth="9"
+                                        markerHeight="9"
+                                        refX="7"
+                                        refY="3"
+                                        orient="auto">
+                                    <path d="M0,0 L0,6 L8,3 z"
+                                          fill="#64748b"></path>
+                                </marker>
+                            </defs>
+
+
+                            <!-- Input nodes -->
+
+                            <circle cx="105" cy="85" r="29"
+                                    class="pc-diagram-input" />
+
+                            <circle cx="105" cy="175" r="29"
+                                    class="pc-diagram-input" />
+
+                            <circle cx="105" cy="265" r="29"
+                                    class="pc-diagram-input" />
+
+
+                            <text x="105" y="91" class="pc-diagram-node-text">
+                                x1
+                            </text>
+
+                            <text x="105" y="181" class="pc-diagram-node-text">
+                                x2
+                            </text>
+
+                            <text x="105" y="271" class="pc-diagram-node-text">
+                                xn
+                            </text>
+
+
+                            <!-- Weights -->
+
+                            <text x="245" y="76" class="pc-diagram-weight">
+                                w1
+                            </text>
+
+                            <text x="245" y="166" class="pc-diagram-weight">
+                                w2
+                            </text>
+
+                            <text x="245" y="256" class="pc-diagram-weight">
+                                wn
+                            </text>
+
+
+                            <!-- Connections -->
+
+                            <line x1="134" y1="85" x2="385" y2="154"
+                                  class="pc-diagram-line"
+                                  marker-end="url(#pc-arrow)" />
+
+                            <line x1="134" y1="175" x2="385" y2="175"
+                                  class="pc-diagram-line"
+                                  marker-end="url(#pc-arrow)" />
+
+                            <line x1="134" y1="265" x2="385" y2="196"
+                                  class="pc-diagram-line"
+                                  marker-end="url(#pc-arrow)" />
+
+
+                            <!-- Bias -->
+
+                            <rect x="280" y="310"
+                                  width="105"
+                                  height="42"
+                                  rx="8"
+                                  class="pc-diagram-bias" />
+
+                            <text x="332" y="336"
+                                  class="pc-diagram-node-text">
+                                Bias b
+                            </text>
+
+                            <line x1="385" y1="331"
+                                  x2="430" y2="214"
+                                  class="pc-diagram-line"
+                                  marker-end="url(#pc-arrow)" />
+
+
+                            <!-- Summation -->
+
+                            <circle cx="460" cy="175"
+                                    r="48"
+                                    class="pc-diagram-sum" />
+
+                            <text x="460" y="184"
+                                  class="pc-diagram-sum-text">
+                                Σ
+                            </text>
+
+
+                            <!-- Activation -->
+
+                            <line x1="510" y1="175"
+                                  x2="600" y2="175"
+                                  class="pc-diagram-line"
+                                  marker-end="url(#pc-arrow)" />
+
+
+                            <rect x="605" y="132"
+                                  width="125"
+                                  height="86"
+                                  rx="11"
+                                  class="pc-diagram-activation" />
+
+                            <text x="667" y="169"
+                                  class="pc-diagram-activation-title">
+                                Activation
+                            </text>
+
+                            <text x="667" y="193"
+                                  class="pc-diagram-activation-subtitle">
+                                Threshold
+                            </text>
+
+
+                            <!-- Output -->
+
+                            <line x1="730" y1="175"
+                                  x2="795" y2="175"
+                                  class="pc-diagram-line"
+                                  marker-end="url(#pc-arrow)" />
+
+
+                            <text x="795" y="151"
+                                  text-anchor="middle"
+                                  class="pc-diagram-weight">
+                                Output
+                            </text>
+
+                            <text x="795" y="202"
+                                  text-anchor="middle"
+                                  class="pc-diagram-weight">
+                                y
+                            </text>
+
+                        </svg>
+
+                        <div class="pc-diagram-caption">
+                            Inputs are weighted, summed with the bias,
+                            and passed through the activation function.
+                        </div>
+
+                    </div>
+
+
+                    <h3>1.2 Components of the perceptron</h3>
+
+
+                    <div class="pc-component-grid">
+
+                        <div class="pc-component-card">
+                            <span>01</span>
+                            <h4>Inputs (x)</h4>
+                            <p>
+                                The values supplied to the perceptron,
+                                such as x1, x2 and x3.
+                            </p>
+                        </div>
+
+
+                        <div class="pc-component-card">
+                            <span>02</span>
+                            <h4>Weights (w)</h4>
+                            <p>
+                                Values that determine the influence
+                                of each input.
+                            </p>
+                        </div>
+
+
+                        <div class="pc-component-card">
+                            <span>03</span>
+                            <h4>Bias (b)</h4>
+                            <p>
+                                An additional value added to the
+                                weighted input sum.
+                            </p>
+                        </div>
+
+
+                        <div class="pc-component-card">
+                            <span>04</span>
+                            <h4>Activation</h4>
+                            <p>
+                                Converts the net input into the
+                                perceptron's predicted output.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <h3>1.3 Important training terminology</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Term</th>
+                                    <th>Meaning</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>Input (x)</td>
+                                    <td>One feature value supplied to the perceptron.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Target (t)</td>
+                                    <td>The correct output expected for the training example.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Net input (y_in)</td>
+                                    <td>The bias plus the sum of input-weight products.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Output (y)</td>
+                                    <td>The result produced by the threshold activation.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Learning rate (α)</td>
+                                    <td>Controls the size of the weight and bias adjustments.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Epoch</td>
+                                    <td>One complete pass through all training rows.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Convergence</td>
+                                    <td>Training has reached an epoch with no weight changes.</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     02. IMPORTANT FORMULAS
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="perceptron-formulas"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">02</span>
+
+                        <div>
+                            <p class="section-kicker">EXAM FORMULA SHEET</p>
+                            <h2>Important Perceptron Formulas</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        These formulas are the foundation of every
+                        perceptron training table in your COMP304 guide.
+                    </p>
+
+
+                    <h3>2.1 Net input / weighted sum</h3>
+
+
+                    <div class="pc-formula-card">
+
+                        <span>FORMULA 1 — NET INPUT</span>
+
+                        <div class="pc-formula-equation">
+                            y<sub>in</sub> = b + Σ (x<sub>i</sub> × w<sub>i</sub>)
+                        </div>
+
+                        <div class="pc-formula-expanded">
+                            y<sub>in</sub> =
+                            b + x<sub>1</sub>w<sub>1</sub>
+                            + x<sub>2</sub>w<sub>2</sub>
+                            + ... +
+                            x<sub>n</sub>w<sub>n</sub>
+                        </div>
+
+                        <p>
+                            Always include the bias first.
+                            Then multiply each input by its matching weight
+                            and add all the products.
+                        </p>
+
+                    </div>
+
+
+                    <h3>2.2 Weight update</h3>
+
+
+                    <div class="pc-formula-card">
+
+                        <span>FORMULA 2 — WEIGHT UPDATE</span>
+
+                        <div class="pc-formula-equation">
+                            w<sub>i</sub>(new) =
+                            w<sub>i</sub>(old) +
+                            α × t × x<sub>i</sub>
+                        </div>
+
+                        <p>
+                            Update each weight only when the predicted
+                            output differs from the target.
+                        </p>
+
+                    </div>
+
+
+                    <h3>2.3 Bias update</h3>
+
+
+                    <div class="pc-formula-card">
+
+                        <span>FORMULA 3 — BIAS UPDATE</span>
+
+                        <div class="pc-formula-equation">
+                            b(new) = b(old) + α × t
+                        </div>
+
+                        <p>
+                            The bias is updated using the learning rate
+                            and the target. It is not a weight that
+                            should be forgotten during the calculation.
+                        </p>
+
+                    </div>
+
+
+                    <h3>2.4 Weight correction</h3>
+
+
+                    <div class="pc-formula-card">
+
+                        <span>FORMULA 4 — CHANGE IN WEIGHT</span>
+
+                        <div class="pc-formula-equation">
+                            Δw<sub>i</sub> = α × t × x<sub>i</sub>
+                        </div>
+
+                        <div class="pc-formula-equation">
+                            Δb = α × t
+                        </div>
+
+                        <p>
+                            Calculate the corrections first, then add
+                            them to the old weights and bias.
+                        </p>
+
+                    </div>
+
+
+                    <h3>2.5 Decision rule</h3>
+
+
+                    <div class="pc-formula-card">
+
+                        <span>FORMULA 5 — PREDICTED OUTPUT</span>
+
+                        <div class="pc-threshold-rules">
+
+                            <div>
+                                <strong>1</strong>
+                                <span>if y<sub>in</sub> is greater than θ</span>
+                            </div>
+
+                            <div>
+                                <strong>0</strong>
+                                <span>if y<sub>in</sub> equals θ</span>
+                            </div>
+
+                            <div>
+                                <strong>−1</strong>
+                                <span>if y<sub>in</sub> is less than θ</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <h3>2.6 The complete training rule</h3>
+
+
+                    <div class="pc-training-rule">
+
+                        <div class="pc-rule-match">
+                            <span>WHEN</span>
+                            <strong>y = t</strong>
+                            <p>Correct prediction. Keep all weights and bias unchanged.</p>
+                        </div>
+
+                        <div class="pc-rule-update">
+                            <span>WHEN</span>
+                            <strong>y ≠ t</strong>
+                            <p>Incorrect prediction. Update every weight and the bias.</p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="important-note">
+
+                        <span>EXAM WARNING</span>
+
+                        <p>
+                            Your guide uses bipolar targets: +1 and −1.
+                            Therefore, an output of 0 is not equal to
+                            either target. It always causes an update.
+                        </p>
+
+                    </div>
+
+
+                    <h3>2.7 Symbols you must know</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Symbol</th>
+                                    <th>Meaning</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr><td>xᵢ</td><td>Input feature i.</td></tr>
+                                <tr><td>wᵢ</td><td>Weight associated with input i.</td></tr>
+                                <tr><td>t</td><td>Target or correct output.</td></tr>
+                                <tr><td>y_in</td><td>Net input before activation.</td></tr>
+                                <tr><td>y</td><td>Predicted output.</td></tr>
+                                <tr><td>b</td><td>Bias.</td></tr>
+                                <tr><td>α</td><td>Learning rate.</td></tr>
+                                <tr><td>θ</td><td>Activation threshold.</td></tr>
+                                <tr><td>Δw</td><td>Change in a weight.</td></tr>
+                                <tr><td>Δb</td><td>Change in bias.</td></tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     03. THRESHOLD ACTIVATION
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="activation"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">03</span>
+
+                        <div>
+                            <p class="section-kicker">CLASSIFICATION</p>
+                            <h2>Threshold Activation Function</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        After calculating the net input, the perceptron
+                        compares it with the threshold θ to determine
+                        its predicted output.
+                    </p>
+
+
+                    <h3>3.1 The three possible outputs</h3>
+
+
+                    <div class="pc-activation-table">
+
+                        <div class="pc-activation-row positive">
+                            <strong>y_in &gt; θ</strong>
+                            <span>Output = +1</span>
+                            <p>The net input is above the threshold.</p>
+                        </div>
+
+                        <div class="pc-activation-row zero">
+                            <strong>y_in = θ</strong>
+                            <span>Output = 0</span>
+                            <p>The net input is exactly at the threshold.</p>
+                        </div>
+
+                        <div class="pc-activation-row negative">
+                            <strong>y_in &lt; θ</strong>
+                            <span>Output = −1</span>
+                            <p>The net input is below the threshold.</p>
+                        </div>
+
+                    </div>
+
+
+                    <h3>3.2 Worked activation examples</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Net input</th>
+                                    <th>Threshold</th>
+                                    <th>Comparison</th>
+                                    <th>Output</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr><td>5</td><td>0</td><td>5 &gt; 0</td><td>+1</td></tr>
+                                <tr><td>0</td><td>0</td><td>0 = 0</td><td>0</td></tr>
+                                <tr><td>−3</td><td>0</td><td>−3 &lt; 0</td><td>−1</td></tr>
+                                <tr><td>4</td><td>2</td><td>4 &gt; 2</td><td>+1</td></tr>
+                                <tr><td>2</td><td>2</td><td>2 = 2</td><td>0</td></tr>
+                                <tr><td>1</td><td>2</td><td>1 &lt; 2</td><td>−1</td></tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>3.3 Interactive activation calculator</h3>
+
+
+                    <div class="pc-workbench">
+
+                        <div class="pc-workbench-heading">
+                            <span>THRESHOLD ACTIVATION</span>
+                            <span>TRY YOUR OWN VALUES</span>
+                        </div>
+
+
+                        <div class="pc-input-grid">
+
+                            <label>
+                                Net input (y_in)
+                                <input id="pc-activation-input"
+                                       type="number"
+                                       value="0"
+                                       step="any" />
+                            </label>
+
+                            <label>
+                                Threshold (θ)
+                                <input id="pc-activation-threshold"
+                                       type="number"
+                                       value="0"
+                                       step="any" />
+                            </label>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="pc-activation-calculate"
+                                class="pc-btn primary">
+                            Calculate Output
+                        </button>
+
+
+                        <div id="pc-activation-result"
+                             class="pc-result"
+                             aria-live="polite">
+
+                            Enter values and calculate the output.
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>REMEMBER</span>
+                        <p>
+                            Do not use a binary 0/1 step function when
+                            tracing the perceptron examples in this guide.
+                            The required output includes +1, 0 and −1.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     04. WEIGHT AND BIAS UPDATE
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="weight-update"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">04</span>
+
+                        <div>
+                            <p class="section-kicker">LEARNING RULE</p>
+                            <h2>How to Update Weights and Bias</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        When a perceptron predicts incorrectly, its
+                        weights and bias are adjusted using the
+                        learning rule.
+                    </p>
+
+
+                    <h3>4.1 Understand the learning rate</h3>
+
+
+                    <p>
+                        The learning rate α controls the size of the
+                        adjustment. In the worked examples from your
+                        guide, the learning rate is α = 1.
+                    </p>
+
+
+                    <h3>4.2 Step-by-step weight update</h3>
+
+
+                    <div class="pc-worked-card">
+
+                        <span class="pc-worked-label">GIVEN VALUES</span>
+
+                        <div class="pc-values-grid">
+                            <div><span>Old weight</span><strong>w = 2</strong></div>
+                            <div><span>Input</span><strong>x = −1</strong></div>
+                            <div><span>Target</span><strong>t = −1</strong></div>
+                            <div><span>Learning rate</span><strong>α = 1</strong></div>
+                        </div>
+
+
+                        <div class="pc-worked-step">
+                            <span>STEP 1 — CALCULATE THE CHANGE</span>
+                            <div class="pc-equation">
+                                Δw = α × t × x
+                            </div>
+                            <div class="pc-equation">
+                                Δw = 1 × (−1) × (−1) = +1
+                            </div>
+                        </div>
+
+
+                        <div class="pc-worked-step">
+                            <span>STEP 2 — UPDATE THE WEIGHT</span>
+                            <div class="pc-equation">
+                                w(new) = w(old) + Δw
+                            </div>
+                            <div class="pc-equation">
+                                w(new) = 2 + 1 = 3
+                            </div>
+                        </div>
+
+
+                        <strong class="pc-worked-answer">
+                            New weight = 3
+                        </strong>
+
+                    </div>
+
+
+                    <h3>4.3 Step-by-step bias update</h3>
+
+
+                    <div class="pc-worked-card">
+
+                        <span class="pc-worked-label">GIVEN VALUES</span>
+
+                        <div class="pc-values-grid">
+                            <div><span>Old bias</span><strong>b = 1</strong></div>
+                            <div><span>Target</span><strong>t = −1</strong></div>
+                            <div><span>Learning rate</span><strong>α = 1</strong></div>
+                        </div>
+
+
+                        <div class="pc-worked-step">
+                            <span>STEP 1 — CALCULATE THE CHANGE</span>
+                            <div class="pc-equation">
+                                Δb = α × t = 1 × (−1) = −1
+                            </div>
+                        </div>
+
+
+                        <div class="pc-worked-step">
+                            <span>STEP 2 — UPDATE THE BIAS</span>
+                            <div class="pc-equation">
+                                b(new) = b(old) + Δb
+                            </div>
+                            <div class="pc-equation">
+                                b(new) = 1 − 1 = 0
+                            </div>
+                        </div>
+
+
+                        <strong class="pc-worked-answer">
+                            New bias = 0
+                        </strong>
+
+                    </div>
+
+
+                    <h3>4.4 What happens when the prediction is correct?</h3>
+
+
+                    <div class="pc-training-rule">
+
+                        <div class="pc-rule-match">
+                            <span>EXAMPLE</span>
+                            <strong>y = −1, t = −1</strong>
+                            <p>
+                                Prediction matches the target.
+                                No calculation or update is necessary.
+                            </p>
+                        </div>
+
+                        <div class="pc-rule-update">
+                            <span>EXAMPLE</span>
+                            <strong>y = 0, t = −1</strong>
+                            <p>
+                                Prediction does not match the target.
+                                Calculate Δw and Δb and update.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <h3>4.5 Interactive weight-update calculator</h3>
+
+
+                    <div class="pc-workbench">
+
+                        <div class="pc-workbench-heading">
+                            <span>WEIGHT AND BIAS UPDATE</span>
+                            <span>CALCULATE EACH CORRECTION</span>
+                        </div>
+
+
+                        <div class="pc-input-grid">
+
+                            <label>
+                                Old weight
+                                <input id="pc-old-weight"
+                                       type="number"
+                                       value="2"
+                                       step="any" />
+                            </label>
+
+                            <label>
+                                Input (x)
+                                <input id="pc-update-input"
+                                       type="number"
+                                       value="-1"
+                                       step="any" />
+                            </label>
+
+                            <label>
+                                Target (t)
+                                <select id="pc-update-target">
+                                    <option value="1">+1</option>
+                                    <option value="-1" selected>−1</option>
+                                </select>
+                            </label>
+
+                            <label>
+                                Learning rate (α)
+                                <input id="pc-update-alpha"
+                                       type="number"
+                                       value="1"
+                                       min="0"
+                                       step="any" />
+                            </label>
+
+                            <label>
+                                Old bias
+                                <input id="pc-old-bias"
+                                       type="number"
+                                       value="1"
+                                       step="any" />
+                            </label>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="pc-update-calculate"
+                                class="pc-btn primary">
+                            Calculate Updates
+                        </button>
+
+
+                        <div id="pc-update-result"
+                             class="pc-result"
+                             aria-live="polite">
+
+                            Calculate the new weight and bias.
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>COMMON EXAM MISTAKE</span>
+                        <p>
+                            Calculate Δw using the target multiplied by
+                            the input. Do not accidentally use the
+                            predicted output instead of the target.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     05. AND WORKED EXAMPLE
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="and-worked-example"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">05</span>
+
+                        <div>
+                            <p class="section-kicker">LECTURE WORKED EXAMPLE</p>
+                            <h2>Complete Perceptron Training: AND Function</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        This is the worked AND example in your COMP304
+                        Exam Preparation Guide. We will follow the
+                        training rows in order and update the weights
+                        immediately after each incorrect prediction.
+                    </p>
+
+
+                    <h3>5.1 Given information</h3>
+
+
+                    <div class="pc-values-grid pc-given-grid">
+
+                        <div>
+                            <span>Learning rate</span>
+                            <strong>α = 1</strong>
+                        </div>
+
+                        <div>
+                            <span>Threshold</span>
+                            <strong>θ = 0</strong>
+                        </div>
+
+                        <div>
+                            <span>Initial weights</span>
+                            <strong>w1 = 0, w2 = 0</strong>
+                        </div>
+
+                        <div>
+                            <span>Initial bias</span>
+                            <strong>b = 0</strong>
+                        </div>
+
+                    </div>
+
+
+                    <h3>5.2 Training dataset: bipolar AND</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Row</th>
+                                    <th>x1</th>
+                                    <th>x2</th>
+                                    <th>Target (t)</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr><td>1</td><td>+1</td><td>+1</td><td>+1</td></tr>
+                                <tr><td>2</td><td>+1</td><td>−1</td><td>−1</td></tr>
+                                <tr><td>3</td><td>−1</td><td>+1</td><td>−1</td></tr>
+                                <tr><td>4</td><td>−1</td><td>−1</td><td>−1</td></tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>5.3 Epoch 1 — trace each row</h3>
+
+
+                    <p>
+                        Initial weights and bias:
+                    </p>
+
+                    <div class="pc-equation">
+                        w1 = 0, w2 = 0, b = 0
+                    </div>
+
+
+                    <div class="pc-trace-card">
+
+                        <span>ROW 1</span>
+
+                        <strong>Inputs: x1 = +1, x2 = +1, target = +1</strong>
+
+                        <p>Calculate the net input:</p>
+
+                        <div class="pc-equation">
+                            y_in = 0 + (0 × 1) + (0 × 1) = 0
+                        </div>
+
+                        <p>Apply the threshold:</p>
+
+                        <div class="pc-equation">
+                            y_in = 0, therefore y = 0
+                        </div>
+
+                        <p>Compare the output and target:</p>
+
+                        <div class="pc-equation">
+                            y = 0 ≠ t = +1
+                        </div>
+
+                        <p>Update the weights and bias:</p>
+
+                        <div class="pc-equation">
+                            Δw1 = 1 × 1 × 1 = +1
+                        </div>
+
+                        <div class="pc-equation">
+                            Δw2 = 1 × 1 × 1 = +1
+                        </div>
+
+                        <div class="pc-equation">
+                            Δb = 1 × 1 = +1
+                        </div>
+
+                        <strong class="pc-trace-result">
+                            New values: w1 = 1, w2 = 1, b = 1
+                        </strong>
+
+                    </div>
+
+
+                    <div class="pc-trace-card">
+
+                        <span>ROW 2</span>
+
+                        <strong>Inputs: x1 = +1, x2 = −1, target = −1</strong>
+
+                        <p>Use the updated values from Row 1:</p>
+
+                        <div class="pc-equation">
+                            y_in = 1 + (1 × 1) + (1 × −1) = 1
+                        </div>
+
+                        <p>Apply the threshold:</p>
+
+                        <div class="pc-equation">
+                            y_in = 1 &gt; 0, therefore y = +1
+                        </div>
+
+                        <p>Compare:</p>
+
+                        <div class="pc-equation">
+                            y = +1 ≠ t = −1
+                        </div>
+
+                        <p>Update:</p>
+
+                        <div class="pc-equation">
+                            Δw1 = 1 × (−1) × 1 = −1
+                        </div>
+
+                        <div class="pc-equation">
+                            Δw2 = 1 × (−1) × (−1) = +1
+                        </div>
+
+                        <div class="pc-equation">
+                            Δb = 1 × (−1) = −1
+                        </div>
+
+                        <strong class="pc-trace-result">
+                            New values: w1 = 0, w2 = 2, b = 0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="pc-trace-card">
+
+                        <span>ROW 3</span>
+
+                        <strong>Inputs: x1 = −1, x2 = +1, target = −1</strong>
+
+                        <p>Use the updated values from Row 2:</p>
+
+                        <div class="pc-equation">
+                            y_in = 0 + (0 × −1) + (2 × 1) = 2
+                        </div>
+
+                        <p>Apply the threshold:</p>
+
+                        <div class="pc-equation">
+                            y_in = 2 &gt; 0, therefore y = +1
+                        </div>
+
+                        <p>Compare:</p>
+
+                        <div class="pc-equation">
+                            y = +1 ≠ t = −1
+                        </div>
+
+                        <p>Update:</p>
+
+                        <div class="pc-equation">
+                            Δw1 = 1 × (−1) × (−1) = +1
+                        </div>
+
+                        <div class="pc-equation">
+                            Δw2 = 1 × (−1) × 1 = −1
+                        </div>
+
+                        <div class="pc-equation">
+                            Δb = 1 × (−1) = −1
+                        </div>
+
+                        <strong class="pc-trace-result">
+                            New values: w1 = 1, w2 = 1, b = −1
+                        </strong>
+
+                    </div>
+
+
+                    <div class="pc-trace-card">
+
+                        <span>ROW 4</span>
+
+                        <strong>Inputs: x1 = −1, x2 = −1, target = −1</strong>
+
+                        <p>Use the updated values from Row 3:</p>
+
+                        <div class="pc-equation">
+                            y_in = −1 + (1 × −1) + (1 × −1) = −3
+                        </div>
+
+                        <p>Apply the threshold:</p>
+
+                        <div class="pc-equation">
+                            y_in = −3 &lt; 0, therefore y = −1
+                        </div>
+
+                        <p>Compare:</p>
+
+                        <div class="pc-equation">
+                            y = −1 = t = −1
+                        </div>
+
+                        <strong class="pc-trace-result">
+                            Correct prediction. No weight or bias changes.
+                        </strong>
+
+                    </div>
+
+
+                    <h3>5.4 Complete Epoch 1 table</h3>
+
+
+                    <div class="table-responsive">
+
+                        <table class="learning-comparison pc-wide-table">
+
+                            <thead>
+                                <tr>
+                                    <th>x1</th>
+                                    <th>x2</th>
+                                    <th>t</th>
+                                    <th>y_in</th>
+                                    <th>y</th>
+                                    <th>Δw1</th>
+                                    <th>Δw2</th>
+                                    <th>Δb</th>
+                                    <th>w1</th>
+                                    <th>w2</th>
+                                    <th>b</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td colspan="8">Initial state</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                </tr>
+
+                                <tr>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>+1</td>
+                                    <td>+1</td>
+                                    <td>+1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                </tr>
+
+                                <tr>
+                                    <td>1</td>
+                                    <td>−1</td>
+                                    <td>−1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>−1</td>
+                                    <td>+1</td>
+                                    <td>−1</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                </tr>
+
+                                <tr>
+                                    <td>−1</td>
+                                    <td>1</td>
+                                    <td>−1</td>
+                                    <td>2</td>
+                                    <td>1</td>
+                                    <td>+1</td>
+                                    <td>−1</td>
+                                    <td>−1</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>−1</td>
+                                </tr>
+
+                                <tr>
+                                    <td>−1</td>
+                                    <td>−1</td>
+                                    <td>−1</td>
+                                    <td>−3</td>
+                                    <td>−1</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>−1</td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>5.5 Epoch 2 — verify the weights</h3>
+
+
+                    <p>
+                        Epoch 2 starts with:
+                    </p>
+
+
+                    <div class="pc-equation">
+                        w1 = 1, w2 = 1, b = −1
+                    </div>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Row</th>
+                                    <th>Calculation</th>
+                                    <th>y_in</th>
+                                    <th>Output</th>
+                                    <th>Target</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>1</td>
+                                    <td>−1 + 1 + 1</td>
+                                    <td>1</td>
+                                    <td>+1</td>
+                                    <td>+1</td>
+                                </tr>
+
+                                <tr>
+                                    <td>2</td>
+                                    <td>−1 + 1 − 1</td>
+                                    <td>−1</td>
+                                    <td>−1</td>
+                                    <td>−1</td>
+                                </tr>
+
+                                <tr>
+                                    <td>3</td>
+                                    <td>−1 − 1 + 1</td>
+                                    <td>−1</td>
+                                    <td>−1</td>
+                                    <td>−1</td>
+                                </tr>
+
+                                <tr>
+                                    <td>4</td>
+                                    <td>−1 − 1 − 1</td>
+                                    <td>−3</td>
+                                    <td>−1</td>
+                                    <td>−1</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>CONVERGENCE</span>
+                        <p>
+                            Every prediction in Epoch 2 matches its target.
+                            Therefore, there are no weight or bias changes.
+                            Training stops with w1 = 1, w2 = 1 and b = −1.
+                        </p>
+                    </div>
+
+
+                    <h3>5.6 What you should learn from the example</h3>
+
+                    <ol>
+                        <li>Always use the most recently updated weights for the next row.</li>
+                        <li>Update weights immediately after an incorrect prediction.</li>
+                        <li>Keep the weights and bias unchanged when the prediction is correct.</li>
+                        <li>Do not stop just because the last row of an epoch was correct.</li>
+                        <li>Check whether the entire epoch produced zero updates.</li>
+                    </ol>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     06. INTERACTIVE TRAINER
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="interactive-trainer"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">06</span>
+
+                        <div>
+                            <p class="section-kicker">STEP-BY-STEP EXECUTION</p>
+                            <h2>Interactive Perceptron Training Simulator</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        This simulator follows the exact row-by-row
+                        training procedure used in your exam guide.
+                        You can select a dataset, calculate one row,
+                        complete an epoch or run until the stopping
+                        condition is reached.
+                    </p>
+
+
+                    <div class="pc-simulator">
+
+
+                        <!-- DATASET SELECTION -->
+
+                        <div class="pc-simulator-header">
+
+                            <div>
+                                <h3>Perceptron Training Lab</h3>
+                                <p>
+                                    Every step displays the net input,
+                                    predicted output, weight changes,
+                                    and updated bias.
+                                </p>
+                            </div>
+
+                            <span class="pc-simulator-badge">
+                                BIPOLAR TRAINING
+                            </span>
+
+                        </div>
+
+
+                        <h4>1. Select a training dataset</h4>
+
+
+                        <label for="pc-dataset">
+                            Training problem
+                        </label>
+
+                        <select id="pc-dataset">
+
+                            <option value="and" selected>
+                                Lecture example — AND function
+                            </option>
+
+                            <option value="or">
+                                Exam practice — OR function
+                            </option>
+
+                            <option value="three-input">
+                                Exam practice — Three-input perceptron
+                            </option>
+
+                            <option value="spam-2025">
+                                2025 Exam — Spam classification
+                            </option>
+
+                        </select>
+
+
+                        <div class="pc-dataset-info"
+                             id="pc-dataset-info">
+
+                            AND function · 2 inputs · 4 training rows.
+
+                        </div>
+
+
+                        <!-- TRAINING PARAMETERS -->
+
+                        <h4>2. Training parameters</h4>
+
+
+                        <div class="pc-parameter-grid">
+
+                            <label>
+                                Learning rate (α)
+                                <input id="pc-alpha"
+                                       type="number"
+                                       min="0"
+                                       step="any"
+                                       value="1" />
+                            </label>
+
+
+                            <label>
+                                Threshold (θ)
+                                <input id="pc-theta"
+                                       type="number"
+                                       step="any"
+                                       value="0" />
+                            </label>
+
+
+                            <label>
+                                Initial bias (b)
+                                <input id="pc-initial-bias"
+                                       type="number"
+                                       step="any"
+                                       value="0" />
+                            </label>
+
+
+                            <label>
+                                Maximum epochs
+                                <input id="pc-max-epochs"
+                                       type="number"
+                                       min="1"
+                                       max="100"
+                                       value="20" />
+                            </label>
+
+                        </div>
+
+
+                        <label for="pc-initial-weights">
+                            Initial weights — comma-separated
+                        </label>
+
+                        <input id="pc-initial-weights"
+                               type="text"
+                               value="0, 0"
+                               autocomplete="off" />
+
+
+                        <!-- TRAINING CONTROLS -->
+
+                        <h4>3. Execute the training algorithm</h4>
+
+
+                        <div class="pc-controls">
+
+                            <button type="button"
+                                    id="pc-next-row"
+                                    class="pc-btn primary">
+                                Next Training Row →
+                            </button>
+
+
+                            <button type="button"
+                                    id="pc-next-epoch"
+                                    class="pc-btn secondary">
+                                Complete Current Epoch
+                            </button>
+
+
+                            <button type="button"
+                                    id="pc-run-training"
+                                    class="pc-btn success">
+                                Run Until Stopping Condition
+                            </button>
+
+
+                            <button type="button"
+                                    id="pc-reset-training"
+                                    class="pc-btn danger">
+                                Reset Training
+                            </button>
+
+                        </div>
+
+
+                        <!-- STATUS -->
+
+                        <div id="pc-training-status"
+                             class="pc-training-status"
+                             aria-live="polite">
+
+                            Select a training dataset and start with
+                            the first row.
+
+                        </div>
+
+
+                        <!-- METRICS -->
+
+                        <div class="pc-live-metrics">
+
+                            <div>
+                                <span>CURRENT EPOCH</span>
+                                <strong id="pc-current-epoch">1</strong>
+                            </div>
+
+                            <div>
+                                <span>TRAINING ROW</span>
+                                <strong id="pc-current-row">1</strong>
+                            </div>
+
+                            <div>
+                                <span>WEIGHT UPDATES</span>
+                                <strong id="pc-total-updates">0</strong>
+                            </div>
+
+                            <div>
+                                <span>ROWS PROCESSED</span>
+                                <strong id="pc-rows-processed">0</strong>
+                            </div>
+
+                        </div>
+
+
+                        <!-- CURRENT STATE -->
+
+                        <h4>4. Current perceptron state</h4>
+
+
+                        <div class="pc-current-state">
+
+                            <div>
+                                <span>WEIGHTS</span>
+                                <strong id="pc-current-weights">[0, 0]</strong>
+                            </div>
+
+                            <div>
+                                <span>BIAS</span>
+                                <strong id="pc-current-bias">0</strong>
+                            </div>
+
+                            <div>
+                                <span>NET INPUT</span>
+                                <strong id="pc-current-net-input">—</strong>
+                            </div>
+
+                            <div>
+                                <span>PREDICTED OUTPUT</span>
+                                <strong id="pc-current-output">—</strong>
+                            </div>
+
+                        </div>
+
+
+                        <!-- CURRENT ROW EXPLANATION -->
+
+                        <h4>5. Current row calculation</h4>
+
+
+                        <div class="pc-row-calculation"
+                             id="pc-row-calculation">
+
+                            The calculation for the selected row
+                            will appear here.
+
+                        </div>
+
+
+                        <!-- TRAINING TRACE -->
+
+                        <div class="pc-trace-heading">
+
+                            <h4>6. Training execution table</h4>
+
+                            <span id="pc-trace-count">
+                                0 rows traced
+                            </span>
+
+                        </div>
+
+
+                        <div class="pc-table-wrapper">
+
+                            <table class="pc-execution-table">
+
+                                <thead id="pc-trace-head">
+
+                                    <tr>
+                                        <th>Epoch</th>
+                                        <th>Row</th>
+                                        <th>Training trace</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="pc-trace-body">
+
+                                    <tr>
+                                        <td colspan="3">
+                                            No training rows processed yet.
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                        <!-- EPOCH SUMMARY -->
+
+                        <div class="pc-epoch-summary">
+
+                            <h4>7. Epoch summary</h4>
+
+                            <div id="pc-epoch-summary-content">
+                                No epoch has been completed yet.
+                            </div>
+
+                        </div>
+
+
+                        <!-- TEST INPUT -->
+
+                        <h4>8. Test the trained perceptron</h4>
+
+
+                        <p>
+                            Enter a new input vector. The simulator
+                            will calculate its net input using the
+                            current weights and bias.
+                        </p>
+
+
+                        <label for="pc-test-input">
+                            Test input — comma-separated
+                        </label>
+
+                        <input id="pc-test-input"
+                               type="text"
+                               value="1, 1"
+                               autocomplete="off" />
+
+
+                        <button type="button"
+                                id="pc-test-model"
+                                class="pc-btn primary">
+                            Test Current Model
+                        </button>
+
+
+                        <div id="pc-test-result"
+                             class="pc-test-result"
+                             aria-live="polite">
+
+                            Train the perceptron and then test an input.
+
+                        </div>
+
+
+                        <!-- COMPLETION -->
+
+                        <div class="pc-simulator-footer">
+
+                            <span id="pc-simulator-completion">
+                                Complete a training run and test an input
+                                to finish this activity.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>HOW TO STUDY WITH THIS SIMULATOR</span>
+                        <p>
+                            Start with the AND example. Press Next Training
+                            Row after each calculation and compare the
+                            result with the worked solution above.
+                            Then use Complete Current Epoch and Run
+                            Until Stopping Condition. Repeat for the
+                            OR, three-input and spam datasets.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     07. OR FUNCTION
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="or-example"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">07</span>
+
+                        <div>
+                            <p class="section-kicker">EXAM PRACTICE</p>
+                            <h2>Training the Bipolar OR Function</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        The OR function appears as the first practice
+                        question in the perceptron section of your
+                        Exam Preparation Guide.
+                    </p>
+
+
+                    <h3>7.1 Training data</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>x1</th>
+                                    <th>x2</th>
+                                    <th>Target (t)</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr><td>+1</td><td>+1</td><td>+1</td></tr>
+                                <tr><td>+1</td><td>−1</td><td>+1</td></tr>
+                                <tr><td>−1</td><td>+1</td><td>+1</td></tr>
+                                <tr><td>−1</td><td>−1</td><td>−1</td></tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>7.2 Starting values</h3>
+
+
+                    <div class="pc-equation">
+                        α = 1, θ = 0, w1 = 0, w2 = 0, b = 0
+                    </div>
+
+
+                    <h3>7.3 Row-by-row working</h3>
+
+
+                    <div class="pc-trace-card">
+
+                        <span>ROW 1</span>
+
+                        <strong>x1 = +1, x2 = +1, t = +1</strong>
+
+                        <div class="pc-equation">
+                            y_in = 0 + 0 + 0 = 0
+                        </div>
+
+                        <p>
+                            Output = 0. Since 0 ≠ +1, update.
+                        </p>
+
+                        <div class="pc-equation">
+                            Δw1 = +1, Δw2 = +1, Δb = +1
+                        </div>
+
+                        <strong class="pc-trace-result">
+                            New weights = (1, 1), bias = 1
+                        </strong>
+
+                    </div>
+
+
+                    <div class="pc-trace-card">
+
+                        <span>ROW 2</span>
+
+                        <strong>x1 = +1, x2 = −1, t = +1</strong>
+
+                        <div class="pc-equation">
+                            y_in = 1 + (1)(1) + (1)(−1) = 1
+                        </div>
+
+                        <p>Output = +1. Target = +1. No update.</p>
+
+                    </div>
+
+
+                    <div class="pc-trace-card">
+
+                        <span>ROW 3</span>
+
+                        <strong>x1 = −1, x2 = +1, t = +1</strong>
+
+                        <div class="pc-equation">
+                            y_in = 1 + (1)(−1) + (1)(1) = 1
+                        </div>
+
+                        <p>Output = +1. Target = +1. No update.</p>
+
+                    </div>
+
+
+                    <div class="pc-trace-card">
+
+                        <span>ROW 4</span>
+
+                        <strong>x1 = −1, x2 = −1, t = −1</strong>
+
+                        <div class="pc-equation">
+                            y_in = 1 − 1 − 1 = −1
+                        </div>
+
+                        <p>Output = −1. Target = −1. No update.</p>
+
+                    </div>
+
+
+                    <h3>7.4 End of Epoch 1</h3>
+
+                    <div class="important-note">
+                        <span>EPOCH 1 RESULT</span>
+                        <p>
+                            Only Row 1 required an update.
+                            The resulting values are w1 = 1,
+                            w2 = 1 and b = 1.
+                        </p>
+                    </div>
+
+
+                    <h3>7.5 Epoch 2</h3>
+
+                    <p>
+                        All four rows are now classified correctly.
+                        There are no weight or bias changes.
+                        Training stops after Epoch 2.
+                    </p>
+
+
+                    <div class="pc-final-weights">
+                        <span>FINAL WEIGHTS AND BIAS</span>
+                        <strong>w1 = 1, w2 = 1, b = 1</strong>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     08. THREE INPUT EXAMPLE
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="multi-input-example"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">08</span>
+
+                        <div>
+                            <p class="section-kicker">MULTI-FEATURE TRAINING</p>
+                            <h2>Three-Input Perceptron: Exam Question 2</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        This question tests whether you can apply
+                        the same update procedure when the perceptron
+                        has three inputs instead of two.
+                    </p>
+
+
+                    <h3>8.1 Training dataset</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Row</th>
+                                    <th>x1</th>
+                                    <th>x2</th>
+                                    <th>x3</th>
+                                    <th>Target</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr><td>1</td><td>1</td><td>1</td><td>−1</td><td>+1</td></tr>
+                                <tr><td>2</td><td>−1</td><td>1</td><td>1</td><td>−1</td></tr>
+                                <tr><td>3</td><td>1</td><td>−1</td><td>−1</td><td>+1</td></tr>
+                                <tr><td>4</td><td>−1</td><td>−1</td><td>1</td><td>−1</td></tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>8.2 Given values</h3>
+
+                    <div class="pc-equation">
+                        α = 1, θ = 0, w1 = w2 = w3 = 0, b = 0
+                    </div>
+
+
+                    <h3>8.3 Epoch 1 — Row 1</h3>
+
+
+                    <div class="pc-trace-card">
+
+                        <strong>Inputs = (1, 1, −1), target = +1</strong>
+
+                        <div class="pc-equation">
+                            y_in = 0 + (0)(1) + (0)(1) + (0)(−1) = 0
+                        </div>
+
+                        <p>Output = 0, which differs from target +1.</p>
+
+                        <div class="pc-equation">
+                            Δw = (+1, +1, −1), Δb = +1
+                        </div>
+
+                        <strong class="pc-trace-result">
+                            w = (1, 1, −1), b = 1
+                        </strong>
+
+                    </div>
+
+
+                    <h3>8.4 Epoch 1 — Row 2</h3>
+
+
+                    <div class="pc-trace-card">
+
+                        <strong>Inputs = (−1, 1, 1), target = −1</strong>
+
+                        <div class="pc-equation">
+                            y_in = 1 − 1 + 1 − 1 = 0
+                        </div>
+
+                        <p>Output = 0, which differs from target −1.</p>
+
+                        <div class="pc-equation">
+                            Δw = (+1, −1, −1), Δb = −1
+                        </div>
+
+                        <strong class="pc-trace-result">
+                            w = (2, 0, −2), b = 0
+                        </strong>
+
+                    </div>
+
+
+                    <h3>8.5 Epoch 1 — Rows 3 and 4</h3>
+
+
+                    <div class="pc-trace-card">
+
+                        <strong>Row 3: inputs = (1, −1, −1), target = +1</strong>
+
+                        <div class="pc-equation">
+                            y_in = 0 + 2 + 0 + 2 = 4
+                        </div>
+
+                        <p>
+                            Output = +1, which matches the target.
+                            No update.
+                        </p>
+
+
+                        <strong>Row 4: inputs = (−1, −1, 1), target = −1</strong>
+
+                        <div class="pc-equation">
+                            y_in = 0 − 2 + 0 − 2 = −4
+                        </div>
+
+                        <p>
+                            Output = −1, which matches the target.
+                            No update.
+                        </p>
+
+                    </div>
+
+
+                    <h3>8.6 Epoch 2</h3>
+
+
+                    <p>
+                        The starting values for Epoch 2 are:
+                    </p>
+
+                    <div class="pc-equation">
+                        w = (2, 0, −2), b = 0
+                    </div>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Row</th>
+                                    <th>Net input</th>
+                                    <th>Output</th>
+                                    <th>Target</th>
+                                    <th>Update?</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr><td>1</td><td>4</td><td>+1</td><td>+1</td><td>No</td></tr>
+                                <tr><td>2</td><td>−4</td><td>−1</td><td>−1</td><td>No</td></tr>
+                                <tr><td>3</td><td>4</td><td>+1</td><td>+1</td><td>No</td></tr>
+                                <tr><td>4</td><td>−4</td><td>−1</td><td>−1</td><td>No</td></tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>8.7 Test input: (1, 1, 1)</h3>
+
+
+                    <div class="pc-worked-card">
+
+                        <span class="pc-worked-label">USE THE FINAL WEIGHTS</span>
+
+                        <div class="pc-equation">
+                            y_in = 0 + (2)(1) + (0)(1) + (−2)(1)
+                        </div>
+
+                        <div class="pc-equation">
+                            y_in = 2 + 0 − 2 = 0
+                        </div>
+
+                        <div class="pc-equation">
+                            y = 0
+                        </div>
+
+                        <strong class="pc-worked-answer">
+                            The perceptron gives an undecided output.
+                        </strong>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>INTERPRETATION</span>
+                        <p>
+                            The training examples do not cover every
+                            possible input combination. The test input
+                            (1, 1, 1) produces an output of 0 even though
+                            the perceptron has classified all training
+                            examples correctly. This is a generalisation
+                            limitation, not a training-row error.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     09. 2025 SPAM EXAMPLE
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="spam-example"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">09</span>
+
+                        <div>
+                            <p class="section-kicker">PAST EXAM APPLICATION</p>
+                            <h2>2025 Exam: Spam Classification</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        This example uses four binary-valued features
+                        to classify emails as spam or not spam.
+                        The examination asks you to train for two
+                        epochs and test a new input.
+                    </p>
+
+
+                    <h3>9.1 Features</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Input</th>
+                                    <th>Feature</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr><td>x1</td><td>Contains promotional words.</td></tr>
+                                <tr><td>x2</td><td>From unknown sender.</td></tr>
+                                <tr><td>x3</td><td>Contains suspicious links.</td></tr>
+                                <tr><td>x4</td><td>Has spelling or grammar errors.</td></tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <p>
+                        Each feature uses bipolar values:
+                        True = +1 and False = −1.
+                        Spam is labelled +1 and not spam is labelled −1.
+                    </p>
+
+
+                    <h3>9.2 Training dataset</h3>
+
+
+                    <div class="table-responsive">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>x1</th>
+                                    <th>x2</th>
+                                    <th>x3</th>
+                                    <th>x4</th>
+                                    <th>Target</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>+1</td></tr>
+                                <tr><td>1</td><td>1</td><td>1</td><td>−1</td><td>+1</td></tr>
+                                <tr><td>−1</td><td>−1</td><td>−1</td><td>−1</td><td>−1</td></tr>
+                                <tr><td>−1</td><td>−1</td><td>1</td><td>−1</td><td>−1</td></tr>
+                                <tr><td>1</td><td>−1</td><td>−1</td><td>1</td><td>−1</td></tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>9.3 Starting values</h3>
+
+
+                    <div class="pc-equation">
+                        w = (0, 0, 0, 0), b = 0, α = 1, θ = 0
+                    </div>
+
+
+                    <h3>9.4 Epoch 1 — important rows</h3>
+
+
+                    <div class="pc-trace-card">
+
+                        <span>ROW 1</span>
+
+                        <strong>Input = (1, 1, 1, 1), target = +1</strong>
+
+                        <div class="pc-equation">
+                            y_in = 0 + 0 + 0 + 0 + 0 = 0
+                        </div>
+
+                        <p>
+                            Output = 0. It differs from target +1.
+                            Update all four weights and bias by +1.
+                        </p>
+
+                        <strong class="pc-trace-result">
+                            w = (1, 1, 1, 1), b = 1
+                        </strong>
+
+                    </div>
+
+
+                    <div class="pc-trace-card">
+
+                        <span>ROW 5</span>
+
+                        <strong>Input = (1, −1, −1, 1), target = −1</strong>
+
+                        <p>Use the values after Row 4.</p>
+
+                        <div class="pc-equation">
+                            y_in = 1 + 1 − 1 − 1 + 1 = 1
+                        </div>
+
+                        <p>
+                            Output = +1, but the target is −1.
+                            This requires an update.
+                        </p>
+
+                        <div class="pc-equation">
+                            Δw = (−1, +1, +1, −1)
+                        </div>
+
+                        <div class="pc-equation">
+                            Δb = −1
+                        </div>
+
+                        <strong class="pc-trace-result">
+                            w = (0, 2, 2, 0), b = 0
+                        </strong>
+
+                    </div>
+
+
+                    <h3>9.5 Epoch 1 summary</h3>
+
+
+                    <div class="pc-final-weights">
+                        <span>AFTER EPOCH 1</span>
+                        <strong>w = (0, 2, 2, 0), b = 0</strong>
+                    </div>
+
+
+                    <h3>9.6 Epoch 2 — the important zero-output update</h3>
+
+
+                    <div class="pc-trace-card">
+
+                        <span>ROW 4</span>
+
+                        <strong>Input = (−1, −1, 1, −1), target = −1</strong>
+
+                        <div class="pc-equation">
+                            y_in = 0 + (0)(−1) + (2)(−1) + (2)(1) + (0)(−1)
+                        </div>
+
+                        <div class="pc-equation">
+                            y_in = −2 + 2 = 0
+                        </div>
+
+                        <p>
+                            Output = 0. This is not equal to target −1.
+                            Therefore, an update is required.
+                        </p>
+
+                        <div class="pc-equation">
+                            Δw = (+1, +1, −1, +1)
+                        </div>
+
+                        <div class="pc-equation">
+                            Δb = −1
+                        </div>
+
+                        <strong class="pc-trace-result">
+                            New weights = (1, 3, 1, 1), b = −1
+                        </strong>
+
+                    </div>
+
+
+                    <h3>9.7 Final values after two epochs</h3>
+
+
+                    <div class="pc-final-weights">
+                        <span>FINAL MODEL FROM THE 2025 MEMO</span>
+                        <strong>w = (1, 3, 1, 1), b = −1</strong>
+                    </div>
+
+
+                    <h3>9.8 Test the new email</h3>
+
+
+                    <p>
+                        The examination uses:
+                    </p>
+
+                    <div class="pc-equation">
+                        x = (−1, 1, −1, −1)
+                    </div>
+
+
+                    <div class="pc-worked-card">
+
+                        <div class="pc-equation">
+                            y_in = −1 + (1)(−1) + (3)(1)
+                            + (1)(−1) + (1)(−1)
+                        </div>
+
+                        <div class="pc-equation">
+                            y_in = −1 − 1 + 3 − 1 − 1 = −1
+                        </div>
+
+                        <div class="pc-equation">
+                            y = −1
+                        </div>
+
+                        <strong class="pc-worked-answer">
+                            Classification: NOT SPAM
+                        </strong>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>EXAM TRAP</span>
+                        <p>
+                            During Epoch 2, Row 4 produces y_in = 0.
+                            Do not treat that as correct. Since the
+                            target is −1, the perceptron must update.
+                            This is why the final bias becomes −1.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     10. PYTHON IMPLEMENTATION
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="python-implementation"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">10</span>
+
+                        <div>
+                            <p class="section-kicker">PYTHON PROGRAMMING</p>
+                            <h2>Implementing the Perceptron in Python</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        Your guide asks you to write a Python function
+                        that performs one perceptron training step.
+                        It receives the weights, bias, input vector,
+                        target and learning rate.
+                    </p>
+
+
+                    <h3>10.1 One training step</h3>
+
+
+                    <div class="pc-code-card">
+
+                        <div class="pc-code-title">
+                            <span>PYTHON</span>
+                            <span>TRAIN_STEP()</span>
+                        </div>
+
+<pre><code>def train_step(w, b, x, t, alpha=1):
+
+    # Step 1: Calculate net input.
+    # Always include the bias first.
+    y_in = b
+
+    for i in range(len(x)):
+        y_in += x[i] * w[i]
+
+    # Step 2: Apply threshold activation.
+    if y_in > 0:
+        y = 1
+    elif y_in == 0:
+        y = 0
+    else:
+        y = -1
+
+    # Step 3: Update only when prediction is wrong.
+    if y != t:
+
+        for i in range(len(w)):
+            w[i] = w[i] + alpha * t * x[i]
+
+        b = b + alpha * t
+
+    # Step 4: Return updated weights and bias.
+    return w, b</code></pre>
+
+                    </div>
+
+
+                    <h3>10.2 Understand the code line by line</h3>
+
+
+                    <div class="pc-code-explanation">
+
+                        <div>
+                            <code>y_in = b</code>
+                            <p>Begin the net input with the bias.</p>
+                        </div>
+
+                        <div>
+                            <code>y_in += x[i] * w[i]</code>
+                            <p>Multiply each feature by its corresponding weight and add the result.</p>
+                        </div>
+
+                        <div>
+                            <code>if y_in &gt; 0</code>
+                            <p>Produce +1 when net input is positive.</p>
+                        </div>
+
+                        <div>
+                            <code>elif y_in == 0</code>
+                            <p>Produce 0 when net input equals the threshold.</p>
+                        </div>
+
+                        <div>
+                            <code>else</code>
+                            <p>Produce −1 when net input is negative.</p>
+                        </div>
+
+                        <div>
+                            <code>if y != t</code>
+                            <p>Update only when the predicted output differs from the target.</p>
+                        </div>
+
+                        <div>
+                            <code>w[i] = w[i] + alpha * t * x[i]</code>
+                            <p>Apply the perceptron learning rule to every weight.</p>
+                        </div>
+
+                        <div>
+                            <code>b = b + alpha * t</code>
+                            <p>Adjust the bias.</p>
+                        </div>
+
+                    </div>
+
+
+                    <h3>10.3 Training through multiple epochs</h3>
+
+
+                    <div class="pc-code-card">
+
+                        <div class="pc-code-title">
+                            <span>PYTHON</span>
+                            <span>TRAIN UNTIL CONVERGENCE</span>
+                        </div>
+
+<pre><code>def train_perceptron(data, number_of_features,
+                     alpha=1, max_epochs=100):
+
+    w = [0] * number_of_features
+    b = 0
+
+    for epoch in range(max_epochs):
+
+        updates = 0
+
+        for x, t in data:
+
+            old_w = w.copy()
+            old_b = b
+
+            w, b = train_step(
+                w, b, x, t, alpha
+            )
+
+            if w != old_w or b != old_b:
+                updates += 1
+
+        print(
+            "Epoch:", epoch + 1,
+            "Weights:", w,
+            "Bias:", b,
+            "Updates:", updates
+        )
+
+        if updates == 0:
+            print("Training converged.")
+            break
+
+    return w, b</code></pre>
+
+                    </div>
+
+
+                    <h3>10.4 Important Python details</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Purpose</th>
+                                    <th>Common mistake</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>len(x)</td>
+                                    <td>Number of input features.</td>
+                                    <td>Using the wrong number of weights.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>w.copy()</td>
+                                    <td>Preserve old weights for comparison.</td>
+                                    <td>Using old_w = w, which refers to the same list.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>enumerate()</td>
+                                    <td>Iterate through features with their indices.</td>
+                                    <td>Using an incorrect index.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>break</td>
+                                    <td>Stop training when an epoch has no changes.</td>
+                                    <td>Stopping immediately after one correct row.</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>10.5 Optional test function</h3>
+
+
+                    <div class="pc-code-card">
+
+                        <div class="pc-code-title">
+                            <span>PYTHON</span>
+                            <span>PREDICT A NEW INPUT</span>
+                        </div>
+
+<pre><code>def predict(w, b, x):
+
+    y_in = b
+
+    for i in range(len(x)):
+        y_in += x[i] * w[i]
+
+    if y_in > 0:
+        return 1
+
+    elif y_in == 0:
+        return 0
+
+    else:
+        return -1</code></pre>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>EXAM EXPECTATION</span>
+                        <p>
+                            Be able to write train_step independently.
+                            The exam may provide the dataset and ask
+                            you to calculate the table manually or
+                            implement the update function in Python.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     11. XOR LIMITATION
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="xor-limitations"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">11</span>
+
+                        <div>
+                            <p class="section-kicker">LIMITATIONS</p>
+                            <h2>Why a Single Perceptron Cannot Learn XOR</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        A single perceptron creates a linear decision
+                        boundary. It can separate classes that are
+                        linearly separable, but XOR is not linearly
+                        separable.
+                    </p>
+
+
+                    <h3>11.1 XOR truth table</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>x1</th>
+                                    <th>x2</th>
+                                    <th>Output</th>
+                                    <th>Class</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr><td>0</td><td>0</td><td>0</td><td>Negative</td></tr>
+                                <tr><td>0</td><td>1</td><td>1</td><td>Positive</td></tr>
+                                <tr><td>1</td><td>0</td><td>1</td><td>Positive</td></tr>
+                                <tr><td>1</td><td>1</td><td>0</td><td>Negative</td></tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>11.2 Visualising the XOR points</h3>
+
+
+                    <div class="pc-xor-diagram">
+
+                        <svg viewBox="0 0 540 380"
+                             role="img"
+                             aria-label="XOR points showing why one straight line cannot separate the two classes">
+
+                            <line x1="75" y1="315" x2="465" y2="315"
+                                  class="pc-xor-axis" />
+
+                            <line x1="75" y1="315" x2="75" y2="30"
+                                  class="pc-xor-axis" />
+
+
+                            <line x1="75" y1="173" x2="465" y2="173"
+                                  class="pc-xor-grid" />
+
+                            <line x1="270" y1="315" x2="270" y2="30"
+                                  class="pc-xor-grid" />
+
+
+                            <text x="270" y="360"
+                                  text-anchor="middle"
+                                  class="pc-xor-label">
+                                x1
+                            </text>
+
+                            <text x="30" y="170"
+                                  text-anchor="middle"
+                                  class="pc-xor-label">
+                                x2
+                            </text>
+
+
+                            <text x="75" y="337" class="pc-xor-label">0</text>
+                            <text x="465" y="337" text-anchor="end" class="pc-xor-label">1</text>
+                            <text x="57" y="315" text-anchor="end" class="pc-xor-label">0</text>
+                            <text x="57" y="40" text-anchor="end" class="pc-xor-label">1</text>
+
+
+                            <!-- Negative points -->
+
+                            <circle cx="75" cy="315" r="13"
+                                    class="pc-xor-negative" />
+
+                            <circle cx="465" cy="30" r="13"
+                                    class="pc-xor-negative" />
+
+
+                            <!-- Positive points -->
+
+                            <circle cx="75" cy="30" r="13"
+                                    class="pc-xor-positive" />
+
+                            <circle cx="465" cy="315" r="13"
+                                    class="pc-xor-positive" />
+
+
+                            <text x="95" y="285" class="pc-xor-point-label">0</text>
+                            <text x="440" y="57" class="pc-xor-point-label">0</text>
+                            <text x="95" y="57" class="pc-xor-point-label">1</text>
+                            <text x="440" y="285" class="pc-xor-point-label">1</text>
+
+                        </svg>
+
+
+                        <div class="pc-xor-legend">
+                            <span><i class="pc-xor-positive-key"></i> Positive class (1)</span>
+                            <span><i class="pc-xor-negative-key"></i> Negative class (0)</span>
+                        </div>
+
+                    </div>
+
+
+                    <h3>11.3 Why is XOR impossible for a single perceptron?</h3>
+
+
+                    <ol>
+                        <li>The positive points are (0,1) and (1,0).</li>
+                        <li>The negative points are (0,0) and (1,1).</li>
+                        <li>The positive and negative points occupy opposite corners.</li>
+                        <li>No single straight-line boundary separates the two classes.</li>
+                    </ol>
+
+
+                    <div class="important-note">
+                        <span>EXAM ANSWER</span>
+                        <p>
+                            XOR is not linearly separable. A single
+                            perceptron uses one linear decision boundary,
+                            so it cannot learn XOR. A multi-layer
+                            network with a hidden layer is needed.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     12. EXAM PRACTICE
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="exam-practice"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">12</span>
+
+                        <div>
+                            <p class="section-kicker">COMP304 EXAM PREPARATION</p>
+                            <h2>Perceptron Exam Practice</h2>
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+                        Use these questions to test your ability to
+                        perform the calculations without looking
+                        at the worked examples.
+                    </p>
+
+
+                    <h3>Question 1 — Calculate net input</h3>
+
+                    <p>
+                        Given:
+                    </p>
+
+                    <div class="pc-equation">
+                        b = −1, w = (2, 1), x = (1, −1)
+                    </div>
+
+                    <p>
+                        Calculate y_in and the output using θ = 0.
+                    </p>
+
+
+                    <details>
+                        <summary>Show solution</summary>
+
+                        <div class="pc-equation">
+                            y_in = −1 + (2)(1) + (1)(−1)
+                        </div>
+
+                        <div class="pc-equation">
+                            y_in = −1 + 2 − 1 = 0
+                        </div>
+
+                        <p>
+                            Therefore, y = 0.
+                        </p>
+                    </details>
+
+
+                    <h3>Question 2 — Calculate weight changes</h3>
+
+                    <p>
+                        Given α = 1, target t = −1 and input
+                        x = (1, −1, 1), calculate the changes
+                        in the three weights and bias.
+                    </p>
+
+
+                    <details>
+                        <summary>Show solution</summary>
+
+                        <div class="pc-equation">
+                            Δw1 = 1 × (−1) × 1 = −1
+                        </div>
+
+                        <div class="pc-equation">
+                            Δw2 = 1 × (−1) × (−1) = +1
+                        </div>
+
+                        <div class="pc-equation">
+                            Δw3 = 1 × (−1) × 1 = −1
+                        </div>
+
+                        <div class="pc-equation">
+                            Δb = 1 × (−1) = −1
+                        </div>
+
+                    </details>
+
+
+                    <h3>Question 3 — Update values</h3>
+
+                    <p>
+                        Starting from w = (1, 2, 0), b = 1,
+                        use Δw = (−1, +1, −1) and Δb = −1.
+                        Determine the new values.
+                    </p>
+
+
+                    <details>
+                        <summary>Show solution</summary>
+
+                        <p>
+                            w1 = 1 − 1 = 0
+                        </p>
+
+                        <p>
+                            w2 = 2 + 1 = 3
+                        </p>
+
+                        <p>
+                            w3 = 0 − 1 = −1
+                        </p>
+
+                        <p>
+                            b = 1 − 1 = 0
+                        </p>
+
+                        <p>
+                            Final weights = (0, 3, −1), bias = 0.
+                        </p>
+
+                    </details>
+
+
+                    <h3>Question 4 — Training stopping condition</h3>
+
+                    <p>
+                        A perceptron processes four training rows.
+                        It makes no weight changes during the epoch.
+                        What should happen?
+                    </p>
+
+
+                    <details>
+                        <summary>Show solution</summary>
+
+                        <p>
+                            Training stops because an entire epoch has
+                            completed without any weight or bias changes.
+                        </p>
+
+                    </details>
+
+
+                    <h3>Question 5 — The zero-output trap</h3>
+
+                    <p>
+                        A perceptron produces y = 0 when the target is
+                        t = −1. Does it update?
+                    </p>
+
+
+                    <details>
+                        <summary>Show solution</summary>
+
+                        <p>
+                            Yes. Since 0 ≠ −1, the prediction is incorrect
+                            and an update must occur.
+                        </p>
+
+                    </details>
+
+
+                    <h3>Question 6 — XOR</h3>
+
+                    <p>
+                        Explain why a single perceptron cannot learn
+                        the XOR function.
+                    </p>
+
+
+                    <details>
+                        <summary>Show suggested answer</summary>
+
+                        <p>
+                            XOR is not linearly separable. A single
+                            perceptron produces one linear decision
+                            boundary, which cannot separate the two
+                            XOR classes. A hidden layer is required.
+                        </p>
+
+                    </details>
+
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     13. CHECKLIST
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="checklist"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">13</span>
+
+                        <div>
+                            <p class="section-kicker">EXAM VERIFICATION</p>
+                            <h2>Perceptron Training Checklist</h2>
+                        </div>
+
+                    </div>
+
+
+                    <ul class="aiv-checklist">
+
+                        <li>
+                            <label>
+                                <input id="t08-check-01" type="checkbox" />
+                                <span>Calculate net input and always include the bias first.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t08-check-02" type="checkbox" />
+                                <span>Apply the three-way threshold activation rule.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t08-check-03" type="checkbox" />
+                                <span>Compare the predicted output with the target.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t08-check-04" type="checkbox" />
+                                <span>Calculate Δw = α × t × x for every input.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t08-check-05" type="checkbox" />
+                                <span>Calculate Δb = α × t.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t08-check-06" type="checkbox" />
+                                <span>Update weights immediately before processing the next row.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t08-check-07" type="checkbox" />
+                                <span>Understand why output 0 always causes an update for bipolar targets.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t08-check-08" type="checkbox" />
+                                <span>Trace more than one epoch correctly.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t08-check-09" type="checkbox" />
+                                <span>Recognise convergence when a complete epoch has no changes.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t08-check-10" type="checkbox" />
+                                <span>Test a new input using the final weights and bias.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t08-check-11" type="checkbox" />
+                                <span>Write the Python train_step function.</span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t08-check-12" type="checkbox" />
+                                <span>Explain why a single perceptron cannot learn XOR.</span>
+                            </label>
+                        </li>
+
+                    </ul>
+
+
+                    <button type="button"
+                            class="pc-btn secondary"
+                            id="pc-reset-checklist">
+                        Reset Checklist
+                    </button>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     NEXT TOPIC REMINDER
+                     ========================================================= -->
+
+                <section class="pc-next-topic-note">
+
+                    <span>COMING NEXT</span>
+
+                    <h2>Module 09 — Logic</h2>
+
+                    <p>
+                        English-to-predicate-logic translation,
+                        clause form, Skolemisation and resolution
+                        proofs with substitutions.
+                    </p>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     COMPLETION
+                     ========================================================= -->
+
+                <section class="lesson-completion">
+
+                    <div>
+
+                        <span class="completion-label">MODULE 08</span>
+
+                        <h2>Can you train a perceptron by hand?</h2>
+
+                        <p>
+                            Complete the training simulator, trace the
+                            AND, OR and multi-input examples, test the
+                            final weights and practise the Python
+                            training function.
+                        </p>
+
+                    </div>
+
+
+                    <button type="button"
+                            class="pc-btn primary"
+                            id="pc-complete-module"
+                            disabled>
+                        Mark Module Complete
+                    </button>
+
+
+                    <p id="pc-completion-message"
+                       class="completion-message"
+                       aria-live="polite">
+                        Complete a training run and test an input first.
+                    </p>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     BOTTOM NAVIGATION
+                     ========================================================= -->
+
+                <div class="topic-bottom-navigation">
+                    <a href="../topic-07-machine-learning/index.html?v=6" class="topic-previous-link">← Previous: Machine Learning Basics</a>
+                    <a href="../topic-09-logic/index.html?v=6" class="topic-next-link">Next: Logic →</a>
+                </div>
+
+
+            </article>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =========================================================
+         FOOTER
+         ========================================================= -->
+
+    <footer class="ai-footer">
+
+        <div class="footer-content">
+
+            <a href="../../index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <p>
+                COMP304 Artificial Intelligence · Learn, reason and implement.
+            </p>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <p>
+                © <span id="current-year"></span> StructTrace.
+            </p>
+
+            <a href="../../index.html?v=6">Back to AIVisual</a>
+
+        </div>
+
+    </footer>
+
+</body>
+</html>

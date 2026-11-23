@@ -1,0 +1,2730 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- sign-in guard: must load first -->
+    <script src="/js/visualizer-guard.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Module 07 | Machine Learning Basics - AIVisual</title>
+    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=6" />
+    <link rel="stylesheet" href="../../css/topic-base.css?v=6" />
+    <link rel="stylesheet" href="../../css/topic-pages.css?v=6" />
+
+    <script src="../../js/ai-core.js?v=6" defer></script>
+    <script src="../../js/ai-visualizer.js?v=6" defer></script>
+    <script src="./topic07.js?v=6" defer></script>
+
+</head>
+
+<body class="aiv-topic topic07-page">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <header class="ai-header">
+        <nav class="ai-nav">
+
+            <a href="../../index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <button class="mobile-menu-btn" id="mobile-menu-btn" type="button"
+                    aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">☰</button>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="../../index.html?v=6">Course Home</a></li>
+                <li><a href="../topic-06-genetic-algorithms/index.html?v=6">← 06. Genetic Algorithms</a></li>
+                <li><a href="#ml-introduction" class="active" aria-current="page">07. Machine Learning</a></li>
+                <li><a href="../topic-08-perceptron/index.html?v=6">08. Perceptron →</a></li>
+                <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
+                <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
+            </ul>
+
+        </nav>
+    </header>
+
+
+    <main class="topic-container">
+
+        <!-- =========================================================
+             HERO
+             ========================================================= -->
+
+        <section class="topic-hero">
+
+            <div class="topic-breadcrumb">
+                <a href="../../index.html?v=6">AIVisual</a>
+                <span>/</span>
+                <span>COMP304</span>
+                <span>/</span>
+                <span>Module 07</span>
+            </div>
+
+            <div class="topic-hero-content">
+
+                <div>
+
+                    <div class="topic-badges">
+                        <span class="topic-label">MODULE 07</span>
+                        <span class="topic-exam-badge">MACHINE LEARNING</span>
+                    </div>
+
+                    <h1>
+                        Machine Learning Basics
+                        <span>Learn from data. Make predictions.</span>
+                    </h1>
+
+                    <p>
+                        Understand how machines learn from examples,
+                        discover patterns, make predictions and
+                        improve their performance. Explore learning
+                        types, classification, regression, bias,
+                        variance, confusion matrices and neural
+                        network fundamentals.
+                    </p>
+
+                    <div class="topic-meta">
+                        <span>Supervised Learning</span>
+                        <span>Unsupervised Learning</span>
+                        <span>Reinforcement Learning</span>
+                        <span>Classification</span>
+                        <span>Regression</span>
+                        <span>Python</span>
+                    </div>
+
+                </div>
+
+                <div class="topic-hero-symbol">
+                    <div class="topic-symbol-circle">ML</div>
+                    <span>LEARN FROM EXPERIENCE</span>
+                </div>
+
+            </div>
+
+            <div class="topic-hero-footer">
+                <span>DATA · LEARNING · PREDICTION · EVALUATION</span>
+                <span>COMP304 · ARTIFICIAL INTELLIGENCE</span>
+            </div>
+
+        </section>
+
+
+
+        <div class="topic-layout">
+
+
+            <!-- =========================================================
+                 SIDEBAR
+                 ========================================================= -->
+
+            <aside class="topic-sidebar">
+
+                <div class="sidebar-heading">
+                    <span>MODULE CONTENT</span>
+                    <span class="sidebar-module-number">07</span>
+                </div>
+
+                <nav class="topic-navigation">
+
+                    <a href="#ml-introduction" class="topic-nav-link active">
+                        <span>01</span>
+                        Introduction to ML
+                    </a>
+
+                    <a href="#learning-types" class="topic-nav-link">
+                        <span>02</span>
+                        Types of learning
+                    </a>
+
+                    <a href="#supervised-learning" class="topic-nav-link">
+                        <span>03</span>
+                        Supervised learning
+                    </a>
+
+                    <a href="#classification-regression" class="topic-nav-link">
+                        <span>04</span>
+                        Classification vs regression
+                    </a>
+
+                    <a href="#hypothesis" class="topic-nav-link">
+                        <span>05</span>
+                        Hypotheses and testing
+                    </a>
+
+                    <a href="#bias-variance" class="topic-nav-link">
+                        <span>06</span>
+                        Bias and variance
+                    </a>
+
+                    <a href="#confusion-matrix" class="topic-nav-link">
+                        <span>07</span>
+                        Confusion matrix
+                    </a>
+
+                    <a href="#single-neuron" class="topic-nav-link">
+                        <span>08</span>
+                        Single neuron
+                    </a>
+
+                    <a href="#normalisation" class="topic-nav-link">
+                        <span>09</span>
+                        Min-max scaling
+                    </a>
+
+                    <a href="#history" class="topic-nav-link">
+                        <span>10</span>
+                        Neural network history
+                    </a>
+
+                    <a href="#exam-practice" class="topic-nav-link">
+                        <span>11</span>
+                        Exam practice
+                    </a>
+
+                    <a href="#checklist" class="topic-nav-link">
+                        <span>12</span>
+                        Verification checklist
+                    </a>
+
+                </nav>
+
+                <div class="sidebar-progress">
+                    <span>MODULE PROGRESS</span>
+
+                    <div class="sidebar-progress-track">
+                        <div id="lesson-progress-bar"></div>
+                    </div>
+
+                    <p id="lesson-progress-text">0% viewed</p>
+                </div>
+
+                <a href="../../index.html?v=6" class="back-course-link">
+                    ← Back to AIVisual
+                </a>
+
+            </aside>
+
+
+
+            <!-- =========================================================
+                 MAIN CONTENT
+                 ========================================================= -->
+
+            <article class="topic-content">
+
+
+                <!-- =========================================================
+                     01. INTRODUCTION
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="ml-introduction"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">01</span>
+
+                        <div>
+                            <p class="section-kicker">FOUNDATIONS</p>
+                            <h2>Introduction to Machine Learning</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        Machine Learning (ML) is an area of Artificial
+                        Intelligence in which a system improves its
+                        performance on a task by learning from observations
+                        or experience.
+                    </p>
+
+                    <p>
+                        Instead of manually programming every possible
+                        situation, we provide the learning system with
+                        data or feedback. The system uses this information
+                        to identify patterns and improve how it performs
+                        a task.
+                    </p>
+
+                    <h3>1.1 Traditional programming vs machine learning</h3>
+
+                    <div class="ml-comparison">
+
+                        <div class="ml-comparison-card">
+
+                            <span class="ml-card-number">01</span>
+
+                            <h4>Traditional programming</h4>
+
+                            <div class="ml-flow">
+                                <span>Input data</span>
+                                <b>+</b>
+                                <span>Programmed rules</span>
+                                <b>↓</b>
+                                <strong>Output</strong>
+                            </div>
+
+                            <p>
+                                A programmer explicitly provides the rules
+                                used to produce the output.
+                            </p>
+
+                        </div>
+
+                        <div class="ml-comparison-card">
+
+                            <span class="ml-card-number">02</span>
+
+                            <h4>Machine learning</h4>
+
+                            <div class="ml-flow">
+                                <span>Training data</span>
+                                <b>+</b>
+                                <span>Learning algorithm</span>
+                                <b>↓</b>
+                                <strong>Learned model</strong>
+                            </div>
+
+                            <p>
+                                The algorithm uses examples to learn a
+                                model that can make predictions on new data.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <h3>1.2 Common machine learning applications</h3>
+
+                    <div class="ml-example-grid">
+
+                        <div class="ml-example-card">
+                            <span>01</span>
+                            <h4>Email filtering</h4>
+                            <p>Identify whether an email is spam or not spam.</p>
+                        </div>
+
+                        <div class="ml-example-card">
+                            <span>02</span>
+                            <h4>Weather prediction</h4>
+                            <p>Predict a numerical value such as temperature.</p>
+                        </div>
+
+                        <div class="ml-example-card">
+                            <span>03</span>
+                            <h4>Customer grouping</h4>
+                            <p>Discover groups of similar customers.</p>
+                        </div>
+
+                        <div class="ml-example-card">
+                            <span>04</span>
+                            <h4>Game playing</h4>
+                            <p>Improve actions using rewards and penalties.</p>
+                        </div>
+
+                    </div>
+
+                    <div class="important-note">
+                        <span>IMPORTANT CONCEPT</span>
+                        <p>
+                            Learning from labelled examples, discovering
+                            patterns in unlabelled data and learning through
+                            rewards are three different learning situations.
+                            They should not be confused in examination
+                            questions.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     02. TYPES OF LEARNING
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="learning-types"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">02</span>
+
+                        <div>
+                            <p class="section-kicker">LEARNING PARADIGMS</p>
+                            <h2>Three Types of Machine Learning</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        The type of learning depends on the information
+                        or feedback provided to the learning system.
+                    </p>
+
+
+                    <div class="learning-type-grid">
+
+                        <div class="learning-type-card supervised-card">
+
+                            <div class="learning-type-number">01</div>
+
+                            <h3>Supervised Learning</h3>
+
+                            <p>
+                                The system is given inputs together with
+                                their correct outputs.
+                            </p>
+
+                            <div class="learning-type-example">
+                                <strong>Example</strong>
+                                <span>
+                                    Emails labelled as spam or not spam.
+                                </span>
+                            </div>
+
+                            <div class="learning-type-question">
+                                Does the system know the correct answer
+                                for each training example?
+                                <strong>Yes.</strong>
+                            </div>
+
+                        </div>
+
+
+                        <div class="learning-type-card unsupervised-card">
+
+                            <div class="learning-type-number">02</div>
+
+                            <h3>Unsupervised Learning</h3>
+
+                            <p>
+                                The system receives inputs without
+                                provided correct output labels.
+                            </p>
+
+                            <div class="learning-type-example">
+                                <strong>Example</strong>
+                                <span>
+                                    Grouping customers into clusters.
+                                </span>
+                            </div>
+
+                            <div class="learning-type-question">
+                                Are correct output labels provided?
+                                <strong>No.</strong>
+                            </div>
+
+                        </div>
+
+
+                        <div class="learning-type-card reinforcement-card">
+
+                            <div class="learning-type-number">03</div>
+
+                            <h3>Reinforcement Learning</h3>
+
+                            <p>
+                                The system learns by acting and receiving
+                                rewards or penalties.
+                            </p>
+
+                            <div class="learning-type-example">
+                                <strong>Example</strong>
+                                <span>
+                                    A program learns to play chess.
+                                </span>
+                            </div>
+
+                            <div class="learning-type-question">
+                                Does the system receive feedback after acting?
+                                <strong>Yes, through rewards or penalties.</strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <h3>2.1 Compare the learning types</h3>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Learning type</th>
+                                    <th>Information received</th>
+                                    <th>Typical task</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>Supervised</td>
+                                    <td>Inputs with correct outputs.</td>
+                                    <td>Classify an email as spam.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Unsupervised</td>
+                                    <td>Inputs only.</td>
+                                    <td>Group customers into clusters.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Reinforcement</td>
+                                    <td>Reward or penalty after acting.</td>
+                                    <td>Learn to play a game.</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>2.2 Interactive learning-type identification</h3>
+
+                    <p>
+                        Read each situation and identify whether the
+                        learning system uses supervised, unsupervised
+                        or reinforcement learning.
+                    </p>
+
+
+                    <div class="ml-quiz-workbench">
+
+                        <div class="ml-quiz-topline">
+
+                            <span>LEARNING TYPE CHALLENGE</span>
+
+                            <strong id="ml-scenario-count">Question 1 of 6</strong>
+
+                        </div>
+
+
+                        <div class="ml-scenario-card">
+
+                            <span id="ml-scenario-category">
+                                SCENARIO
+                            </span>
+
+                            <h4 id="ml-scenario-title">
+                                Loading scenario...
+                            </h4>
+
+                            <p id="ml-scenario-description">
+                                Please wait.
+                            </p>
+
+                        </div>
+
+
+                        <label for="ml-type-answer">
+                            Choose the learning type
+                        </label>
+
+                        <select id="ml-type-answer">
+
+                            <option value="">Select an answer</option>
+
+                            <option value="supervised">
+                                Supervised Learning
+                            </option>
+
+                            <option value="unsupervised">
+                                Unsupervised Learning
+                            </option>
+
+                            <option value="reinforcement">
+                                Reinforcement Learning
+                            </option>
+
+                        </select>
+
+
+                        <div class="ml-quiz-buttons">
+
+                            <button type="button"
+                                    id="ml-check-answer"
+                                    class="ml-btn ml-btn-primary">
+                                Check Answer
+                            </button>
+
+                            <button type="button"
+                                    id="ml-next-scenario"
+                                    class="ml-btn ml-btn-secondary"
+                                    disabled>
+                                Next Scenario →
+                            </button>
+
+                        </div>
+
+
+                        <div id="ml-scenario-feedback"
+                             class="ml-feedback"
+                             aria-live="polite">
+                            Choose an answer to begin.
+                        </div>
+
+
+                        <div class="ml-quiz-score">
+
+                            <span>Correct answers</span>
+
+                            <strong id="ml-scenario-score">0 / 6</strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>EXAM TIP</span>
+                        <p>
+                            Ask yourself what feedback the learner receives.
+                            Correct answers for every example indicate
+                            supervised learning. No labels indicate
+                            unsupervised learning. Rewards after actions
+                            indicate reinforcement learning.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     03. SUPERVISED LEARNING
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="supervised-learning"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">03</span>
+
+                        <div>
+                            <p class="section-kicker">LABELLED TRAINING DATA</p>
+                            <h2>Supervised Learning</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        Supervised learning uses examples where the
+                        correct output is already known.
+                    </p>
+
+
+                    <h3>3.1 Understanding a training example</h3>
+
+                    <p>
+                        Each training example is represented as a pair:
+                    </p>
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">TRAINING EXAMPLE</span>
+
+                        <div class="formula-equation">
+                            (x, y)
+                        </div>
+
+                        <p>
+                            x represents a vector of input attributes,
+                            while y represents the correct output or label.
+                        </p>
+
+                    </div>
+
+
+                    <div class="ml-training-example">
+
+                        <div>
+                            <span>INPUT ATTRIBUTES (x)</span>
+
+                            <div class="ml-data-values">
+                                <span>Study hours = 8</span>
+                                <span>Attendance = 90%</span>
+                                <span>Assignments = 85%</span>
+                            </div>
+
+                        </div>
+
+                        <div class="ml-data-arrow">→</div>
+
+                        <div>
+                            <span>KNOWN OUTPUT (y)</span>
+
+                            <div class="ml-label-value">
+                                Final mark = 78
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <h3>3.2 The hypothesis space</h3>
+
+                    <p>
+                        In supervised learning, the learner searches
+                        a hypothesis space H for a hypothesis h that
+                        approximates the unknown function f.
+                    </p>
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">HYPOTHESIS CONCEPT</span>
+
+                        <div class="formula-equation">
+                            h ∈ H
+                        </div>
+
+                        <p>
+                            H is the set of possible hypotheses or models.
+                            The learner selects a hypothesis h that attempts
+                            to approximate the unknown function f.
+                        </p>
+
+                    </div>
+
+
+                    <div class="definition-card">
+
+                        <div class="definition-icon">H</div>
+
+                        <div>
+                            <span class="definition-label">HYPOTHESIS SPACE</span>
+                            <p>
+                                The collection of possible models that
+                                the learning algorithm can consider.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="definition-card">
+
+                        <div class="definition-icon">h</div>
+
+                        <div>
+                            <span class="definition-label">HYPOTHESIS</span>
+                            <p>
+                                One particular model selected from the
+                                hypothesis space.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="definition-card">
+
+                        <div class="definition-icon">f</div>
+
+                        <div>
+                            <span class="definition-label">UNKNOWN FUNCTION</span>
+                            <p>
+                                The actual relationship the learner is
+                                attempting to approximate.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <h3>3.3 What does it mean for a hypothesis to be consistent?</h3>
+
+                    <p>
+                        A hypothesis h is consistent if it gives the
+                        correct output for every training example.
+                    </p>
+
+                    <div class="important-note">
+                        <span>IMPORTANT EXAM DEFINITION</span>
+                        <p>
+                            Consistency means zero error on the training
+                            examples. It does not automatically mean
+                            that the hypothesis will predict unseen
+                            examples accurately.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     04. CLASSIFICATION VS REGRESSION
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="classification-regression"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">04</span>
+
+                        <div>
+                            <p class="section-kicker">SUPERVISED LEARNING TASKS</p>
+                            <h2>Classification vs Regression</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        The difference depends on the type of output
+                        the learning system is expected to predict.
+                    </p>
+
+
+                    <div class="ml-comparison">
+
+                        <div class="ml-comparison-card">
+
+                            <span class="ml-card-number">01</span>
+
+                            <h4>Classification</h4>
+
+                            <p>
+                                Predicts one value from a finite set
+                                of possible classes.
+                            </p>
+
+                            <div class="ml-output-example">
+                                <span>Input</span>
+                                <strong>Credit application</strong>
+                                <b>↓</b>
+                                <span>Predicted class</span>
+                                <strong class="ml-class-output">
+                                    Approve / Reject
+                                </strong>
+                            </div>
+
+                            <p>
+                                The output is a category or label.
+                            </p>
+
+                        </div>
+
+
+                        <div class="ml-comparison-card">
+
+                            <span class="ml-card-number">02</span>
+
+                            <h4>Regression</h4>
+
+                            <p>
+                                Predicts a numerical value.
+                            </p>
+
+                            <div class="ml-output-example">
+                                <span>Input</span>
+                                <strong>Student test marks</strong>
+                                <b>↓</b>
+                                <span>Predicted value</span>
+                                <strong class="ml-number-output">
+                                    Final mark = 78.5
+                                </strong>
+                            </div>
+
+                            <p>
+                                The output is a number.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <h3>4.1 Compare the two tasks</h3>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th>Classification</th>
+                                    <th>Regression</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>Output</td>
+                                    <td>Finite class or category.</td>
+                                    <td>Numerical value.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Example</td>
+                                    <td>Spam or not spam.</td>
+                                    <td>Predict a house price.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Student example</td>
+                                    <td>Pass or fail.</td>
+                                    <td>Predict final mark.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Bank example</td>
+                                    <td>Approve or reject.</td>
+                                    <td>Predict loan amount.</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>4.2 Interactive classification or regression?</h3>
+
+                    <div class="ml-quiz-workbench">
+
+                        <div class="ml-quiz-topline">
+                            <span>OUTPUT IDENTIFICATION</span>
+                            <strong id="ml-task-count">Question 1 of 4</strong>
+                        </div>
+
+
+                        <div class="ml-scenario-card">
+
+                            <span>IDENTIFY THE OUTPUT</span>
+
+                            <h4 id="ml-task-title">
+                                Loading question...
+                            </h4>
+
+                            <p id="ml-task-description"></p>
+
+                        </div>
+
+
+                        <label for="ml-task-answer">
+                            Choose the task type
+                        </label>
+
+                        <select id="ml-task-answer">
+
+                            <option value="">Select an answer</option>
+
+                            <option value="classification">
+                                Classification
+                            </option>
+
+                            <option value="regression">
+                                Regression
+                            </option>
+
+                        </select>
+
+
+                        <div class="ml-quiz-buttons">
+
+                            <button type="button"
+                                    id="ml-task-check"
+                                    class="ml-btn ml-btn-primary">
+                                Check Answer
+                            </button>
+
+                            <button type="button"
+                                    id="ml-task-next"
+                                    class="ml-btn ml-btn-secondary"
+                                    disabled>
+                                Next Question →
+                            </button>
+
+                        </div>
+
+
+                        <div id="ml-task-feedback"
+                             class="ml-feedback"
+                             aria-live="polite">
+                            Choose an answer.
+                        </div>
+
+
+                        <div class="ml-quiz-score">
+                            <span>Correct answers</span>
+                            <strong id="ml-task-score">0 / 4</strong>
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     05. HYPOTHESES AND TESTING
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="hypothesis"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">05</span>
+
+                        <div>
+                            <p class="section-kicker">MODEL EVALUATION</p>
+                            <h2>Training Data, Test Data and Generalisation</h2>
+                        </div>
+                    </div>
+
+
+                    <p class="lead-text">
+                        A model must be evaluated using data it has
+                        not previously seen. Correct predictions on
+                        training examples alone are not enough.
+                    </p>
+
+
+                    <h3>5.1 Training set</h3>
+
+                    <p>
+                        The training set contains examples used by
+                        the learning algorithm to learn the model.
+                    </p>
+
+
+                    <h3>5.2 Test set</h3>
+
+                    <p>
+                        The test set contains data the model has not
+                        seen during training. It is used to assess
+                        how accurately the model predicts unseen data.
+                    </p>
+
+
+                    <div class="ml-dataset-flow">
+
+                        <div class="ml-dataset-box">
+                            <span>TRAINING SET</span>
+                            <strong>Learn the model</strong>
+                            <p>Examples used during learning.</p>
+                        </div>
+
+                        <div class="ml-dataset-arrow">→</div>
+
+                        <div class="ml-dataset-box ml-model-box">
+                            <span>LEARNED MODEL</span>
+                            <strong>Hypothesis h</strong>
+                            <p>Approximates the unknown function f.</p>
+                        </div>
+
+                        <div class="ml-dataset-arrow">→</div>
+
+                        <div class="ml-dataset-box">
+                            <span>TEST SET</span>
+                            <strong>Evaluate predictions</strong>
+                            <p>Unseen examples used for evaluation.</p>
+                        </div>
+
+                    </div>
+
+
+                    <h3>5.3 Generalisation</h3>
+
+                    <p>
+                        A model generalises well when it makes accurate
+                        predictions on data that was not used to train it.
+                    </p>
+
+
+                    <div class="important-note">
+                        <span>EXAM CONCEPT</span>
+                        <p>
+                            A hypothesis can be perfectly consistent
+                            with the training set and still perform
+                            badly on the test set. Training performance
+                            does not guarantee good generalisation.
+                        </p>
+                    </div>
+
+
+                    <h3>5.4 Test your understanding</h3>
+
+                    <div class="ml-question-card">
+
+                        <p>
+                            A model produces zero error on every training
+                            example. What must be true?
+                        </p>
+
+                        <div class="ml-answer-options">
+
+                            <label>
+                                <input type="radio" name="consistent-question" value="A" />
+                                A. It will predict the test set accurately.
+                            </label>
+
+                            <label>
+                                <input type="radio" name="consistent-question" value="B" />
+                                B. It is consistent with the training set.
+                            </label>
+
+                            <label>
+                                <input type="radio" name="consistent-question" value="C" />
+                                C. It is the simplest possible hypothesis.
+                            </label>
+
+                            <label>
+                                <input type="radio" name="consistent-question" value="D" />
+                                D. It has low variance.
+                            </label>
+
+                        </div>
+
+                        <button type="button"
+                                class="ml-btn ml-btn-primary"
+                                id="ml-consistency-check">
+                            Check Answer
+                        </button>
+
+                        <div id="ml-consistency-feedback"
+                             class="ml-feedback"
+                             aria-live="polite"></div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     06. BIAS AND VARIANCE
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="bias-variance"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">06</span>
+
+                        <div>
+                            <p class="section-kicker">MODEL COMPLEXITY</p>
+                            <h2>Bias and Variance</h2>
+                        </div>
+                    </div>
+
+
+                    <p class="lead-text">
+                        Bias and variance describe two different ways
+                        in which a learning model can perform poorly.
+                    </p>
+
+
+                    <div class="ml-bias-variance-grid">
+
+                        <div class="ml-bias-card">
+
+                            <span class="ml-card-number">01</span>
+
+                            <h3>Bias</h3>
+
+                            <p>
+                                Bias occurs when the hypothesis
+                                systematically deviates from the
+                                true function.
+                            </p>
+
+                            <strong>Often associated with underfitting.</strong>
+
+                            <ul>
+                                <li>Model is too restricted.</li>
+                                <li>Fails to capture patterns in the data.</li>
+                                <li>Example: using a straight line for a wavy function.</li>
+                            </ul>
+
+                        </div>
+
+
+                        <div class="ml-variance-card">
+
+                            <span class="ml-card-number">02</span>
+
+                            <h3>Variance</h3>
+
+                            <p>
+                                Variance describes how much the learned
+                                hypothesis changes when the training
+                                data changes.
+                            </p>
+
+                            <strong>Often associated with overfitting.</strong>
+
+                            <ul>
+                                <li>Model is too flexible.</li>
+                                <li>Fits training examples too closely.</li>
+                                <li>Example: a degree-12 polynomial fitted to 13 points.</li>
+                            </ul>
+
+                        </div>
+
+                    </div>
+
+
+                    <h3>6.1 Underfitting</h3>
+
+                    <p>
+                        Underfitting occurs when the model is too simple
+                        to represent the patterns in the data.
+                        A straight line may fail to describe a wavy
+                        relationship even when more data is available.
+                    </p>
+
+
+                    <h3>6.2 Overfitting</h3>
+
+                    <p>
+                        Overfitting occurs when a model fits the training
+                        examples too closely. It may perform very well
+                        on training data but poorly on unseen data.
+                    </p>
+
+
+                    <h3>6.3 Model complexity and error</h3>
+
+                    <p>
+                        As model complexity increases, training error
+                        keeps falling. Validation error initially falls
+                        and then rises. The preferred model complexity
+                        is where validation error is lowest.
+                    </p>
+
+
+                    <div class="ml-chart-workbench">
+
+                        <div class="ml-chart-heading">
+
+                            <div>
+                                <span>MODEL COMPLEXITY</span>
+                                <h4>Training error vs validation error</h4>
+                            </div>
+
+                            <label for="ml-complexity">
+                                Model complexity
+
+                                <input id="ml-complexity"
+                                       type="range"
+                                       min="1"
+                                       max="10"
+                                       value="5" />
+                            </label>
+
+                        </div>
+
+
+                        <div class="ml-complexity-readout">
+
+                            <div>
+                                <span>SELECTED COMPLEXITY</span>
+                                <strong id="ml-complexity-value">5 / 10</strong>
+                            </div>
+
+                            <div>
+                                <span>MODEL BEHAVIOUR</span>
+                                <strong id="ml-complexity-state">Balanced model</strong>
+                            </div>
+
+                        </div>
+
+
+                        <svg id="ml-bias-chart"
+                             viewBox="0 0 720 340"
+                             role="img"
+                             aria-label="Illustrative training error and validation error curves">
+
+                            <line x1="70" y1="30" x2="70" y2="275" class="ml-chart-axis" />
+                            <line x1="70" y1="275" x2="680" y2="275" class="ml-chart-axis" />
+
+                            <text x="24" y="25" class="ml-chart-label">
+                                Error
+                            </text>
+
+                            <text x="375" y="320" class="ml-chart-label">
+                                Model complexity →
+                            </text>
+
+                            <text x="72" y="295" class="ml-chart-tick">Low</text>
+                            <text x="680" y="295" text-anchor="end" class="ml-chart-tick">High</text>
+
+                            <path id="ml-training-curve"
+                                  class="ml-training-curve"
+                                  d="" />
+
+                            <path id="ml-validation-curve"
+                                  class="ml-validation-curve"
+                                  d="" />
+
+                            <line id="ml-complexity-marker"
+                                  x1="375" y1="30"
+                                  x2="375" y2="275"
+                                  class="ml-chart-marker" />
+
+                            <circle id="ml-training-point"
+                                    cx="375" cy="100" r="6"
+                                    class="ml-training-point" />
+
+                            <circle id="ml-validation-point"
+                                    cx="375" cy="100" r="6"
+                                    class="ml-validation-point" />
+
+                        </svg>
+
+
+                        <div class="ml-chart-legend">
+
+                            <span><i class="ml-legend-training"></i> Training error</span>
+
+                            <span><i class="ml-legend-validation"></i> Validation error</span>
+
+                            <span><i class="ml-legend-marker"></i> Selected complexity</span>
+
+                        </div>
+
+
+                        <p id="ml-complexity-explanation"
+                           class="ml-chart-explanation">
+                            Move the slider to examine how model complexity
+                            changes the behaviour of training and validation error.
+                        </p>
+
+                    </div>
+
+
+                    <h3>6.4 Choosing a model</h3>
+
+                    <p>
+                        If two hypotheses fit the data equally well,
+                        prefer the simpler hypothesis. This is the
+                        principle of Ockham's razor.
+                    </p>
+
+
+                    <div class="important-note">
+                        <span>EXAM COMPARISON</span>
+                        <p>
+                            A straight line fitted to a wavy function
+                            has high bias and underfits. A degree-12
+                            polynomial fitted to 13 points has high
+                            variance and may overfit.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     07. CONFUSION MATRIX
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="confusion-matrix"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">07</span>
+
+                        <div>
+                            <p class="section-kicker">CLASSIFICATION EVALUATION</p>
+                            <h2>Confusion Matrix: TP, FP, FN and TN</h2>
+                        </div>
+                    </div>
+
+
+                    <p class="lead-text">
+                        A confusion matrix compares the model's predicted
+                        class with the actual class. For a two-class
+                        classifier, there are four possible outcomes.
+                    </p>
+
+
+                    <h3>7.1 The confusion matrix</h3>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison confusion-table">
+
+                            <thead>
+
+                                <tr>
+                                    <th rowspan="2">Model prediction</th>
+                                    <th colspan="2">Actual class</th>
+                                </tr>
+
+                                <tr>
+                                    <th>Positive</th>
+                                    <th>Negative</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <th>Predicted positive</th>
+                                    <td class="confusion-tp">
+                                        <strong>True Positive (TP)</strong>
+                                        <span>Correct positive prediction</span>
+                                    </td>
+                                    <td class="confusion-fp">
+                                        <strong>False Positive (FP)</strong>
+                                        <span>Incorrect positive prediction</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Predicted negative</th>
+                                    <td class="confusion-fn">
+                                        <strong>False Negative (FN)</strong>
+                                        <span>Incorrect negative prediction</span>
+                                    </td>
+                                    <td class="confusion-tn">
+                                        <strong>True Negative (TN)</strong>
+                                        <span>Correct negative prediction</span>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>7.2 Understanding the four outcomes</h3>
+
+
+                    <div class="confusion-outcome-grid">
+
+                        <div class="confusion-outcome tp">
+                            <span>TP</span>
+                            <strong>True Positive</strong>
+                            <p>Model predicts positive and the actual class is positive.</p>
+                        </div>
+
+                        <div class="confusion-outcome fp">
+                            <span>FP</span>
+                            <strong>False Positive</strong>
+                            <p>Model predicts positive but the actual class is negative.</p>
+                        </div>
+
+                        <div class="confusion-outcome fn">
+                            <span>FN</span>
+                            <strong>False Negative</strong>
+                            <p>Model predicts negative but the actual class is positive.</p>
+                        </div>
+
+                        <div class="confusion-outcome tn">
+                            <span>TN</span>
+                            <strong>True Negative</strong>
+                            <p>Model predicts negative and the actual class is negative.</p>
+                        </div>
+
+                    </div>
+
+
+                    <h3>7.3 Interactive confusion-matrix classifier</h3>
+
+                    <div class="ml-quiz-workbench">
+
+                        <div class="ml-quiz-topline">
+                            <span>IDENTIFY THE OUTCOME</span>
+                            <strong>CLASSIFICATION EXERCISE</strong>
+                        </div>
+
+
+                        <p>
+                            Choose what the model predicted and what
+                            the actual class was.
+                        </p>
+
+
+                        <div class="ml-confusion-controls">
+
+                            <label for="ml-predicted-class">
+                                Model predicted
+                                <select id="ml-predicted-class">
+                                    <option value="positive">Positive</option>
+                                    <option value="negative">Negative</option>
+                                </select>
+                            </label>
+
+
+                            <label for="ml-actual-class">
+                                Actual class
+                                <select id="ml-actual-class">
+                                    <option value="positive">Positive</option>
+                                    <option value="negative">Negative</option>
+                                </select>
+                            </label>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="ml-identify-outcome"
+                                class="ml-btn ml-btn-primary">
+                            Identify Outcome
+                        </button>
+
+
+                        <div id="ml-confusion-result"
+                             class="ml-confusion-result"
+                             aria-live="polite">
+
+                            Select the prediction and actual class.
+
+                        </div>
+
+                    </div>
+
+
+                    <h3>7.4 Medical test example</h3>
+
+                    <p>
+                        Consider a medical model that predicts whether
+                        a patient has a disease.
+                    </p>
+
+
+                    <div class="example-box">
+
+                        <strong>False Negative (FN)</strong>
+
+                        <p>
+                            The model predicts that the patient is
+                            healthy, but the patient actually has
+                            the disease.
+                        </p>
+
+                        <p>
+                            This may be particularly serious because
+                            the patient could go untreated.
+                        </p>
+
+                    </div>
+
+
+                    <div class="example-box">
+
+                        <strong>False Positive (FP)</strong>
+
+                        <p>
+                            The model predicts that the patient has
+                            the disease, but the patient is actually
+                            healthy.
+                        </p>
+
+                        <p>
+                            This may lead to additional tests.
+                        </p>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>EXAM QUESTION</span>
+                        <p>
+                            In the medical-test example in your guide,
+                            a false negative is usually more serious
+                            because a sick patient may be told they
+                            are healthy and go untreated.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     08. SINGLE NEURON
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="single-neuron"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">08</span>
+
+                        <div>
+                            <p class="section-kicker">NEURAL NETWORK FUNDAMENTALS</p>
+                            <h2>How a Single Neuron Works</h2>
+                        </div>
+                    </div>
+
+
+                    <p class="lead-text">
+                        A single neuron multiplies each input by its
+                        corresponding weight, adds the weighted inputs
+                        and passes the resulting sum through an
+                        activation function.
+                    </p>
+
+
+                    <h3>8.1 Weighted inputs</h3>
+
+                    <p>
+                        Suppose there are four inputs and four weights.
+                        Each input contributes according to its
+                        corresponding weight.
+                    </p>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">WEIGHTED SUM</span>
+
+                        <div class="formula-equation">
+                            z = Σ (x<sub>i</sub> × w<sub>i</sub>)
+                        </div>
+
+                        <p>
+                            x represents an input value and w represents
+                            its corresponding weight. The sum of all
+                            input-weight products is the weighted sum,
+                            also called the net input.
+                        </p>
+
+                    </div>
+
+
+                    <h3>8.2 Activation function</h3>
+
+                    <p>
+                        The weighted sum is passed through an activation
+                        function. The supplied lecture code uses
+                        NumPy's heaviside function.
+                    </p>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">HEAVISIDE ACTIVATION</span>
+
+                        <div class="formula-equation">
+                            a = heaviside(z, 1)
+                        </div>
+
+                        <p>
+                            In the supplied example, the weighted sum
+                            is positive, so the activation output is 1.0.
+                        </p>
+
+                    </div>
+
+
+                    <h3>8.3 Worked calculation from the guide</h3>
+
+
+                    <div class="neuron-data">
+
+                        <div>
+                            <span>INPUTS</span>
+                            <strong>[0.15, 0.5, 0.7, 0.22]</strong>
+                        </div>
+
+                        <div>
+                            <span>WEIGHTS</span>
+                            <strong>[0.22, 0.27, 0.72, 0.05]</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>SINGLE NEURON</span>
+                        </div>
+
+<pre><code>import numpy as np
+
+inputs = [0.15, 0.5, 0.7, 0.22]
+
+weights = [0.22, 0.27, 0.72, 0.05]
+
+weighted_inputs = np.multiply(inputs, weights)
+
+soma = np.sum(weighted_inputs)
+
+activation = np.heaviside(soma, 1)
+
+print(activation)</code></pre>
+
+                    </div>
+
+
+                    <h3>8.4 Step-by-step calculation</h3>
+
+
+                    <div class="calculation-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Input</th>
+                                    <th>Weight</th>
+                                    <th>Multiplication</th>
+                                    <th>Result</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>0.15</td>
+                                    <td>0.22</td>
+                                    <td>0.15 × 0.22</td>
+                                    <td>0.033</td>
+                                </tr>
+
+                                <tr>
+                                    <td>0.5</td>
+                                    <td>0.27</td>
+                                    <td>0.5 × 0.27</td>
+                                    <td>0.135</td>
+                                </tr>
+
+                                <tr>
+                                    <td>0.7</td>
+                                    <td>0.72</td>
+                                    <td>0.7 × 0.72</td>
+                                    <td>0.504</td>
+                                </tr>
+
+                                <tr>
+                                    <td>0.22</td>
+                                    <td>0.05</td>
+                                    <td>0.22 × 0.05</td>
+                                    <td>0.011</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">SUM THE PRODUCTS</span>
+
+                        <div class="formula-equation">
+                            z = 0.033 + 0.135 + 0.504 + 0.011
+                        </div>
+
+                        <div class="formula-equation">
+                            z = 0.683
+                        </div>
+
+                        <p>
+                            Since 0.683 is greater than zero,
+                            the Heaviside activation returns 1.
+                        </p>
+
+                        <div class="formula-equation">
+                            Output = 1.0
+                        </div>
+
+                    </div>
+
+
+                    <h3>8.5 Interactive single-neuron calculator</h3>
+
+                    <div class="ml-neuron-workbench">
+
+                        <div class="ml-quiz-topline">
+                            <span>SINGLE NEURON SIMULATOR</span>
+                            <strong>WEIGHTED SUM AND ACTIVATION</strong>
+                        </div>
+
+
+                        <label for="ml-neuron-inputs">
+                            Input values
+                        </label>
+
+                        <input id="ml-neuron-inputs"
+                               value="0.15, 0.5, 0.7, 0.22"
+                               autocomplete="off" />
+
+
+                        <label for="ml-neuron-weights">
+                            Weight values
+                        </label>
+
+                        <input id="ml-neuron-weights"
+                               value="0.22, 0.27, 0.72, 0.05"
+                               autocomplete="off" />
+
+
+                        <button type="button"
+                                id="ml-neuron-calculate"
+                                class="ml-btn ml-btn-primary">
+                            Calculate Neuron Output
+                        </button>
+
+
+                        <p id="ml-neuron-error"
+                           class="ml-error"
+                           aria-live="polite"></p>
+
+
+                        <div id="ml-neuron-result"
+                             class="ml-neuron-result"
+                             hidden>
+
+                            <div class="ml-neuron-metrics">
+
+                                <div>
+                                    <span>WEIGHTED SUM</span>
+                                    <strong id="ml-neuron-sum">—</strong>
+                                </div>
+
+                                <div>
+                                    <span>ACTIVATION</span>
+                                    <strong id="ml-neuron-activation">—</strong>
+                                </div>
+
+                            </div>
+
+
+                            <h4>Multiplication trace</h4>
+
+                            <div id="ml-neuron-trace"
+                                 class="ml-neuron-trace"></div>
+
+
+                            <p id="ml-neuron-explanation"></p>
+
+                        </div>
+
+                    </div>
+
+
+                    <h3>8.6 Important Python debugging question</h3>
+
+                    <p>
+                        Consider this small modification to the lecture code:
+                    </p>
+
+
+                    <div class="mistake-card">
+
+                        <strong>Incorrect variable name</strong>
+
+<pre><code>input_layer = [0.15, 0.5, 0.7, 0.22]
+
+weights = [0.22, 0.27, 0.72, 0.05]
+
+weighted_inputs = np.multiply(inputs, weights)</code></pre>
+
+                        <p>
+                            The list is called input_layer, but the
+                            multiplication uses inputs.
+                        </p>
+
+                        <p>
+                            Python raises NameError because inputs
+                            has not been defined.
+                        </p>
+
+                    </div>
+
+
+                    <h3>8.7 Corrected code</h3>
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>DEBUGGED VERSION</span>
+                        </div>
+
+<pre><code>import numpy as np
+
+input_layer = [0.15, 0.5, 0.7, 0.22]
+
+weights = [0.22, 0.27, 0.72, 0.05]
+
+weighted_inputs = np.multiply(input_layer, weights)
+
+soma = np.sum(weighted_inputs)
+
+activation = np.heaviside(soma, 1)
+
+print(activation)</code></pre>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>PYTHON REMINDER</span>
+                        <p>
+                            Variable names must match exactly.
+                            Python is case-sensitive, and a variable
+                            must be defined before it is used.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     09. MIN-MAX SCALING
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="normalisation"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">09</span>
+
+                        <div>
+                            <p class="section-kicker">DATA PREPROCESSING</p>
+                            <h2>Min-Max Scaling</h2>
+                        </div>
+                    </div>
+
+
+                    <p class="lead-text">
+                        Min-max scaling transforms a feature to the
+                        range from 0 to 1. It allows values measured
+                        on different scales to be compared.
+                    </p>
+
+
+                    <h3>9.1 Formula</h3>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">MIN-MAX SCALING</span>
+
+                        <div class="formula-equation">
+                            x<sub>scaled</sub> =
+                            (x − minimum) / (maximum − minimum)
+                        </div>
+
+                        <p>
+                            x is the original value. Minimum and maximum
+                            are the smallest and largest values in the
+                            feature's range.
+                        </p>
+
+                    </div>
+
+
+                    <h3>9.2 Worked example: speed</h3>
+
+                    <p>
+                        Scale a speed of 40 mph when the range is
+                        from 0 to 70 mph.
+                    </p>
+
+
+                    <div class="example-box">
+
+                        <strong>Step 1: Substitute into the formula</strong>
+
+                        <div class="formula-equation">
+                            (40 − 0) / (70 − 0)
+                        </div>
+
+                        <strong>Step 2: Calculate</strong>
+
+                        <div class="formula-equation">
+                            40 / 70 = 0.5714
+                        </div>
+
+                        <strong>Final answer: approximately 0.57.</strong>
+
+                    </div>
+
+
+                    <h3>9.3 Worked example: distance</h3>
+
+                    <p>
+                        Scale a distance of 50 thousand miles when
+                        the range is from 0 to 300 thousand miles.
+                    </p>
+
+
+                    <div class="example-box">
+
+                        <strong>Step 1: Substitute</strong>
+
+                        <div class="formula-equation">
+                            (50 − 0) / (300 − 0)
+                        </div>
+
+                        <strong>Step 2: Calculate</strong>
+
+                        <div class="formula-equation">
+                            50 / 300 = 0.1667
+                        </div>
+
+                        <strong>Final answer: approximately 0.17.</strong>
+
+                    </div>
+
+
+                    <h3>9.4 Interactive min-max scaling calculator</h3>
+
+
+                    <div class="ml-scaling-workbench">
+
+                        <div class="ml-quiz-topline">
+                            <span>MIN-MAX SCALING</span>
+                            <strong>TRANSFORM A VALUE</strong>
+                        </div>
+
+
+                        <div class="ml-scaling-input-grid">
+
+                            <label for="ml-scale-value">
+                                Original value
+
+                                <input id="ml-scale-value"
+                                       type="number"
+                                       value="40"
+                                       step="any" />
+                            </label>
+
+                            <label for="ml-scale-min">
+                                Minimum
+
+                                <input id="ml-scale-min"
+                                       type="number"
+                                       value="0"
+                                       step="any" />
+                            </label>
+
+                            <label for="ml-scale-max">
+                                Maximum
+
+                                <input id="ml-scale-max"
+                                       type="number"
+                                       value="70"
+                                       step="any" />
+                            </label>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="ml-scale-calculate"
+                                class="ml-btn ml-btn-primary">
+                            Calculate Scaled Value
+                        </button>
+
+
+                        <p id="ml-scale-error"
+                           class="ml-error"
+                           aria-live="polite"></p>
+
+
+                        <div id="ml-scale-result"
+                             class="ml-scale-result"
+                             hidden>
+
+                            <span>SCALED VALUE</span>
+
+                            <strong id="ml-scale-output">—</strong>
+
+                            <div id="ml-scale-working"
+                                 class="ml-scale-working"></div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>EXAM REMINDER</span>
+                        <p>
+                            Always subtract the minimum from the original
+                            value, then divide by maximum minus minimum.
+                            Do not divide by the maximum alone unless
+                            the minimum is zero.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     10. NEURAL NETWORK HISTORY
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="history"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">10</span>
+
+                        <div>
+                            <p class="section-kicker">BACKGROUND</p>
+                            <h2>Neural Network History</h2>
+                        </div>
+                    </div>
+
+
+                    <div class="ml-history-timeline">
+
+                        <div class="ml-history-item">
+
+                            <span>1958</span>
+
+                            <div>
+                                <h4>Perceptron — Frank Rosenblatt</h4>
+
+                                <p>
+                                    The perceptron was introduced.
+                                    A single perceptron can learn
+                                    linearly separable problems.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="ml-history-item">
+
+                            <span>1969</span>
+
+                            <div>
+                                <h4>Minsky and Papert</h4>
+
+                                <p>
+                                    Their work showed that a single
+                                    perceptron cannot learn XOR.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="ml-history-item">
+
+                            <span>1980s</span>
+
+                            <div>
+                                <h4>Multi-layer networks and backpropagation</h4>
+
+                                <p>
+                                    Multi-layer networks trained with
+                                    backpropagation overcame the
+                                    single-layer perceptron's limitation.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <h3>10.1 Why is XOR important?</h3>
+
+                    <p>
+                        A single perceptron separates classes using
+                        a single straight-line decision boundary.
+                        XOR cannot be separated by one straight line.
+                    </p>
+
+
+                    <div class="ml-xor-grid">
+
+                        <div>
+                            <h4>XOR input</h4>
+
+                            <table class="learning-comparison">
+                                <thead>
+                                    <tr>
+                                        <th>x1</th>
+                                        <th>x2</th>
+                                        <th>Output</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr><td>0</td><td>0</td><td>0</td></tr>
+                                    <tr><td>0</td><td>1</td><td>1</td></tr>
+                                    <tr><td>1</td><td>0</td><td>1</td></tr>
+                                    <tr><td>1</td><td>1</td><td>0</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                        <div class="ml-xor-explanation">
+
+                            <strong>Why one line is not enough</strong>
+
+                            <p>
+                                The positive outputs are at (0,1)
+                                and (1,0). The negative outputs are
+                                at (0,0) and (1,1).
+                            </p>
+
+                            <p>
+                                No single straight line separates
+                                the two classes.
+                            </p>
+
+                            <p>
+                                A hidden layer is needed.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>MODULE CONNECTION</span>
+                        <p>
+                            We will return to the perceptron in Module 08.
+                            That module will focus on its formulas,
+                            training examples, epochs, weight updates
+                            and examination tracing.
+                        </p>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     11. EXAM PRACTICE
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="exam-practice"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">11</span>
+
+                        <div>
+                            <p class="section-kicker">COMP304 EXAM PREPARATION</p>
+                            <h2>Machine Learning Exam Practice</h2>
+                        </div>
+                    </div>
+
+
+                    <p class="lead-text">
+                        These questions follow the Machine Learning
+                        Basics practice section in your COMP304
+                        Exam Preparation Guide. Attempt each question
+                        before opening its solution.
+                    </p>
+
+
+                    <h3>Question 1 — Identify the learning type</h3>
+
+                    <p>
+                        Write S, U or R for each situation:
+                    </p>
+
+                    <ol>
+                        <li>A model predicts a student's final mark using historical student marks.</li>
+                        <li>A robot vacuum learns a cleaning route by receiving scores.</li>
+                        <li>A bank groups customers without predefined labels.</li>
+                        <li>A system classifies credit applications using past decisions.</li>
+                        <li>A program learns chess by playing and receiving rewards.</li>
+                        <li>A tool identifies unusual sensor readings without labelled faults.</li>
+                    </ol>
+
+                    <details>
+                        <summary>Show answers</summary>
+
+                        <p>1. S — Supervised.</p>
+                        <p>2. R — Reinforcement.</p>
+                        <p>3. U — Unsupervised.</p>
+                        <p>4. S — Supervised.</p>
+                        <p>5. R — Reinforcement.</p>
+                        <p>6. U — Unsupervised.</p>
+                    </details>
+
+
+                    <h3>Question 2 — Classification or regression?</h3>
+
+                    <p>
+                        For situations 1 and 4 in Question 1,
+                        identify whether the task is classification
+                        or regression.
+                    </p>
+
+                    <details>
+                        <summary>Show answers</summary>
+
+                        <p>
+                            Situation 1 is regression because the output
+                            is a numerical final mark.
+                        </p>
+
+                        <p>
+                            Situation 4 is classification because the
+                            output is one of two labels: approve or reject.
+                        </p>
+                    </details>
+
+
+                    <h3>Question 3 — Confusion matrix</h3>
+
+                    <p>
+                        A medical model predicts whether a patient
+                        has a disease. Identify the outcomes:
+                    </p>
+
+                    <ol type="a">
+                        <li>Predicts healthy, but the patient has the disease.</li>
+                        <li>Predicts disease, but the patient is healthy.</li>
+                        <li>Predicts disease, and the patient has it.</li>
+                        <li>Predicts healthy, and the patient is healthy.</li>
+                    </ol>
+
+                    <details>
+                        <summary>Show answers</summary>
+
+                        <p>(a) False Negative (FN).</p>
+                        <p>(b) False Positive (FP).</p>
+                        <p>(c) True Positive (TP).</p>
+                        <p>(d) True Negative (TN).</p>
+
+                        <p>
+                            A false negative is usually more serious
+                            in this example because a sick patient
+                            may go untreated.
+                        </p>
+                    </details>
+
+
+                    <h3>Question 4 — Consistency</h3>
+
+                    <p>
+                        A hypothesis has zero error on the training
+                        set. Which statement must be true?
+                    </p>
+
+                    <ol type="A">
+                        <li>It will predict the test set well.</li>
+                        <li>It is consistent with the training set.</li>
+                        <li>It is the simplest hypothesis.</li>
+                        <li>It has low variance.</li>
+                    </ol>
+
+                    <details>
+                        <summary>Show answer</summary>
+
+                        <p>
+                            B. Zero training error means the hypothesis
+                            is consistent with the training set.
+                        </p>
+
+                        <p>
+                            Nothing necessarily follows about its
+                            test performance, simplicity or variance.
+                        </p>
+                    </details>
+
+
+                    <h3>Question 5 — Bias and variance</h3>
+
+                    <p>
+                        A straight line and a degree-12 polynomial
+                        are fitted to 13 points from a wavy function.
+                        Which has high bias and which has high variance?
+                    </p>
+
+                    <details>
+                        <summary>Show answer</summary>
+
+                        <p>
+                            The straight line has high bias and
+                            underfits because it cannot represent
+                            the wavy relationship.
+                        </p>
+
+                        <p>
+                            The degree-12 polynomial has high variance
+                            and may overfit by fitting the training
+                            points too closely.
+                        </p>
+                    </details>
+
+
+                    <h3>Question 6 — Single neuron calculation</h3>
+
+                    <p>
+                        Use the supplied inputs and weights to
+                        calculate the weighted sum and activation.
+                    </p>
+
+<pre class="exam-tree-code"><code>inputs = [0.15, 0.5, 0.7, 0.22]
+
+weights = [0.22, 0.27, 0.72, 0.05]</code></pre>
+
+                    <details>
+                        <summary>Show worked solution</summary>
+
+                        <p>
+                            0.15 × 0.22 = 0.033
+                        </p>
+
+                        <p>
+                            0.5 × 0.27 = 0.135
+                        </p>
+
+                        <p>
+                            0.7 × 0.72 = 0.504
+                        </p>
+
+                        <p>
+                            0.22 × 0.05 = 0.011
+                        </p>
+
+                        <p>
+                            Soma = 0.033 + 0.135 + 0.504 + 0.011
+                            = 0.683.
+                        </p>
+
+                        <p>
+                            Since 0.683 is positive, the activation
+                            output is 1.0.
+                        </p>
+                    </details>
+
+
+                    <h3>Question 7 — Python debugging</h3>
+
+                    <p>
+                        The first line defines input_layer, but the
+                        multiplication uses inputs. What happens?
+                    </p>
+
+                    <details>
+                        <summary>Show answer</summary>
+
+                        <p>
+                            NameError: name 'inputs' is not defined.
+                            Use the same variable name in both places.
+                        </p>
+                    </details>
+
+
+                    <h3>Question 8 — Min-max scaling</h3>
+
+                    <p>
+                        Write min_max_scale(x, minimum, maximum).
+                        Then scale:
+                    </p>
+
+                    <ul>
+                        <li>40 mph when the range is 0 to 70.</li>
+                        <li>50 thousand miles when the range is 0 to 300.</li>
+                    </ul>
+
+                    <details>
+                        <summary>Show worked solution</summary>
+
+<pre><code>def min_max_scale(x, minimum, maximum):
+
+    return (x - minimum) / (maximum - minimum)</code></pre>
+
+                        <p>Speed: 40 / 70 = approximately 0.57.</p>
+
+                        <p>Distance: 50 / 300 = approximately 0.17.</p>
+                    </details>
+
+
+                    <h3>Question 9 — XOR and the perceptron</h3>
+
+                    <p>
+                        Why can a single perceptron not learn XOR?
+                    </p>
+
+                    <details>
+                        <summary>Show answer</summary>
+
+                        <p>
+                            A single perceptron creates a linear
+                            decision boundary. XOR is not linearly
+                            separable, so one straight line cannot
+                            separate its positive and negative classes.
+                            A hidden layer is needed.
+                        </p>
+                    </details>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     12. CHECKLIST
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="checklist"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">12</span>
+
+                        <div>
+                            <p class="section-kicker">EXAM VERIFICATION</p>
+                            <h2>Machine Learning Checklist</h2>
+                        </div>
+                    </div>
+
+
+                    <ul class="aiv-checklist">
+
+                        <li>
+                            <label>
+                                <input id="t07-check-01" type="checkbox" />
+                                <span>
+                                    Explain supervised, unsupervised and
+                                    reinforcement learning.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t07-check-02" type="checkbox" />
+                                <span>
+                                    Identify learning types from real-world
+                                    scenarios.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t07-check-03" type="checkbox" />
+                                <span>
+                                    Distinguish classification from regression.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t07-check-04" type="checkbox" />
+                                <span>
+                                    Explain x, y, hypothesis space H,
+                                    hypothesis h and unknown function f.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t07-check-05" type="checkbox" />
+                                <span>
+                                    Explain the difference between training
+                                    data and test data.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t07-check-06" type="checkbox" />
+                                <span>
+                                    Explain consistency and generalisation.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t07-check-07" type="checkbox" />
+                                <span>
+                                    Distinguish bias, variance, underfitting
+                                    and overfitting.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t07-check-08" type="checkbox" />
+                                <span>
+                                    Identify TP, FP, FN and TN from scenarios.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t07-check-09" type="checkbox" />
+                                <span>
+                                    Calculate a neuron's weighted sum and
+                                    activation output.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t07-check-10" type="checkbox" />
+                                <span>
+                                    Debug the variable-name error in the
+                                    NumPy neuron example.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t07-check-11" type="checkbox" />
+                                <span>
+                                    Apply min-max scaling and show the
+                                    calculation steps.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t07-check-12" type="checkbox" />
+                                <span>
+                                    Explain why a single perceptron cannot
+                                    learn XOR.
+                                </span>
+                            </label>
+                        </li>
+
+                    </ul>
+
+
+                    <button type="button"
+                            class="ml-btn ml-btn-secondary"
+                            id="ml-reset-checklist">
+                        Reset Checklist
+                    </button>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     COMPLETION
+                     ========================================================= -->
+
+                <section class="lesson-completion">
+
+                    <div>
+
+                        <span class="completion-label">MODULE 07</span>
+
+                        <h2>Ready for Perceptron Training?</h2>
+
+                        <p>
+                            Complete the learning-type exercises,
+                            classification questions, confusion-matrix
+                            activity, neuron calculation and min-max
+                            scaling exercise before continuing.
+                        </p>
+
+                    </div>
+
+
+                    <button type="button"
+                            class="ml-btn ml-btn-primary"
+                            id="ml-complete-module"
+                            disabled>
+                        Mark Module Complete
+                    </button>
+
+
+                    <p id="ml-completion-message"
+                       class="completion-message"
+                       aria-live="polite">
+                        Complete the interactive activities first.
+                    </p>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     BOTTOM NAVIGATION
+                     ========================================================= -->
+
+                <div class="topic-bottom-navigation">
+                    <a href="../topic-06-genetic-algorithms/index.html?v=6" class="topic-previous-link">← Previous: Genetic Algorithms</a>
+                    <a href="../topic-08-perceptron/index.html?v=6" class="topic-next-link">Next: Perceptron Training →</a>
+                </div>
+
+
+            </article>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =========================================================
+         FOOTER
+         ========================================================= -->
+
+    <footer class="ai-footer">
+
+        <div class="footer-content">
+
+            <a href="../../index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <p>
+                COMP304 Artificial Intelligence · Learn, reason and implement.
+            </p>
+
+        </div>
+
+        <div class="footer-bottom">
+
+            <p>
+                © <span id="current-year"></span> StructTrace.
+            </p>
+
+            <a href="../../index.html?v=6">Back to AIVisual</a>
+
+        </div>
+
+    </footer>
+
+</body>
+</html>

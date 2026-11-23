@@ -1024,3 +1024,68 @@ body {
         animation-duration: 0.01ms !important;
     }
 }
+
+/* =====================================================
+   AIVISUAL - STRUCTTRACE HOMEPAGE INTEGRATION
+   ===================================================== */
+
+/* AIVisual feature card */
+
+.st-icon-purple {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+.st-ai-visual-card {
+    border-color: #ddd6fe;
+    background: linear-gradient( 145deg, #ffffff, #f5f3ff );
+}
+
+    .st-ai-visual-card:hover {
+        border-color: #a78bfa;
+        box-shadow: 0 18px 35px rgba(124, 58, 237, 0.12);
+    }
+
+    .st-ai-visual-card .st-card-badge {
+        color: #7c3aed;
+    }
+
+    .st-ai-visual-card .st-card-link {
+        color: #7c3aed;
+    }
+
+        .st-ai-visual-card .st-card-link:hover {
+            color: #5b21b6;
+        }
+
+/* AIVisual hero button */
+
+.st-ai-btn:hover {
+    border-color: #a78bfa;
+    background: #7c3aed;
+    color: #ffffff;
+}
+
+/* Three platform cards */
+
+@media (min-width: 901px) {
+    .st-feature-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* Tablet layout */
+
+@media (max-width: 900px) {
+    .st-feature-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Mobile layout */
+
+@media (max-width: 650px) {
+    .st-feature-grid {
+        grid-template-columns: 1fr;
+    }
+}

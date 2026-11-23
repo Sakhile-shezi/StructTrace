@@ -1,0 +1,2793 @@
+/* =========================================================
+   STRUCTTRACE - AIVISUAL
+   SHARED TOPIC PAGE BASE
+
+   One layout for every topic page (hero, sidebar, lesson
+   sections, formulas, notes, tables, code, checklist,
+   completion and bottom navigation).
+
+   Usage: <body class="aiv-topic topicNN-page">
+   Load order: ai-visualizer.css -> topic-base.css -> topic-pages.css
+   (module blocks in topic-pages.css may still override this).
+   ========================================================= */
+
+/* ============================================================
+   01. MODULE 05 DESIGN VARIABLES
+   ============================================================ */
+
+.aiv-topic {
+    --tp-bg: #f5f8fc;
+    --tp-surface: #ffffff;
+    --tp-text: #172033;
+    --tp-secondary: #52627a;
+    --tp-muted: #718198;
+    --tp-primary: #2563eb;
+    --tp-primary-light: #dbeafe;
+    --tp-cyan: #0891b2;
+    --tp-purple: #7c3aed;
+    --tp-green: #16a34a;
+    --tp-orange: #ea580c;
+    --tp-red: #dc2626;
+    --tp-border: #dce4ef;
+    background: var(--tp-bg);
+    color: var(--tp-text);
+}
+
+
+
+    /* ============================================================
+   02. PAGE LAYOUT
+   ============================================================ */
+
+    .aiv-topic .topic-container {
+        width: min(96%, 1500px);
+        margin: 0 auto;
+        padding: 26px 20px 55px;
+    }
+
+    .aiv-topic .topic-layout {
+        display: grid;
+        grid-template-columns: 255px minmax(0, 1fr);
+        align-items: start;
+        gap: 25px;
+    }
+
+    .aiv-topic .topic-content {
+        min-width: 0;
+        width: 100%;
+    }
+
+        .aiv-topic .topic-content,
+        .aiv-topic .topic-content * {
+            box-sizing: border-box;
+        }
+
+
+    /* ============================================================
+
+   03. HERO
+   ============================================================ */
+
+    .aiv-topic .topic-hero {
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 30px;
+        padding: 38px 42px 25px;
+        background: radial-gradient( circle at 85% 15%, rgba(37, 99, 235, 0.3), transparent 35% ), linear-gradient( 130deg, #101a30 0%, #172b50 55%, #123b65 100% );
+        color: #ffffff;
+        border: 1px solid rgba(148, 163, 184, 0.15);
+        border-radius: 17px;
+        box-shadow: 0 15px 40px rgba(15, 23, 42, 0.13);
+    }
+
+        .aiv-topic .topic-hero::before,
+        .aiv-topic .topic-hero::after {
+            content: "";
+            position: absolute;
+            pointer-events: none;
+            border: 1px solid rgba(56, 189, 248, 0.16);
+            border-radius: 50%;
+        }
+
+        .aiv-topic .topic-hero::before {
+            width: 430px;
+            height: 430px;
+            top: -300px;
+            right: -100px;
+        }
+
+        .aiv-topic .topic-hero::after {
+            width: 500px;
+            height: 500px;
+            bottom: -430px;
+            right: 100px;
+        }
+
+    .aiv-topic .topic-breadcrumb {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-bottom: 25px;
+        color: #a8bad3;
+        font-size: 0.76rem;
+        font-weight: 650;
+    }
+
+        .aiv-topic .topic-breadcrumb a {
+            color: #67d5f3;
+        }
+
+    .aiv-topic .topic-hero-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 35px;
+    }
+
+    .aiv-topic .topic-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 17px;
+    }
+
+    .aiv-topic .topic-label,
+    .aiv-topic .topic-exam-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-size: 0.66rem;
+        font-weight: 850;
+        letter-spacing: 0.075em;
+        text-transform: uppercase;
+    }
+
+    .aiv-topic .topic-label {
+        background: rgba(56, 189, 248, 0.13);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+        color: #67e8f9;
+    }
+
+    .aiv-topic .topic-exam-badge {
+        background: rgba(124, 58, 237, 0.18);
+        border: 1px solid rgba(167, 139, 250, 0.35);
+        color: #ddd6fe;
+    }
+
+    .aiv-topic .topic-hero h1 {
+        max-width: 800px;
+        margin: 0;
+        color: #ffffff;
+        font-size: clamp(2rem, 4vw, 3.2rem);
+        font-weight: 900;
+        letter-spacing: -0.045em;
+    }
+
+        .aiv-topic .topic-hero h1 span {
+            display: block;
+            margin-top: 5px;
+            color: #38bdf8;
+        }
+
+    .aiv-topic .topic-hero-content > div:first-child > p {
+        max-width: 780px;
+        margin: 18px 0;
+        color: #c5d3e7;
+        font-size: 0.99rem;
+        line-height: 1.85;
+    }
+
+    .aiv-topic .topic-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 20px;
+    }
+
+        .aiv-topic .topic-meta span {
+            padding: 6px 11px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 6px;
+            color: #dce9f8;
+            font-size: 0.68rem;
+            font-weight: 700;
+        }
+
+    .aiv-topic .topic-hero-symbol {
+        position: relative;
+        z-index: 2;
+        flex-shrink: 0;
+        width: 185px;
+        text-align: center;
+    }
+
+    .aiv-topic .topic-symbol-circle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 145px;
+        height: 145px;
+        margin: 0 auto 13px;
+        background: rgba(56, 189, 248, 0.1);
+        border: 2px solid rgba(56, 189, 248, 0.5);
+        border-radius: 50%;
+        color: #67e8f9;
+        font-size: 2.7rem;
+        font-weight: 900;
+        box-shadow: 0 0 45px rgba(56, 189, 248, 0.13);
+    }
+
+    .aiv-topic .topic-hero-symbol > span {
+        color: #a5dff3;
+        font-size: 0.69rem;
+        font-weight: 850;
+        letter-spacing: 0.1em;
+    }
+
+    .aiv-topic .topic-hero-footer {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+        padding-top: 17px;
+        border-top: 1px solid rgba(255, 255, 255, 0.14);
+        color: #a5bdd9;
+        font-size: 0.65rem;
+        font-weight: 800;
+        letter-spacing: 0.075em;
+    }
+
+
+    /* ============================================================
+
+   04. SIDEBAR
+   ============================================================ */
+
+    .aiv-topic .topic-sidebar {
+        position: sticky;
+        top: 95px;
+        padding: 19px 15px;
+        background: #ffffff;
+        border: 1px solid var(--tp-border);
+        border-radius: 13px;
+        box-shadow: 0 5px 20px rgba(15, 23, 42, 0.045);
+    }
+
+    .aiv-topic .sidebar-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding: 0 5px 13px;
+        border-bottom: 1px solid var(--tp-border);
+        color: var(--tp-muted);
+        font-size: 0.66rem;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+    }
+
+    .aiv-topic .sidebar-module-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 27px;
+        height: 27px;
+        background: #dbeafe;
+        border-radius: 7px;
+        color: #2563eb;
+    }
+
+    .aiv-topic .topic-navigation {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .aiv-topic .topic-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 10px;
+        border-radius: 7px;
+        color: var(--tp-secondary);
+        font-size: 0.76rem;
+        font-weight: 650;
+        transition: 0.2s ease;
+    }
+
+        .aiv-topic .topic-nav-link > span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 24px;
+            flex-shrink: 0;
+            background: #f1f5f9;
+            border-radius: 5px;
+            color: #718096;
+            font-size: 0.63rem;
+            font-weight: 850;
+        }
+
+        .aiv-topic .topic-nav-link:hover,
+        .aiv-topic .topic-nav-link.active {
+            background: #eaf2ff;
+            color: #2563eb;
+        }
+
+            .aiv-topic .topic-nav-link.active > span {
+                background: #2563eb;
+                color: white;
+            }
+
+    .aiv-topic .sidebar-progress {
+        margin-top: 24px;
+        padding: 15px 5px;
+        border-top: 1px solid var(--tp-border);
+    }
+
+        .aiv-topic .sidebar-progress > span {
+            color: var(--tp-muted);
+            font-size: 0.65rem;
+            font-weight: 850;
+            letter-spacing: 0.06em;
+        }
+
+    .aiv-topic .sidebar-progress-track {
+        width: 100%;
+        height: 6px;
+        margin-top: 11px;
+        overflow: hidden;
+        background: #e9eef5;
+        border-radius: 20px;
+    }
+
+        .aiv-topic .sidebar-progress-track > div {
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #2563eb, #06b6d4);
+            border-radius: inherit;
+            transition: width 0.25s ease;
+        }
+
+    .aiv-topic .sidebar-progress p {
+        margin: 7px 0 0;
+        color: var(--tp-muted);
+        font-size: 0.68rem;
+    }
+
+    .aiv-topic .back-course-link {
+        display: block;
+        margin-top: 10px;
+        padding: 10px;
+        background: #f8fafc;
+        border: 1px solid var(--tp-border);
+        border-radius: 7px;
+        color: #475569;
+        font-size: 0.74rem;
+        font-weight: 750;
+    }
+
+
+    /* ============================================================
+
+   05. LESSON SECTIONS
+   ============================================================ */
+
+    .aiv-topic .lesson-section {
+        min-width: 0;
+        margin-bottom: 23px;
+        padding: 29px 30px;
+        background: #ffffff;
+        border: 1px solid var(--tp-border);
+        border-radius: 13px;
+        box-shadow: 0 5px 20px rgba(15, 23, 42, 0.045);
+        scroll-margin-top: 100px;
+    }
+
+        .aiv-topic .lesson-section > p,
+        .aiv-topic .lesson-section > ul,
+        .aiv-topic .lesson-section > ol {
+            color: var(--tp-secondary);
+            font-size: 0.88rem;
+        }
+
+        .aiv-topic .lesson-section > p {
+            margin: 12px 0;
+            line-height: 1.8;
+        }
+
+        .aiv-topic .lesson-section h3 {
+            margin: 25px 0 10px;
+            color: #172b4d;
+            font-size: 1.04rem;
+            font-weight: 850;
+            line-height: 1.4;
+        }
+
+        .aiv-topic .lesson-section h4 {
+            margin: 18px 0 10px;
+            color: #24364f;
+            font-size: 0.9rem;
+            font-weight: 800;
+        }
+
+        .aiv-topic .lesson-section strong {
+            color: #1e293b;
+        }
+
+        .aiv-topic .lesson-section ul,
+        .aiv-topic .lesson-section ol {
+            padding-left: 23px;
+        }
+
+        .aiv-topic .lesson-section li {
+            margin: 7px 0;
+            padding-left: 3px;
+            line-height: 1.75;
+        }
+
+        .aiv-topic .lesson-section .lead-text {
+            margin: 0 0 22px;
+            color: #475569;
+            font-size: 0.97rem;
+            line-height: 1.85;
+        }
+
+        .aiv-topic .lesson-section code:not(pre code) {
+            display: inline-block;
+            padding: 2px 6px;
+            background: #eef3fa;
+            border: 1px solid #e3eaf3;
+            border-radius: 4px;
+            color: #1d4ed8;
+            font-family: "Cascadia Code", Consolas, monospace;
+            font-size: 0.83em;
+            font-weight: 650;
+        }
+
+
+    /* ============================================================
+
+   06. SECTION HEADINGS
+   ============================================================ */
+
+    .aiv-topic .lesson-section-heading {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 22px;
+        padding-bottom: 17px;
+        border-bottom: 1px solid var(--tp-border);
+    }
+
+    .aiv-topic .section-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 43px;
+        height: 43px;
+        flex-shrink: 0;
+        background: #dbeafe;
+        border: 1px solid #c7dcff;
+        border-radius: 10px;
+        color: #2563eb;
+        font-size: 1rem;
+        font-weight: 900;
+    }
+
+    .aiv-topic .section-kicker {
+        margin: 0 0 4px;
+        color: #0891b2;
+        font-size: 0.65rem;
+        font-weight: 850;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .aiv-topic .lesson-section-heading h2 {
+        margin: 0;
+        color: #12213a;
+        font-size: clamp(1.25rem, 2vw, 1.65rem);
+        font-weight: 900;
+        letter-spacing: -0.025em;
+    }
+
+
+    /* ============================================================
+
+   08. DEFINITIONS AND FORMULAS
+   ============================================================ */
+
+    .aiv-topic .definition-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        margin: 20px 0;
+        padding: 18px;
+        background: #eff6ff;
+        border: 1px solid #dbeafe;
+        border-left: 4px solid #2563eb;
+        border-radius: 9px;
+    }
+
+    .aiv-topic .definition-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 43px;
+        height: 43px;
+        background: #2563eb;
+        border-radius: 9px;
+        color: white;
+        font-family: "Cascadia Code", Consolas, monospace;
+        font-weight: 900;
+    }
+
+    .aiv-topic .definition-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #2563eb;
+        font-size: 0.64rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+    }
+
+    .aiv-topic .definition-card p {
+        margin: 0;
+        color: #334155;
+        font-size: 0.86rem;
+        line-height: 1.8;
+    }
+
+    .aiv-topic .formula-card {
+        margin: 18px 0;
+        padding: 19px 21px;
+        background: #f0f7ff;
+        border: 1px solid #d8e9ff;
+        border-left: 4px solid #2563eb;
+        border-radius: 9px;
+    }
+
+        .aiv-topic .formula-card .definition-label {
+            color: #2563eb;
+        }
+
+    .aiv-topic .formula-equation {
+        display: block;
+        width: 100%;
+        margin: 13px 0;
+        padding: 14px 12px;
+        background: #eaf3ff;
+        border: 1px solid #cfe1fb;
+        border-radius: 8px;
+        color: #12325b;
+        text-align: center;
+        font-family: "Cambria Math", "Times New Roman", serif;
+        font-size: clamp(1.15rem, 2.2vw, 1.65rem);
+        font-weight: 700;
+        line-height: 1.8;
+        overflow-x: auto;
+        overflow-wrap: anywhere;
+    }
+
+    .aiv-topic .formula-card p {
+        color: #52657f;
+        font-size: 0.82rem;
+        line-height: 1.8;
+    }
+
+    .aiv-topic .formula-card ul {
+        color: #475569;
+        font-size: 0.83rem;
+    }
+
+    .aiv-topic .formula-definition {
+        text-align: left;
+    }
+
+    .aiv-topic .formula-case {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(120px, 1fr);
+        gap: 12px;
+        padding: 10px 12px;
+        border-top: 1px solid #d8e9ff;
+    }
+
+    .aiv-topic .formula-case-expression {
+        color: #12325b;
+        font-family: "Cambria Math", "Times New Roman", serif;
+        font-size: 1.12rem;
+        font-weight: 750;
+    }
+
+    .aiv-topic .formula-case-condition {
+        color: #52657f;
+        font-size: 0.78rem;
+    }
+
+    .aiv-topic .pruning-formula {
+        background: #fff7ed;
+        border-color: #fed7aa;
+        border-left-color: #ea580c;
+    }
+
+        .aiv-topic .pruning-formula .formula-equation {
+            color: #9a3412;
+            background: #ffedd5;
+            border-color: #fed7aa;
+        }
+
+
+    /* ============================================================
+
+   09. IMPORTANT NOTES AND EXAMPLES
+   ============================================================ */
+
+    .aiv-topic .important-note,
+    .aiv-topic .exam-note {
+        margin: 19px 0;
+        padding: 16px 19px;
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        border-left: 4px solid #eab308;
+        border-radius: 8px;
+    }
+
+        .aiv-topic .important-note > span,
+        .aiv-topic .exam-note > span {
+            display: block;
+            margin-bottom: 7px;
+            color: #a16207;
+            font-size: 0.66rem;
+            font-weight: 900;
+            letter-spacing: 0.07em;
+        }
+
+        .aiv-topic .important-note p,
+        .aiv-topic .exam-note p {
+            margin: 0;
+            color: #67552a;
+            font-size: 0.84rem;
+            line-height: 1.8;
+        }
+
+    .aiv-topic .example-box {
+        margin: 17px 0;
+        padding: 17px 19px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        color: #40516a;
+        font-size: 0.86rem;
+        line-height: 1.8;
+    }
+
+        .aiv-topic .example-box strong {
+            color: #1d4ed8;
+        }
+
+    .aiv-topic .positive-value {
+        color: #16a34a !important;
+        font-weight: 900;
+    }
+
+    .aiv-topic .negative-value {
+        color: #dc2626 !important;
+        font-weight: 900;
+    }
+
+
+    /* ============================================================
+
+   10. TABLES
+   ============================================================ */
+
+    .aiv-topic .comparison-table-wrapper,
+    .aiv-topic .table-responsive {
+        width: 100%;
+        max-width: 100%;
+        margin: 16px 0;
+        overflow-x: auto;
+        border: 1px solid var(--tp-border);
+        border-radius: 8px;
+    }
+
+    .aiv-topic .learning-comparison {
+        width: 100%;
+        min-width: 550px;
+        border-collapse: collapse;
+        border-spacing: 0;
+        background: #ffffff;
+        color: #334155;
+        font-size: 0.79rem;
+        line-height: 1.65;
+    }
+
+        .aiv-topic .learning-comparison thead th {
+            padding: 12px 14px;
+            background: #eef3f9;
+            border-bottom: 1px solid #dce4ef;
+            color: #172b4d;
+            font-size: 0.72rem;
+            font-weight: 850;
+            text-align: left;
+        }
+
+        .aiv-topic .learning-comparison td {
+            padding: 11px 14px;
+            border-bottom: 1px solid #e8edf4;
+            color: #475569;
+            vertical-align: top;
+        }
+
+        .aiv-topic .learning-comparison tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .aiv-topic .learning-comparison tbody tr:hover {
+            background: #f8fbff;
+        }
+
+        .aiv-topic .learning-comparison td:first-child {
+            color: #1e293b;
+            font-weight: 750;
+        }
+
+
+    /* ============================================================
+
+   13. PYTHON CODE BLOCKS
+   ============================================================ */
+
+    .aiv-topic .python-code-card {
+        min-width: 0;
+        margin: 18px 0;
+        overflow: hidden;
+        background: #0e1729;
+        border: 1px solid #26354f;
+        border-radius: 10px;
+        box-shadow: 0 5px 16px rgba(15, 23, 42, 0.12);
+    }
+
+    .aiv-topic .code-titlebar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 11px 17px;
+        background: #192942;
+        border-bottom: 1px solid #2c405e;
+        color: #93c5fd;
+        font-size: 0.65rem;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+    }
+
+    .aiv-topic .python-code-card pre,
+    .aiv-topic .exam-tree-code {
+        max-width: 100%;
+        margin: 0;
+        padding: 20px;
+        overflow-x: auto;
+        background: #0e1729;
+        color: #e2e8f0;
+        font-family: "Cascadia Code", Consolas, monospace;
+        font-size: 0.78rem;
+        line-height: 1.75;
+        tab-size: 4;
+    }
+
+        .aiv-topic .python-code-card pre code {
+            padding: 0;
+            background: transparent;
+            border: none;
+            color: inherit;
+            font-family: inherit;
+            font-size: inherit;
+            white-space: pre;
+        }
+
+    .aiv-topic .exam-tree-code {
+        margin: 13px 0;
+        background: #101a30;
+        border: 1px solid #26354f;
+        border-radius: 8px;
+    }
+
+
+    /* ============================================================
+
+   26. DETAILS / WORKED ANSWERS
+   ============================================================ */
+
+    .aiv-topic .lesson-section details {
+        margin: 12px 0;
+        padding: 13px 16px;
+        background: #f8fafc;
+        border: 1px solid #dce4ef;
+        border-radius: 8px;
+    }
+
+        .aiv-topic .lesson-section details summary {
+            cursor: pointer;
+            color: #1d4ed8;
+            font-size: 0.84rem;
+            font-weight: 800;
+        }
+
+        .aiv-topic .lesson-section details[open] summary {
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dce4ef;
+        }
+
+        .aiv-topic .lesson-section details > p,
+        .aiv-topic .lesson-section details > ul,
+        .aiv-topic .lesson-section details > ol {
+            color: #52627a;
+            font-size: 0.82rem;
+        }
+
+
+    /* ============================================================
+
+   27. CHECKLIST
+   ============================================================ */
+
+    .aiv-topic .lesson-section .aiv-checklist {
+        list-style: none;
+        padding: 0;
+    }
+
+        .aiv-topic .lesson-section .aiv-checklist li {
+            padding: 13px 0;
+            border-bottom: 1px solid var(--tp-border);
+        }
+
+        .aiv-topic .lesson-section .aiv-checklist label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            color: var(--tp-secondary);
+            cursor: pointer;
+        }
+
+        .aiv-topic .lesson-section .aiv-checklist input {
+            flex-shrink: 0;
+            width: 16px;
+            height: 16px;
+            margin-top: 5px;
+            accent-color: #16a34a;
+        }
+
+        .aiv-topic .lesson-section .aiv-checklist span {
+            font-size: 0.82rem;
+            line-height: 1.8;
+        }
+
+
+    /* ============================================================
+
+   28. MODULE COMPLETION
+   ============================================================ */
+
+    .aiv-topic .lesson-completion {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin: 22px 0;
+        padding: 25px;
+        background: linear-gradient(125deg, #101a30, #17375c);
+        border: 1px solid #28466b;
+        border-radius: 12px;
+        color: white;
+    }
+
+    .aiv-topic .completion-label {
+        color: #67e8f9;
+        font-size: 0.66rem;
+        font-weight: 850;
+        letter-spacing: 0.1em;
+    }
+
+    .aiv-topic .lesson-completion h2 {
+        margin: 8px 0;
+        color: white;
+        font-size: 1.3rem;
+    }
+
+    .aiv-topic .lesson-completion p {
+        max-width: 600px;
+        margin-bottom: 0;
+        color: #bdcde1;
+        font-size: 0.83rem;
+    }
+
+    .aiv-topic .lesson-completion .completion-message {
+        flex-basis: 100%;
+        font-size: 0.78rem;
+    }
+
+    .aiv-topic .lesson-completion button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+
+    /* ============================================================
+
+   29. BOTTOM NAVIGATION
+   ============================================================ */
+
+    .aiv-topic .topic-bottom-navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 23px 0 5px;
+    }
+
+    .aiv-topic .topic-previous-link,
+    .aiv-topic .topic-next-link {
+        display: inline-flex;
+        align-items: center;
+        padding: 11px 16px;
+        border: 1px solid var(--tp-border);
+        border-radius: 7px;
+        font-size: 0.78rem;
+        font-weight: 750;
+        transition: 0.2s ease;
+    }
+
+    .aiv-topic .topic-previous-link {
+        background: #ffffff;
+        color: #475569;
+    }
+
+    .aiv-topic .topic-next-link {
+        background: #2563eb;
+        border-color: #2563eb;
+        color: #ffffff;
+    }
+
+
+@media (max-width: 1050px) {
+    .aiv-topic .topic-layout {
+        grid-template-columns: 215px minmax(0, 1fr);
+        gap: 16px;
+    }
+    .aiv-topic .topic-sidebar {
+        padding: 14px 10px;
+    }
+    .aiv-topic .topic-nav-link {
+        font-size: 0.7rem;
+        padding: 8px 7px;
+    }
+    .aiv-topic .lesson-section {
+        padding: 23px;
+    }
+    .aiv-topic .topic-hero {
+        padding: 30px;
+    }
+    .aiv-topic .topic-symbol-circle {
+        width: 115px;
+        height: 115px;
+        font-size: 2.1rem;
+    }
+}
+
+@media (max-width: 760px) {
+    .aiv-topic .topic-container {
+        width: 100%;
+        padding: 14px 12px 35px;
+    }
+    .aiv-topic .topic-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 15px;
+    }
+    .aiv-topic .topic-sidebar {
+        position: static;
+        padding: 13px;
+    }
+    .aiv-topic .topic-navigation {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .aiv-topic .topic-nav-link {
+        min-width: 0;
+        font-size: 0.69rem;
+    }
+    .aiv-topic .topic-hero {
+        padding: 23px 19px;
+    }
+    .aiv-topic .topic-hero-symbol {
+        display: none;
+    }
+    .aiv-topic .topic-hero h1 {
+        font-size: 2rem;
+    }
+    .aiv-topic .topic-hero-content > div:first-child > p {
+        font-size: 0.86rem;
+    }
+    .aiv-topic .topic-hero-footer {
+        flex-direction: column;
+        font-size: 0.59rem;
+    }
+    .aiv-topic .lesson-section {
+        padding: 19px 16px;
+        margin-bottom: 15px;
+    }
+    .aiv-topic .lesson-section-heading {
+        gap: 10px;
+    }
+    .aiv-topic .section-number {
+        width: 36px;
+        height: 36px;
+    }
+    .aiv-topic .lesson-section-heading h2 {
+        font-size: 1.18rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .aiv-topic .topic-navigation {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .aiv-topic .topic-hero h1 {
+        font-size: 1.7rem;
+    }
+    .aiv-topic .lesson-section {
+        padding: 16px 12px;
+    }
+    .aiv-topic .formula-card {
+        padding: 14px;
+    }
+    .aiv-topic .formula-equation {
+        font-size: 1.1rem;
+    }
+    .aiv-topic .formula-case {
+        grid-template-columns: 1fr;
+        gap: 3px;
+    }
+    .aiv-topic .topic-bottom-navigation {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .aiv-topic .topic-previous-link,
+    .aiv-topic .topic-next-link {
+        justify-content: center;
+    }
+}
+
+
+/* #########################################################
+   PART 2 — SHARED LAB KIT (dark interactive workbenches)
+
+   One look for every interactive simulator, matching the
+   Module 04/10 workbenches. Selectors are prefixed with
+   .aiv-topic .topic-content so they win over the light
+   lesson-section text colours and over module blocks.
+   ######################################################### */
+
+.aiv-topic {
+    --lab-bg: #0a1222;
+    --lab-card: #172540;
+    --lab-deep: #0d1629;
+    --lab-border: #334155;
+    --lab-line: #29384f;
+    --lab-text: #e2e8f0;
+    --lab-soft: #cbd5e1;
+    --lab-muted: #94a3b8;
+    --lab-accent: #38bdf8;
+    --lab-blue: #2563eb;
+    --lab-green: #34d399;
+    --lab-amber: #f59e0b;
+    --lab-red: #f87171;
+    --lab-mono: "Cascadia Code", Consolas, "SFMono-Regular", monospace;
+}
+
+/* ---------- panel ---------- */
+
+.aiv-topic .topic-content :is(.search-workbench, .problem-workbench, .agent-trace-panel,
+    .nq-lab, .sudoku-lab, .crypto-lab, .xlab) {
+    margin: 18px 0;
+    padding: 22px;
+    background: var(--lab-bg);
+    border: 1px solid #263750;
+    border-radius: 13px;
+    color: var(--lab-text);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+    overflow-wrap: anywhere;
+}
+
+.aiv-topic .topic-content :is(.search-workbench, .problem-workbench, .agent-trace-panel,
+    .nq-lab, .sudoku-lab, .crypto-lab, .xlab) :is(h3, h4) {
+    color: #f1f5f9;
+}
+
+.aiv-topic .topic-content :is(.search-workbench, .problem-workbench, .agent-trace-panel,
+    .nq-lab, .sudoku-lab, .crypto-lab, .xlab) h3 {
+    margin: 0 0 6px;
+    font-size: 1.02rem;
+}
+
+.aiv-topic .topic-content :is(.search-workbench, .problem-workbench, .agent-trace-panel,
+    .nq-lab, .sudoku-lab, .crypto-lab, .xlab) h4 {
+    margin: 22px 0 10px;
+    font-size: 0.86rem;
+}
+
+.aiv-topic .topic-content :is(.search-workbench, .problem-workbench, .agent-trace-panel,
+    .nq-lab, .sudoku-lab, .crypto-lab, .xlab) :is(p, li) {
+    color: #aebdd0;
+    font-size: 0.79rem;
+    line-height: 1.7;
+}
+
+.aiv-topic .topic-content :is(.search-workbench, .problem-workbench, .agent-trace-panel,
+    .nq-lab, .sudoku-lab, .crypto-lab, .xlab) strong {
+    color: #f1f5f9;
+}
+
+.aiv-topic .topic-content :is(.search-workbench, .problem-workbench, .agent-trace-panel,
+    .nq-lab, .sudoku-lab, .crypto-lab, .xlab) code:not(pre code) {
+    background: rgba(56, 189, 248, 0.1);
+    border-color: rgba(56, 189, 248, 0.25);
+    color: #bae6fd;
+}
+
+/* ---------- heading row ---------- */
+
+.aiv-topic .topic-content :is(.workbench-heading, .nq-lab-heading, .sudoku-lab-heading,
+    .crypto-lab-heading, .xlab-heading) {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 17px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--lab-border);
+}
+
+.aiv-topic .topic-content :is(.workbench-heading, .nq-lab-heading, .sudoku-lab-heading,
+    .crypto-lab-heading, .xlab-heading) p {
+    margin: 0;
+}
+
+.aiv-topic .topic-content :is(.nq-badge, .sudoku-badge, .crypto-badge, .xlab-badge) {
+    display: inline-flex;
+    flex-shrink: 0;
+    padding: 7px 10px;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 20px;
+    color: #7dd3fc;
+    font-size: 0.62rem;
+    font-weight: 850;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.aiv-topic .topic-content :is(.nq-eyebrow, .sudoku-eyebrow, .crypto-eyebrow, .xlab-eyebrow) {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--lab-accent);
+    font-size: 0.62rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+}
+
+/* ---------- speed selector ---------- */
+
+.aiv-topic .topic-content .speed-control {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: var(--lab-muted);
+    font-size: 0.7rem;
+    font-weight: 750;
+}
+
+.aiv-topic .topic-content :is(.speed-control select, .aiv-speed-select) {
+    min-height: 38px;
+    padding: 7px;
+    background: var(--lab-card);
+    border: 1px solid #475569;
+    border-radius: 7px;
+    color: #ffffff;
+}
+
+/* ---------- control rows, settings, inputs ---------- */
+
+.aiv-topic .topic-content :is(.search-controls, .workbench-controls, .trace-controls,
+    .nq-controls, .sudoku-controls, .crypto-controls, .xlab-controls) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 9px;
+    margin: 14px 0;
+}
+
+.aiv-topic .topic-content :is(.search-controls, .nq-settings, .sudoku-controls, .xlab-settings) label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    color: #aebdd0;
+    font-size: 0.69rem;
+    font-weight: 750;
+}
+
+.aiv-topic .topic-content :is(.nq-settings, .xlab-settings) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+    margin: 13px 0;
+}
+
+.aiv-topic .topic-content :is(.nq-settings, .xlab-settings) label {
+    padding: 12px;
+    background: var(--lab-card);
+    border: 1px solid var(--lab-border);
+    border-radius: 8px;
+}
+
+.aiv-topic .topic-content :is(.search-workbench, .problem-workbench, .nq-lab, .sudoku-lab,
+    .crypto-lab, .xlab) :is(select, input[type="number"], input[type="text"], input:not([type])) {
+    width: 100%;
+    min-width: 0;
+    min-height: 40px;
+    padding: 8px 10px;
+    background: var(--lab-deep);
+    border: 1px solid #475569;
+    border-radius: 6px;
+    color: #f1f5f9;
+    font-family: var(--lab-mono);
+    font-size: 0.76rem;
+}
+
+.aiv-topic .topic-content :is(.search-workbench, .problem-workbench, .nq-lab, .sudoku-lab,
+    .crypto-lab, .xlab) :is(select, input):focus-visible {
+    outline: 2px solid var(--lab-accent);
+    outline-offset: 2px;
+}
+
+.aiv-topic .topic-content :is(.nq-hint, .workbench-hint, .xlab-hint) {
+    margin: 6px 0 0;
+    color: var(--lab-muted) !important;
+    font-size: 0.72rem !important;
+}
+
+/* ---------- buttons ---------- */
+
+.aiv-topic .topic-content :is(.btn.primary, .btn.secondary, .btn.danger, .btn.success,
+    .nq-btn, .sudoku-btn, .crypto-btn, .xlab-btn) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 41px;
+    padding: 9px 15px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 0.77rem;
+    font-weight: 800;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.aiv-topic .topic-content :is(.btn.primary, .btn.secondary, .btn.danger, .btn.success,
+    .nq-btn, .sudoku-btn, .crypto-btn, .xlab-btn):hover:not(:disabled) {
+    transform: translateY(-1px);
+    filter: brightness(1.08);
+}
+
+.aiv-topic .topic-content :is(.btn.primary, .btn.secondary, .btn.danger, .btn.success,
+    .nq-btn, .sudoku-btn, .crypto-btn, .xlab-btn):disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.aiv-topic .topic-content :is(.btn.primary, .nq-btn.primary, .sudoku-btn.primary,
+    .crypto-btn.primary, .xlab-btn.primary) {
+    background: var(--lab-blue);
+    border-color: var(--lab-blue);
+    color: #ffffff;
+}
+
+.aiv-topic .topic-content :is(.btn.secondary, .nq-btn.secondary, .sudoku-btn.secondary,
+    .crypto-btn.secondary, .xlab-btn.secondary) {
+    background: var(--lab-card);
+    border-color: #475569;
+    color: var(--lab-text);
+}
+
+.aiv-topic .topic-content :is(.btn.success, .nq-btn.success, .sudoku-btn.success,
+    .crypto-btn.success, .xlab-btn.success) {
+    background: #047857;
+    border-color: #059669;
+    color: #ffffff;
+}
+
+.aiv-topic .topic-content :is(.btn.danger, .xlab-btn.danger) {
+    background: rgba(220, 38, 38, 0.14);
+    border-color: rgba(248, 113, 113, 0.5);
+    color: #fecaca;
+}
+
+/* secondary buttons that sit on the white lesson cards */
+.aiv-topic .topic-content .lesson-section > .btn.secondary,
+.aiv-topic .topic-content .lesson-section > div > .btn.secondary,
+.aiv-topic .topic-content .operator-workbench .btn.secondary {
+    color: var(--lab-text);
+}
+
+.aiv-topic .topic-content .btn-secondary {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #1e293b;
+}
+
+.aiv-topic .topic-content .btn-secondary:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+}
+
+.aiv-topic .topic-content :is(.agent-trace-panel, .xlab) .btn-secondary {
+    background: var(--lab-card);
+    border-color: #475569;
+    color: var(--lab-text);
+}
+
+/* ---------- status / explanation banners ---------- */
+
+.aiv-topic .topic-content :is(.status-banner, .strategy-explanation, .nq-status, .sudoku-status,
+    .crypto-status, .xlab-status, .trace-explanation) {
+    margin: 14px 0;
+    padding: 12px 15px;
+    background: rgba(56, 189, 248, 0.07);
+    border: 1px solid rgba(56, 189, 248, 0.15);
+    border-left: 4px solid var(--lab-accent);
+    border-radius: 7px;
+    color: var(--lab-soft);
+    font-size: 0.79rem;
+    line-height: 1.7;
+}
+
+.aiv-topic .topic-content :is(.status-banner, .xlab-status).is-success,
+.aiv-topic .topic-content .status-banner.goal-reached {
+    background: rgba(52, 211, 153, 0.08);
+    border-left-color: var(--lab-green);
+    color: #a7f3d0;
+}
+
+.aiv-topic .topic-content :is(.status-banner, .xlab-status).is-error {
+    background: rgba(251, 113, 133, 0.08);
+    border-left-color: #fb7185;
+    color: #fecdd3;
+}
+
+/* ---------- metric tiles ---------- */
+
+.aiv-topic .topic-content :is(.search-metrics, .state-summary, .trace-readout,
+    .nq-metrics, .sudoku-metrics, .xlab-metrics) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 9px;
+    margin: 15px 0;
+}
+
+.aiv-topic .topic-content :is(.search-metrics, .state-summary, .trace-readout,
+    .nq-metrics, .sudoku-metrics, .xlab-metrics) > div {
+    min-width: 0;
+    padding: 13px;
+    background: var(--lab-card);
+    border: 1px solid var(--lab-border);
+    border-radius: 8px;
+}
+
+.aiv-topic .topic-content :is(.search-metrics, .state-summary, .trace-readout,
+    .nq-metrics, .sudoku-metrics, .xlab-metrics) span {
+    display: block;
+    color: var(--lab-muted);
+    font-size: 0.61rem;
+    font-weight: 850;
+    letter-spacing: 0.05em;
+}
+
+.aiv-topic .topic-content :is(.search-metrics, .state-summary, .trace-readout,
+    .nq-metrics, .sudoku-metrics, .xlab-metrics) strong {
+    display: block;
+    margin-top: 7px;
+    color: var(--lab-accent);
+    font-family: var(--lab-mono);
+    font-size: 1.02rem;
+    overflow-wrap: anywhere;
+}
+
+.aiv-topic .topic-content .state-summary strong.goal-reached,
+.aiv-topic .topic-content .xlab-metrics strong.is-good {
+    color: var(--lab-green);
+}
+
+.aiv-topic .topic-content .xlab-metrics strong.is-bad {
+    color: var(--lab-red);
+}
+
+/* ---------- "current step" card ---------- */
+
+.aiv-topic .topic-content :is(.search-current-operation, .nq-current-step, .sudoku-current-step,
+    .crypto-current, .xlab-current) {
+    margin: 12px 0;
+    padding: 14px;
+    background: var(--lab-card);
+    border: 1px solid var(--lab-border);
+    border-left: 4px solid var(--lab-accent);
+    border-radius: 8px;
+}
+
+.aiv-topic .topic-content :is(.search-current-operation, .nq-current-step, .sudoku-current-step,
+    .crypto-current, .xlab-current) > span {
+    display: block;
+    color: #7dd3fc;
+    font-size: 0.65rem;
+    font-weight: 900;
+    letter-spacing: 0.07em;
+}
+
+.aiv-topic .topic-content :is(.nq-current-step, .sudoku-current-step, .crypto-current, .xlab-current) p {
+    margin: 7px 0 0;
+    color: var(--lab-soft);
+}
+
+.aiv-topic .topic-content .search-current-operation > strong {
+    display: block;
+    margin: 7px 0;
+    color: #f8fafc;
+    font-family: var(--lab-mono);
+    font-size: 1rem;
+}
+
+.aiv-topic .topic-content .current-operation-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    color: var(--lab-muted);
+    font-size: 0.75rem;
+}
+
+.aiv-topic .topic-content .current-operation-details strong {
+    color: var(--lab-accent);
+    font-family: var(--lab-mono);
+}
+
+/* ---------- sub-heading row inside a lab ---------- */
+
+.aiv-topic .topic-content :is(.workbench-subheading, .nq-trace-heading, .xlab-subheading) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 19px;
+}
+
+.aiv-topic .topic-content :is(.workbench-subheading, .nq-trace-heading, .xlab-subheading) h4 {
+    margin: 0;
+}
+
+.aiv-topic .topic-content :is(.workbench-subheading, .nq-trace-heading, .xlab-subheading) > span {
+    color: var(--lab-muted);
+    font-size: 0.69rem;
+}
+
+/* ---------- dark tables ---------- */
+
+.aiv-topic .topic-content :is(.nq-table-scroll, .sudoku-table-wrap, .crypto-table-wrap, .xlab-table-wrap) {
+    width: 100%;
+    max-width: 100%;
+    margin: 10px 0;
+    overflow-x: auto;
+    border: 1px solid var(--lab-border);
+    border-radius: 8px;
+}
+
+.aiv-topic .topic-content :is(.nq-domain-table, .nq-trace-table, .sudoku-domain-table,
+    .sudoku-trace-table, .crypto-trace-table, .xlab-table) {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--lab-deep);
+    color: var(--lab-soft);
+    font-size: 0.72rem;
+    line-height: 1.65;
+}
+
+.aiv-topic .topic-content :is(.nq-trace-table, .sudoku-trace-table, .crypto-trace-table) {
+    min-width: 620px;
+}
+
+.aiv-topic .topic-content :is(.nq-domain-table, .nq-trace-table, .sudoku-domain-table,
+    .sudoku-trace-table, .crypto-trace-table, .xlab-table) th {
+    padding: 10px 11px;
+    background: #1b2b45;
+    border-bottom: 1px solid #475569;
+    color: #93c5fd;
+    font-size: 0.66rem;
+    font-weight: 850;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.aiv-topic .topic-content :is(.nq-domain-table, .nq-trace-table, .sudoku-domain-table,
+    .sudoku-trace-table, .crypto-trace-table, .xlab-table) td {
+    padding: 9px 11px;
+    border-bottom: 1px solid var(--lab-line);
+    color: var(--lab-soft);
+    vertical-align: top;
+}
+
+.aiv-topic .topic-content :is(.nq-domain-table, .nq-trace-table, .xlab-table) tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.aiv-topic .topic-content :is(.nq-current-trace-row, .xlab-row-current) {
+    background: rgba(37, 99, 235, 0.16);
+}
+
+.aiv-topic .topic-content .nq-wipeout-row,
+.aiv-topic .topic-content .xlab-row-bad {
+    background: rgba(220, 38, 38, 0.14);
+}
+
+.aiv-topic .topic-content .xlab-row-good {
+    background: rgba(22, 163, 74, 0.14);
+}
+
+.aiv-topic .topic-content .nq-empty-domain {
+    color: #fca5a5 !important;
+    font-weight: 900;
+}
+
+.aiv-topic .topic-content :is(.nq-domain-pill, .xlab-pill) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px;
+    margin: 2px 4px 2px 0;
+    padding: 2px 7px;
+    background: #1e3a5f;
+    border: 1px solid #2c5282;
+    border-radius: 5px;
+    color: #e0f2fe;
+    font-family: var(--lab-mono);
+    font-size: 0.7rem;
+    font-weight: 800;
+}
+
+/* event colours used by the trace tables */
+.aiv-topic .topic-content :is(.nq-event-assign, .sudoku-event-assign, .crypto-event-assign, .xlab-ev-assign) {
+    color: #86efac !important;
+    font-weight: 900;
+}
+
+.aiv-topic .topic-content :is(.nq-event-reduce, .nq-event-select, .nq-event-start,
+    .sudoku-event-start, .crypto-event-start, .csp-event-start, .csp-event-select, .xlab-ev-info) {
+    color: #7dd3fc !important;
+    font-weight: 850;
+}
+
+.aiv-topic .topic-content :is(.nq-event-wipeout, .nq-event-conflict, .nq-event-failure,
+    .nq-event-exhausted, .nq-event-no-solution, .xlab-ev-fail) {
+    color: #fca5a5 !important;
+    font-weight: 900;
+}
+
+.aiv-topic .topic-content :is(.nq-event-backtrack, .xlab-ev-back) {
+    color: #fcd34d !important;
+    font-weight: 900;
+}
+
+.aiv-topic .topic-content .nq-event-solution {
+    color: #86efac !important;
+    font-weight: 900;
+}
+
+/* ---------- result box ---------- */
+
+.aiv-topic .topic-content :is(.nq-result, .search-result, .xlab-result) {
+    margin-top: 15px;
+    padding: 14px;
+    background: var(--lab-card);
+    border: 1px solid var(--lab-border);
+    border-left: 4px solid var(--lab-accent);
+    border-radius: 8px;
+    color: var(--lab-soft);
+    font-size: 0.79rem;
+    line-height: 1.8;
+}
+
+.aiv-topic .topic-content :is(.nq-result, .search-result, .xlab-result).is-success,
+.aiv-topic .topic-content .search-result.goal-reached {
+    background: rgba(22, 163, 74, 0.12);
+    border-left-color: var(--lab-green);
+    color: #bbf7d0;
+}
+
+/* ---------- legends ---------- */
+
+.aiv-topic .topic-content :is(.graph-legend, .nq-legend, .sudoku-legend, .xlab-legend) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 12px 0 16px;
+    color: var(--lab-muted);
+    font-size: 0.69rem;
+}
+
+.aiv-topic .topic-content :is(.graph-legend, .nq-legend, .sudoku-legend, .xlab-legend) span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.aiv-topic .topic-content :is(.graph-legend, .nq-legend, .sudoku-legend, .xlab-legend) i {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid;
+    border-radius: 50%;
+    font-style: normal;
+}
+
+.aiv-topic .topic-content .graph-legend .legend-start { background: #e0e7ff; border-color: #6366f1; }
+.aiv-topic .topic-content .graph-legend .legend-frontier { background: #bfdbfe; border-color: #3b82f6; }
+.aiv-topic .topic-content .graph-legend .legend-expanded { background: #fef3c7; border-color: #f59e0b; }
+.aiv-topic .topic-content .graph-legend .legend-solution { background: #bbf7d0; border-color: #16a34a; }
+
+
+/* #########################################################
+   PART 3 — TOPIC 01–03 WIDGETS
+   ######################################################### */
+
+/* ---------- concept cards (Topics 01, 02) ---------- */
+
+.aiv-topic .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 13px;
+    margin: 18px 0;
+}
+
+.aiv-topic .concept-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 17px;
+    background: #f8fafc;
+    border: 1px solid var(--tp-border);
+    border-top: 3px solid var(--tp-primary);
+    border-radius: 10px;
+}
+
+.aiv-topic .lesson-section .concept-card h4 {
+    margin: 0;
+}
+
+.aiv-topic .concept-card p {
+    margin: 0;
+    color: var(--tp-secondary);
+    font-size: 0.8rem;
+    line-height: 1.7;
+}
+
+.aiv-topic .concept-example {
+    margin-top: auto;
+    padding: 10px 12px;
+    background: #eef5ff;
+    border-radius: 7px;
+    color: #1e3a8a;
+    font-size: 0.74rem;
+    line-height: 1.65;
+}
+
+/* ---------- numbered component list ---------- */
+
+.aiv-topic .component-list {
+    display: grid;
+    gap: 10px;
+    margin: 18px 0;
+}
+
+.aiv-topic .component-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 16px;
+    background: #f8fafc;
+    border: 1px solid var(--tp-border);
+    border-radius: 10px;
+}
+
+.aiv-topic .component-number {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--tp-primary-light);
+    border-radius: 8px;
+    color: var(--tp-primary);
+    font-size: 0.72rem;
+    font-weight: 900;
+}
+
+.aiv-topic .lesson-section .component-item h4 {
+    margin: 2px 0 4px;
+}
+
+.aiv-topic .component-item p {
+    margin: 0;
+    color: var(--tp-secondary);
+    font-size: 0.8rem;
+    line-height: 1.7;
+}
+
+/* ---------- AI ⊃ ML ⊃ DL nested diagram ---------- */
+
+.aiv-topic .comparison-diagram {
+    margin: 18px 0;
+}
+
+.aiv-topic :is(.ai-outer-box, .ml-inner-box, .dl-inner-box) {
+    padding: 18px 20px;
+    border-radius: 14px;
+}
+
+.aiv-topic .ai-outer-box {
+    background: linear-gradient(135deg, #101a30, #172b50);
+    color: #e2e8f0;
+}
+
+.aiv-topic .ml-inner-box {
+    margin-top: 12px;
+    background: rgba(37, 99, 235, 0.35);
+    border: 1px solid rgba(147, 197, 253, 0.35);
+}
+
+.aiv-topic .dl-inner-box {
+    margin-top: 12px;
+    background: rgba(8, 145, 178, 0.45);
+    border: 1px solid rgba(103, 232, 249, 0.4);
+}
+
+.aiv-topic .comparison-heading {
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+}
+
+.aiv-topic .comparison-diagram p {
+    margin: 4px 0 0;
+    color: #cbd5e1;
+    font-size: 0.78rem;
+}
+
+/* ---------- timeline ---------- */
+
+.aiv-topic .timeline {
+    position: relative;
+    margin: 20px 0;
+    padding-left: 22px;
+    border-left: 2px solid var(--tp-border);
+}
+
+.aiv-topic .timeline-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.aiv-topic .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -29px;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    background: #ffffff;
+    border: 3px solid var(--tp-primary);
+    border-radius: 50%;
+}
+
+.aiv-topic .timeline-year {
+    align-self: start;
+    padding: 4px 8px;
+    background: var(--tp-primary-light);
+    border-radius: 6px;
+    color: var(--tp-primary);
+    font-size: 0.72rem;
+    font-weight: 900;
+    text-align: center;
+}
+
+.aiv-topic .lesson-section .timeline-content h3 {
+    margin: 0 0 4px;
+    font-size: 0.92rem;
+}
+
+.aiv-topic .timeline-content p {
+    margin: 0;
+    color: var(--tp-secondary);
+    font-size: 0.8rem;
+    line-height: 1.7;
+}
+
+/* ---------- quiz (Topic 01) ---------- */
+
+.aiv-topic .quiz-container {
+    display: grid;
+    gap: 14px;
+    margin: 18px 0;
+}
+
+.aiv-topic .quiz-question {
+    padding: 18px;
+    background: #f8fafc;
+    border: 1px solid var(--tp-border);
+    border-radius: 10px;
+}
+
+.aiv-topic .quiz-question.is-correct {
+    border-color: #86efac;
+    background: #f0fdf4;
+}
+
+.aiv-topic .quiz-question.is-incorrect {
+    border-color: #fca5a5;
+    background: #fef2f2;
+}
+
+.aiv-topic .question-number {
+    display: inline-block;
+    margin-bottom: 4px;
+    color: var(--tp-primary);
+    font-size: 0.64rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+}
+
+.aiv-topic .lesson-section .quiz-question h3 {
+    margin: 4px 0 12px;
+    font-size: 0.93rem;
+}
+
+.aiv-topic .quiz-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 7px 0;
+    padding: 10px 12px;
+    background: #ffffff;
+    border: 1px solid var(--tp-border);
+    border-radius: 8px;
+    color: #334155;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    cursor: pointer;
+}
+
+.aiv-topic .quiz-option:hover {
+    border-color: #93c5fd;
+    background: #f5f9ff;
+}
+
+.aiv-topic .quiz-option:has(input:checked) {
+    border-color: var(--tp-primary);
+    background: #eef5ff;
+}
+
+.aiv-topic .quiz-option input {
+    margin-top: 3px;
+    accent-color: var(--tp-primary);
+}
+
+.aiv-topic .quiz-feedback {
+    margin: 10px 0 0;
+    font-size: 0.8rem;
+    line-height: 1.6;
+}
+
+.aiv-topic .quiz-feedback.correct { color: #15803d; font-weight: 700; }
+.aiv-topic .quiz-feedback.incorrect { color: #b91c1c; font-weight: 700; }
+
+.aiv-topic .quiz-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.aiv-topic .quiz-result {
+    padding: 13px 15px;
+    background: #eef5ff;
+    border-left: 4px solid var(--tp-primary);
+    border-radius: 7px;
+    color: #1e3a8a;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.aiv-topic .quiz-result:empty {
+    display: none;
+}
+
+/* ---------- small text helpers ---------- */
+
+.aiv-topic .formula-main-text {
+    display: block;
+    margin: 8px 0;
+    color: #0f172a;
+    font-family: var(--lab-mono);
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.aiv-topic .question-highlight {
+    padding: 12px 15px;
+    background: #fff7ed;
+    border-left: 4px solid #f97316;
+    border-radius: 7px;
+    color: #7c2d12;
+    font-size: 0.86rem;
+    line-height: 1.7;
+}
+
+.aiv-topic .code-language {
+    margin-left: auto;
+    color: #94a3b8;
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+}
+
+/* ---------- vacuum-cleaner agent world (Topic 01) ---------- */
+
+.aiv-topic .agent-world {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.aiv-topic .agent-room {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    padding: 22px 14px;
+    background: var(--lab-card);
+    border: 2px solid var(--lab-border);
+    border-radius: 10px;
+    text-align: center;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.aiv-topic .room-name {
+    color: var(--lab-muted);
+    font-size: 0.65rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+}
+
+.aiv-topic .topic-content .agent-room strong {
+    color: #fcd34d;
+    font-family: var(--lab-mono);
+    font-size: 1.15rem;
+}
+
+.aiv-topic .agent-room > span:last-child {
+    color: var(--lab-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.aiv-topic .agent-room.room-dirty {
+    background: rgba(245, 158, 11, 0.08);
+}
+
+.aiv-topic .topic-content .agent-room.room-clean strong {
+    color: var(--lab-green);
+}
+
+.aiv-topic .agent-room.agent-present {
+    border-color: var(--lab-accent);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
+}
+
+.aiv-topic .agent-room.agent-present > span:last-child {
+    color: var(--lab-accent);
+}
+
+.aiv-topic .topic-content .agent-trace-panel .comparison-table-wrapper {
+    border-color: var(--lab-border);
+}
+
+/* ---------- water-jug workbench (Topic 02) ---------- */
+
+.aiv-topic .jug-display {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 48px;
+    margin: 18px 0;
+    padding: 22px;
+    background: var(--lab-deep);
+    border: 1px solid var(--lab-border);
+    border-radius: 10px;
+}
+
+.aiv-topic .jug-column {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto 1fr;
+    column-gap: 10px;
+    row-gap: 10px;
+    align-items: end;
+}
+
+.aiv-topic .jug-label {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+.aiv-topic .topic-content .jug-label strong {
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+}
+
+.aiv-topic .jug-label span {
+    color: var(--lab-accent);
+    font-family: var(--lab-mono);
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.aiv-topic .jug-tank {
+    position: relative;
+    width: 92px;
+    overflow: hidden;
+    background: rgba(148, 163, 184, 0.08);
+    border: 3px solid #64748b;
+    border-top: 0;
+    border-radius: 0 0 14px 14px;
+}
+
+.aiv-topic .jug-tank.jug-four { height: 200px; }
+.aiv-topic .jug-tank.jug-three { height: 150px; }
+
+.aiv-topic .jug-water {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 0;
+    background: linear-gradient(180deg, #38bdf8, #2563eb);
+    transition: height 0.45s ease;
+}
+
+.aiv-topic .jug-scale {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    color: var(--lab-muted);
+    font-family: var(--lab-mono);
+    font-size: 0.62rem;
+}
+
+.aiv-topic .jug-column:first-child .jug-scale { height: 200px; }
+.aiv-topic .jug-column:last-child .jug-scale { height: 150px; }
+
+.aiv-topic .jug-action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+.aiv-topic .topic-content .solution-progress {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--lab-card);
+    border: 1px solid var(--lab-border);
+    border-radius: 8px;
+    color: var(--lab-muted);
+    font-size: 0.75rem;
+}
+
+.aiv-topic .topic-content .solution-progress strong {
+    color: var(--lab-accent);
+    font-family: var(--lab-mono);
+}
+
+/* ---------- graph-search workbench (Topic 03) ---------- */
+
+.aiv-topic .search-graph-container {
+    margin: 10px 0;
+    padding: 12px;
+    background: var(--lab-deep);
+    border: 1px solid var(--lab-border);
+    border-radius: 10px;
+}
+
+.aiv-topic .search-graph {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.aiv-topic .search-edges line {
+    stroke: #64748b;
+    stroke-width: 2.5;
+    transition: stroke 0.2s ease, stroke-width 0.2s ease;
+}
+
+.aiv-topic .search-edges line.is-current-path { stroke: #f59e0b; stroke-width: 4; }
+.aiv-topic .search-edges line.is-solution-edge { stroke: #22c55e; stroke-width: 5; }
+
+.aiv-topic .edge-costs text {
+    fill: #f8fafc;
+    font-family: var(--lab-mono);
+    font-size: 15px;
+    font-weight: 850;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    paint-order: stroke;
+    stroke: #0d1629;
+    stroke-width: 5px;
+}
+
+.aiv-topic .search-node circle {
+    fill: #f8fafc;
+    stroke: #64748b;
+    stroke-width: 3;
+    transition: fill 0.2s ease, stroke 0.2s ease;
+}
+
+.aiv-topic .search-node text {
+    fill: #0f172a;
+    font-size: 17px;
+    font-weight: 900;
+    text-anchor: middle;
+    pointer-events: none;
+}
+
+.aiv-topic .search-node#node-S circle { fill: #e0e7ff; stroke: #6366f1; }
+.aiv-topic .search-node.goal-node circle { stroke-dasharray: 4 3; }
+.aiv-topic .search-node.is-frontier circle { fill: #bfdbfe; stroke: #3b82f6; }
+.aiv-topic .search-node.is-expanded circle { fill: #fef3c7; stroke: #f59e0b; }
+.aiv-topic .search-node.is-current circle { fill: #fde68a; stroke: #d97706; stroke-width: 4; }
+.aiv-topic .search-node.is-solution circle { fill: #bbf7d0; stroke: #16a34a; stroke-width: 4; }
+
+.aiv-topic :is(.frontier-panel, .visited-panel) {
+    margin: 14px 0;
+    padding: 15px;
+    background: var(--lab-deep);
+    border: 1px solid var(--lab-border);
+    border-radius: 9px;
+}
+
+.aiv-topic .topic-content :is(.frontier-panel, .visited-panel) h4 {
+    margin: 0 0 6px;
+}
+
+.aiv-topic :is(.frontier-list, .visited-order) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 8px;
+}
+
+.aiv-topic :is(.frontier-path, .visited-chip) {
+    padding: 6px 10px;
+    background: var(--lab-card);
+    border: 1px solid #475569;
+    border-radius: 7px;
+    color: var(--lab-text);
+    font-family: var(--lab-mono);
+    font-size: 0.72rem;
+}
+
+.aiv-topic .frontier-path.frontier-next {
+    background: rgba(245, 158, 11, 0.12);
+    border-color: var(--lab-amber);
+    color: #fde68a;
+}
+
+.aiv-topic .visited-chip.visited-goal {
+    background: rgba(22, 163, 74, 0.16);
+    border-color: #22c55e;
+    color: #bbf7d0;
+}
+
+.aiv-topic .muted-placeholder {
+    color: var(--lab-muted);
+    font-size: 0.75rem;
+}
+
+.aiv-topic .search-log-table .search-goal-row td {
+    background: #f0fdf4;
+}
+
+
+/* #########################################################
+   PART 4 — TOPIC 10 BOARD LABS (N-Queens, Sudoku, cryptarithm)
+   ######################################################### */
+
+.aiv-topic .nq-board-container,
+.aiv-topic .sudoku-board-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+    padding: 14px;
+    background: var(--lab-deep);
+    border: 1px solid var(--lab-border);
+    border-radius: 10px;
+}
+
+.aiv-topic .nq-board {
+    display: grid;
+    width: min(100%, 440px);
+    aspect-ratio: 1;
+    border: 3px solid #475569;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.aiv-topic .nq-board-placeholder {
+    display: grid;
+    place-items: center;
+    padding: 30px;
+    color: var(--lab-muted);
+    font-size: 0.8rem;
+}
+
+.aiv-topic .nq-cell {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-width: 0;
+    min-height: 0;
+}
+
+.aiv-topic .nq-cell.light { background: #e8edf4; }
+.aiv-topic .nq-cell.dark { background: #8ea3bf; }
+
+.aiv-topic .nq-queen {
+    color: #0f172a;
+    font-size: clamp(14px, 4.2vw, 30px);
+    line-height: 1;
+}
+
+.aiv-topic .nq-cell.nq-current-square {
+    box-shadow: inset 0 0 0 4px #facc15;
+}
+
+.aiv-topic .nq-legend .nq-legend-square { background: #e8edf4; border-color: #8ea3bf; border-radius: 3px; }
+.aiv-topic .nq-legend .nq-legend-queen { width: auto; height: auto; border: 0; color: #e2e8f0; font-size: 0.9rem; }
+.aiv-topic .nq-legend .nq-legend-focus { background: transparent; border: 3px solid #facc15; border-radius: 3px; }
+
+.aiv-topic .sudoku-board {
+    display: grid;
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+    width: min(100%, 420px);
+    aspect-ratio: 1;
+    background: #e8edf4;
+    border: 3px solid #0f172a;
+}
+
+.aiv-topic .sudoku-cell {
+    display: grid;
+    place-items: center;
+    min-width: 0;
+    border-right: 1px solid #94a3b8;
+    border-bottom: 1px solid #94a3b8;
+    color: #1d4ed8;
+    font-family: var(--lab-mono);
+    font-size: clamp(12px, 2.6vw, 19px);
+    font-weight: 800;
+}
+
+.aiv-topic .sudoku-cell.given {
+    background: #cbd5e1;
+    color: #0f172a;
+}
+
+.aiv-topic .sudoku-cell.box-right { border-right: 3px solid #0f172a; }
+.aiv-topic .sudoku-cell.box-bottom { border-bottom: 3px solid #0f172a; }
+.aiv-topic .sudoku-cell.sudoku-current-cell { background: #fde68a; box-shadow: inset 0 0 0 3px #f59e0b; }
+
+.aiv-topic .sudoku-legend .sudoku-given-key { background: #cbd5e1; border-color: #0f172a; border-radius: 3px; }
+.aiv-topic .sudoku-legend .sudoku-solved-key { background: #e8edf4; border-color: #1d4ed8; border-radius: 3px; }
+.aiv-topic .sudoku-legend .sudoku-focus-key { background: #fde68a; border-color: #f59e0b; border-radius: 3px; }
+
+.aiv-topic .csp-graph-node circle {
+    fill: #e2e8f0;
+    stroke: #64748b;
+    stroke-width: 2.5;
+}
+
+.aiv-topic .csp-graph-node text {
+    fill: #1e293b;
+    font-size: 16px;
+    font-weight: 900;
+    text-anchor: middle;
+}
+
+.aiv-topic .csp-graph-edges line {
+    stroke: #94a3b8;
+    stroke-width: 2.5;
+}
+
+.aiv-topic .csp-no-neighbours circle {
+    stroke-dasharray: 5 4;
+}
+
+
+/* #########################################################
+   PART 5 — TEST-PREP LABS (colour-swap, FC step table,
+   permutation crossover)
+   ######################################################### */
+
+.aiv-topic .xlab-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.aiv-topic .xlab-box {
+    min-width: 0;
+    padding: 14px;
+    background: var(--lab-deep);
+    border: 1px solid var(--lab-border);
+    border-radius: 10px;
+}
+
+.aiv-topic .topic-content .xlab-box > h4:first-child {
+    margin-top: 0;
+}
+
+.aiv-topic .xlab-mono {
+    font-family: var(--lab-mono);
+}
+
+.aiv-topic .topic-content .xlab pre.xlab-code {
+    margin: 8px 0 0;
+    padding: 12px;
+    overflow-x: auto;
+    background: #050b16;
+    border: 1px solid var(--lab-line);
+    border-radius: 8px;
+    color: #e2e8f0;
+    font-family: var(--lab-mono);
+    font-size: 0.72rem;
+    line-height: 1.6;
+}
+
+/* ----- colour-swap game ----- */
+
+.aiv-topic .cs-boards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 34px;
+    margin: 12px 0;
+    padding: 18px;
+    background: var(--lab-deep);
+    border: 1px solid var(--lab-border);
+    border-radius: 10px;
+}
+
+.aiv-topic .cs-board-wrap {
+    text-align: center;
+}
+
+.aiv-topic .cs-board-wrap > span {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--lab-muted);
+    font-size: 0.65rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+}
+
+.aiv-topic .cs-board {
+    display: grid;
+    grid-template-columns: repeat(4, 52px);
+    grid-auto-rows: 52px;
+    gap: 3px;
+}
+
+.aiv-topic .cs-cell {
+    position: relative;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 5px;
+    color: rgba(15, 23, 42, 0.75);
+    font-family: var(--lab-mono);
+    font-size: 0.78rem;
+    font-weight: 900;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.aiv-topic .cs-cell:hover { transform: scale(1.05); }
+.aiv-topic .cs-cell:focus-visible { outline: 3px solid #f8fafc; outline-offset: 1px; }
+
+.aiv-topic .cs-cell.c-G { background: #5cc864; }
+.aiv-topic .cs-cell.c-Y { background: #ffe14d; }
+.aiv-topic .cs-cell.c-O { background: #ff9a3c; }
+.aiv-topic .cs-cell.c-B { background: #9a97ff; }
+
+.aiv-topic .cs-cell.is-mismatch::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border: 2px dashed rgba(220, 38, 38, 0.95);
+    border-radius: 4px;
+}
+
+.aiv-topic .cs-cell.is-selected {
+    box-shadow: 0 0 0 3px #f8fafc, 0 0 0 6px #ef4444;
+    transform: scale(1.06);
+}
+
+.aiv-topic .cs-cell.is-selected::before {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 9px;
+    height: 9px;
+    background: #ef4444;
+    border-radius: 50%;
+}
+
+.aiv-topic .cs-cell.just-swapped {
+    animation: cs-pop 0.35s ease;
+}
+
+@keyframes cs-pop {
+    0% { transform: scale(0.85); }
+    100% { transform: scale(1); }
+}
+
+/* ----- FC step table ----- */
+
+.aiv-topic .fc-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+    gap: 8px;
+    margin: 10px 0;
+}
+
+.aiv-topic .fc-step {
+    position: relative;
+    padding: 9px 10px 8px;
+    background: var(--lab-card);
+    border: 1px solid var(--lab-border);
+    border-radius: 8px;
+    color: var(--lab-soft);
+    font-family: var(--lab-mono);
+    font-size: 0.72rem;
+    line-height: 1.55;
+    text-align: left;
+    cursor: pointer;
+}
+
+.aiv-topic .fc-step:hover { border-color: #64748b; }
+.aiv-topic .fc-step:focus-visible { outline: 2px solid var(--lab-accent); outline-offset: 2px; }
+
+.aiv-topic .fc-step > b {
+    display: block;
+    margin-bottom: 4px;
+    color: #f1f5f9;
+    font-family: inherit;
+    font-size: 0.7rem;
+}
+
+.aiv-topic .fc-step .fc-new {
+    color: #86efac;
+    font-weight: 900;
+}
+
+.aiv-topic .fc-step .fc-dash {
+    color: #64748b;
+}
+
+.aiv-topic .fc-step.is-fail {
+    border-color: rgba(248, 113, 113, 0.6);
+}
+
+.aiv-topic .fc-step.is-fail > b::after {
+    content: " ✕";
+    color: var(--lab-red);
+}
+
+.aiv-topic .fc-step.is-solution {
+    border-color: #22c55e;
+    background: rgba(22, 163, 74, 0.14);
+}
+
+.aiv-topic .fc-step.is-solution > b::after {
+    content: " ✓";
+    color: var(--lab-green);
+}
+
+.aiv-topic .fc-step.is-active {
+    box-shadow: 0 0 0 2px var(--lab-accent);
+}
+
+.aiv-topic .fc-step.not-in-memo {
+    border-style: dashed;
+    opacity: 0.8;
+}
+
+.aiv-topic .fc-step .fc-tag {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 1px 5px;
+    background: rgba(245, 158, 11, 0.16);
+    border-radius: 4px;
+    color: #fcd34d;
+    font-size: 0.56rem;
+    font-weight: 900;
+    letter-spacing: 0.03em;
+}
+
+.aiv-topic .fc-mini-board {
+    display: grid;
+    width: min(100%, 300px);
+    aspect-ratio: 1;
+    margin: 0 auto;
+    border: 3px solid #475569;
+}
+
+.aiv-topic .fc-mini-board > div {
+    display: grid;
+    place-items: center;
+    min-width: 0;
+    color: #0f172a;
+    font-size: clamp(12px, 3vw, 22px);
+    font-weight: 900;
+}
+
+.aiv-topic .fc-mini-board .sq-l { background: #e8edf4; }
+.aiv-topic .fc-mini-board .sq-d { background: #8ea3bf; }
+.aiv-topic .fc-mini-board .sq-new { box-shadow: inset 0 0 0 4px #22c55e; }
+.aiv-topic .fc-mini-board .sq-x { color: rgba(220, 38, 38, 0.75); font-size: clamp(10px, 2.2vw, 15px); }
+.aiv-topic .fc-mini-board .sq-label { background: transparent; color: var(--lab-muted); font-size: 0.7rem; }
+
+/* ----- permutation crossover ----- */
+
+.aiv-topic .px-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    margin: 6px 0;
+}
+
+.aiv-topic .px-row > em {
+    min-width: 92px;
+    color: var(--lab-muted);
+    font-size: 0.7rem;
+    font-style: normal;
+    font-weight: 800;
+}
+
+.aiv-topic .px-gene {
+    display: inline-grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    background: var(--lab-card);
+    border: 1px solid #475569;
+    border-radius: 6px;
+    color: #f1f5f9;
+    font-family: var(--lab-mono);
+    font-size: 0.82rem;
+    font-weight: 900;
+}
+
+.aiv-topic .px-gene.in-seg { background: rgba(37, 99, 235, 0.35); border-color: #60a5fa; }
+.aiv-topic .px-gene.repaired { background: rgba(245, 158, 11, 0.22); border-color: #f59e0b; color: #fde68a; }
+.aiv-topic .px-gene.cyc-0 { background: rgba(56, 189, 248, 0.25); border-color: #38bdf8; }
+.aiv-topic .px-gene.cyc-1 { background: rgba(244, 114, 182, 0.25); border-color: #f472b6; }
+.aiv-topic .px-gene.cyc-2 { background: rgba(163, 230, 53, 0.22); border-color: #a3e635; }
+.aiv-topic .px-gene.cyc-3 { background: rgba(251, 146, 60, 0.25); border-color: #fb923c; }
+.aiv-topic .px-gene.cyc-4 { background: rgba(167, 139, 250, 0.28); border-color: #a78bfa; }
+
+.aiv-topic .px-pos {
+    width: 34px;
+    color: #64748b;
+    font-family: var(--lab-mono);
+    font-size: 0.6rem;
+    text-align: center;
+}
+
+.aiv-topic .px-matrix {
+    border-collapse: collapse;
+    font-family: var(--lab-mono);
+    font-size: 0.72rem;
+}
+
+.aiv-topic .px-matrix th,
+.aiv-topic .px-matrix td {
+    padding: 0;
+    border: 1px solid var(--lab-line);
+    text-align: center;
+}
+
+.aiv-topic .px-matrix th {
+    min-width: 30px;
+    padding: 4px;
+    background: #1b2b45;
+    color: #93c5fd;
+}
+
+.aiv-topic .topic-content .xlab .px-matrix input {
+    width: 44px;
+    min-height: 30px;
+    padding: 3px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    text-align: center;
+}
+
+.aiv-topic .topic-content .xlab .px-matrix input[readonly] {
+    color: #f87171;
+}
+
+.aiv-topic .px-letters {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.aiv-topic .px-letters > div {
+    padding: 7px 8px;
+    background: var(--lab-card);
+    border: 1px solid var(--lab-border);
+    border-radius: 6px;
+    color: var(--lab-soft);
+    font-family: var(--lab-mono);
+    font-size: 0.74rem;
+}
+
+.aiv-topic .px-letters b {
+    color: #7dd3fc;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 760px) {
+    .aiv-topic .topic-content :is(.search-workbench, .problem-workbench, .agent-trace-panel,
+        .nq-lab, .sudoku-lab, .crypto-lab, .xlab) {
+        padding: 16px;
+    }
+
+    .aiv-topic .topic-content :is(.workbench-heading, .nq-lab-heading, .sudoku-lab-heading,
+        .crypto-lab-heading, .xlab-heading) {
+        flex-direction: column;
+    }
+
+    .aiv-topic .topic-content :is(.search-controls, .workbench-controls, .trace-controls,
+        .nq-controls, .sudoku-controls, .crypto-controls, .xlab-controls) > * {
+        flex: 1 1 100%;
+    }
+
+    .aiv-topic .xlab-grid-2,
+    .aiv-topic .agent-world {
+        grid-template-columns: 1fr;
+    }
+
+    .aiv-topic .timeline-item {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .aiv-topic .jug-display {
+        gap: 22px;
+        padding: 16px 10px;
+    }
+
+    .aiv-topic .cs-board {
+        grid-template-columns: repeat(4, 44px);
+        grid-auto-rows: 44px;
+    }
+}
+
+/* ---------- additions: inline control label, mismatch badge ---------- */
+
+.aiv-topic .topic-content .xlab-controls .xlab-inline {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 7px;
+    padding: 0 4px 0 10px;
+    min-height: 41px;
+    background: var(--lab-card);
+    border: 1px solid #475569;
+    border-radius: 7px;
+    color: #aebdd0;
+    font-size: 0.72rem;
+    font-weight: 750;
+}
+
+.aiv-topic .topic-content .xlab-controls .xlab-inline input,
+.aiv-topic .topic-content .xlab-controls .xlab-inline select {
+    width: auto;
+    min-width: 58px;
+    min-height: 33px;
+    padding: 4px 8px;
+}
+
+.aiv-topic .cs-cell .cs-num {
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    color: #7f1d1d;
+    font-size: 0.6rem;
+    font-weight: 900;
+}
+
+/* author display rules must not defeat the hidden attribute */
+.aiv-topic [hidden] {
+    display: none !important;
+}
+
+.aiv-topic .px-output {
+    display: grid;
+    gap: 14px;
+    margin-top: 14px;
+}
+
+.aiv-topic .topic-content .px-output p {
+    margin: 8px 0;
+}
+
+.aiv-topic .topic-content .px-output p.xlab-mono {
+    color: #cbd5e1;
+    font-size: 0.72rem;
+}
+
+.aiv-topic .topic-content .xlab-settings .span-full {
+    grid-column: 1 / -1;
+}

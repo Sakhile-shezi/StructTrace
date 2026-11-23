@@ -1,0 +1,2367 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- sign-in guard: must load first -->
+    <script src="/js/visualizer-guard.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Module 01 | Introduction to Artificial Intelligence - AIVisual</title>
+    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=6" />
+    <link rel="stylesheet" href="../../css/topic-base.css?v=6" />
+    <link rel="stylesheet" href="../../css/topic-pages.css?v=6" />
+
+    <script src="../../js/ai-core.js?v=6" defer></script>
+    <script src="../../js/ai-visualizer.js?v=6" defer></script>
+    <script src="./topic01.js?v=6" defer></script>
+
+</head>
+
+<body class="aiv-topic topic01-page">
+
+    <header class="ai-header">
+        <nav class="ai-nav">
+            <a href="../../index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <button class="mobile-menu-btn" id="mobile-menu-btn" type="button"
+                    aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">☰</button>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="../../index.html?v=6">Course Home</a></li>
+                <li><a href="#top" class="active" aria-current="page">01. Introduction</a></li>
+                <li><a href="../topic-02-problem-formulation/index.html?v=6">02. Problem Formulation →</a></li>
+                <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
+                <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+    <main class="topic-container">
+
+        <!-- =====================================================
+             CHAPTER INTRODUCTION
+             ===================================================== -->
+
+        <section class="topic-hero">
+
+            <div class="topic-breadcrumb">
+                <a href="../../index.html?v=6">AIVisual</a>
+                <span>/</span>
+                <span>COMP304</span>
+                <span>/</span>
+                <span>Module 01</span>
+            </div>
+
+            <div class="topic-hero-content">
+
+                <div>
+
+                    <div class="topic-badges">
+                        <span class="topic-label">MODULE 01</span>
+                        <span class="topic-exam-badge">COMP304 FOUNDATIONS</span>
+                    </div>
+
+                    <h1>
+                        Introduction to
+                        <span>Artificial Intelligence</span>
+                    </h1>
+
+                    <p>
+                        Understand what Artificial Intelligence means, why
+                        intelligent agents are developed, how they perceive
+                        and act, and the different approaches used to study
+                        intelligent behaviour.
+                    </p>
+
+                    <div class="topic-meta">
+                        <span>Detailed theory</span>
+                        <span>Worked examples</span>
+                        <span>Python demonstration</span>
+                        <span>Exam preparation</span>
+                    </div>
+
+                </div>
+
+                <div class="topic-hero-symbol">
+                    <div class="topic-symbol-circle">AI</div>
+                    <span>ARTIFICIAL INTELLIGENCE</span>
+                </div>
+
+            </div>
+
+            <div class="topic-hero-footer">
+                <span>LEARN THE CONCEPTS BEFORE THE ALGORITHMS</span>
+                <span>Chapter 1 · AIMA</span>
+            </div>
+
+        </section>
+
+
+        <div class="topic-layout">
+
+            <!-- =================================================
+                 LESSON NAVIGATION
+                 ================================================= -->
+
+            <aside class="topic-sidebar">
+
+                <div class="sidebar-heading">
+                    <span>MODULE CONTENT</span>
+                    <span class="sidebar-module-number">01</span>
+                </div>
+
+                <nav class="topic-navigation">
+
+                    <a href="#objectives" class="topic-nav-link active">
+                        <span>01</span> Learning objectives
+                    </a>
+
+                    <a href="#definition" class="topic-nav-link">
+                        <span>02</span> What is AI?
+                    </a>
+
+                    <a href="#approaches" class="topic-nav-link">
+                        <span>03</span> Four AI approaches
+                    </a>
+
+                    <a href="#turing" class="topic-nav-link">
+                        <span>04</span> Turing Test
+                    </a>
+
+                    <a href="#rationality" class="topic-nav-link">
+                        <span>05</span> Rationality and utility
+                    </a>
+
+                    <a href="#agents" class="topic-nav-link">
+                        <span>06</span> Intelligent agents
+                    </a>
+
+                    <a href="#agent-trace" class="topic-nav-link">
+                        <span>07</span> Agent worked example
+                    </a>
+
+                    <a href="#ai-ml" class="topic-nav-link">
+                        <span>08</span> AI versus ML
+                    </a>
+
+                    <a href="#history" class="topic-nav-link">
+                        <span>09</span> History and applications
+                    </a>
+
+                    <a href="#practice" class="topic-nav-link">
+                        <span>10</span> Examination practice
+                    </a>
+
+                </nav>
+
+                <div class="sidebar-progress">
+                    <span>CHAPTER PROGRESS</span>
+                    <div class="sidebar-progress-track">
+                        <div id="lesson-progress-bar"></div>
+                    </div>
+                    <p id="lesson-progress-text">0% completed</p>
+                </div>
+
+                <a href="../../index.html?v=6" class="back-course-link">
+                    ← Back to course
+                </a>
+
+            </aside>
+
+
+            <!-- =================================================
+                 MAIN TEACHING CONTENT
+                 ================================================= -->
+
+            <article class="topic-content">
+
+
+                <!-- =================================================
+                     01. LEARNING OBJECTIVES
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="objectives"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">01</span>
+                        <div>
+                            <p class="section-kicker">START HERE</p>
+                            <h2>What must you understand?</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        This chapter establishes the ideas used throughout
+                        Artificial Intelligence. You must understand what
+                        makes an agent intelligent before learning how to
+                        implement search, reasoning or machine-learning algorithms.
+                    </p>
+
+                    <h3>By the end of this chapter, you should be able to:</h3>
+
+                    <ol>
+                        <li>Define Artificial Intelligence using the intelligent-agent perspective.</li>
+                        <li>Distinguish narrow AI from Artificial General Intelligence.</li>
+                        <li>Explain the four approaches to AI and compare them.</li>
+                        <li>Explain the Turing Test and discuss its limitations.</li>
+                        <li>Explain rationality, utility, expected utility and bounded rationality.</li>
+                        <li>Identify an agent's environment, sensors, percepts, actuators and actions.</li>
+                        <li>Explain the relationship between AI, Machine Learning and Deep Learning.</li>
+                        <li>Discuss important developments and applications of AI.</li>
+                    </ol>
+
+                    <div class="important-note">
+                        <span>HOW TO STUDY THIS CHAPTER</span>
+                        <p>
+                            Do not memorise definitions in isolation. For every
+                            concept, ask: what does it mean, why is it needed,
+                            how does it work, and how would I recognise it in
+                            a practical scenario?
+                        </p>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     02. WHAT IS AI?
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="definition"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">02</span>
+                        <div>
+                            <p class="section-kicker">FOUNDATION</p>
+                            <h2>What is Artificial Intelligence?</h2>
+                        </div>
+                    </div>
+
+                    <h3>2.1 The intelligent-agent definition</h3>
+
+                    <div class="definition-card">
+                        <div class="definition-icon">AI</div>
+                        <div>
+                            <span class="definition-label">COURSE DEFINITION</span>
+                            <p>
+                                Artificial Intelligence is the synthesis and
+                                analysis of computational agents that act intelligently.
+                            </p>
+                        </div>
+                    </div>
+
+                    <p>
+                        This definition is important because it focuses on
+                        <strong>agents and their behaviour</strong>, rather
+                        than defining AI as simply making computers look or
+                        behave like humans.
+                    </p>
+
+                    <p>
+                        An agent is something that acts in an environment.
+                        It receives information about what is happening and
+                        performs actions that influence its surroundings.
+                    </p>
+
+                    <h3>2.2 What makes an agent intelligent?</h3>
+
+                    <p>
+                        According to the introductory lecture, an agent acts
+                        intelligently when its actions are appropriate for
+                        its goals and circumstances. The lecture also
+                        highlights flexibility, learning and the limitations
+                        under which an agent makes decisions.
+                    </p>
+
+                    <div class="concept-grid">
+
+                        <div class="concept-card">
+                            <h4>Appropriate actions</h4>
+                            <p>
+                                The action should make sense in relation to
+                                the agent's goals and its current situation.
+                            </p>
+                            <div class="concept-example">
+                                Example: A navigation system recommends
+                                a route that moves the driver towards
+                                the destination.
+                            </div>
+                        </div>
+
+                        <div class="concept-card">
+                            <h4>Flexibility</h4>
+                            <p>
+                                The agent should be able to respond when
+                                the environment or goals change.
+                            </p>
+                            <div class="concept-example">
+                                Example: A navigation system changes
+                                its recommendation when a road is closed.
+                            </div>
+                        </div>
+
+                        <div class="concept-card">
+                            <h4>Learning from experience</h4>
+                            <p>
+                                An agent may improve its performance
+                                using information gained from experience.
+                            </p>
+                            <div class="concept-example">
+                                Example: A spam detector can improve
+                                its classification using additional
+                                labelled examples.
+                            </div>
+                        </div>
+
+                        <div class="concept-card">
+                            <h4>Limited resources</h4>
+                            <p>
+                                Decisions are made using available
+                                perceptual information and computational
+                                resources.
+                            </p>
+                            <div class="concept-example">
+                                Example: A robot must make decisions
+                                using the information its sensors
+                                can currently provide.
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <h3>2.3 Narrow AI versus Artificial General Intelligence</h3>
+
+                    <p>
+                        The lecture distinguishes AI developed for a
+                        particular problem from a hypothetical system
+                        with general human-level intellectual capability.
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Aspect</th>
+                                    <th>Narrow AI</th>
+                                    <th>Artificial General Intelligence (AGI)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Purpose</td>
+                                    <td>Designed for a specific problem or task.</td>
+                                    <td>Would understand or learn a broad range of intellectual tasks.</td>
+                                </tr>
+                                <tr>
+                                    <td>Scope</td>
+                                    <td>Limited to its intended task or domain.</td>
+                                    <td>General-purpose intellectual ability.</td>
+                                </tr>
+                                <tr>
+                                    <td>Course position</td>
+                                    <td>The focus of practical narrow-AI techniques.</td>
+                                    <td>Presented in the lecture as hypothetical.</td>
+                                </tr>
+                                <tr>
+                                    <td>Example</td>
+                                    <td>A system that identifies spam emails.</td>
+                                    <td>A hypothetical agent able to learn many different intellectual tasks.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                    <h3>2.4 The two goals of AI</h3>
+
+                    <div class="concept-grid">
+
+                        <div class="concept-card">
+                            <h4>Scientific goal</h4>
+                            <p>
+                                Understand the principles that make
+                                intelligent behaviour possible in
+                                natural and artificial systems.
+                            </p>
+                            <ul>
+                                <li>Analyse natural and artificial agents.</li>
+                                <li>Formulate and test hypotheses.</li>
+                                <li>Experiment with computational systems.</li>
+                            </ul>
+                        </div>
+
+                        <div class="concept-card">
+                            <h4>Engineering goal</h4>
+                            <p>
+                                Design and build useful intelligent
+                                artefacts that solve real problems.
+                            </p>
+                            <ul>
+                                <li>Construct intelligent systems.</li>
+                                <li>Apply AI methods to practical problems.</li>
+                                <li>Evaluate whether the system is useful.</li>
+                            </ul>
+                        </div>
+
+                    </div>
+
+                    <div class="exam-note">
+                        <strong>Exam distinction:</strong>
+                        The scientific goal is about understanding
+                        intelligent behaviour. The engineering goal
+                        is about building useful intelligent systems.
+                        Do not treat the two as interchangeable.
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     03. FOUR APPROACHES
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="approaches"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">03</span>
+                        <div>
+                            <p class="section-kicker">AI PERSPECTIVES</p>
+                            <h2>The Four Approaches to AI</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        AI can be studied using two independent distinctions:
+                        whether we are interested in thinking or acting,
+                        and whether the behaviour should imitate humans
+                        or follow rational principles.
+                    </p>
+
+                    <h3>3.1 Understand the two dimensions</h3>
+
+                    <div class="question-highlight">
+                        <div>
+                            <span>DIMENSION 1</span>
+                            <h3>Thinking versus acting</h3>
+                            <p>
+                                Thinking focuses on internal reasoning
+                                or mental processes. Acting focuses
+                                on observable behaviour.
+                            </p>
+                        </div>
+
+                        <div>
+                            <span>DIMENSION 2</span>
+                            <h3>Human versus rational</h3>
+                            <p>
+                                Human-like behaviour imitates people.
+                                Rational behaviour aims to make sensible
+                                decisions towards a goal.
+                            </p>
+                        </div>
+                    </div>
+
+                    <h3>3.2 The four approaches compared</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Approach</th>
+                                    <th>Main concern</th>
+                                    <th>Central question</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Thinking humanly</td>
+                                    <td>Human thought processes</td>
+                                    <td>Does the machine think like a human?</td>
+                                </tr>
+                                <tr>
+                                    <td>Acting humanly</td>
+                                    <td>Human-like behaviour</td>
+                                    <td>Does the machine behave like a human?</td>
+                                </tr>
+                                <tr>
+                                    <td>Thinking rationally</td>
+                                    <td>Correct reasoning</td>
+                                    <td>Does the machine reason correctly?</td>
+                                </tr>
+                                <tr>
+                                    <td>Acting rationally</td>
+                                    <td>Goal-directed action</td>
+                                    <td>Does the machine choose an appropriate action?</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>3.3 Thinking humanly</h3>
+
+                    <p>
+                        Thinking humanly attempts to model the way humans
+                        actually think. It is closely related to cognitive
+                        science because it requires us to understand
+                        processes such as memory, learning, decision-making
+                        and problem-solving.
+                    </p>
+
+                    <p>
+                        The lecture describes several ways of studying
+                        human thinking:
+                    </p>
+
+                    <ul>
+                        <li><strong>Introspection:</strong> examining our own thought processes.</li>
+                        <li><strong>Human-subject studies:</strong> observing and predicting human behaviour.</li>
+                        <li><strong>Brain imaging and neurological data:</strong> examining evidence about how the brain works.</li>
+                    </ul>
+
+                    <div class="example-box">
+                        <strong>Illustrative example</strong>
+                        <p>
+                            Suppose a researcher builds a model that attempts
+                            to reproduce the steps a person follows when
+                            solving a puzzle. The objective is to model
+                            the human thinking process, not merely to
+                            produce the correct answer.
+                        </p>
+                    </div>
+
+                    <h3>3.4 Acting humanly</h3>
+
+                    <p>
+                        Acting humanly focuses on whether a machine's
+                        observable behaviour resembles human behaviour.
+                        The Turing Test is the main example associated
+                        with this approach.
+                    </p>
+
+                    <div class="example-box">
+                        <strong>Illustrative example</strong>
+                        <p>
+                            A conversational system is evaluated by
+                            asking whether a human interrogator can
+                            distinguish its written responses from
+                            the responses of another human.
+                        </p>
+                    </div>
+
+                    <h3>3.5 Thinking rationally</h3>
+
+                    <p>
+                        Thinking rationally focuses on drawing correct
+                        conclusions using reasoning and logic.
+                        A logic-based AI system represents knowledge
+                        in a formal notation and applies deduction
+                        procedures to derive conclusions.
+                    </p>
+
+                    <div class="example-box">
+                        <strong>Worked reasoning example</strong>
+
+                        <p>Consider these two statements:</p>
+
+                        <p>Premise 1: All humans are mortal.</p>
+                        <p>Premise 2: Socrates is a human.</p>
+
+                        <p>Therefore:</p>
+                        <p><strong>Conclusion: Socrates is mortal.</strong></p>
+
+                        <p>
+                            The conclusion follows from the premises
+                            using logical reasoning.
+                        </p>
+                    </div>
+
+                    <p>
+                        The lecture also identifies limitations of
+                        logic-based AI:
+                    </p>
+
+                    <ul>
+                        <li>Representing real-world knowledge in formal logic can be difficult.</li>
+                        <li>Finding a solution may require significant computation.</li>
+                        <li>Uncertain real-world situations cannot always be handled by simple logical rules.</li>
+                    </ul>
+
+                    <h3>3.6 Acting rationally</h3>
+
+                    <p>
+                        Acting rationally means selecting actions
+                        that aim to achieve the best available outcome.
+                        This approach focuses on the design of
+                        intelligent agents.
+                    </p>
+
+                    <p>
+                        Rational action is not necessarily the same
+                        as human-like action. A machine may use a
+                        method that humans would not normally use
+                        and still choose an appropriate action.
+                    </p>
+
+                    <div class="example-box">
+                        <strong>Illustrative example</strong>
+                        <p>
+                            A route-planning agent compares possible
+                            routes and selects one that best satisfies
+                            its objective. It does not need to imitate
+                            the way a human driver thinks.
+                        </p>
+                    </div>
+
+                    <h3>3.7 How to distinguish them in an exam</h3>
+
+                    <div class="important-note">
+                        <span>USE THIS DECISION METHOD</span>
+                        <p>
+                            First ask whether the question is about
+                            internal thought or observable action.
+                            Then ask whether the standard is human-like
+                            behaviour or rational correctness.
+                        </p>
+                    </div>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Question description</th>
+                                    <th>Correct approach</th>
+                                    <th>Reason</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Models how people remember information.</td>
+                                    <td>Thinking humanly</td>
+                                    <td>It models internal human cognition.</td>
+                                </tr>
+                                <tr>
+                                    <td>Attempts to fool a human interrogator.</td>
+                                    <td>Acting humanly</td>
+                                    <td>It evaluates observable human-like behaviour.</td>
+                                </tr>
+                                <tr>
+                                    <td>Uses formal logic to derive a conclusion.</td>
+                                    <td>Thinking rationally</td>
+                                    <td>It focuses on correct reasoning.</td>
+                                </tr>
+                                <tr>
+                                    <td>Chooses an action that maximises a goal.</td>
+                                    <td>Acting rationally</td>
+                                    <td>It focuses on selecting an appropriate action.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     04. TURING TEST
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="turing"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">04</span>
+                        <div>
+                            <p class="section-kicker">ACTING HUMANLY</p>
+                            <h2>The Turing Test</h2>
+                        </div>
+                    </div>
+
+                    <h3>4.1 Why was it introduced?</h3>
+
+                    <p>
+                        Alan Turing discussed the question of machine
+                        intelligence in his 1950 paper, "Computing
+                        Machinery and Intelligence". Rather than
+                        attempting to settle the abstract question
+                        "Can machines think?", the Turing Test
+                        provides an operational way to evaluate
+                        human-like conversational behaviour.
+                    </p>
+
+                    <h3>4.2 How does the test work?</h3>
+
+                    <ol>
+                        <li>A human interrogator communicates through written questions.</li>
+                        <li>The interrogator receives written responses from a human and a machine.</li>
+                        <li>The interrogator attempts to determine which respondent is the machine.</li>
+                        <li>If the interrogator cannot reliably distinguish the machine's responses from the human's responses, the machine is considered to have passed the test.</li>
+                    </ol>
+
+                    <div class="example-box">
+                        <strong>Small example</strong>
+                        <p>
+                            The interrogator asks both participants:
+                            "What would you do if it started raining
+                            while you were walking to class?"
+                        </p>
+                        <p>
+                            The interrogator compares the responses.
+                            The test is concerned with whether the
+                            machine's responses can be distinguished
+                            from human responses.
+                        </p>
+                    </div>
+
+                    <h3>4.3 Four capabilities associated with the Turing Test</h3>
+
+                    <div class="component-list">
+
+                        <div class="component-item">
+                            <span class="component-number">01</span>
+                            <div>
+                                <h4>Natural Language Processing</h4>
+                                <p>
+                                    Enables a computer to understand
+                                    and communicate using human language.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="component-item">
+                            <span class="component-number">02</span>
+                            <div>
+                                <h4>Knowledge Representation</h4>
+                                <p>
+                                    Allows information about the world
+                                    to be represented in a form that
+                                    a computer can use.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="component-item">
+                            <span class="component-number">03</span>
+                            <div>
+                                <h4>Automated Reasoning</h4>
+                                <p>
+                                    Allows a computer to use available
+                                    information to derive conclusions
+                                    and answer questions.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="component-item">
+                            <span class="component-number">04</span>
+                            <div>
+                                <h4>Machine Learning</h4>
+                                <p>
+                                    Allows a computer to improve its
+                                    performance through learning
+                                    from examples or experience.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <h3>4.4 Criticisms of the Turing Test</h3>
+
+                    <p>
+                        Passing the Turing Test does not automatically
+                        prove that a machine understands information
+                        or reasons in the same way as a human.
+                    </p>
+
+                    <ul>
+                        <li>
+                            <strong>Human behaviour is not always intelligent.</strong>
+                            Imitating a human may also mean imitating
+                            human errors.
+                        </li>
+
+                        <li>
+                            <strong>Intelligent behaviour need not be human-like.</strong>
+                            A system may solve a problem effectively
+                            without copying human behaviour.
+                        </li>
+
+                        <li>
+                            <strong>Human observers can be fooled.</strong>
+                            Their expectations and assumptions influence
+                            their judgement.
+                        </li>
+
+                        <li>
+                            <strong>Anthropomorphic fallacy.</strong>
+                            People have a tendency to attribute
+                            human characteristics to non-human systems.
+                        </li>
+
+                        <li>
+                            <strong>Imitation is not necessarily understanding.</strong>
+                            A system can imitate intelligent behaviour
+                            using rules or patterns without demonstrating
+                            the kind of understanding people associate
+                            with intelligence.
+                        </li>
+                    </ul>
+
+                    <h3>4.5 The Chinese Room Argument</h3>
+
+                    <p>
+                        John Searle's Chinese Room thought experiment
+                        (1980) questions whether following rules for
+                        manipulating symbols necessarily means that
+                        a system understands their meaning.
+                    </p>
+
+                    <div class="example-box">
+                        <strong>Understand the argument</strong>
+                        <p>
+                            Imagine a person inside a room who does not
+                            understand Chinese. The person receives
+                            Chinese symbols and follows a set of rules
+                            that tells them which symbols to return.
+                        </p>
+                        <p>
+                            To an outside observer, the answers may
+                            appear meaningful. However, the person
+                            inside the room does not understand the
+                            Chinese language.
+                        </p>
+                        <p>
+                            The argument challenges the assumption
+                            that producing appropriate responses
+                            necessarily demonstrates understanding.
+                        </p>
+                    </div>
+
+                    <div class="exam-note">
+                        <strong>Exam preparation:</strong>
+                        Be able to explain the purpose of the Turing
+                        Test, identify the four required AI capabilities,
+                        and discuss at least two criticisms.
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     05. RATIONALITY AND UTILITY
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="rationality"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">05</span>
+                        <div>
+                            <p class="section-kicker">RATIONAL DECISION-MAKING</p>
+                            <h2>Rationality, Utility and Optimisation</h2>
+                        </div>
+                    </div>
+
+                    <h3>5.1 What is rationality?</h3>
+
+                    <p>
+                        Rationality concerns drawing sensible conclusions
+                        from facts, logic and available data, and choosing
+                        actions that are appropriate for the desired outcome.
+                    </p>
+
+                    <p>
+                        In AI, acting rationally means attempting to
+                        achieve the best outcome according to the
+                        agent's objective and the information available.
+                    </p>
+
+                    <h3>5.2 Why does rational action involve optimisation?</h3>
+
+                    <p>
+                        To choose the best action, an agent needs a way
+                        to compare possible outcomes. This is where
+                        optimisation becomes useful.
+                    </p>
+
+                    <p>
+                        The lecture introduces utility as a measure
+                        of the desirability of an outcome. An agent
+                        can use utility to compare how desirable
+                        different outcomes are.
+                    </p>
+
+                    <div class="formula-card">
+                        <span class="definition-label">
+                            SUPPLEMENTARY MATHEMATICAL FORMALISATION
+                        </span>
+
+                        <div class="formula-main-text">
+                            U(outcome) = desirability of that outcome
+                        </div>
+
+                        <p>
+                            Utility is a numerical representation of
+                            how desirable an outcome is for the agent.
+                            Higher utility represents a more desirable
+                            outcome under the chosen utility scale.
+                        </p>
+                    </div>
+
+                    <h3>5.3 Expected utility under uncertainty</h3>
+
+                    <p>
+                        Sometimes an action can produce different
+                        outcomes. The agent may not know which outcome
+                        will occur. The lecture therefore introduces
+                        the idea of maximising expected utility.
+                    </p>
+
+                    <p>
+                        The following equation is a supplementary
+                        mathematical way to express that idea.
+                        It is not printed as a formula in the
+                        introductory slides.
+                    </p>
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">
+                            EXPECTED UTILITY
+                        </span>
+
+                        <div class="formula-main-text">
+                            EU(a) = Σ P(oᵢ | a) × U(oᵢ)
+                        </div>
+
+                        <p><strong>Where:</strong></p>
+                        <ul>
+                            <li><strong>EU(a):</strong> Expected utility of action a.</li>
+                            <li><strong>oᵢ:</strong> A possible outcome.</li>
+                            <li><strong>P(oᵢ | a):</strong> Probability of outcome oᵢ given action a.</li>
+                            <li><strong>U(oᵢ):</strong> Utility of that outcome.</li>
+                            <li><strong>Σ:</strong> Add the contributions from all possible outcomes.</li>
+                        </ul>
+
+                    </div>
+
+                    <h3>5.4 Worked expected-utility example</h3>
+
+                    <p>
+                        Suppose an agent has two possible actions.
+                        Each action has two possible outcomes.
+                        The probabilities and utilities are given below.
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Outcome</th>
+                                    <th>Probability</th>
+                                    <th>Utility</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>A</td>
+                                    <td>Success</td>
+                                    <td>0.8</td>
+                                    <td>100</td>
+                                </tr>
+                                <tr>
+                                    <td>A</td>
+                                    <td>Failure</td>
+                                    <td>0.2</td>
+                                    <td>0</td>
+                                </tr>
+                                <tr>
+                                    <td>B</td>
+                                    <td>Success</td>
+                                    <td>0.5</td>
+                                    <td>120</td>
+                                </tr>
+                                <tr>
+                                    <td>B</td>
+                                    <td>Failure</td>
+                                    <td>0.5</td>
+                                    <td>20</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h4>Step 1: Calculate expected utility of A</h4>
+
+                    <div class="example-box">
+                        EU(A) = (0.8 × 100) + (0.2 × 0)
+
+                        <p>EU(A) = 80 + 0</p>
+                        <p><strong>EU(A) = 80</strong></p>
+                    </div>
+
+                    <h4>Step 2: Calculate expected utility of B</h4>
+
+                    <div class="example-box">
+                        EU(B) = (0.5 × 120) + (0.5 × 20)
+
+                        <p>EU(B) = 60 + 10</p>
+                        <p><strong>EU(B) = 70</strong></p>
+                    </div>
+
+                    <h4>Step 3: Compare the actions</h4>
+
+                    <p>
+                        Action A has expected utility 80, while
+                        action B has expected utility 70.
+                        Under this utility model, action A is preferred.
+                    </p>
+
+                    <div class="important-note">
+                        <span>IMPORTANT</span>
+                        <p>
+                            This example illustrates expected utility
+                            using additional numerical values. It is
+                            not a numerical question copied from
+                            your lecture slides.
+                        </p>
+                    </div>
+
+                    <h3>5.5 Advantages of optimisation</h3>
+
+                    <ul>
+                        <li><strong>Generality:</strong> Optimisation is not limited to a fixed set of rules.</li>
+                        <li><strong>Practicality:</strong> It can be adapted to many real-world problems.</li>
+                        <li><strong>Established techniques:</strong> Solvers, simulation and experimentation are available.</li>
+                        <li><strong>Clear objectives:</strong> A problem can be described using a measurable objective.</li>
+                    </ul>
+
+                    <h3>5.6 Bounded rationality</h3>
+
+                    <p>
+                        A theoretical agent may attempt to maximise
+                        expected utility, but real agents have limits.
+                        They may not know everything about the
+                        environment and may not have unlimited
+                        computing resources.
+                    </p>
+
+                    <p>
+                        Bounded rationality means that rational
+                        decision-making is subject to the agent's
+                        knowledge and computational constraints.
+                    </p>
+
+                    <div class="example-box">
+                        <strong>Example</strong>
+                        <p>
+                            A navigation agent may not be able to
+                            examine every possible route in the
+                            entire road network before giving a
+                            recommendation. It must make a decision
+                            using available information and
+                            computational resources.
+                        </p>
+                    </div>
+
+                    <h3>5.7 Thinking rationally versus acting rationally</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Thinking rationally</th>
+                                    <th>Acting rationally</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Focuses on reasoning and deriving correct conclusions.</td>
+                                    <td>Focuses on choosing appropriate actions.</td>
+                                </tr>
+                                <tr>
+                                    <td>Often uses formal logic and deduction.</td>
+                                    <td>Uses objectives, optimisation and utility.</td>
+                                </tr>
+                                <tr>
+                                    <td>Concerned with whether reasoning is correct.</td>
+                                    <td>Concerned with whether actions achieve desirable outcomes.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     06. INTELLIGENT AGENTS
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="agents"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">06</span>
+                        <div>
+                            <p class="section-kicker">CORE COMPONENT</p>
+                            <h2>Intelligent Agents</h2>
+                        </div>
+                    </div>
+
+                    <h3>6.1 The basic idea</h3>
+
+                    <p>
+                        An agent is an entity that perceives and acts.
+                        It interacts with an environment by receiving
+                        percepts through sensors and performing
+                        actions through actuators.
+                    </p>
+
+                    <div class="definition-card">
+                        <div class="definition-icon">AG</div>
+                        <div>
+                            <span class="definition-label">AGENT MODEL</span>
+                            <p>
+                                Environment → Sensors → Percepts → Agent
+                                → Actions → Actuators → Environment
+                            </p>
+                        </div>
+                    </div>
+
+                    <h3>6.2 Understand each component</h3>
+
+                    <div class="component-list">
+
+                        <div class="component-item">
+                            <span class="component-number">01</span>
+                            <div>
+                                <h4>Environment</h4>
+                                <p>
+                                    The world or surroundings in which
+                                    the agent operates.
+                                </p>
+                                <p><strong>Example:</strong> The road network around a self-driving vehicle.</p>
+                            </div>
+                        </div>
+
+                        <div class="component-item">
+                            <span class="component-number">02</span>
+                            <div>
+                                <h4>Sensors</h4>
+                                <p>
+                                    Components used to receive information
+                                    from the environment.
+                                </p>
+                                <p><strong>Example:</strong> Cameras and other sensing devices.</p>
+                            </div>
+                        </div>
+
+                        <div class="component-item">
+                            <span class="component-number">03</span>
+                            <div>
+                                <h4>Percepts</h4>
+                                <p>
+                                    The information the agent receives
+                                    from its sensors at a particular time.
+                                </p>
+                                <p><strong>Example:</strong> A camera detects that a vehicle is in front.</p>
+                            </div>
+                        </div>
+
+                        <div class="component-item">
+                            <span class="component-number">04</span>
+                            <div>
+                                <h4>Agent</h4>
+                                <p>
+                                    The decision-making system that
+                                    receives information and selects
+                                    an action.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="component-item">
+                            <span class="component-number">05</span>
+                            <div>
+                                <h4>Actions</h4>
+                                <p>
+                                    The operations selected by the
+                                    agent to influence the environment.
+                                </p>
+                                <p><strong>Example:</strong> Slow down or change direction.</p>
+                            </div>
+                        </div>
+
+                        <div class="component-item">
+                            <span class="component-number">06</span>
+                            <div>
+                                <h4>Actuators</h4>
+                                <p>
+                                    Components through which the
+                                    agent carries out its actions.
+                                </p>
+                                <p><strong>Example:</strong> The vehicle's steering, braking and acceleration systems.</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <h3>6.3 The agent interaction cycle</h3>
+
+                    <ol>
+                        <li>The environment has a current state.</li>
+                        <li>Sensors observe some information about that state.</li>
+                        <li>The agent receives a percept.</li>
+                        <li>The agent uses its program, knowledge or rules to select an action.</li>
+                        <li>Actuators perform the action.</li>
+                        <li>The environment changes, and the cycle can repeat.</li>
+                    </ol>
+
+                    <div class="important-note">
+                        <span>IMPORTANT DISTINCTION</span>
+                        <p>
+                            Sensors are used to perceive. Actuators
+                            are used to act. Percepts are information
+                            received; actions are operations performed.
+                            Do not confuse these terms in examinations.
+                        </p>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     07. STEP-BY-STEP AGENT EXAMPLE
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="agent-trace"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">07</span>
+                        <div>
+                            <p class="section-kicker">WORKED EXAMPLE</p>
+                            <h2>Trace a Simple Vacuum-Cleaner Agent</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        We will use a small two-room environment to
+                        follow the complete perceive-decide-act cycle.
+                        This is a supplementary teaching example,
+                        not code copied from the lecturer's slides.
+                    </p>
+
+                    <h3>7.1 Define the problem</h3>
+
+                    <p>
+                        A vacuum-cleaner agent can move between two
+                        rooms: A and B. Each room can be Dirty or Clean.
+                        The agent starts in room A.
+                    </p>
+
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <h4>Environment</h4>
+                            <p>Two rooms: A and B.</p>
+                        </div>
+
+                        <div class="concept-card">
+                            <h4>Percept</h4>
+                            <p>Current location and whether it is dirty.</p>
+                        </div>
+
+                        <div class="concept-card">
+                            <h4>Possible actions</h4>
+                            <p>SUCK, MOVE_RIGHT or STOP.</p>
+                        </div>
+
+                        <div class="concept-card">
+                            <h4>Goal</h4>
+                            <p>Clean both rooms.</p>
+                        </div>
+                    </div>
+
+                    <h3>7.2 Agent rules</h3>
+
+                    <div class="example-box">
+                        <ol>
+                            <li>If the current room is Dirty, choose SUCK.</li>
+                            <li>Otherwise, if the agent is in A, choose MOVE_RIGHT.</li>
+                            <li>Otherwise, choose STOP.</li>
+                        </ol>
+                    </div>
+
+                    <h3>7.3 Initial environment state</h3>
+
+                    <div class="agent-trace-panel">
+
+                        <div class="agent-world">
+
+                            <div class="agent-room" id="room-a">
+                                <span class="room-name">ROOM A</span>
+                                <strong id="room-a-state">DIRTY</strong>
+                                <span id="room-a-agent">AGENT HERE</span>
+                            </div>
+
+                            <div class="agent-room" id="room-b">
+                                <span class="room-name">ROOM B</span>
+                                <strong id="room-b-state">DIRTY</strong>
+                                <span id="room-b-agent">---</span>
+                            </div>
+
+                        </div>
+
+                        <div class="trace-readout">
+
+                            <div>
+                                <span>CURRENT LOCATION</span>
+                                <strong id="trace-location">A</strong>
+                            </div>
+
+                            <div>
+                                <span>PERCEPT</span>
+                                <strong id="trace-percept">A, Dirty</strong>
+                            </div>
+
+                            <div>
+                                <span>AGENT ACTION</span>
+                                <strong id="trace-action">Not started</strong>
+                            </div>
+
+                        </div>
+
+                        <p class="trace-explanation" id="trace-explanation">
+                            Initial state: the agent is in room A.
+                            Both rooms are dirty. Select Next Step to begin.
+                        </p>
+
+                        <div class="trace-controls">
+                            <button type="button"
+                                    class="btn btn-primary"
+                                    id="trace-next">
+                                Next Step →
+                            </button>
+
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    id="trace-reset">
+                                Reset Trace
+                            </button>
+                        </div>
+
+                        <div class="comparison-table-wrapper">
+
+                            <table class="learning-comparison">
+                                <thead>
+                                    <tr>
+                                        <th>Step</th>
+                                        <th>Location</th>
+                                        <th>Percept</th>
+                                        <th>Action</th>
+                                        <th>Result</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="trace-table-body">
+                                    <tr>
+                                        <td colspan="5">
+                                            No actions performed yet.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <p id="trace-completion" aria-live="polite"></p>
+
+                    </div>
+
+
+                    <h3>7.4 Python implementation</h3>
+
+                    <p>
+                        The following Python function implements
+                        the three rules. The input is a percept
+                        containing the current location and status.
+                    </p>
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span class="code-language">vacuum_agent.py</span>
+                        </div>
+
+<pre><code>def vacuum_agent(percept):
+
+    location, status = percept
+
+    # Rule 1: clean the current room
+    if status == "Dirty":
+        return "SUCK"
+
+    # Rule 2: move from A to B
+    if location == "A":
+        return "MOVE_RIGHT"
+
+    # Rule 3: both rooms have been checked
+    return "STOP"
+
+
+# Test the agent
+percept = ("A", "Dirty")
+
+action = vacuum_agent(percept)
+
+print("Percept:", percept)
+print("Action:", action)</code></pre>
+
+                    </div>
+
+                    <h3>7.5 Trace the Python code manually</h3>
+
+                    <div class="component-list">
+
+                        <div class="component-item">
+                            <span class="component-number">01</span>
+                            <div>
+                                <h4>Receive the input</h4>
+                                <p>
+                                    <code>percept = ("A", "Dirty")</code>
+                                    means the agent is in room A and
+                                    its current location is dirty.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="component-item">
+                            <span class="component-number">02</span>
+                            <div>
+                                <h4>Unpack the percept</h4>
+                                <p>
+                                    <code>location = "A"</code> and
+                                    <code>status = "Dirty"</code>.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="component-item">
+                            <span class="component-number">03</span>
+                            <div>
+                                <h4>Evaluate the first condition</h4>
+                                <p>
+                                    <code>status == "Dirty"</code>
+                                    evaluates to True. The function
+                                    returns <code>"SUCK"</code>.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="component-item">
+                            <span class="component-number">04</span>
+                            <div>
+                                <h4>Why do the other rules not execute?</h4>
+                                <p>
+                                    A return statement immediately
+                                    exits the function. The MOVE_RIGHT
+                                    and STOP conditions are not reached
+                                    during this call.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="important-note">
+                        <span>EXPECTED OUTPUT</span>
+                        <p>
+                            Percept: ('A', 'Dirty')<br />
+                            Action: SUCK
+                        </p>
+                    </div>
+
+                    <h3>7.6 What does this example teach?</h3>
+
+                    <p>
+                        The agent is not simply performing random
+                        actions. It receives a percept, evaluates
+                        the information and selects an action
+                        according to its rules.
+                    </p>
+
+                    <p>
+                        This small example demonstrates the
+                        fundamental interaction between an agent
+                        and its environment. More advanced AI
+                        algorithms will use more sophisticated
+                        decision-making methods.
+                    </p>
+
+                    <div class="exam-note">
+                        <strong>Remember:</strong>
+                        The function uses the current percept
+                        to choose an action. The interactive
+                        trace above additionally models how the
+                        environment changes after the action.
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     08. AI VS MACHINE LEARNING
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="ai-ml"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">08</span>
+                        <div>
+                            <p class="section-kicker">IMPORTANT RELATIONSHIP</p>
+                            <h2>AI, Machine Learning and Deep Learning</h2>
+                        </div>
+                    </div>
+
+                    <h3>8.1 Artificial Intelligence</h3>
+
+                    <p>
+                        AI is the broader field concerned with
+                        designing intelligent agents. An AI agent
+                        may involve perception, reasoning, knowledge
+                        representation, planning, goals and learning.
+                    </p>
+
+                    <h3>8.2 Machine Learning</h3>
+
+                    <p>
+                        Machine Learning focuses on learning from
+                        examples and data instead of relying entirely
+                        on explicitly programmed rules.
+                    </p>
+
+                    <p>
+                        Machine Learning is part of AI, not a synonym
+                        for the whole field of AI.
+                    </p>
+
+                    <h3>8.3 Deep Learning</h3>
+
+                    <p>
+                        Deep Learning is a subfield of Machine Learning
+                        that uses layered artificial neural networks
+                        to learn representations from data.
+                    </p>
+
+                    <div class="comparison-diagram">
+
+                        <div class="ai-outer-box">
+
+                            <div class="comparison-heading">
+                                ARTIFICIAL INTELLIGENCE
+                            </div>
+
+                            <p>Designing intelligent agents</p>
+
+                            <div class="ml-inner-box">
+
+                                <div class="comparison-heading">
+                                    MACHINE LEARNING
+                                </div>
+
+                                <p>Learning from examples and data</p>
+
+                                <div class="dl-inner-box">
+
+                                    <div class="comparison-heading">
+                                        DEEP LEARNING
+                                    </div>
+
+                                    <p>Layered artificial neural networks</p>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>8.4 Three types of Machine Learning</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Learning type</th>
+                                    <th>What the agent receives</th>
+                                    <th>Example</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Supervised learning</td>
+                                    <td>Inputs with their correct outputs.</td>
+                                    <td>Classifying an email as spam using labelled examples.</td>
+                                </tr>
+                                <tr>
+                                    <td>Unsupervised learning</td>
+                                    <td>Inputs without supplied labels.</td>
+                                    <td>Grouping customers into clusters.</td>
+                                </tr>
+                                <tr>
+                                    <td>Reinforcement learning</td>
+                                    <td>Rewards or penalties after actions.</td>
+                                    <td>Learning to play a game using rewards.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>8.5 Test your classification</h3>
+
+                    <p>
+                        Identify the learning type in each scenario.
+                        Think about the type of feedback the learning
+                        system receives.
+                    </p>
+
+                    <div class="example-box">
+
+                        <p><strong>Scenario A:</strong> A model is trained using emails already labelled as spam or not spam.</p>
+                        <p><strong>Answer:</strong> Supervised learning, because the training examples have correct labels.</p>
+
+                        <hr />
+
+                        <p><strong>Scenario B:</strong> A bank groups customers without being given categories beforehand.</p>
+                        <p><strong>Answer:</strong> Unsupervised learning, because the inputs are not supplied with labels.</p>
+
+                        <hr />
+
+                        <p><strong>Scenario C:</strong> A robot receives a reward for successfully completing a task.</p>
+                        <p><strong>Answer:</strong> Reinforcement learning, because it learns from rewards or penalties.</p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     09. HISTORY AND APPLICATIONS
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="history"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">09</span>
+                        <div>
+                            <p class="section-kicker">DEVELOPMENT AND APPLICATIONS</p>
+                            <h2>History of AI and AI Today</h2>
+                        </div>
+                    </div>
+
+                    <h3>9.1 Important developments</h3>
+
+                    <div class="timeline">
+
+                        <div class="timeline-item">
+                            <span class="timeline-year">1950</span>
+                            <div class="timeline-content">
+                                <h3>Alan Turing</h3>
+                                <p>
+                                    Published "Computing Machinery
+                                    and Intelligence", associated
+                                    with the Turing Test.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <span class="timeline-year">1974–1980</span>
+                            <div class="timeline-content">
+                                <h3>First AI Winter</h3>
+                                <p>
+                                    A period of reduced funding
+                                    and enthusiasm for AI research.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <span class="timeline-year">1987–1993</span>
+                            <div class="timeline-content">
+                                <h3>Second AI Winter</h3>
+                                <p>
+                                    A further period of reduced
+                                    investment and expectations.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <span class="timeline-year">1989</span>
+                            <div class="timeline-content">
+                                <h3>Neural Networks</h3>
+                                <p>
+                                    The universal approximation
+                                    theorem was an important
+                                    mathematical development.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <span class="timeline-year">2010 onwards</span>
+                            <div class="timeline-content">
+                                <h3>Deep Learning Revolution</h3>
+                                <p>
+                                    Increased computing power,
+                                    GPUs and large datasets
+                                    supported major improvements
+                                    in deep learning.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <span class="timeline-year">2017</span>
+                            <div class="timeline-content">
+                                <h3>Transformer Architecture</h3>
+                                <p>
+                                    The transformer architecture
+                                    became an important foundation
+                                    for modern language models.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <span class="timeline-year">2024</span>
+                            <div class="timeline-content">
+                                <h3>Generative AI</h3>
+                                <p>
+                                    The lecture highlights
+                                    generative systems such as
+                                    ChatGPT and DALL-E.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <h3>9.2 What contributed to recent AI successes?</h3>
+
+                    <ul>
+                        <li>Faster computers and specialised hardware, including GPUs.</li>
+                        <li>Large quantities of data from the internet and sensors.</li>
+                        <li>Increased storage and cloud computing.</li>
+                        <li>The dominance and progress of Machine Learning.</li>
+                        <li>Improved optimisation methods, including Deep Learning.</li>
+                    </ul>
+
+                    <h3>9.3 Moravec's Paradox</h3>
+
+                    <p>
+                        Moravec's Paradox describes the observation
+                        that tasks which are difficult for computers
+                        may be easy for humans, while tasks that
+                        require little conscious effort from humans
+                        can be extremely difficult for machines.
+                    </p>
+
+                    <div class="example-box">
+                        <strong>Example</strong>
+                        <p>
+                            Computers can perform exceptionally well
+                            in games such as chess, but giving a
+                            robot the perception and mobility skills
+                            of a young child is much more difficult.
+                        </p>
+                    </div>
+
+                    <h3>9.4 The AI Effect</h3>
+
+                    <p>
+                        The AI Effect describes how a task may stop
+                        being regarded as a demonstration of
+                        intelligence once a machine becomes good
+                        at performing it.
+                    </p>
+
+                    <div class="example-box">
+                        <strong>Example</strong>
+                        <p>
+                            Calculating and playing chess were once
+                            regarded as highly demanding intellectual
+                            activities. As computers became very
+                            capable at these tasks, people increasingly
+                            viewed them as computational problems.
+                        </p>
+                    </div>
+
+                    <h3>9.5 Applications of AI</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Area</th>
+                                    <th>Applications from the lecture</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Vision and image processing</td>
+                                    <td>OCR, handwriting recognition, face detection, visual search and image generation.</td>
+                                </tr>
+                                <tr>
+                                    <td>Natural Language Processing</td>
+                                    <td>Text-to-speech, speech-to-text, machine translation and text generation.</td>
+                                </tr>
+                                <tr>
+                                    <td>Robotics</td>
+                                    <td>Mars rovers, autonomous vehicles, drones, robot soccer and humanoid robots.</td>
+                                </tr>
+                                <tr>
+                                    <td>Question answering</td>
+                                    <td>IBM Watson answering factual questions, including its Jeopardy demonstration.</td>
+                                </tr>
+                                <tr>
+                                    <td>Decision-making</td>
+                                    <td>Scheduling, route planning, medical diagnosis, spam classification and fraud detection.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>9.6 Why are autonomous vehicles challenging?</h3>
+
+                    <p>
+                        The lecture identifies several components
+                        required by autonomous vehicles:
+                    </p>
+
+                    <ul>
+                        <li>Sensing</li>
+                        <li>Maps</li>
+                        <li>Path planning</li>
+                        <li>Controlling the vehicle</li>
+                    </ul>
+
+                    <p>
+                        These components must work together so that
+                        the vehicle can perceive its surroundings,
+                        plan what to do and perform appropriate actions.
+                    </p>
+
+                    <div class="important-note">
+                        <span>LINK TO THE NEXT TOPICS</span>
+                        <p>
+                            The agent, planning and decision-making
+                            concepts introduced here lead into
+                            state-space representation and search
+                            algorithms, which we will study in
+                            greater technical detail.
+                        </p>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     10. EXAMINATION PRACTICE
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="practice"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">10</span>
+                        <div>
+                            <p class="section-kicker">APPLY WHAT YOU LEARNED</p>
+                            <h2>Examination Practice</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        These questions test whether you can apply
+                        the concepts, not just recognise definitions.
+                        Select an answer for each question, submit
+                        the quiz and read the explanation.
+                    </p>
+
+
+                    <div class="quiz-container" id="topic01-quiz">
+
+                        <!-- QUESTION 1 -->
+
+                        <div class="quiz-question"
+                             data-correct="c"
+                             data-explanation="Artificial Intelligence is concerned with the synthesis and analysis of computational agents that act intelligently.">
+
+                            <span class="question-number">QUESTION 01</span>
+
+                            <h3>
+                                Which statement best represents
+                                the agent-centred definition of AI?
+                            </h3>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q1" value="a" />
+                                AI is only the study of machines that imitate
+                                human appearance.
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q1" value="b" />
+                                AI is the development of computer hardware.
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q1" value="c" />
+                                AI is the synthesis and analysis of computational
+                                agents that act intelligently.
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q1" value="d" />
+                                AI is the same thing as Deep Learning.
+                            </label>
+
+                            <p class="quiz-feedback"></p>
+                        </div>
+
+
+                        <!-- QUESTION 2 -->
+
+                        <div class="quiz-question"
+                             data-correct="b"
+                             data-explanation="Thinking humanly focuses on modelling internal human thought processes, such as memory, decision-making and problem-solving.">
+
+                            <span class="question-number">QUESTION 02</span>
+
+                            <h3>
+                                A researcher builds a model to reproduce
+                                how humans solve mathematical problems.
+                                Which AI approach is being followed?
+                            </h3>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q2" value="a" />
+                                Acting humanly
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q2" value="b" />
+                                Thinking humanly
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q2" value="c" />
+                                Acting rationally
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q2" value="d" />
+                                Thinking rationally
+                            </label>
+
+                            <p class="quiz-feedback"></p>
+                        </div>
+
+
+                        <!-- QUESTION 3 -->
+
+                        <div class="quiz-question"
+                             data-correct="d"
+                             data-explanation="The Turing Test evaluates whether a human interrogator can distinguish the machine's written responses from a human's responses.">
+
+                            <span class="question-number">QUESTION 03</span>
+
+                            <h3>
+                                What is the central objective of the Turing Test?
+                            </h3>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q3" value="a" />
+                                To measure a computer's processing speed.
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q3" value="b" />
+                                To test whether a machine can move like a human.
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q3" value="c" />
+                                To prove that a machine has consciousness.
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q3" value="d" />
+                                To evaluate whether a human can distinguish
+                                machine responses from human responses.
+                            </label>
+
+                            <p class="quiz-feedback"></p>
+                        </div>
+
+
+                        <!-- QUESTION 4 -->
+
+                        <div class="quiz-question"
+                             data-correct="a"
+                             data-explanation="Sensors collect information from the environment. Actuators carry out the selected action.">
+
+                            <span class="question-number">QUESTION 04</span>
+
+                            <h3>
+                                A robot detects an obstacle and then
+                                turns left. Which statement is correct?
+                            </h3>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q4" value="a" />
+                                Sensors detect the obstacle; actuators
+                                carry out the turn.
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q4" value="b" />
+                                Actuators detect the obstacle; sensors
+                                carry out the turn.
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q4" value="c" />
+                                Percepts carry out the turn.
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q4" value="d" />
+                                The environment performs the action.
+                            </label>
+
+                            <p class="quiz-feedback"></p>
+                        </div>
+
+
+                        <!-- QUESTION 5 -->
+
+                        <div class="quiz-question"
+                             data-correct="c"
+                             data-explanation="Bounded rationality recognises that an agent's decisions are restricted by the knowledge and computational resources available to it.">
+
+                            <span class="question-number">QUESTION 05</span>
+
+                            <h3>
+                                A route-planning agent cannot examine
+                                every possible route because of limited
+                                processing resources. What concept does
+                                this illustrate?
+                            </h3>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q5" value="a" />
+                                The Turing Test
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q5" value="b" />
+                                The Chinese Room Argument
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q5" value="c" />
+                                Bounded rationality
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q5" value="d" />
+                                Unsupervised learning
+                            </label>
+
+                            <p class="quiz-feedback"></p>
+                        </div>
+
+
+                        <!-- QUESTION 6 -->
+
+                        <div class="quiz-question"
+                             data-correct="b"
+                             data-explanation="Machine Learning is part of AI. Deep Learning is a subfield of Machine Learning.">
+
+                            <span class="question-number">QUESTION 06</span>
+
+                            <h3>
+                                Which statement correctly describes
+                                the relationship between AI, ML and Deep Learning?
+                            </h3>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q6" value="a" />
+                                AI is a subset of Deep Learning.
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q6" value="b" />
+                                Deep Learning is a subfield of Machine Learning,
+                                which is part of AI.
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q6" value="c" />
+                                Machine Learning and AI are unrelated.
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q6" value="d" />
+                                Deep Learning and AI are exactly the same thing.
+                            </label>
+
+                            <p class="quiz-feedback"></p>
+                        </div>
+
+
+                        <!-- QUESTION 7 -->
+
+                        <div class="quiz-question"
+                             data-correct="d"
+                             data-explanation="The bank is receiving inputs without predefined labels and discovering groups. That is unsupervised learning.">
+
+                            <span class="question-number">QUESTION 07</span>
+
+                            <h3>
+                                A bank groups customers using their
+                                spending patterns. No customer groups
+                                are supplied in advance. Which learning
+                                type is this?
+                            </h3>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q7" value="a" />
+                                Supervised learning
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q7" value="b" />
+                                Reinforcement learning
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q7" value="c" />
+                                Deep learning only
+                            </label>
+
+                            <label class="quiz-option">
+                                <input type="radio" name="q7" value="d" />
+                                Unsupervised learning
+                            </label>
+
+                            <p class="quiz-feedback"></p>
+                        </div>
+
+
+                        <div class="quiz-actions">
+
+                            <button type="button"
+                                    class="btn btn-primary"
+                                    id="submit-quiz-btn">
+                                Submit Answers
+                            </button>
+
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    id="reset-quiz-btn">
+                                Reset Quiz
+                            </button>
+
+                        </div>
+
+
+                        <div class="quiz-result"
+                             id="quiz-result"
+                             hidden>
+
+                            <h3 id="quiz-score"></h3>
+                            <p id="quiz-message"></p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- WRITTEN EXAM QUESTIONS -->
+
+                    <h3>Written examination questions</h3>
+
+                    <div class="example-box">
+                        <strong>Question 1 — Understanding AI</strong>
+                        <p>
+                            Explain the difference between Narrow AI
+                            and Artificial General Intelligence.
+                            Give one example of each.
+                        </p>
+
+                        <details>
+                            <summary>Show suggested answer</summary>
+                            <p>
+                                Narrow AI is developed to solve a specific
+                                problem or perform a particular task.
+                                An example is a spam-classification system.
+                                AGI is a hypothetical agent that would
+                                understand or learn a broad range of
+                                intellectual tasks that humans can perform.
+                            </p>
+                        </details>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>Question 2 — AI approaches</strong>
+                        <p>
+                            Explain the difference between thinking
+                            rationally and acting rationally.
+                        </p>
+
+                        <details>
+                            <summary>Show suggested answer</summary>
+                            <p>
+                                Thinking rationally focuses on deriving
+                                correct conclusions through reasoning
+                                and logic. Acting rationally focuses on
+                                selecting actions that aim to achieve
+                                the best outcome according to the
+                                agent's objectives and circumstances.
+                            </p>
+                        </details>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>Question 3 — Intelligent agents</strong>
+                        <p>
+                            Explain the relationship between sensors,
+                            percepts, agents, actions and actuators.
+                        </p>
+
+                        <details>
+                            <summary>Show suggested answer</summary>
+                            <p>
+                                Sensors obtain information from the
+                                environment. The information received
+                                is called a percept. The agent uses
+                                the percept to select an action.
+                                Actuators carry out that action and
+                                influence the environment.
+                            </p>
+                        </details>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>Question 4 — Turing Test</strong>
+                        <p>
+                            Discuss two criticisms of the Turing Test.
+                        </p>
+
+                        <details>
+                            <summary>Show suggested answer</summary>
+                            <p>
+                                First, human-like behaviour does not
+                                necessarily demonstrate intelligence,
+                                because human behaviour can include
+                                mistakes. Second, an intelligent
+                                system does not have to imitate humans
+                                to solve problems effectively. Other
+                                criticisms include the possibility of
+                                fooling human observers and the
+                                distinction between imitation
+                                and understanding.
+                            </p>
+                        </details>
+                    </div>
+
+
+                    <!-- COMPLETION -->
+
+                    <div class="lesson-completion">
+
+                        <div>
+                            <span class="completion-label">MODULE 01</span>
+
+                            <h2>Complete your learning</h2>
+
+                            <p>
+                                Finish the agent trace and achieve
+                                at least 70% in the knowledge check
+                                before marking this topic complete.
+                            </p>
+                        </div>
+
+                        <button type="button"
+                                class="btn btn-primary"
+                                id="complete-topic-btn"
+                                disabled>
+                            Mark Topic Complete
+                        </button>
+
+                        <p id="completion-message"
+                           class="completion-message"
+                           aria-live="polite"></p>
+
+                    </div>
+
+                </section>
+
+
+            <div class="topic-bottom-navigation">
+                    <a href="../../index.html?v=6" class="topic-previous-link">← Course Home</a>
+                    <a href="../topic-02-problem-formulation/index.html?v=6" class="topic-next-link">Next: Problem Formulation →</a>
+                </div>
+
+            </article>
+
+        </div>
+
+    </main>
+
+
+    <footer class="ai-footer">
+
+        <div class="footer-content">
+            <a href="../../index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <p>
+                COMP304 Artificial Intelligence · Learn, reason and implement.
+            </p>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© <span id="current-year"></span> StructTrace.</p>
+            <a href="../../index.html?v=6">Back to AIVisual</a>
+        </div>
+
+    </footer>
+
+</body>
+</html>

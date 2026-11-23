@@ -1,0 +1,2576 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <!-- sign-in guard: must load first -->
+    <script src="/js/visualizer-guard.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Module 03 | Uninformed Search Algorithms - AIVisual</title>
+    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=6" />
+    <link rel="stylesheet" href="../../css/topic-base.css?v=6" />
+    <link rel="stylesheet" href="../../css/topic-pages.css?v=6" />
+
+    <script src="../../js/ai-core.js?v=6" defer></script>
+    <script src="../../js/ai-visualizer.js?v=6" defer></script>
+    <script src="./topic03.js?v=6" defer></script>
+
+</head>
+
+<body class="aiv-topic topic03-page">
+
+    <header class="ai-header">
+        <nav class="ai-nav">
+            <a href="../../index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <button class="mobile-menu-btn" id="mobile-menu-btn" type="button"
+                    aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">☰</button>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="../../index.html?v=6">Course Home</a></li>
+                <li><a href="../topic-02-problem-formulation/index.html?v=6">← 02. Problem Formulation</a></li>
+                <li><a href="#search-workbench" class="active" aria-current="page">03. Uninformed Search</a></li>
+                <li><a href="../topic-04-heuristic-search/index.html?v=6">04. Heuristic Search →</a></li>
+                <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
+                <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+    <main class="topic-container">
+
+        <!-- =====================================================
+             MODULE HERO
+             ===================================================== -->
+
+        <section class="topic-hero">
+
+            <div class="topic-breadcrumb">
+                <a href="../../index.html?v=6">AIVisual</a>
+                <span>/</span>
+                <span>COMP304</span>
+                <span>/</span>
+                <span>Module 03</span>
+            </div>
+
+            <div class="topic-hero-content">
+
+                <div>
+
+                    <div class="topic-badges">
+                        <span class="topic-label">MODULE 03</span>
+                        <span class="topic-exam-badge">EXAM CORE CONTENT</span>
+                    </div>
+
+                    <h1>
+                        Uninformed Search
+                        <span>BFS · DFS · Lowest-Cost-First</span>
+                    </h1>
+
+                    <p>
+                        Understand how search algorithms explore a state space.
+                        Trace queues, stacks and priority queues, calculate
+                        cumulative path costs, implement search in Python and
+                        determine which solution is returned.
+                    </p>
+
+                    <div class="topic-meta">
+                        <span>Graph searching</span>
+                        <span>Frontier tracing</span>
+                        <span>Path costs</span>
+                        <span>Python implementation</span>
+                    </div>
+
+                </div>
+
+                <div class="topic-hero-symbol">
+                    <div class="topic-symbol-circle">G</div>
+                    <span>GRAPH SEARCH</span>
+                </div>
+
+            </div>
+
+            <div class="topic-hero-footer">
+                <span>THE FRONTIER DETERMINES THE SEARCH STRATEGY</span>
+                <span>COMP304 · SEARCH IN PYTHON</span>
+            </div>
+
+        </section>
+
+
+        <div class="topic-layout">
+
+            <!-- =================================================
+                 SIDEBAR
+                 ================================================= -->
+
+            <aside class="topic-sidebar">
+
+                <div class="sidebar-heading">
+                    <span>MODULE CONTENT</span>
+                    <span class="sidebar-module-number">03</span>
+                </div>
+
+                <nav class="topic-navigation">
+
+                    <a href="#generic-search" class="topic-nav-link active">
+                        <span>01</span> Generic graph search
+                    </a>
+
+                    <a href="#frontier" class="topic-nav-link">
+                        <span>02</span> Understanding the frontier
+                    </a>
+
+                    <a href="#search-workbench" class="topic-nav-link">
+                        <span>03</span> Interactive workbench
+                    </a>
+
+                    <a href="#worked-traces" class="topic-nav-link">
+                        <span>04</span> Worked traces
+                    </a>
+
+                    <a href="#goal-testing" class="topic-nav-link">
+                        <span>05</span> Goal test timing
+                    </a>
+
+                    <a href="#pseudocode" class="topic-nav-link">
+                        <span>06</span> Search pseudocode
+                    </a>
+
+                    <a href="#python" class="topic-nav-link">
+                        <span>07</span> Python implementation
+                    </a>
+
+                    <a href="#comparison" class="topic-nav-link">
+                        <span>08</span> Comparison and properties
+                    </a>
+
+                    <a href="#bounded-search" class="topic-nav-link">
+                        <span>09</span> Bounded and iterative search
+                    </a>
+
+                    <a href="#exam-practice" class="topic-nav-link">
+                        <span>10</span> Examination practice
+                    </a>
+
+                    <a href="#edge-cases" class="topic-nav-link">
+                        <span>11</span> Verification checklist
+                    </a>
+
+                </nav>
+
+                <div class="sidebar-progress">
+                    <span>MODULE PROGRESS</span>
+                    <div class="sidebar-progress-track">
+                        <div id="lesson-progress-bar"></div>
+                    </div>
+                    <p id="lesson-progress-text">0% viewed</p>
+                </div>
+
+                <a href="../../index.html?v=6" class="back-course-link">
+                    ← Back to AIVisual
+                </a>
+
+            </aside>
+
+
+            <!-- =================================================
+                 MAIN CONTENT
+                 ================================================= -->
+
+            <article class="topic-content">
+
+
+                <!-- =================================================
+                     01. GENERIC GRAPH SEARCH
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="generic-search"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">01</span>
+                        <div>
+                            <p class="section-kicker">SEARCH FUNDAMENTALS</p>
+                            <h2>Problem Solving by Graph Searching</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        A search algorithm explores paths from a starting
+                        state until it finds a path that reaches a goal.
+                        It does not necessarily explore the entire graph.
+                        It expands the graph progressively.
+                    </p>
+
+                    <h3>1.1 What information does a search algorithm need?</h3>
+
+                    <p>
+                        A generic graph-search algorithm needs:
+                    </p>
+
+                    <ul>
+                        <li>A graph representing the available connections.</li>
+                        <li>One or more starting nodes.</li>
+                        <li>A goal test that determines whether a node is a goal.</li>
+                        <li>A frontier containing paths that are waiting to be explored.</li>
+                    </ul>
+
+                    <h3>1.2 What is the frontier?</h3>
+
+                    <p>
+                        The frontier stores paths that have been generated
+                        but have not yet been selected for expansion.
+                        Each path starts at the initial node and ends
+                        at a node that may lead to a goal.
+                    </p>
+
+                    <div class="definition-card">
+                        <div class="definition-icon">F</div>
+                        <div>
+                            <span class="definition-label">IMPORTANT DEFINITION</span>
+                            <p>
+                                The frontier is the collection of paths
+                                available for future exploration. The
+                                search strategy determines which path
+                                is removed from it next.
+                            </p>
+                        </div>
+                    </div>
+
+                    <h3>1.3 The generic search process</h3>
+
+                    <ol>
+                        <li>Put the initial path into the frontier.</li>
+                        <li>Select and remove one path from the frontier.</li>
+                        <li>Look at the final node of that path.</li>
+                        <li>Test whether that node is a goal.</li>
+                        <li>If it is a goal, return the path.</li>
+                        <li>Otherwise, generate the neighbours of the final node.</li>
+                        <li>Extend the current path with each outgoing arc and add the new paths to the frontier.</li>
+                        <li>Repeat until a goal is found or the frontier becomes empty.</li>
+                    </ol>
+
+                    <div class="important-note">
+                        <span>KEY PRINCIPLE FROM THE LECTURE</span>
+                        <p>
+                            The search algorithm's control loop can remain
+                            the same. The way the frontier selects and
+                            returns paths determines the search strategy.
+                            This is why changing a stack to a queue or
+                            a priority queue changes the behaviour.
+                        </p>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     02. FRONTIER
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="frontier"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">02</span>
+                        <div>
+                            <p class="section-kicker">DATA STRUCTURES</p>
+                            <h2>How the Frontier Determines Search</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        The same graph can produce different search
+                        orders because each algorithm chooses its
+                        next path differently.
+                    </p>
+
+                    <h3>2.1 Depth-First Search — Stack (LIFO)</h3>
+
+                    <p>
+                        DFS treats the frontier as a stack. It selects
+                        the most recently added path. This causes it
+                        to follow one branch deeply before returning
+                        to another branch.
+                    </p>
+
+                    <div class="formula-card">
+                        <span class="definition-label">STACK RULE</span>
+                        <div class="formula-main-text">
+                            Last In, First Out (LIFO)
+                        </div>
+                        <p>
+                            The most recently inserted path is the
+                            next path removed.
+                        </p>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>Illustrative frontier</strong>
+                        <p>
+                            Suppose the stack is:
+                            [S→B, S→A], with the top on the right.
+                        </p>
+                        <p>
+                            DFS removes S→A first. The paths extending
+                            S→A are explored before S→B is selected.
+                        </p>
+                    </div>
+
+                    <h3>2.2 Breadth-First Search — Queue (FIFO)</h3>
+
+                    <p>
+                        BFS treats the frontier as a queue. It selects
+                        the earliest inserted path. Paths are explored
+                        in layers: first the start node, then paths
+                        with one edge, then paths with two edges, and
+                        so on.
+                    </p>
+
+                    <div class="formula-card">
+                        <span class="definition-label">QUEUE RULE</span>
+                        <div class="formula-main-text">
+                            First In, First Out (FIFO)
+                        </div>
+                        <p>
+                            The oldest path in the queue is removed first.
+                        </p>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>Illustrative frontier</strong>
+                        <p>
+                            Suppose the queue is:
+                            [S→A, S→B], with the front on the left.
+                        </p>
+                        <p>
+                            BFS removes S→A first. New paths are added
+                            after the paths already waiting in the queue.
+                        </p>
+                    </div>
+
+                    <h3>2.3 Lowest-Cost-First Search — Priority Queue</h3>
+
+                    <p>
+                        Sometimes arcs have different costs. In that
+                        case, simply exploring the shallowest path
+                        may not find the least expensive solution.
+                    </p>
+
+                    <p>
+                        Lowest-Cost-First Search selects the path
+                        with the smallest cumulative cost so far.
+                        Its frontier is ordered by path cost.
+                    </p>
+
+                    <div class="formula-card">
+                        <span class="definition-label">PRIORITY RULE</span>
+                        <div class="formula-main-text">
+                            Select path p with minimum g(p)
+                        </div>
+                        <p>
+                            Here, g(p) is the total cost of the path
+                            from the start node to the endpoint of p.
+                        </p>
+                    </div>
+
+                    <h3>2.4 The three frontier policies</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Strategy</th>
+                                    <th>Frontier</th>
+                                    <th>Next path selected</th>
+                                    <th>Ordering principle</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>DFS</td>
+                                    <td>Stack</td>
+                                    <td>Most recently added</td>
+                                    <td>Depth first</td>
+                                </tr>
+                                <tr>
+                                    <td>BFS</td>
+                                    <td>Queue</td>
+                                    <td>Earliest added</td>
+                                    <td>Shallowest paths first</td>
+                                </tr>
+                                <tr>
+                                    <td>LCFS</td>
+                                    <td>Priority queue</td>
+                                    <td>Lowest cumulative cost</td>
+                                    <td>Cheapest path so far</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="exam-note">
+                        <strong>Memorise the distinction:</strong>
+                        DFS uses LIFO, BFS uses FIFO, and LCFS uses
+                        minimum cumulative path cost. Do not confuse
+                        the depth of a path with its cost.
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     03. INTERACTIVE SEARCH WORKBENCH
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="search-workbench"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">03</span>
+                        <div>
+                            <p class="section-kicker">INTERACTIVE ALGORITHM WORKBENCH</p>
+                            <h2>Compare DFS, BFS and LCFS on the Same Graph</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        This is the directed weighted graph used in
+                        the COMP304 Exam Preparation Guide's search
+                        strategy questions. The start is S and the
+                        goal is G. The neighbour order is the order
+                        in which the arcs are listed in the question.
+                    </p>
+
+                    <div class="search-workbench">
+
+                        <!-- CONTROLS -->
+
+                        <div class="workbench-heading">
+
+                            <div>
+                                <h3>Graph Search Simulator</h3>
+                                <p>
+                                    Select a strategy, then inspect
+                                    every frontier operation.
+                                </p>
+                            </div>
+
+                            <label class="speed-control">
+                                Speed
+
+                                <select class="aiv-speed-select"
+                                        id="search-speed">
+                                    <option value="0.5">0.5x</option>
+                                    <option value="1" selected>1x</option>
+                                    <option value="1.5">1.5x</option>
+                                    <option value="2">2x</option>
+                                </select>
+                            </label>
+
+                        </div>
+
+
+                        <div class="search-controls">
+
+                            <label>
+                                Search strategy
+
+                                <select id="search-strategy">
+                                    <option value="dfs">Depth-First Search (DFS)</option>
+                                    <option value="bfs">Breadth-First Search (BFS)</option>
+                                    <option value="lcfs">Lowest-Cost-First Search (LCFS)</option>
+                                </select>
+                            </label>
+
+                            <button type="button"
+                                    class="btn primary"
+                                    id="search-step">
+                                Step Search →
+                            </button>
+
+                            <button type="button"
+                                    class="btn secondary"
+                                    id="search-run">
+                                Run to Goal
+                            </button>
+
+                            <button type="button"
+                                    class="btn danger"
+                                    id="search-reset">
+                                Reset
+                            </button>
+
+                        </div>
+
+
+                        <!-- STRATEGY DESCRIPTION -->
+
+                        <div class="strategy-explanation"
+                             id="strategy-explanation">
+
+                            DFS uses a stack. The last path added
+                            is the next path removed.
+
+                        </div>
+
+
+                        <!-- GRAPH -->
+
+                        <h4>Directed weighted graph</h4>
+
+                        <div class="search-graph-container">
+
+                            <svg class="search-graph"
+                                 id="search-graph"
+                                 viewBox="0 0 720 330"
+                                 role="img"
+                                 aria-label="Directed graph with nodes S, A, B, C, D and G">
+
+                                <defs>
+                                    <marker id="search-arrow"
+                                            viewBox="0 0 10 10"
+                                            refX="9"
+                                            refY="5"
+                                            markerWidth="7"
+                                            markerHeight="7"
+                                            orient="auto-start-reverse">
+                                        <path d="M 0 0 L 10 5 L 0 10 z"
+                                              fill="#94a3b8"></path>
+                                    </marker>
+                                </defs>
+
+
+                                <!-- EDGES -->
+
+                                <g class="search-edges">
+
+                                    <line id="edge-S-A"
+                                          x1="82" y1="160"
+                                          x2="230" y2="75"
+                                          marker-end="url(#search-arrow)"></line>
+
+                                    <line id="edge-S-B"
+                                          x1="82" y1="170"
+                                          x2="230" y2="255"
+                                          marker-end="url(#search-arrow)"></line>
+
+                                    <line id="edge-A-C"
+                                          x1="270" y1="75"
+                                          x2="420" y2="75"
+                                          marker-end="url(#search-arrow)"></line>
+
+                                    <line id="edge-A-G"
+                                          x1="267" y1="83"
+                                          x2="625" y2="158"
+                                          marker-end="url(#search-arrow)"></line>
+
+                                    <line id="edge-B-C"
+                                          x1="265" y1="245"
+                                          x2="425" y2="88"
+                                          marker-end="url(#search-arrow)"></line>
+
+                                    <line id="edge-B-D"
+                                          x1="270" y1="255"
+                                          x2="420" y2="255"
+                                          marker-end="url(#search-arrow)"></line>
+
+                                    <line id="edge-C-G"
+                                          x1="460" y1="85"
+                                          x2="625" y2="158"
+                                          marker-end="url(#search-arrow)"></line>
+
+                                    <line id="edge-D-G"
+                                          x1="460" y1="245"
+                                          x2="625" y2="172"
+                                          marker-end="url(#search-arrow)"></line>
+
+                                </g>
+
+
+                                <!-- EDGE COST LABELS -->
+
+                                <g class="edge-costs">
+
+                                    <text x="145" y="100">2</text>
+                                    <text x="145" y="230">1</text>
+
+                                    <text x="345" y="58">2</text>
+                                    <text x="440" y="118">6</text>
+
+                                    <text x="335" y="170">4</text>
+                                    <text x="345" y="278">2</text>
+
+                                    <text x="555" y="100">2</text>
+                                    <text x="555" y="240">7</text>
+
+                                </g>
+
+
+                                <!-- NODES -->
+
+                                <g class="search-nodes">
+
+                                    <g class="search-node" id="node-S">
+                                        <circle cx="62" cy="165" r="23"></circle>
+                                        <text x="62" y="170">S</text>
+                                    </g>
+
+                                    <g class="search-node" id="node-A">
+                                        <circle cx="250" cy="75" r="23"></circle>
+                                        <text x="250" y="80">A</text>
+                                    </g>
+
+                                    <g class="search-node" id="node-B">
+                                        <circle cx="250" cy="255" r="23"></circle>
+                                        <text x="250" y="260">B</text>
+                                    </g>
+
+                                    <g class="search-node" id="node-C">
+                                        <circle cx="440" cy="75" r="23"></circle>
+                                        <text x="440" y="80">C</text>
+                                    </g>
+
+                                    <g class="search-node" id="node-D">
+                                        <circle cx="440" cy="255" r="23"></circle>
+                                        <text x="440" y="260">D</text>
+                                    </g>
+
+                                    <g class="search-node goal-node" id="node-G">
+                                        <circle cx="650" cy="165" r="23"></circle>
+                                        <text x="650" y="170">G</text>
+                                    </g>
+
+                                </g>
+
+                            </svg>
+
+                        </div>
+
+
+                        <!-- GRAPH LEGEND -->
+
+                        <div class="graph-legend">
+
+                            <span><i class="legend-start"></i> Start</span>
+                            <span><i class="legend-frontier"></i> In frontier</span>
+                            <span><i class="legend-expanded"></i> Selected / tested</span>
+                            <span><i class="legend-solution"></i> Solution path</span>
+
+                        </div>
+
+
+                        <!-- METRICS -->
+
+                        <div class="search-metrics">
+
+                            <div class="search-metric">
+                                <span>ACTIVE STRATEGY</span>
+                                <strong id="metric-strategy">DFS</strong>
+                            </div>
+
+                            <div class="search-metric">
+                                <span>PATHS POPPED</span>
+                                <strong id="metric-expanded">0</strong>
+                            </div>
+
+                            <div class="search-metric">
+                                <span>MAX FRONTIER SIZE</span>
+                                <strong id="metric-max-frontier">1</strong>
+                            </div>
+
+                            <div class="search-metric">
+                                <span>GOAL STATUS</span>
+                                <strong id="metric-goal">Not found</strong>
+                            </div>
+
+                        </div>
+
+
+                        <!-- CURRENT OPERATION -->
+
+                        <div class="search-current-operation">
+
+                            <span>PATH REMOVED FROM FRONTIER</span>
+
+                            <strong id="current-path">Not started</strong>
+
+                            <div class="current-operation-details">
+
+                                <span>
+                                    g(path):
+                                    <strong id="current-cost">—</strong>
+                                </span>
+
+                                <span>
+                                    Goal test:
+                                    <strong id="current-goal-test">—</strong>
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- FRONTIER -->
+
+                        <div class="frontier-panel">
+
+                            <div class="workbench-subheading">
+
+                                <h4>Live Frontier</h4>
+
+                                <span id="frontier-count">
+                                    1 path
+                                </span>
+
+                            </div>
+
+                            <p id="frontier-order-hint">
+                                Stack: top of the stack is on the right.
+                            </p>
+
+                            <div id="frontier-list"
+                                 class="frontier-list">
+
+                                <span class="frontier-path">
+                                    S (g=0)
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- VISITED ORDER -->
+
+                        <div class="visited-panel">
+
+                            <h4>Path Pop / Expansion Order</h4>
+
+                            <div id="visited-order"
+                                 class="visited-order">
+
+                                <span class="muted-placeholder">No paths popped yet.</span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- STATUS -->
+
+                        <div id="search-status"
+                             class="status-banner"
+                             aria-live="polite">
+
+                            Ready. Select Step Search to begin.
+
+                        </div>
+
+
+                        <!-- EXECUTION LOG -->
+
+                        <div class="workbench-subheading">
+                            <h4>Step-by-Step Execution Log</h4>
+                            <span id="search-log-count">0 steps</span>
+                        </div>
+
+                        <div class="table-responsive">
+
+                            <table class="learning-comparison search-log-table">
+
+                                <thead>
+                                    <tr>
+                                        <th>Step</th>
+                                        <th>Path popped</th>
+                                        <th>g(path)</th>
+                                        <th>Goal?</th>
+                                        <th>New paths generated</th>
+                                        <th>Frontier after step</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="search-log-body">
+
+                                    <tr>
+                                        <td colspan="6">
+                                            Search has not started.
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                        <!-- FINAL RESULT -->
+
+                        <div class="search-result"
+                             id="search-result"
+                             hidden>
+
+                            <h4>Search Result</h4>
+
+                            <p id="result-path"></p>
+
+                            <p id="result-cost"></p>
+
+                            <p id="result-expanded"></p>
+
+                        </div>
+
+                    </div>
+
+
+                    <h3>3.1 What should you observe?</h3>
+
+                    <ul>
+                        <li>DFS follows one branch before returning to alternatives.</li>
+                        <li>BFS processes paths in order of the number of edges.</li>
+                        <li>LCFS processes the path with the smallest accumulated cost.</li>
+                        <li>The same node may be reached through different paths.</li>
+                        <li>The goal is tested when a path is removed from the frontier.</li>
+                        <li>The path returned depends on the frontier ordering.</li>
+                    </ul>
+
+                </section>
+
+
+                <!-- =================================================
+                     04. WORKED TRACES
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="worked-traces"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">04</span>
+                        <div>
+                            <p class="section-kicker">EXAM-STYLE WORKED EXAMPLES</p>
+                            <h2>Trace Each Search Strategy by Hand</h2>
+                        </div>
+                    </div>
+
+                    <h3>4.1 Graph definition</h3>
+
+                    <p>
+                        We use the graph and neighbour order from
+                        your COMP304 Exam Preparation Guide.
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Arc cost</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr><td>S</td><td>A</td><td>2</td></tr>
+                                <tr><td>S</td><td>B</td><td>1</td></tr>
+                                <tr><td>A</td><td>C</td><td>2</td></tr>
+                                <tr><td>A</td><td>G</td><td>6</td></tr>
+                                <tr><td>B</td><td>C</td><td>4</td></tr>
+                                <tr><td>B</td><td>D</td><td>2</td></tr>
+                                <tr><td>C</td><td>G</td><td>2</td></tr>
+                                <tr><td>D</td><td>G</td><td>7</td></tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <div class="example-box">
+                        <strong>Important assumptions</strong>
+                        <p>Start node: S</p>
+                        <p>Goal node: G</p>
+                        <p>Neighbour order: the order shown in the table.</p>
+                        <p>Paths are tested for a goal when removed from the frontier.</p>
+                    </div>
+
+
+                    <!-- DFS TRACE -->
+
+                    <h3>4.2 Depth-First Search trace</h3>
+
+                    <p>
+                        DFS uses a stack. In this trace the top of
+                        the stack is on the right. Neighbours are
+                        considered in the order listed in the graph,
+                        so the first-listed neighbour is placed on
+                        top of the stack.
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Step</th>
+                                    <th>Frontier before pop</th>
+                                    <th>Path popped</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>1</td>
+                                    <td>S(0)</td>
+                                    <td>S</td>
+                                    <td>Generate S→A and S→B</td>
+                                </tr>
+
+                                <tr>
+                                    <td>2</td>
+                                    <td>S→B(1), S→A(2)</td>
+                                    <td>S→A</td>
+                                    <td>Generate S→A→C and S→A→G</td>
+                                </tr>
+
+                                <tr>
+                                    <td>3</td>
+                                    <td>S→B(1), S→A→G(8), S→A→C(4)</td>
+                                    <td>S→A→C</td>
+                                    <td>Generate S→A→C→G</td>
+                                </tr>
+
+                                <tr>
+                                    <td>4</td>
+                                    <td>S→B(1), S→A→G(8), S→A→C→G(6)</td>
+                                    <td>S→A→C→G</td>
+                                    <td>Goal found</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <div class="example-box">
+                        <strong>DFS result</strong>
+                        <p>Returned path: S → A → C → G</p>
+                        <p>Path cost: 2 + 2 + 2 = 6</p>
+                        <p>Paths popped: 4</p>
+                    </div>
+
+                    <p>
+                        DFS happens to return the least-cost path
+                        in this example, but DFS does not guarantee
+                        that its first solution is optimal.
+                    </p>
+
+
+                    <!-- BFS TRACE -->
+
+                    <h3>4.3 Breadth-First Search trace</h3>
+
+                    <p>
+                        BFS uses a queue. The oldest path is
+                        removed first. Newly generated paths
+                        are placed behind the paths already
+                        waiting in the queue.
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Step</th>
+                                    <th>Frontier before pop</th>
+                                    <th>Path popped</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>1</td>
+                                    <td>S(0)</td>
+                                    <td>S</td>
+                                    <td>Generate S→A, S→B</td>
+                                </tr>
+
+                                <tr>
+                                    <td>2</td>
+                                    <td>S→A(2), S→B(1)</td>
+                                    <td>S→A</td>
+                                    <td>Generate S→A→C, S→A→G</td>
+                                </tr>
+
+                                <tr>
+                                    <td>3</td>
+                                    <td>S→B(1), S→A→C(4), S→A→G(8)</td>
+                                    <td>S→B</td>
+                                    <td>Generate S→B→C, S→B→D</td>
+                                </tr>
+
+                                <tr>
+                                    <td>4</td>
+                                    <td>S→A→C, S→A→G, S→B→C, S→B→D</td>
+                                    <td>S→A→C</td>
+                                    <td>Generate S→A→C→G</td>
+                                </tr>
+
+                                <tr>
+                                    <td>5</td>
+                                    <td>S→A→G, S→B→C, S→B→D, S→A→C→G</td>
+                                    <td>S→A→G</td>
+                                    <td>Goal found</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <div class="example-box">
+                        <strong>BFS result</strong>
+                        <p>Returned path: S → A → G</p>
+                        <p>Path cost: 2 + 6 = 8</p>
+                        <p>Paths popped: 5</p>
+                        <p>Number of edges: 2</p>
+                    </div>
+
+                    <div class="important-note">
+                        <span>VERY IMPORTANT EXAM CONCEPT</span>
+                        <p>
+                            BFS returns the path with the fewest
+                            edges in an unweighted graph. Here it
+                            returns a path of cost 8, even though
+                            DFS and LCFS find a path of cost 6.
+                            The reason is that BFS is not designed
+                            to minimise arbitrary weighted path cost.
+                        </p>
+                    </div>
+
+
+                    <!-- LCFS TRACE -->
+
+                    <h3>4.4 Lowest-Cost-First Search trace</h3>
+
+                    <p>
+                        LCFS uses a priority queue ordered by
+                        cumulative path cost. At every step,
+                        remove the path with the smallest g(path).
+                    </p>
+
+                    <div class="formula-card">
+                        <span class="definition-label">PATH COST</span>
+                        <div class="formula-main-text">
+                            g(p) = Σ cost(arcᵢ)
+                        </div>
+                        <p>
+                            Add the cost of each arc in the path.
+                            Do not use only the cost of the last arc.
+                        </p>
+                    </div>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Step</th>
+                                    <th>Path popped</th>
+                                    <th>g(path)</th>
+                                    <th>Reason</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr><td>1</td><td>S</td><td>0</td><td>Only path</td></tr>
+                                <tr><td>2</td><td>S→B</td><td>1</td><td>Lowest available cost</td></tr>
+                                <tr><td>3</td><td>S→A</td><td>2</td><td>Lowest available cost</td></tr>
+                                <tr><td>4</td><td>S→B→D</td><td>3</td><td>Lowest available cost</td></tr>
+                                <tr><td>5</td><td>S→A→C</td><td>4</td><td>Lowest available cost</td></tr>
+                                <tr><td>6</td><td>S→B→C</td><td>5</td><td>Lowest available cost</td></tr>
+                                <tr><td>7</td><td>S→A→C→G</td><td>6</td><td>Goal found</td></tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <div class="example-box">
+                        <strong>LCFS result</strong>
+                        <p>Returned path: S → A → C → G</p>
+                        <p>Path cost: 2 + 2 + 2 = 6</p>
+                        <p>Paths popped: 7</p>
+                    </div>
+
+
+                    <h3>4.5 Compare all three results</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Algorithm</th>
+                                    <th>Returned path</th>
+                                    <th>Path cost</th>
+                                    <th>Paths popped</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>DFS</td>
+                                    <td>S → A → C → G</td>
+                                    <td>6</td>
+                                    <td>4</td>
+                                </tr>
+                                <tr>
+                                    <td>BFS</td>
+                                    <td>S → A → G</td>
+                                    <td>8</td>
+                                    <td>5</td>
+                                </tr>
+                                <tr>
+                                    <td>LCFS</td>
+                                    <td>S → A → C → G</td>
+                                    <td>6</td>
+                                    <td>7</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        The number of paths popped is the number
+                        of iterations that remove a path from the
+                        frontier, including the goal path in this
+                        course's search-loop implementation.
+                    </p>
+
+                </section>
+
+
+                <!-- =================================================
+                     05. GOAL TEST TIMING
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="goal-testing"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">05</span>
+                        <div>
+                            <p class="section-kicker">IMPORTANT SEARCH DETAIL</p>
+                            <h2>Why is the Goal Tested When a Path is Popped?</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        The COMP304 search implementation tests the
+                        goal after removing a path from the frontier.
+                        It does not stop immediately when a goal
+                        path is generated.
+                    </p>
+
+                    <h3>5.1 Consider this small graph</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Arc</th>
+                                    <th>Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>S → G</td><td>10</td></tr>
+                                <tr><td>S → A</td><td>1</td></tr>
+                                <tr><td>A → G</td><td>2</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>5.2 What happens with an early goal test?</h3>
+
+                    <p>
+                        When the search expands S, it generates
+                        S → G with cost 10. If the algorithm stops
+                        immediately at generation time, it returns
+                        a solution costing 10.
+                    </p>
+
+                    <h3>5.3 What happens with a late goal test?</h3>
+
+                    <p>
+                        Lowest-cost-first adds both paths to
+                        the frontier:
+                    </p>
+
+                    <ul>
+                        <li>S → A, cost 1</li>
+                        <li>S → G, cost 10</li>
+                    </ul>
+
+                    <p>
+                        It removes S → A first because its cost
+                        is lower. It then generates S → A → G,
+                        with cost 1 + 2 = 3.
+                    </p>
+
+                    <p>
+                        The frontier now contains paths with
+                        costs 3 and 10. The path costing 3
+                        is removed first and passes the goal test.
+                    </p>
+
+                    <div class="example-box">
+                        <strong>Correct result</strong>
+                        <p>Returned path: S → A → G</p>
+                        <p>Cost: 1 + 2 = 3</p>
+                    </div>
+
+                    <div class="important-note">
+                        <span>EXAM RULE</span>
+                        <p>
+                            In lowest-cost-first search, a goal
+                            path may be generated before the
+                            optimal goal path. Testing the goal
+                            only when the path is removed from
+                            the priority queue avoids returning
+                            an unnecessarily expensive path.
+                        </p>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     06. PSEUDOCODE
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="pseudocode"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">06</span>
+                        <div>
+                            <p class="section-kicker">ALGORITHM DESIGN</p>
+                            <h2>Generic Search Pseudocode</h2>
+                        </div>
+                    </div>
+
+                    <p>
+                        The generic search loop controls the
+                        expansion process. The strategy changes
+                        how paths are stored and selected.
+                    </p>
+
+                    <div class="python-code-card">
+                        <div class="code-titlebar">
+                            <span>PSEUDOCODE</span>
+                            <span>GENERIC SEARCH</span>
+                        </div>
+
+<pre><code>frontier ← {initial path}
+
+while frontier is not empty:
+
+    path ← select and remove a path
+
+    node ← final node of path
+
+    if goal(node):
+        return path
+
+    for each arc from node:
+
+        new_path ← extend path using arc
+
+        add new_path to frontier
+
+return failure</code></pre>
+                    </div>
+
+
+                    <h3>6.1 What changes for DFS?</h3>
+
+                    <div class="python-code-card">
+                        <div class="code-titlebar">
+                            <span>PSEUDOCODE</span>
+                            <span>DEPTH-FIRST SEARCH</span>
+                        </div>
+
+<pre><code>frontier ← stack containing initial path
+
+while stack is not empty:
+
+    path ← pop the top path
+
+    if goal(path.end):
+        return path
+
+    for each neighbour in reverse order:
+
+        push extended path onto stack
+
+return failure</code></pre>
+                    </div>
+
+
+                    <h3>6.2 What changes for BFS?</h3>
+
+                    <div class="python-code-card">
+                        <div class="code-titlebar">
+                            <span>PSEUDOCODE</span>
+                            <span>BREADTH-FIRST SEARCH</span>
+                        </div>
+
+<pre><code>frontier ← queue containing initial path
+
+while queue is not empty:
+
+    path ← remove the oldest path
+
+    if goal(path.end):
+        return path
+
+    for each neighbour in listed order:
+
+        add extended path to back of queue
+
+return failure</code></pre>
+                    </div>
+
+
+                    <h3>6.3 What changes for LCFS?</h3>
+
+                    <div class="python-code-card">
+                        <div class="code-titlebar">
+                            <span>PSEUDOCODE</span>
+                            <span>LOWEST-COST-FIRST</span>
+                        </div>
+
+<pre><code>frontier ← priority queue containing initial path
+
+while priority queue is not empty:
+
+    path ← remove path with lowest cumulative cost
+
+    if goal(path.end):
+        return path
+
+    for each outgoing arc:
+
+        new_path ← extend path
+
+        priority ← new_path.cost
+
+        insert new_path using priority
+
+return failure</code></pre>
+                    </div>
+
+
+                    <h3>6.4 Important Python search methods</h3>
+
+                    <p>
+                        The COMP304 guide identifies three
+                        frontier operations that a strategy
+                        implements:
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Method</th>
+                                    <th>Responsibility</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>initialize_frontier()</code></td>
+                                    <td>Create the required stack, queue or priority queue.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>empty_frontier()</code></td>
+                                    <td>Determine whether any paths remain.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>add_to_frontier(path)</code></td>
+                                    <td>Insert a path according to the strategy's priority rule.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                    <p>
+                        The generic search loop repeatedly pops
+                        a path, tests its endpoint and generates
+                        its successors. The frontier implementation
+                        determines which strategy is being used.
+                    </p>
+
+                </section>
+
+
+                <!-- =================================================
+                     07. PYTHON IMPLEMENTATION
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="python"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">07</span>
+                        <div>
+                            <p class="section-kicker">PYTHON PROGRAMMING</p>
+                            <h2>Implementing the Search Strategies</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        The following is a self-contained teaching
+                        implementation of the course's search
+                        framework. It uses the same concepts:
+                        Arc, Path, Search_problem, a common search
+                        loop and strategy-specific frontiers.
+                    </p>
+
+                    <h3>7.1 The Arc class</h3>
+
+                    <p>
+                        An Arc represents a connection between
+                        two nodes and its cost.
+                    </p>
+
+                    <div class="python-code-card">
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>ARC</span>
+                        </div>
+
+<pre><code>class Arc:
+
+    def __init__(self, from_node, to_node, cost=1, action=None):
+
+        if cost &lt; 0:
+            raise ValueError("Arc costs cannot be negative")
+
+        self.from_node = from_node
+        self.to_node = to_node
+        self.cost = cost
+        self.action = action</code></pre>
+                    </div>
+
+
+                    <h3>7.2 The Path class</h3>
+
+                    <p>
+                        A Path stores the previous path and the
+                        final arc. Its cost is cumulative.
+                    </p>
+
+                    <div class="python-code-card">
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>PATH</span>
+                        </div>
+
+<pre><code>class Path:
+
+    def __init__(self, initial, arc=None):
+
+        self.initial = initial
+        self.arc = arc
+
+        if arc is None:
+            self.cost = 0
+        else:
+            self.cost = initial.cost + arc.cost
+
+
+    def end(self):
+
+        if self.arc is None:
+            return self.initial
+
+        return self.arc.to_node
+
+
+    def nodes(self):
+
+        current = self
+
+        while current.arc is not None:
+
+            yield current.arc.to_node
+
+            current = current.initial
+
+        yield current.initial</code></pre>
+                    </div>
+
+
+                    <h3>7.3 The search problem</h3>
+
+                    <p>
+                        This class represents the examination
+                        graph and returns outgoing arcs in
+                        the specified order.
+                    </p>
+
+                    <div class="python-code-card">
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>GRAPH PROBLEM</span>
+                        </div>
+
+<pre><code>class GraphProblem:
+
+    def start_node(self):
+        return "S"
+
+
+    def is_goal(self, node):
+        return node == "G"
+
+
+    def neighbors(self, node):
+
+        graph = {
+
+            "S": [
+                Arc("S", "A", 2),
+                Arc("S", "B", 1)
+            ],
+
+            "A": [
+                Arc("A", "C", 2),
+                Arc("A", "G", 6)
+            ],
+
+            "B": [
+                Arc("B", "C", 4),
+                Arc("B", "D", 2)
+            ],
+
+            "C": [
+                Arc("C", "G", 2)
+            ],
+
+            "D": [
+                Arc("D", "G", 7)
+            ],
+
+            "G": []
+        }
+
+        return graph[node]</code></pre>
+                    </div>
+
+
+                    <h3>7.4 The generic Searcher class</h3>
+
+                    <p>
+                        The search loop is shared by the
+                        three algorithms. Each subclass
+                        determines how paths enter and
+                        leave the frontier.
+                    </p>
+
+                    <div class="python-code-card">
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>COMMON SEARCH LOOP</span>
+                        </div>
+
+<pre><code>class Searcher:
+
+    def __init__(self, problem):
+
+        self.problem = problem
+        self.num_expanded = 0
+        self.max_frontier = 0
+
+        self.initialize_frontier()
+
+        start_path = Path(problem.start_node())
+
+        self.add_to_frontier(start_path)
+
+        self.max_frontier = 1
+
+
+    def search(self):
+
+        while not self.empty_frontier():
+
+            path = self.pop_frontier()
+
+            self.num_expanded += 1
+
+            # Test the goal when the path is removed
+            if self.problem.is_goal(path.end()):
+                return path
+
+            # Generate outgoing arcs
+            arcs = self.problem.neighbors(path.end())
+
+            # Strategy-specific insertion
+            self.add_paths(path, arcs)
+
+            self.max_frontier = max(
+                self.max_frontier,
+                self.frontier_size()
+            )
+
+        return None</code></pre>
+                    </div>
+
+
+                    <h3>7.5 DFS implementation</h3>
+
+                    <div class="python-code-card">
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>DEPTH-FIRST SEARCH</span>
+                        </div>
+
+<pre><code>class DepthFirstSearcher(Searcher):
+
+    def initialize_frontier(self):
+        self.frontier = []
+
+
+    def empty_frontier(self):
+        return len(self.frontier) == 0
+
+
+    def add_to_frontier(self, path):
+        self.frontier.append(path)
+
+
+    def pop_frontier(self):
+        return self.frontier.pop()
+
+
+    def frontier_size(self):
+        return len(self.frontier)
+
+
+    def add_paths(self, path, arcs):
+
+        # Reverse insertion makes the first neighbour
+        # the next path removed from the stack.
+        for arc in reversed(arcs):
+
+            new_path = Path(path, arc)
+
+            self.add_to_frontier(new_path)</code></pre>
+                    </div>
+
+
+                    <h3>7.6 BFS implementation</h3>
+
+                    <div class="python-code-card">
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>BREADTH-FIRST SEARCH</span>
+                        </div>
+
+<pre><code>from collections import deque
+
+
+class BreadthFirstSearcher(Searcher):
+
+    def initialize_frontier(self):
+        self.frontier = deque()
+
+
+    def empty_frontier(self):
+        return len(self.frontier) == 0
+
+
+    def add_to_frontier(self, path):
+        self.frontier.append(path)
+
+
+    def pop_frontier(self):
+        return self.frontier.popleft()
+
+
+    def frontier_size(self):
+        return len(self.frontier)
+
+
+    def add_paths(self, path, arcs):
+
+        # Add neighbours in their listed order.
+        for arc in arcs:
+
+            new_path = Path(path, arc)
+
+            self.add_to_frontier(new_path)</code></pre>
+                    </div>
+
+
+                    <h3>7.7 LCFS implementation</h3>
+
+                    <div class="python-code-card">
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>LOWEST-COST-FIRST</span>
+                        </div>
+
+<pre><code>import heapq
+from itertools import count
+
+
+class LowestCostSearcher(Searcher):
+
+    def initialize_frontier(self):
+
+        self.frontier = []
+
+        # Counter gives stable ordering for equal costs.
+        self.sequence = count()
+
+
+    def empty_frontier(self):
+        return len(self.frontier) == 0
+
+
+    def add_to_frontier(self, path):
+
+        heapq.heappush(
+            self.frontier,
+            (
+                path.cost,
+                next(self.sequence),
+                path
+            )
+        )
+
+
+    def pop_frontier(self):
+
+        priority, sequence, path = heapq.heappop(
+            self.frontier
+        )
+
+        return path
+
+
+    def frontier_size(self):
+        return len(self.frontier)
+
+
+    def add_paths(self, path, arcs):
+
+        for arc in arcs:
+
+            new_path = Path(path, arc)
+
+            self.add_to_frontier(new_path)</code></pre>
+                    </div>
+
+
+                    <h3>7.8 Run the three search algorithms</h3>
+
+                    <div class="python-code-card">
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>TEST PROGRAM</span>
+                        </div>
+
+<pre><code>problem = GraphProblem()
+
+
+dfs = DepthFirstSearcher(problem)
+dfs_path = dfs.search()
+
+bfs = BreadthFirstSearcher(problem)
+bfs_path = bfs.search()
+
+lcfs = LowestCostSearcher(problem)
+lcfs_path = lcfs.search()
+
+
+def display_result(name, searcher, path):
+
+    if path is None:
+        print(name, "found no solution")
+        return
+
+    route = list(reversed(list(path.nodes())))
+
+    print(name)
+    print("Path:", route)
+    print("Cost:", path.cost)
+    print("Paths popped:", searcher.num_expanded)
+    print("Maximum frontier:", searcher.max_frontier)
+    print()
+
+
+display_result("DFS", dfs, dfs_path)
+display_result("BFS", bfs, bfs_path)
+display_result("LCFS", lcfs, lcfs_path)</code></pre>
+                    </div>
+
+
+                    <h3>7.9 Expected output</h3>
+
+                    <div class="python-code-card">
+<pre><code>DFS
+Path: ['S', 'A', 'C', 'G']
+Cost: 6
+Paths popped: 4
+
+
+BFS
+Path: ['S', 'A', 'G']
+Cost: 8
+Paths popped: 5
+
+
+LCFS
+Path: ['S', 'A', 'C', 'G']
+Cost: 6
+Paths popped: 7</code></pre>
+                    </div>
+
+                    <div class="important-note">
+                        <span>IMPLEMENTATION NOTE</span>
+                        <p>
+                            This is a self-contained Python version
+                            for learning and experimentation. It
+                            follows the frontier and Path concepts
+                            in your guide, while using Python's
+                            standard deque and heapq for clear
+                            FIFO and priority-queue behaviour.
+                            It does not replace the exact aipython
+                            library files used in your lecturer's
+                            Revision 2a and 2b materials.
+                        </p>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     08. STRATEGY COMPARISON
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="comparison"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">08</span>
+                        <div>
+                            <p class="section-kicker">PROPERTIES AND COMPARISON</p>
+                            <h2>DFS vs BFS vs LCFS</h2>
+                        </div>
+                    </div>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Property</th>
+                                    <th>DFS</th>
+                                    <th>BFS</th>
+                                    <th>LCFS</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>Frontier</td>
+                                    <td>Stack</td>
+                                    <td>Queue</td>
+                                    <td>Priority queue on g</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Next path</td>
+                                    <td>Last added</td>
+                                    <td>First added</td>
+                                    <td>Lowest path cost</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Complete?</td>
+                                    <td>No, can follow a cycle forever</td>
+                                    <td>Yes, under the guide's assumptions</td>
+                                    <td>Yes, with non-negative costs</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Optimal?</td>
+                                    <td>No</td>
+                                    <td>Only if all arcs have equal cost</td>
+                                    <td>Yes, with non-negative costs</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Space behaviour</td>
+                                    <td>Linear in search depth, in the guide's summary</td>
+                                    <td>Stores a whole level; main weakness</td>
+                                    <td>Can require a large frontier</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>8.1 Why is BFS optimal when all arc costs are equal?</h3>
+
+                    <p>
+                        BFS explores paths in increasing order
+                        of the number of edges. If every edge
+                        has the same cost, a path with fewer
+                        edges also has a lower total cost.
+                    </p>
+
+                    <p>
+                        Therefore, the first goal path removed
+                        from the queue has the minimum number
+                        of edges and the minimum path cost.
+                    </p>
+
+
+                    <h3>8.2 Why is BFS not necessarily least-cost?</h3>
+
+                    <p>
+                        In a weighted graph, a path containing
+                        two expensive edges may cost more than
+                        a path containing three inexpensive edges.
+                        BFS considers the number of edges,
+                        not their weights.
+                    </p>
+
+
+                    <h3>8.3 Why does LCFS find a least-cost path?</h3>
+
+                    <p>
+                        LCFS orders paths by cumulative cost.
+                        With non-negative arc costs, extending
+                        a path cannot reduce its accumulated cost.
+                        The first goal path removed from the
+                        priority queue therefore has the
+                        least path cost.
+                    </p>
+
+
+                    <h3>8.4 Measuring search performance</h3>
+
+                    <p>
+                        Your COMP304 guide recommends measuring
+                        the number of paths popped (the
+                        <code>num_expanded</code> counter) and
+                        the largest frontier size.
+                    </p>
+
+                    <div class="formula-card">
+                        <span class="definition-label">TWO IMPORTANT MEASURES</span>
+                        <div class="formula-main-text">
+                            Search work = number of paths popped
+                        </div>
+                        <div class="formula-main-text">
+                            Space measure = maximum frontier size
+                        </div>
+                        <p>
+                            Do not compare only execution time.
+                            The number of expansions and the
+                            maximum frontier show how much
+                            search work and stored information
+                            were required.
+                        </p>
+                    </div>
+
+
+                    <h3>8.5 Supplementary complexity notation</h3>
+
+                    <p>
+                        The following are standard tree-search
+                        bounds that help explain the space and
+                        time trade-offs. They are supplementary
+                        to the qualitative comparison in your
+                        uploaded lecture slides and guide.
+                    </p>
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">VARIABLES</span>
+
+                        <ul>
+                            <li><strong>b:</strong> branching factor, the average number of successors per node.</li>
+                            <li><strong>d:</strong> depth of the shallowest goal.</li>
+                            <li><strong>m:</strong> maximum search depth.</li>
+                        </ul>
+
+                        <div class="formula-main-text">
+                            BFS: O(b<sup>d+1</sup>) time and space
+                        </div>
+
+                        <div class="formula-main-text">
+                            DFS: O(b<sup>m</sup>) time
+                        </div>
+
+                        <div class="formula-main-text">
+                            DFS: O(bm) space
+                        </div>
+
+                        <p>
+                            These bounds assume the standard
+                            tree-search model. Repeated-state
+                            checking and graph structure can
+                            change the practical memory use.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     09. BOUNDED AND ITERATIVE DEEPENING
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="bounded-search"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">09</span>
+                        <div>
+                            <p class="section-kicker">ADDITIONAL LECTURE CONTENT</p>
+                            <h2>Bounded DFS and Iterative Deepening</h2>
+                        </div>
+                    </div>
+
+                    <h3>9.1 Bounded Depth-First Search</h3>
+
+                    <p>
+                        A bounded depth-first search is given
+                        a maximum depth or cost bound. Paths
+                        that exceed the bound are not expanded.
+                    </p>
+
+                    <p>
+                        This limits how far DFS explores and
+                        can prevent it from following an
+                        indefinitely deep branch.
+                    </p>
+
+                    <div class="example-box">
+                        <strong>Example with depth bound 2</strong>
+                        <p>
+                            If the start node S is at depth 0,
+                            its children are at depth 1 and
+                            their children are at depth 2.
+                        </p>
+                        <p>
+                            A node at depth 2 is not expanded
+                            further when the bound is 2.
+                        </p>
+                    </div>
+
+                    <h3>9.2 Iterative Deepening Search</h3>
+
+                    <p>
+                        Iterative deepening repeatedly runs
+                        bounded DFS while increasing the
+                        depth bound.
+                    </p>
+
+                    <div class="formula-card">
+                        <span class="definition-label">ITERATIVE DEEPENING PROCEDURE</span>
+                        <ol>
+                            <li>Set the depth bound to 0.</li>
+                            <li>Perform bounded DFS with the current bound.</li>
+                            <li>If a solution is found, return it.</li>
+                            <li>Otherwise, increase the bound by 1.</li>
+                            <li>Repeat the bounded search.</li>
+                        </ol>
+                    </div>
+
+                    <h3>9.3 Example sequence of bounds</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Iteration</th>
+                                    <th>Depth bound</th>
+                                    <th>Search performed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>Only the start node.</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>1</td>
+                                    <td>Start and its immediate children.</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>2</td>
+                                    <td>Explore up to depth 2.</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>3</td>
+                                    <td>Explore up to depth 3.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        The lecture asks students to relate
+                        iterative deepening to another search
+                        method: under the usual finite-branching,
+                        unit-depth-cost assumptions, it finds
+                        the same shallowest solution as BFS.
+                    </p>
+
+                    <div class="important-note">
+                        <span>LECTURE CONNECTION</span>
+                        <p>
+                            Bounded DFS and iterative deepening
+                            are included in your Review Search
+                            Algorithms slides. They extend the
+                            idea of controlling how deep DFS
+                            is allowed to explore.
+                        </p>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     10. EXAM PRACTICE
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="exam-practice"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">10</span>
+                        <div>
+                            <p class="section-kicker">EXAMINATION PRACTICE</p>
+                            <h2>Search Strategy Questions</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        These questions are based on the search
+                        strategy exercises in your COMP304
+                        Exam Preparation Guide. Attempt them
+                        before opening the solutions.
+                    </p>
+
+
+                    <h3>Question 1 — Choosing the frontier</h3>
+
+                    <p>
+                        Match each search strategy to its frontier
+                        and explain which path is selected next.
+                    </p>
+
+                    <details>
+                        <summary>Show suggested answer</summary>
+                        <ul>
+                            <li>DFS: stack; most recently added path.</li>
+                            <li>BFS: queue; earliest added path.</li>
+                            <li>LCFS: priority queue; smallest cumulative path cost.</li>
+                        </ul>
+                    </details>
+
+
+                    <h3>Question 2 — DFS tracing</h3>
+
+                    <p>
+                        Use the graph in the workbench. Start at
+                        S and search for G using DFS. Give the
+                        frontier before every pop, the path popped,
+                        the returned path and its cost.
+                    </p>
+
+                    <details>
+                        <summary>Show worked answer</summary>
+                        <p>
+                            Pop order: S, S→A, S→A→C,
+                            S→A→C→G.
+                        </p>
+                        <p>
+                            Returned path: S→A→C→G.
+                        </p>
+                        <p>
+                            Cost: 2 + 2 + 2 = 6.
+                        </p>
+                        <p>
+                            Four paths were popped, including
+                            the goal path.
+                        </p>
+                    </details>
+
+
+                    <h3>Question 3 — BFS versus path cost</h3>
+
+                    <p>
+                        BFS returns S→A→G at a cost of 8.
+                        Explain why it does not return
+                        S→A→C→G at a cost of 6.
+                    </p>
+
+                    <details>
+                        <summary>Show suggested answer</summary>
+                        <p>
+                            BFS prioritises paths with fewer
+                            edges, not lower cumulative cost.
+                            S→A→G has two edges, while
+                            S→A→C→G has three edges.
+                            Therefore, the two-edge goal path
+                            is removed from the queue first.
+                        </p>
+                    </details>
+
+
+                    <h3>Question 4 — Lowest-cost-first</h3>
+
+                    <p>
+                        Why is S→B selected before S→A
+                        after expanding S?
+                    </p>
+
+                    <details>
+                        <summary>Show suggested answer</summary>
+                        <p>
+                            S→B has cost 1, while S→A has
+                            cost 2. LCFS selects the path
+                            with the smallest cumulative cost.
+                        </p>
+                    </details>
+
+
+                    <h3>Question 5 — Debugging the Path class</h3>
+
+                    <p>
+                        A student writes:
+                        <code>self.cost = arc.cost</code>.
+                        Explain why this is wrong and identify
+                        the strategies affected.
+                    </p>
+
+                    <details>
+                        <summary>Show worked answer</summary>
+                        <p>
+                            The path cost must include all
+                            previous arcs. The correct
+                            expression is:
+                        </p>
+                        <p>
+                            <code>self.cost = initial.cost + arc.cost</code>
+                        </p>
+                        <p>
+                            LCFS and A* are affected because
+                            they rely on cumulative path cost
+                            to order their frontier.
+                        </p>
+                    </details>
+
+
+                    <h3>Question 6 — Changing the insertion method</h3>
+
+                    <p>
+                        In the course's DFS implementation,
+                        paths are added using:
+                        <code>self.frontier.append(path)</code>
+                        and removed using <code>pop()</code>.
+                        What happens if insertion changes to:
+                        <code>self.frontier.insert(0, path)</code>,
+                        while removal remains <code>pop()</code>?
+                    </p>
+
+                    <details>
+                        <summary>Show worked answer</summary>
+                        <p>
+                            The oldest path is now at the
+                            end of the list and is removed first.
+                            This changes the behaviour to FIFO,
+                            which is breadth-first search.
+                        </p>
+                    </details>
+
+
+                    <h3>Question 7 — Why reverse neighbours?</h3>
+
+                    <p>
+                        Why does the generic search code
+                        use <code>reversed(list(neighs))</code>
+                        before adding paths to a stack?
+                    </p>
+
+                    <details>
+                        <summary>Show worked answer</summary>
+                        <p>
+                            A stack removes the most recently
+                            added path. Reversing the neighbour
+                            list before insertion places the
+                            first-listed neighbour on top,
+                            so DFS follows the neighbour order
+                            specified by the problem.
+                        </p>
+                    </details>
+
+
+                    <h3>Question 8 — Completeness and optimality</h3>
+
+                    <p>
+                        State whether DFS, BFS and LCFS are
+                        complete and whether they are optimal,
+                        using the assumptions stated in the
+                        COMP304 guide.
+                    </p>
+
+                    <details>
+                        <summary>Show worked answer</summary>
+                        <ul>
+                            <li>DFS: not complete in the guide's generic setting because it can follow a cycle forever; not optimal.</li>
+                            <li>BFS: complete; optimal only when all arc costs are equal.</li>
+                            <li>LCFS: complete and optimal with non-negative arc costs.</li>
+                        </ul>
+                    </details>
+
+
+                    <div class="exam-note">
+                        <strong>Exam technique:</strong>
+                        Always show the frontier before each pop.
+                        State the path removed, its cost and the
+                        paths generated. Do not skip iterations
+                        just because you can already see a goal
+                        in the graph.
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     11. EDGE CASE CHECKLIST
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="edge-cases"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">11</span>
+                        <div>
+                            <p class="section-kicker">VERIFICATION</p>
+                            <h2>Search Algorithm Verification Checklist</h2>
+                        </div>
+                    </div>
+
+                    <p>
+                        Use this checklist when tracing or
+                        implementing a search algorithm.
+                    </p>
+
+                    <ul class="checklist aiv-checklist">
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="s3-check-frontier" />
+                                <span>
+                                    <strong>Correct frontier:</strong>
+                                    Am I using a stack, queue or priority queue
+                                    appropriate to the selected algorithm?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="s3-check-order" />
+                                <span>
+                                    <strong>Neighbour order:</strong>
+                                    Am I following the order in which
+                                    neighbours are returned?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="s3-check-pop" />
+                                <span>
+                                    <strong>Correct path selection:</strong>
+                                    Have I removed the right path
+                                    from the frontier?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="s3-check-cost" />
+                                <span>
+                                    <strong>Cumulative cost:</strong>
+                                    Did I add the new arc cost to
+                                    the previous path cost?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="s3-check-goal" />
+                                <span>
+                                    <strong>Late goal test:</strong>
+                                    Did I test the endpoint after
+                                    removing the path from the frontier?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="s3-check-trace" />
+                                <span>
+                                    <strong>Complete trace:</strong>
+                                    Did I record the frontier before
+                                    each pop and all paths generated?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="s3-check-optimal" />
+                                <span>
+                                    <strong>Optimality:</strong>
+                                    Did I distinguish fewest edges
+                                    from lowest total cost?
+                                </span>
+                            </label>
+                        </li>
+
+                    </ul>
+
+                    <button type="button"
+                            class="btn secondary"
+                            id="reset-search-checklist">
+                        Reset Checklist
+                    </button>
+
+                </section>
+
+
+                <!-- =================================================
+                     MODULE COMPLETION
+                     ================================================= -->
+
+                <section class="lesson-completion">
+
+                    <div>
+                        <span class="completion-label">MODULE 03</span>
+
+                        <h2>Can you trace all three strategies?</h2>
+
+                        <p>
+                            Run DFS, BFS and LCFS to their goal,
+                            compare the returned paths, and
+                            explain why their results differ.
+                        </p>
+                    </div>
+
+                    <button type="button"
+                            class="btn btn-primary"
+                            id="complete-search-module"
+                            disabled>
+                        Mark Module Complete
+                    </button>
+
+                    <p id="search-completion-message"
+                       class="completion-message"
+                       aria-live="polite">
+                        Complete all three search demonstrations first.
+                    </p>
+
+                </section>
+
+
+                <div class="topic-bottom-navigation">
+                    <a href="../topic-02-problem-formulation/index.html?v=6" class="topic-previous-link">← Previous: Problem Formulation</a>
+                    <a href="../topic-04-heuristic-search/index.html?v=6" class="topic-next-link">Next: Heuristic Search →</a>
+                </div>
+
+            </article>
+
+        </div>
+
+    </main>
+
+
+    <footer class="ai-footer">
+
+        <div class="footer-content">
+            <a href="../../index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <p>
+                COMP304 Artificial Intelligence · Learn, reason and implement.
+            </p>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© <span id="current-year"></span> StructTrace.</p>
+            <a href="../../index.html?v=6">Back to AIVisual</a>
+        </div>
+
+    </footer>
+
+</body>
+</html>

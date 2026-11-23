@@ -1,0 +1,8 @@
+@if (TempData["AdminMessage"] is string ok)
+{
+    <div class="st-alert st-alert--success">@ok</div>
+}
+@if (TempData["AdminError"] is string error)
+{
+    <div class="st-alert st-alert--error">@error</div>
+}

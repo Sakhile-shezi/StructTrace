@@ -1,0 +1,2679 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <!-- sign-in guard: must load first -->
+    <script src="/js/visualizer-guard.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Module 04 | Heuristic Search and A* - AIVisual</title>
+    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=6" />
+    <link rel="stylesheet" href="../../css/topic-base.css?v=6" />
+    <link rel="stylesheet" href="../../css/topic-pages.css?v=6" />
+
+    <script src="../../js/ai-core.js?v=6" defer></script>
+    <script src="../../js/ai-visualizer.js?v=6" defer></script>
+    <script src="./topic04.js?v=6" defer></script>
+
+</head>
+
+<body class="aiv-topic topic04-page">
+
+    <header class="ai-header">
+        <nav class="ai-nav">
+            <a href="../../index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <button class="mobile-menu-btn" id="mobile-menu-btn" type="button"
+                    aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">☰</button>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="../../index.html?v=6">Course Home</a></li>
+                <li><a href="../topic-03-uninformed-search/index.html?v=6">← 03. Uninformed Search</a></li>
+                <li><a href="#heuristics" class="active" aria-current="page">04. Heuristic Search</a></li>
+                <li><a href="../topic-05-game-trees/index.html?v=6">05. Game Trees →</a></li>
+                <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
+                <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+    <main class="topic-container">
+
+        <!-- =====================================================
+             MODULE HERO
+             ===================================================== -->
+
+        <section class="topic-hero">
+
+            <div class="topic-breadcrumb">
+                <a href="../../index.html?v=6">AIVisual</a>
+                <span>/</span>
+                <span>COMP304</span>
+                <span>/</span>
+                <span>Module 04</span>
+            </div>
+
+            <div class="topic-hero-content">
+
+                <div>
+
+                    <div class="topic-badges">
+                        <span class="topic-label">MODULE 04</span>
+                        <span class="topic-exam-badge">INFORMED SEARCH</span>
+                    </div>
+
+                    <h1>
+                        Heuristic Search
+                        <span>Best-First · A* · Manhattan Distance</span>
+                    </h1>
+
+                    <p>
+                        Learn how AI uses estimates to guide search.
+                        Calculate heuristic values, compare Greedy
+                        Best-First with A*, trace priority frontiers,
+                        and understand why some heuristics guarantee
+                        optimal solutions.
+                    </p>
+
+                    <div class="topic-meta">
+                        <span>Heuristic functions</span>
+                        <span>A* evaluation</span>
+                        <span>Manhattan distance</span>
+                        <span>Python programming</span>
+                    </div>
+
+                </div>
+
+                <div class="topic-hero-symbol">
+                    <div class="topic-symbol-circle">A*</div>
+                    <span>f(n) = g(n) + h(n)</span>
+                </div>
+
+            </div>
+
+            <div class="topic-hero-footer">
+                <span>ESTIMATE THE REMAINING COST</span>
+                <span>COMP304 · SEARCH IN PYTHON</span>
+            </div>
+
+        </section>
+
+
+        <div class="topic-layout">
+
+            <!-- =================================================
+                 SIDEBAR
+                 ================================================= -->
+
+            <aside class="topic-sidebar">
+
+                <div class="sidebar-heading">
+                    <span>MODULE CONTENT</span>
+                    <span class="sidebar-module-number">04</span>
+                </div>
+
+                <nav class="topic-navigation">
+
+                    <a href="#heuristics" class="topic-nav-link active">
+                        <span>01</span> Heuristic functions
+                    </a>
+
+                    <a href="#heuristic-design" class="topic-nav-link">
+                        <span>02</span> Designing heuristics
+                    </a>
+
+                    <a href="#best-first" class="topic-nav-link">
+                        <span>03</span> Best-First Search
+                    </a>
+
+                    <a href="#astar" class="topic-nav-link">
+                        <span>04</span> A* Search
+                    </a>
+
+                    <a href="#heuristic-workbench" class="topic-nav-link">
+                        <span>05</span> Interactive workbench
+                    </a>
+
+                    <a href="#worked-trace" class="topic-nav-link">
+                        <span>06</span> A* worked trace
+                    </a>
+
+                    <a href="#admissibility" class="topic-nav-link">
+                        <span>07</span> Admissibility
+                    </a>
+
+                    <a href="#consistency" class="topic-nav-link">
+                        <span>08</span> Consistency
+                    </a>
+
+                    <a href="#puzzle-heuristic" class="topic-nav-link">
+                        <span>09</span> 8-puzzle heuristics
+                    </a>
+
+                    <a href="#python" class="topic-nav-link">
+                        <span>10</span> Python implementation
+                    </a>
+
+                    <a href="#practice" class="topic-nav-link">
+                        <span>11</span> Examination practice
+                    </a>
+
+                    <a href="#edge-cases" class="topic-nav-link">
+                        <span>12</span> Verification checklist
+                    </a>
+
+                </nav>
+
+                <div class="sidebar-progress">
+                    <span>MODULE PROGRESS</span>
+                    <div class="sidebar-progress-track">
+                        <div id="lesson-progress-bar"></div>
+                    </div>
+                    <p id="lesson-progress-text">0% viewed</p>
+                </div>
+
+                <a href="../../index.html?v=6" class="back-course-link">
+                    ← Back to AIVisual
+                </a>
+
+            </aside>
+
+
+            <!-- =================================================
+                 MAIN CONTENT
+                 ================================================= -->
+
+            <article class="topic-content">
+
+
+                <!-- =================================================
+                     01. HEURISTIC FUNCTIONS
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="heuristics"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">01</span>
+                        <div>
+                            <p class="section-kicker">INFORMED SEARCH</p>
+                            <h2>What is a Heuristic Function?</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        Uninformed search explores paths using their
+                        insertion order or accumulated path cost.
+                        Heuristic search uses additional knowledge
+                        about the problem to guide the search towards
+                        a goal.
+                    </p>
+
+                    <h3>1.1 Why do we need heuristics?</h3>
+
+                    <p>
+                        Imagine an agent searching for a destination
+                        on a map. It could explore every possible
+                        route without knowing where the destination
+                        is. However, information about the remaining
+                        distance can help the search make better
+                        decisions.
+                    </p>
+
+                    <p>
+                        A heuristic provides an estimate of the
+                        remaining cost from the current node to
+                        a goal. It helps the search decide which
+                        paths appear more promising.
+                    </p>
+
+                    <div class="definition-card">
+                        <div class="definition-icon">h(n)</div>
+                        <div>
+                            <span class="definition-label">DEFINITION</span>
+                            <p>
+                                A heuristic function h(n) estimates
+                                the cost of reaching a goal state
+                                from the current node n.
+                            </p>
+                        </div>
+                    </div>
+
+                    <h3>1.2 The three values used in heuristic search</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Symbol</th>
+                                    <th>Meaning</th>
+                                    <th>Example</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>g(n)</code></td>
+                                    <td>Actual cost already paid from the start to n.</td>
+                                    <td>Cost from S to A is 5.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>h(n)</code></td>
+                                    <td>Estimated remaining cost from n to a goal.</td>
+                                    <td>Estimated cost from A to G is 3.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>f(n)</code></td>
+                                    <td>Estimated total cost through n.</td>
+                                    <td>5 + 3 = 8.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">HEURISTIC OF A PATH</span>
+
+                        <div class="formula-equation">
+                            h(p) = h(last(p))
+                        </div>
+
+                        <p>
+                            Let p = (n₀, n₁, ..., nₖ) be a path.
+                            Its endpoint is nₖ. Therefore, the heuristic
+                            of the path is the heuristic of its final node.
+                        </p>
+
+                    </div>
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">ACTUAL PATH COST</span>
+
+                        <div class="formula-equation">
+                            g(p) = Σ c(nᵢ₋₁, nᵢ)
+                        </div>
+
+                        <p>
+                            The sum is taken over every edge in the path,
+                            from the starting node n₀ to the endpoint nₖ.
+                            Each c(nᵢ₋₁, nᵢ) is the cost of that edge.
+                        </p>
+
+                    </div>
+
+
+                    <div class="important-note">
+                        <span>IMPORTANT DISTINCTION</span>
+                        <p>
+                            g is the cost already incurred.
+                            h is the estimated cost remaining.
+                            f combines the two. A* uses all three
+                            values to rank paths.
+                        </p>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     02. DESIGNING HEURISTICS
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="heuristic-design"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">02</span>
+                        <div>
+                            <p class="section-kicker">HEURISTIC CONSTRUCTION</p>
+                            <h2>How Do We Design a Heuristic?</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        A heuristic estimates how much cost remains
+                        to reach the goal. Its formula depends on
+                        the problem and the actions that are allowed.
+                    </p>
+
+                    <h3>2.1 Straight-line distance</h3>
+
+                    <p>
+                        If nodes represent locations and the cost
+                        is distance travelled, straight-line
+                        distance to the goal can be used as a
+                        heuristic.
+                    </p>
+
+                    <div class="formula-card">
+                        <span class="definition-label">EUCLIDEAN DISTANCE</span>
+                        <div class="formula-main-text">
+                            d = √((x₂ − x₁)² + (y₂ − y₁)²)
+                        </div>
+                        <p>
+                            This is the direct geometric distance
+                            between two points. It can be a lower
+                            bound when the actual route must follow
+                            roads or paths that cannot be shorter
+                            than the direct distance.
+                        </p>
+                    </div>
+
+                    <h3>2.2 Time estimation</h3>
+
+                    <div class="formula-card">
+                        <span class="definition-label">ESTIMATED TRAVEL TIME</span>
+                        <div class="formula-main-text">
+                            h(n) = distance(n, goal) / maximum speed
+                        </div>
+                        <p>
+                            This estimates the minimum possible
+                            travel time when maximum speed is
+                            the upper bound on travel speed.
+                        </p>
+                    </div>
+
+                    <h3>2.3 Using a simpler version of a problem</h3>
+
+                    <p>
+                        A useful heuristic can be obtained by
+                        solving a relaxed version of the original
+                        problem. A relaxed problem removes some
+                        restrictions, making it easier to solve.
+                    </p>
+
+                    <p>
+                        The optimal solution cost of that easier
+                        problem can be used as an estimate for
+                        the original problem.
+                    </p>
+
+                    <div class="important-note">
+                        <span>HEURISTIC DESIGN PRINCIPLE</span>
+                        <p>
+                            A heuristic should be informative
+                            and efficient to calculate. If an
+                            optimality guarantee is required,
+                            it must also satisfy the appropriate
+                            mathematical conditions.
+                        </p>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     03. BEST-FIRST SEARCH
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="best-first"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">03</span>
+                        <div>
+                            <p class="section-kicker">GREEDY PRIORITY</p>
+                            <h2>Best-First Search (Greedy)</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        Best-First Search selects the path whose
+                        endpoint has the smallest heuristic value.
+                        It chooses the path that appears closest
+                        to a goal according to h.
+                    </p>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">GREEDY BEST-FIRST PRIORITY</span>
+
+                        <div class="formula-equation">
+                            Priority(p) = h(last(p))
+                        </div>
+
+                        <p>
+                            Select the path whose endpoint has the smallest
+                            heuristic value. The accumulated path cost g(p)
+                            is not used to determine priority.
+                        </p>
+
+                    </div>
+
+
+                    <h3>3.1 Worked priority example</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Path</th>
+                                    <th>g(path)</th>
+                                    <th>h(endpoint)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>S → A</td>
+                                    <td>5</td>
+                                    <td>3</td>
+                                </tr>
+                                <tr>
+                                    <td>S → B</td>
+                                    <td>3</td>
+                                    <td>2</td>
+                                </tr>
+                                <tr>
+                                    <td>S → C</td>
+                                    <td>2</td>
+                                    <td>3</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        Best-First selects S → B because its
+                        heuristic value is 2, the smallest.
+                        It does not matter that another path
+                        may have a lower cost already paid.
+                    </p>
+
+                    <h3>3.2 What does Best-First ignore?</h3>
+
+                    <p>
+                        Best-First ignores the cost already
+                        incurred when ranking paths. It uses
+                        only the estimated remaining cost.
+                    </p>
+
+                    <div class="example-box">
+                        A path may have a small h-value but
+                        a very large g-value. Best-First may
+                        still select it because it prioritises
+                        h only.
+                    </div>
+
+                    <h3>3.3 Heuristic Depth-First Search</h3>
+
+                    <p>
+                        Heuristic Depth-First Search locally
+                        chooses a neighbour that appears closest
+                        to a goal according to its heuristic.
+                        It then continues with depth-first
+                        exploration.
+                    </p>
+
+                    <div class="formula-card">
+                        <span class="definition-label">LOCAL HEURISTIC CHOICE</span>
+                        <div class="formula-main-text">
+                            Choose neighbour n with minimum h(n)
+                        </div>
+                        <p>
+                            This is different from Best-First
+                            Search, which selects the globally
+                            lowest heuristic value from the
+                            entire frontier.
+                        </p>
+                    </div>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Heuristic DFS</th>
+                                    <th>Best-First</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Chooses a locally promising neighbour.</td>
+                                    <td>Chooses the globally most promising frontier path.</td>
+                                </tr>
+                                <tr>
+                                    <td>Uses depth-first exploration.</td>
+                                    <td>Uses a priority queue ordered by h.</td>
+                                </tr>
+                                <tr>
+                                    <td>Can follow a poor branch deeply.</td>
+                                    <td>Can select another path already waiting in the frontier.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>3.4 Advantages and disadvantages</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Advantages</th>
+                                    <th>Disadvantages</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Uses problem knowledge to guide exploration.</td>
+                                    <td>Can ignore a large cost already paid.</td>
+                                </tr>
+                                <tr>
+                                    <td>May find a goal with fewer expansions.</td>
+                                    <td>Does not guarantee a least-cost solution.</td>
+                                </tr>
+                                <tr>
+                                    <td>Uses a priority queue ordered by h.</td>
+                                    <td>Can be misled by a poor heuristic.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     04. A STAR SEARCH
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="astar"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">04</span>
+                        <div>
+                            <p class="section-kicker">ACTUAL + ESTIMATED COST</p>
+                            <h2>A* Search</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        A* combines Lowest-Cost-First and
+                        Best-First Search. It considers both
+                        the cost already paid and the estimated
+                        cost remaining.
+                    </p>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">A* EVALUATION FUNCTION</span>
+
+                        <div class="formula-equation">
+                            f(p) = g(p) + h(last(p))
+                        </div>
+
+                        <p>
+                            g(p): actual cost of the complete path so far.
+                        </p>
+
+                        <p>
+                            h(last(p)): estimated remaining cost from the
+                            endpoint of the path to a goal.
+                        </p>
+
+                        <p>
+                            f(p): estimated total solution cost through p.
+                        </p>
+
+                    </div>
+
+
+                    <h3>4.1 Calculate an A* priority</h3>
+
+                    <div class="example-box">
+                        Suppose a path to B has cost 3 and
+                        the heuristic at B is 2.
+
+                        <p>g(B) = 3</p>
+                        <p>h(B) = 2</p>
+                        <p>f(B) = 3 + 2 = <strong>5</strong></p>
+                    </div>
+
+                    <h3>4.2 Compare the priority rules</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Algorithm</th>
+                                    <th>Priority formula</th>
+                                    <th>Considers</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Lowest-Cost-First</td>
+                                    <td><code>g(n)</code></td>
+                                    <td>Cost already paid.</td>
+                                </tr>
+                                <tr>
+                                    <td>Best-First</td>
+                                    <td><code>h(n)</code></td>
+                                    <td>Estimated remaining cost.</td>
+                                </tr>
+                                <tr>
+                                    <td>A*</td>
+                                    <td><code>g(n) + h(n)</code></td>
+                                    <td>Actual cost and estimated remaining cost.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>4.3 When does A* test the goal?</h3>
+
+                    <p>
+                        A* tests the goal when a path is removed
+                        from the priority frontier. It must not
+                        stop merely because a goal path has
+                        been generated.
+                    </p>
+
+                    <div class="important-note">
+                        <span>IMPORTANT</span>
+                        <p>
+                            A different path may still be waiting
+                            in the frontier and may lead to a
+                            cheaper goal. The priority ordering
+                            must be respected before terminating.
+                        </p>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     05. INTERACTIVE HEURISTIC SEARCH WORKBENCH
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="heuristic-workbench"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">05</span>
+                        <div>
+                            <p class="section-kicker">INTERACTIVE WORKBENCH</p>
+                            <h2>Compare Best-First and A*</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        Use the graph and heuristic values from
+                        the November 2025 COMP304 worked examination
+                        memo. Start at S and search for E.
+                    </p>
+
+                    <div class="heuristic-workbench">
+
+                        <div class="workbench-heading">
+                            <div>
+                                <h3>Heuristic Search Simulator</h3>
+                                <p>
+                                    Step through the priority frontier
+                                    and inspect every g, h and f value.
+                                </p>
+                            </div>
+
+                            <label class="speed-control">
+                                Speed
+                                <select class="aiv-speed-select"
+                                        id="heuristic-speed">
+                                    <option value="0.5">0.5x</option>
+                                    <option value="1" selected>1x</option>
+                                    <option value="1.5">1.5x</option>
+                                    <option value="2">2x</option>
+                                </select>
+                            </label>
+                        </div>
+
+
+                        <div class="heuristic-controls">
+
+                            <label>
+                                Strategy
+                                <select id="heuristic-strategy">
+                                    <option value="greedy">
+                                        Best-First / Greedy (minimum h)
+                                    </option>
+                                    <option value="astar">
+                                        A* (minimum g + h)
+                                    </option>
+                                </select>
+                            </label>
+
+                            <button type="button"
+                                    id="heuristic-step"
+                                    class="btn primary">
+                                Step Search →
+                            </button>
+
+                            <button type="button"
+                                    id="heuristic-run"
+                                    class="btn secondary">
+                                Run to Goal
+                            </button>
+
+                            <button type="button"
+                                    id="heuristic-reset"
+                                    class="btn danger">
+                                Reset
+                            </button>
+
+                        </div>
+
+
+                        <div class="heuristic-rule"
+                             id="heuristic-rule">
+                            Best-First selects the path with the smallest h-value.
+                        </div>
+
+
+                        <h4>Directed weighted graph and heuristic values</h4>
+
+                        <div class="heuristic-graph-container">
+
+                            <svg class="heuristic-graph"
+                                 viewBox="0 0 760 360"
+                                 id="heuristic-graph"
+                                 role="img"
+                                 aria-label="Directed weighted graph for heuristic search">
+
+                                <defs>
+                                    <marker id="heuristic-arrow"
+                                            viewBox="0 0 10 10"
+                                            refX="9"
+                                            refY="5"
+                                            markerWidth="7"
+                                            markerHeight="7"
+                                            orient="auto">
+                                        <path d="M 0 0 L 10 5 L 0 10 z"
+                                              fill="#94a3b8"></path>
+                                    </marker>
+                                </defs>
+
+                                <g class="heuristic-edges">
+
+                                    <line id="h-edge-S-A"
+                                          x1="72" y1="170"
+                                          x2="222" y2="65"
+                                          marker-end="url(#heuristic-arrow)"></line>
+
+                                    <line id="h-edge-S-B"
+                                          x1="92" y1="180"
+                                          x2="222" y2="180"
+                                          marker-end="url(#heuristic-arrow)"></line>
+
+                                    <line id="h-edge-S-C"
+                                          x1="72" y1="195"
+                                          x2="222" y2="285"
+                                          marker-end="url(#heuristic-arrow)"></line>
+
+                                    <line id="h-edge-A-D"
+                                          x1="265" y1="65"
+                                          x2="465" y2="85"
+                                          marker-end="url(#heuristic-arrow)"></line>
+
+                                    <line id="h-edge-B-D"
+                                          x1="265" y1="170"
+                                          x2="465" y2="90"
+                                          marker-end="url(#heuristic-arrow)"></line>
+
+                                    <line id="h-edge-B-E"
+                                          x1="270" y1="180"
+                                          x2="650" y2="180"
+                                          marker-end="url(#heuristic-arrow)"></line>
+
+                                    <line id="h-edge-C-B"
+                                          x1="245" y1="260"
+                                          x2="245" y2="205"
+                                          marker-end="url(#heuristic-arrow)"></line>
+
+                                    <line id="h-edge-C-F"
+                                          x1="265" y1="290"
+                                          x2="465" y2="290"
+                                          marker-end="url(#heuristic-arrow)"></line>
+
+                                </g>
+
+
+                                <g class="heuristic-edge-costs">
+                                    <text x="140" y="95">5</text>
+                                    <text x="145" y="160">3</text>
+                                    <text x="140" y="260">2</text>
+                                    <text x="365" y="57">6</text>
+                                    <text x="365" y="118">7</text>
+                                    <text x="465" y="165">4</text>
+                                    <text x="265" y="235">3</text>
+                                    <text x="365" y="312">8</text>
+                                </g>
+
+
+                                <g class="heuristic-nodes">
+
+                                    <g class="heuristic-node" id="h-node-S">
+                                        <circle cx="55" cy="180" r="24"></circle>
+                                        <text class="node-name" x="55" y="185">S</text>
+                                        <text class="node-h" x="55" y="145">h=5</text>
+                                    </g>
+
+                                    <g class="heuristic-node" id="h-node-A">
+                                        <circle cx="245" cy="65" r="24"></circle>
+                                        <text class="node-name" x="245" y="70">A</text>
+                                        <text class="node-h" x="245" y="30">h=3</text>
+                                    </g>
+
+                                    <g class="heuristic-node" id="h-node-B">
+                                        <circle cx="245" cy="180" r="24"></circle>
+                                        <text class="node-name" x="245" y="185">B</text>
+                                        <text class="node-h" x="245" y="145">h=2</text>
+                                    </g>
+
+                                    <g class="heuristic-node" id="h-node-C">
+                                        <circle cx="245" cy="290" r="24"></circle>
+                                        <text class="node-name" x="245" y="295">C</text>
+                                        <text class="node-h" x="245" y="330">h=3</text>
+                                    </g>
+
+                                    <g class="heuristic-node" id="h-node-D">
+                                        <circle cx="490" cy="80" r="24"></circle>
+                                        <text class="node-name" x="490" y="85">D</text>
+                                        <text class="node-h" x="490" y="45">h=3</text>
+                                    </g>
+
+                                    <g class="heuristic-node goal-node" id="h-node-E">
+                                        <circle cx="675" cy="180" r="24"></circle>
+                                        <text class="node-name" x="675" y="185">E</text>
+                                        <text class="node-h" x="675" y="145">h=0</text>
+                                    </g>
+
+                                    <g class="heuristic-node" id="h-node-F">
+                                        <circle cx="490" cy="290" r="24"></circle>
+                                        <text class="node-name" x="490" y="295">F</text>
+                                        <text class="node-h" x="490" y="330">h=2</text>
+                                    </g>
+
+                                </g>
+
+                            </svg>
+
+                        </div>
+
+
+                        <div class="graph-legend">
+                            <span><i class="legend-frontier"></i> In frontier</span>
+                            <span><i class="legend-expanded"></i> Expanded</span>
+                            <span><i class="legend-solution"></i> Solution path</span>
+                        </div>
+
+
+                        <div class="heuristic-formula-readout">
+
+                            <div>
+                                <span>PATH COST (g)</span>
+                                <strong id="current-g">—</strong>
+                            </div>
+
+                            <div>
+                                <span>HEURISTIC (h)</span>
+                                <strong id="current-h">—</strong>
+                            </div>
+
+                            <div>
+                                <span>EVALUATION (f)</span>
+                                <strong id="current-f">—</strong>
+                            </div>
+
+                            <div>
+                                <span>PRIORITY USED</span>
+                                <strong id="current-priority">—</strong>
+                            </div>
+
+                        </div>
+
+
+                        <div class="heuristic-frontier-panel">
+
+                            <div class="workbench-subheading">
+                                <h4>Priority Frontier</h4>
+                                <span id="heuristic-frontier-count">1 path</span>
+                            </div>
+
+                            <p id="heuristic-frontier-hint">
+                                Lowest h-value is selected first.
+                            </p>
+
+                            <div id="heuristic-frontier"
+                                 class="heuristic-frontier"></div>
+
+                        </div>
+
+
+                        <div class="heuristic-expanded-panel">
+                            <h4>Path Selection Order</h4>
+
+                            <div id="heuristic-expanded-order"
+                                 class="heuristic-expanded-order">
+                                <span class="muted-placeholder">
+                                    Search has not started.
+                                </span>
+                            </div>
+                        </div>
+
+
+                        <div id="heuristic-status"
+                             class="status-banner"
+                             aria-live="polite">
+                            Ready. Select Step Search to begin.
+                        </div>
+
+
+                        <div class="workbench-subheading">
+                            <h4>Step-by-Step Priority Calculation</h4>
+                            <span id="heuristic-log-count">0 steps</span>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="learning-comparison heuristic-log-table">
+                                <thead>
+                                    <tr>
+                                        <th>Step</th>
+                                        <th>Path popped</th>
+                                        <th>g</th>
+                                        <th>h</th>
+                                        <th>f = g + h</th>
+                                        <th>Priority</th>
+                                        <th>New paths generated</th>
+                                        <th>Frontier size</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="heuristic-log-body">
+                                    <tr>
+                                        <td colspan="8">Search has not started.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                        <div class="search-result"
+                             id="heuristic-result"
+                             hidden>
+                            <h4>Search Result</h4>
+                            <p id="heuristic-result-path"></p>
+                            <p id="heuristic-result-cost"></p>
+                            <p id="heuristic-result-expanded"></p>
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     06. WORKED A* TRACE
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="worked-trace"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">06</span>
+                        <div>
+                            <p class="section-kicker">NOVEMBER 2025 EXAM MEMO</p>
+                            <h2>Complete A* Worked Trace</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        This example uses the directed graph and
+                        heuristic values in the November 2025
+                        COMP304 worked examination memo.
+                    </p>
+
+                    <h3>6.1 Given heuristic values</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Node</th>
+                                    <th>h(n)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>S</td><td>5</td></tr>
+                                <tr><td>A</td><td>3</td></tr>
+                                <tr><td>B</td><td>2</td></tr>
+                                <tr><td>C</td><td>3</td></tr>
+                                <tr><td>D</td><td>3</td></tr>
+                                <tr><td>E</td><td>0</td></tr>
+                                <tr><td>F</td><td>2</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>Start = S. Goal = E.</p>
+
+                    <h3>6.2 Step 1 — Start at S</h3>
+
+                    <div class="example-box">
+                        g(S) = 0
+
+                        <p>h(S) = 5</p>
+                        <p>f(S) = 0 + 5 = <strong>5</strong></p>
+                    </div>
+
+                    <p>
+                        Remove S and generate paths to A, B and C.
+                    </p>
+
+                    <h3>6.3 Step 2 — Calculate successors of S</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Path</th>
+                                    <th>g</th>
+                                    <th>h</th>
+                                    <th>f = g + h</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>S → A</td><td>5</td><td>3</td><td>8</td></tr>
+                                <tr><td>S → B</td><td>3</td><td>2</td><td>5</td></tr>
+                                <tr><td>S → C</td><td>2</td><td>3</td><td>5</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        S → B and S → C have equal f-values.
+                        This worked example uses alphabetical
+                        path ordering for ties, so S → B is
+                        selected first.
+                    </p>
+
+                    <h3>6.4 Step 3 — Expand S → B</h3>
+
+                    <p>
+                        The current path cost is 3.
+                        Its successors are D and E.
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>New path</th>
+                                    <th>g calculation</th>
+                                    <th>h</th>
+                                    <th>f</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>S → B → E</td>
+                                    <td>3 + 4 = 7</td>
+                                    <td>0</td>
+                                    <td>7</td>
+                                </tr>
+                                <tr>
+                                    <td>S → B → D</td>
+                                    <td>3 + 7 = 10</td>
+                                    <td>3</td>
+                                    <td>13</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>6.5 Step 4 — Expand S → C</h3>
+
+                    <p>
+                        S → C has g = 2. Its successors
+                        are B and F.
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>New path</th>
+                                    <th>g calculation</th>
+                                    <th>h</th>
+                                    <th>f</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>S → C → B</td>
+                                    <td>2 + 3 = 5</td>
+                                    <td>2</td>
+                                    <td>7</td>
+                                </tr>
+                                <tr>
+                                    <td>S → C → F</td>
+                                    <td>2 + 8 = 10</td>
+                                    <td>2</td>
+                                    <td>12</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        The frontier now contains two paths
+                        with f = 7: S → B → E and S → C → B.
+                        Alphabetical path ordering selects
+                        S → B → E first.
+                    </p>
+
+                    <h3>6.6 Step 5 — Remove S → B → E</h3>
+
+                    <p>
+                        The endpoint is E, which is the goal.
+                        The search stops and returns this path.
+                    </p>
+
+                    <div class="example-box">
+                        <strong>Final result</strong>
+                        <p>Path: S → B → E</p>
+                        <p>Cost: 3 + 4 = <strong>7</strong></p>
+                        <p>Paths popped: <strong>4</strong></p>
+                    </div>
+
+                    <h3>6.7 Full frontier trace</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Step</th>
+                                    <th>Frontier after expansion</th>
+                                    <th>Next selected</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>S: f=5</td>
+                                    <td>S</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>S→B: 5; S→C: 5; S→A: 8</td>
+                                    <td>S→B</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>S→C: 5; S→B→E: 7; S→A: 8; S→B→D: 13</td>
+                                    <td>S→C</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>S→B→E: 7; S→C→B: 7; S→A: 8; S→C→F: 12; S→B→D: 13</td>
+                                    <td>S→B→E</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="important-note">
+                        <span>EXAM METHOD</span>
+                        <p>
+                            Calculate g first, look up h at
+                            the endpoint, then calculate f.
+                            Sort the frontier using f and apply
+                            the specified tie-breaking rule.
+                        </p>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     07. ADMISSIBILITY
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="admissibility"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">07</span>
+                        <div>
+                            <p class="section-kicker">OPTIMALITY GUARANTEE</p>
+                            <h2>Admissible Heuristics</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        A heuristic is admissible when it never
+                        overestimates the true minimum remaining
+                        cost to a goal.
+                    </p>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">ADMISSIBILITY CONDITION</span>
+
+                        <div class="formula-equation">
+                            0 ≤ h(n) ≤ h*(n)
+                        </div>
+
+                        <p>
+                            h(n) is the heuristic estimate from node n.
+                            h*(n) is the true minimum cost from n to
+                            the nearest goal.
+                        </p>
+
+                        <p>
+                            An admissible heuristic never overestimates
+                            the true minimum remaining cost.
+                        </p>
+
+                    </div>
+
+
+                    <h3>7.1 Worked example</h3>
+
+                    <p>
+                        Suppose the true minimum remaining cost
+                        from X to the goal is 14.
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>h(X)</th>
+                                    <th>True cost</th>
+                                    <th>Admissible?</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>10</td><td>14</td><td>Yes</td></tr>
+                                <tr><td>14</td><td>14</td><td>Yes</td></tr>
+                                <tr><td>16</td><td>14</td><td>No — overestimates</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>7.2 A* optimality conditions</h3>
+
+                    <p>
+                        The lecture's stated conditions for
+                        A* to find an optimal solution when
+                        one exists are:
+                    </p>
+
+                    <ol>
+                        <li>The branching factor is finite.</li>
+                        <li>Arc costs are bounded above zero.</li>
+                        <li>The heuristic is nonnegative and underestimates the true least cost to a goal.</li>
+                    </ol>
+
+                    <h3>7.3 Why does admissibility help A*?</h3>
+
+                    <p>
+                        When a goal path is removed from the
+                        priority frontier, its heuristic value
+                        is zero. Its f-value is therefore its
+                        actual path cost.
+                    </p>
+
+                    <div class="formula-card">
+                        <div class="formula-main-text">
+                            h(goal) = 0
+                        </div>
+                        <div class="formula-main-text">
+                            f(goal) = g(goal)
+                        </div>
+                    </div>
+
+                    <p>
+                        Any unexplored path with a lower
+                        possible solution cost would need
+                        an f-value smaller than the selected
+                        goal's cost. A* would have selected
+                        that path first. Admissibility ensures
+                        the estimate does not hide a cheaper
+                        solution behind an overestimate.
+                    </p>
+
+                </section>
+
+
+                <!-- =================================================
+                     08. CONSISTENCY
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="consistency"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">08</span>
+                        <div>
+                            <p class="section-kicker">HEURISTIC PROPERTY</p>
+                            <h2>Consistent Heuristics</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        Consistency compares the heuristic at
+                        one node with the cost of moving to
+                        a neighbour and the neighbour's
+                        heuristic estimate.
+                    </p>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">CONSISTENCY CONDITION</span>
+
+                        <div class="formula-equation">
+                            h(n) ≤ c(n,n') + h(n')
+                        </div>
+
+                        <p>
+                            For every edge from n to n', the estimated
+                            cost from n must not exceed the cost of
+                            travelling to n' plus the heuristic estimate
+                            from n'.
+                        </p>
+
+                    </div>
+
+
+                    <h3>8.1 Worked example: S → B</h3>
+
+                    <ul>
+                        <li>h(S) = 5</li>
+                        <li>Cost(S,B) = 3</li>
+                        <li>h(B) = 2</li>
+                    </ul>
+
+                    <div class="example-box">
+                        5 ≤ 3 + 2
+
+                        <p><strong>5 ≤ 5 is True.</strong></p>
+                    </div>
+
+                    <h3>8.2 Verify the exam graph</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Edge</th>
+                                    <th>h(n)</th>
+                                    <th>Cost + h(n')</th>
+                                    <th>Consistent?</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>S → A</td><td>5</td><td>5 + 3 = 8</td><td>Yes</td></tr>
+                                <tr><td>S → B</td><td>5</td><td>3 + 2 = 5</td><td>Yes</td></tr>
+                                <tr><td>S → C</td><td>5</td><td>2 + 3 = 5</td><td>Yes</td></tr>
+                                <tr><td>A → D</td><td>3</td><td>6 + 3 = 9</td><td>Yes</td></tr>
+                                <tr><td>B → D</td><td>2</td><td>7 + 3 = 10</td><td>Yes</td></tr>
+                                <tr><td>B → E</td><td>2</td><td>4 + 0 = 4</td><td>Yes</td></tr>
+                                <tr><td>C → B</td><td>3</td><td>3 + 2 = 5</td><td>Yes</td></tr>
+                                <tr><td>C → F</td><td>3</td><td>8 + 2 = 10</td><td>Yes</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>8.3 Admissible versus consistent</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Admissible</th>
+                                    <th>Consistent</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Compares h with the true least remaining cost.</td>
+                                    <td>Compares h at a node with every outgoing edge and neighbour estimate.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>h(n) ≤ h*(n)</code></td>
+                                    <td><code>h(n) ≤ c(n,n') + h(n')</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Does not overestimate.</td>
+                                    <td>Respects the local transition-cost inequality.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="important-note">
+                        <span>EXAM DISTINCTION</span>
+                        <p>
+                            Do not prove consistency by checking
+                            only the true solution cost. Check
+                            every edge using the consistency
+                            formula. With nonnegative costs and
+                            zero heuristic at goal states,
+                            consistency implies admissibility.
+                        </p>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     09. 8 PUZZLE HEURISTICS
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="puzzle-heuristic"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">09</span>
+                        <div>
+                            <p class="section-kicker">IMPORTANT HEURISTICS</p>
+                            <h2>8-Puzzle: Misplaced Tiles and Manhattan Distance</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        The 8-puzzle is a sliding-tile problem.
+                        A state contains eight numbered tiles
+                        and one blank. A move slides one tile
+                        horizontally or vertically into the blank.
+                    </p>
+
+                    <h3>9.1 The goal state</h3>
+
+                    <div class="puzzle-board" id="puzzle-goal-board">
+                        <div>0</div><div>1</div><div>2</div>
+                        <div>3</div><div>4</div><div>5</div>
+                        <div>6</div><div>7</div><div>8</div>
+                    </div>
+
+                    <p>
+                        The goal state used in the textbook's
+                        example is:
+                    </p>
+
+                    <code>(0, 1, 2, 3, 4, 5, 6, 7, 8)</code>
+
+                    <h3>9.2 Heuristic 1 — Misplaced tiles</h3>
+
+                    <div class="formula-card">
+                        <span class="definition-label">MISPLACED TILES</span>
+                        <div class="formula-main-text">
+                            h₁(n) = number of misplaced numbered tiles
+                        </div>
+                        <p>
+                            Compare each numbered tile with its
+                            goal position. Count a tile when it
+                            is not in the correct position.
+                            Do not count the blank.
+                        </p>
+                    </div>
+
+                    <p>
+                        This heuristic is admissible because
+                        every misplaced numbered tile must
+                        move at least once to reach its goal.
+                    </p>
+
+                    <h3>9.3 Heuristic 2 — Manhattan distance</h3>
+
+                    <p>
+                        Manhattan distance, also called
+                        city-block distance, measures how
+                        far a tile is from its goal using
+                        horizontal and vertical movements.
+                        Diagonal movements are not counted.
+                    </p>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">
+                            HEURISTIC 1 — MISPLACED TILES
+                        </span>
+
+                        <div class="formula-equation">
+                            h₁(s) = Number of misplaced numbered tiles
+                        </div>
+
+                        <p>
+                            Compare the current position of every numbered
+                            tile with its goal position. Add one for every
+                            tile that is not in the correct position.
+                            Do not include the blank tile (0).
+                        </p>
+
+                    </div>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">
+                            HEURISTIC 2 — MANHATTAN DISTANCE
+                        </span>
+
+                        <div class="formula-equation">
+                            d(t) = |r<sub>s</sub>(t) − r<sub>g</sub>(t)|
+                            + |c<sub>s</sub>(t) − c<sub>g</sub>(t)|
+                        </div>
+
+                        <div class="formula-equation">
+                            h₂(s) = Σ<sub>t = 1</sub><sup>8</sup> d(t)
+                        </div>
+
+                        <p>
+                            rₛ(t): current row of tile t.
+                            rᵍ(t): goal row of tile t.
+                        </p>
+
+                        <p>
+                            cₛ(t): current column of tile t.
+                            cᵍ(t): goal column of tile t.
+                        </p>
+
+                        <p>
+                            Calculate each numbered tile's horizontal
+                            and vertical distance, then add all eight
+                            distances. Exclude the blank tile.
+                        </p>
+
+                    </div>
+
+
+                    <h3>9.4 Textbook worked example</h3>
+
+                    <p>
+                        The following example is Figure 3.25
+                        in Chapter 3 of your uploaded AI textbook.
+                    </p>
+
+                    <div class="puzzle-comparison">
+
+                        <div>
+                            <strong>Start state</strong>
+                            <div class="puzzle-board">
+                                <div>7</div><div>2</div><div>4</div>
+                                <div>5</div><div class="blank">0</div><div>6</div>
+                                <div>8</div><div>3</div><div>1</div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <strong>Goal state</strong>
+                            <div class="puzzle-board">
+                                <div class="blank">0</div><div>1</div><div>2</div>
+                                <div>3</div><div>4</div><div>5</div>
+                                <div>6</div><div>7</div><div>8</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <h3>9.5 Calculate every tile's Manhattan distance</h3>
+
+                    <p>
+                        Use zero-based coordinates: the top-left
+                        cell is (0,0). Calculate the horizontal
+                        and vertical difference for each tile.
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Tile</th>
+                                    <th>Current position</th>
+                                    <th>Goal position</th>
+                                    <th>Calculation</th>
+                                    <th>Distance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1</td><td>(2,2)</td><td>(0,1)</td><td>2 + 1</td><td>3</td></tr>
+                                <tr><td>2</td><td>(0,1)</td><td>(0,2)</td><td>0 + 1</td><td>1</td></tr>
+                                <tr><td>3</td><td>(2,1)</td><td>(1,0)</td><td>1 + 1</td><td>2</td></tr>
+                                <tr><td>4</td><td>(0,2)</td><td>(1,1)</td><td>1 + 1</td><td>2</td></tr>
+                                <tr><td>5</td><td>(1,0)</td><td>(1,2)</td><td>0 + 2</td><td>2</td></tr>
+                                <tr><td>6</td><td>(1,2)</td><td>(2,0)</td><td>1 + 2</td><td>3</td></tr>
+                                <tr><td>7</td><td>(0,0)</td><td>(2,1)</td><td>2 + 1</td><td>3</td></tr>
+                                <tr><td>8</td><td>(2,0)</td><td>(2,2)</td><td>0 + 2</td><td>2</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="formula-card">
+                        <span class="definition-label">TOTAL MANHATTAN DISTANCE</span>
+                        <div class="formula-main-text">
+                            h₂(n) = 3 + 1 + 2 + 2 + 2 + 3 + 3 + 2
+                        </div>
+                        <div class="formula-main-text">
+                            h₂(n) = 18
+                        </div>
+                        <p>
+                            The textbook gives the optimal
+                            solution cost as 26 moves.
+                        </p>
+                    </div>
+
+                    <h3>9.6 Why is Manhattan distance admissible?</h3>
+
+                    <ol>
+                        <li>Every numbered tile must reach its correct goal position.</li>
+                        <li>A legal move moves only one numbered tile by one square.</li>
+                        <li>Manhattan distance calculates the minimum horizontal and vertical movements required by each tile, ignoring interference from other tiles.</li>
+                        <li>Therefore, the sum cannot exceed the actual number of moves required.</li>
+                    </ol>
+
+                    <div class="important-note">
+                        <span>DO NOT COUNT THE BLANK</span>
+                        <p>
+                            The blank tile is not included in
+                            misplaced-tile or Manhattan-distance
+                            calculations. Counting the blank
+                            could overestimate the remaining
+                            number of moves.
+                        </p>
+                    </div>
+
+
+                    <!-- MANHATTAN CALCULATOR -->
+
+                    <h3>9.7 Interactive heuristic calculator</h3>
+
+                    <p>
+                        Enter a start state and a goal state.
+                        The calculator will calculate both
+                        heuristics and show the contribution
+                        of each tile.
+                    </p>
+
+                    <div class="manhattan-calculator">
+
+                        <div class="manhattan-inputs">
+
+                            <label for="manhattan-start">
+                                Start state — nine values
+                            </label>
+
+                            <input id="manhattan-start"
+                                   type="text"
+                                   value="7,2,4,5,0,6,8,3,1"
+                                   placeholder="7,2,4,5,0,6,8,3,1" />
+
+                            <label for="manhattan-goal">
+                                Goal state — nine values
+                            </label>
+
+                            <input id="manhattan-goal"
+                                   type="text"
+                                   value="0,1,2,3,4,5,6,7,8"
+                                   placeholder="0,1,2,3,4,5,6,7,8" />
+
+                            <button type="button"
+                                    class="btn primary"
+                                    id="calculate-manhattan">
+                                Calculate Heuristics
+                            </button>
+
+                            <p id="manhattan-error"
+                               class="manhattan-error"
+                               role="alert"></p>
+
+                        </div>
+
+
+                        <div class="manhattan-results">
+
+                            <div>
+                                <span>MISPLACED TILES (h₁)</span>
+                                <strong id="manhattan-h1">8</strong>
+                            </div>
+
+                            <div>
+                                <span>MANHATTAN DISTANCE (h₂)</span>
+                                <strong id="manhattan-h2">18</strong>
+                            </div>
+
+                        </div>
+
+
+                        <div class="puzzle-comparison">
+
+                            <div>
+                                <strong>Entered start state</strong>
+                                <div id="manhattan-start-board"
+                                     class="puzzle-board"></div>
+                            </div>
+
+                            <div>
+                                <strong>Entered goal state</strong>
+                                <div id="manhattan-goal-board"
+                                     class="puzzle-board"></div>
+                            </div>
+
+                        </div>
+
+
+                        <h4>Individual tile calculations</h4>
+
+                        <div class="table-responsive">
+                            <table class="learning-comparison">
+                                <thead>
+                                    <tr>
+                                        <th>Tile</th>
+                                        <th>Current position</th>
+                                        <th>Goal position</th>
+                                        <th>Distance</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="manhattan-tile-results">
+                                    <tr>
+                                        <td colspan="4">
+                                            Calculate to view the tile distances.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <p id="manhattan-explanation"
+                           class="manhattan-explanation"
+                           aria-live="polite">
+                            The calculator excludes the blank tile.
+                        </p>
+
+                    </div>
+
+
+                    <h3>9.8 Compare the two heuristics</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th>Misplaced tiles h₁</th>
+                                    <th>Manhattan distance h₂</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Calculation</td>
+                                    <td>Count incorrectly positioned numbered tiles.</td>
+                                    <td>Sum horizontal and vertical distances.</td>
+                                </tr>
+                                <tr>
+                                    <td>Blank</td>
+                                    <td>Excluded.</td>
+                                    <td>Excluded.</td>
+                                </tr>
+                                <tr>
+                                    <td>Admissible?</td>
+                                    <td>Yes.</td>
+                                    <td>Yes.</td>
+                                </tr>
+                                <tr>
+                                    <td>Information</td>
+                                    <td>Less detailed.</td>
+                                    <td>More detailed distance estimate.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="formula-card">
+                        <span class="definition-label">HEURISTIC DOMINANCE</span>
+                        <div class="formula-main-text">
+                            h₂(n) ≥ h₁(n)
+                        </div>
+                        <p>
+                            For the 8-puzzle, Manhattan distance
+                            dominates misplaced tiles because
+                            every misplaced tile contributes
+                            at least one square to Manhattan
+                            distance. A* with h₂ generally
+                            expands fewer nodes, apart from
+                            possible tie-breaking differences.
+                        </p>
+                    </div>
+
+
+                    <h3>9.9 Other problems solved using Manhattan distance</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Problem</th>
+                                    <th>How it is used</th>
+                                    <th>Movement assumption</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>8-puzzle / 15-puzzle</td>
+                                    <td>Estimate tile moves to goal positions.</td>
+                                    <td>Horizontal and vertical.</td>
+                                </tr>
+                                <tr>
+                                    <td>Grid pathfinding</td>
+                                    <td>Estimate remaining distance to destination.</td>
+                                    <td>Up, down, left and right.</td>
+                                </tr>
+                                <tr>
+                                    <td>Robot navigation</td>
+                                    <td>Estimate required grid movements.</td>
+                                    <td>Orthogonal movement.</td>
+                                </tr>
+                                <tr>
+                                    <td>Warehouse routing</td>
+                                    <td>Estimate movement between storage cells.</td>
+                                    <td>Grid aisles.</td>
+                                </tr>
+                                <tr>
+                                    <td>City-block navigation</td>
+                                    <td>Estimate distance between street intersections.</td>
+                                    <td>Street-grid movement.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>9.10 When should Manhattan distance not be used?</h3>
+
+                    <p>
+                        Manhattan distance assumes horizontal
+                        and vertical movement. If the problem
+                        allows diagonal moves, the appropriate
+                        heuristic may be different.
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Movement model</th>
+                                    <th>Possible distance heuristic</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Horizontal and vertical only</td>
+                                    <td>Manhattan distance</td>
+                                </tr>
+                                <tr>
+                                    <td>Diagonal moves cost the same as straight moves</td>
+                                    <td>Chebyshev distance</td>
+                                </tr>
+                                <tr>
+                                    <td>Diagonal moves cost √2 times a straight move</td>
+                                    <td>Octile distance</td>
+                                </tr>
+                                <tr>
+                                    <td>Unrestricted 2D straight-line movement</td>
+                                    <td>Euclidean distance</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="exam-note">
+                        Manhattan distance is suitable for the
+                        standard 8-puzzle because tiles move
+                        horizontally and vertically into the
+                        adjacent blank square. It remains a
+                        lower bound in grid problems with
+                        obstacles when each orthogonal move
+                        has unit cost.
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     10. PYTHON IMPLEMENTATION
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="python"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">10</span>
+                        <div>
+                            <p class="section-kicker">PYTHON PROGRAMMING</p>
+                            <h2>Implementing Heuristics and A*</h2>
+                        </div>
+                    </div>
+
+                    <h3>10.1 Misplaced tiles heuristic</h3>
+
+                    <div class="python-code-card">
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>h₁ — MISPLACED TILES</span>
+                        </div>
+
+<pre><code>def misplaced_tiles(self, node):
+
+    misplaced = 0
+
+    for index, tile in enumerate(node):
+
+        # Ignore the blank
+        if tile == 0:
+            continue
+
+        if tile != self.goal[index]:
+            misplaced += 1
+
+    return misplaced</code></pre>
+                    </div>
+
+                    <h3>10.2 Manhattan distance heuristic</h3>
+
+                    <div class="python-code-card">
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>h₂ — MANHATTAN DISTANCE</span>
+                        </div>
+
+<pre><code>def manhattan_distance(self, node):
+
+    total = 0
+
+    for current_index, tile in enumerate(node):
+
+        # Ignore the blank
+        if tile == 0:
+            continue
+
+        # Current row and column
+        current_row, current_col = divmod(
+            current_index, self.size
+        )
+
+        # Find the tile's goal position
+        goal_index = self.goal.index(tile)
+
+        goal_row, goal_col = divmod(
+            goal_index, self.size
+        )
+
+        # Manhattan distance
+        distance = (
+            abs(current_row - goal_row)
+            +
+            abs(current_col - goal_col)
+        )
+
+        total += distance
+
+    return total</code></pre>
+                    </div>
+
+                    <h3>10.3 A* evaluation function</h3>
+
+                    <div class="python-code-card">
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>f = g + h</span>
+                        </div>
+
+<pre><code>def a_star_priority(path, problem):
+
+    g = path.cost
+
+    h = problem.heuristic(path.end())
+
+    f = g + h
+
+    return f</code></pre>
+                    </div>
+
+                    <h3>10.4 Best-First versus A* priority</h3>
+
+                    <div class="python-code-card">
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>PRIORITY RULES</span>
+                        </div>
+
+<pre><code>def greedy_priority(path, problem):
+
+    return problem.heuristic(path.end())
+
+
+def a_star_priority(path, problem):
+
+    return (
+        path.cost
+        +
+        problem.heuristic(path.end())
+    )
+
+
+def lowest_cost_priority(path):
+
+    return path.cost</code></pre>
+                    </div>
+
+                    <h3>10.5 Complete graph search demonstration</h3>
+
+                    <p>
+                        This self-contained Python example
+                        demonstrates the priority rules using
+                        the graph from the interactive workbench.
+                    </p>
+
+                    <div class="python-code-card">
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>GREEDY AND A* SEARCH</span>
+                        </div>
+
+<pre><code>import heapq
+from itertools import count
+
+
+GRAPH = {
+
+    "S": [("A", 5), ("B", 3), ("C", 2)],
+
+    "A": [("D", 6)],
+
+    "B": [("D", 7), ("E", 4)],
+
+    "C": [("B", 3), ("F", 8)],
+
+    "D": [],
+
+    "E": [],
+
+    "F": []
+
+}
+
+
+H = {
+
+    "S": 5,
+    "A": 3,
+    "B": 2,
+    "C": 3,
+    "D": 3,
+    "E": 0,
+    "F": 2
+
+}
+
+
+def priority(path, strategy):
+
+    nodes, cost = path
+
+    node = nodes[-1]
+
+    h = H[node]
+
+    if strategy == "greedy":
+        return h
+
+    if strategy == "astar":
+        return cost + h
+
+    raise ValueError("Unknown strategy")
+
+
+def search(strategy):
+
+    frontier = []
+
+    order = count()
+
+    start_path = (["S"], 0)
+
+    heapq.heappush(
+        frontier,
+        (
+            priority(start_path, strategy),
+            tuple(start_path[0]),
+            next(order),
+            start_path
+        )
+    )
+
+    paths_popped = 0
+
+
+    while frontier:
+
+        value, path_name, sequence, path = (
+            heapq.heappop(frontier)
+        )
+
+        nodes, cost = path
+
+        node = nodes[-1]
+
+        paths_popped += 1
+
+
+        # Test the goal after popping.
+        if node == "E":
+
+            return {
+                "path": nodes,
+                "cost": cost,
+                "paths_popped": paths_popped
+            }
+
+
+        # Generate successors.
+        for neighbour, arc_cost in GRAPH[node]:
+
+            new_nodes = nodes + [neighbour]
+
+            new_cost = cost + arc_cost
+
+            new_path = (new_nodes, new_cost)
+
+            new_priority = priority(
+                new_path,
+                strategy
+            )
+
+            # Alphabetical path ordering breaks ties.
+            heapq.heappush(
+                frontier,
+                (
+                    new_priority,
+                    tuple(new_nodes),
+                    next(order),
+                    new_path
+                )
+            )
+
+
+    return None
+
+
+greedy_result = search("greedy")
+
+astar_result = search("astar")
+
+
+print("Best-First:")
+print(greedy_result)
+
+print()
+
+print("A*:")
+print(astar_result)</code></pre>
+                    </div>
+
+                    <h3>10.6 Expected output</h3>
+
+                    <div class="python-code-card">
+<pre><code>Best-First:
+{
+    'path': ['S', 'B', 'E'],
+    'cost': 7,
+    'paths_popped': 3
+}
+
+A*:
+{
+    'path': ['S', 'B', 'E'],
+    'cost': 7,
+    'paths_popped': 4
+}</code></pre>
+                    </div>
+
+                    <div class="important-note">
+                        <span>IMPLEMENTATION NOTE</span>
+                        <p>
+                            This example uses Python heapq and
+                            alphabetical path ordering to make
+                            the priority policy explicit. It is
+                            a self-contained teaching implementation,
+                            not a replacement for the complete
+                            aipython library used in the lecture.
+                        </p>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     11. EXAMINATION PRACTICE
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="practice"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">11</span>
+                        <div>
+                            <p class="section-kicker">EXAMINATION PRACTICE</p>
+                            <h2>Heuristic Search Questions</h2>
+                        </div>
+                    </div>
+
+                    <h3>Question 1 — Calculate A* priorities</h3>
+
+                    <p>Given:</p>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr>
+                                    <th>Path</th>
+                                    <th>g</th>
+                                    <th>h</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>S → A</td><td>4</td><td>7</td></tr>
+                                <tr><td>S → B</td><td>5</td><td>3</td></tr>
+                                <tr><td>S → C</td><td>2</td><td>8</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        Calculate f for every path and identify
+                        the path A* selects.
+                    </p>
+
+                    <details>
+                        <summary>Show worked solution</summary>
+                        <p>S→A: 4 + 7 = 11.</p>
+                        <p>S→B: 5 + 3 = 8.</p>
+                        <p>S→C: 2 + 8 = 10.</p>
+                        <p>A* selects S→B because f = 8 is smallest.</p>
+                    </details>
+
+
+                    <h3>Question 2 — Identify the strategy</h3>
+
+                    <p>
+                        An algorithm selects the path with the
+                        smallest heuristic value without
+                        considering the cost already incurred.
+                        Identify the strategy and formula.
+                    </p>
+
+                    <details>
+                        <summary>Show suggested answer</summary>
+                        <p>Best-First / Greedy Search.</p>
+                        <p><code>Priority(path) = h(endpoint(path))</code>.</p>
+                    </details>
+
+
+                    <h3>Question 3 — Admissibility</h3>
+
+                    <p>
+                        The true minimum remaining cost from X
+                        to a goal is 14. Evaluate the following
+                        heuristic estimates.
+                    </p>
+
+                    <ol>
+                        <li>h(X) = 10</li>
+                        <li>h(X) = 14</li>
+                        <li>h(X) = 16</li>
+                    </ol>
+
+                    <details>
+                        <summary>Show suggested answer</summary>
+                        <p>10: admissible because 10 ≤ 14.</p>
+                        <p>14: admissible because 14 = 14.</p>
+                        <p>16: not admissible because it overestimates.</p>
+                    </details>
+
+
+                    <h3>Question 4 — Consistency</h3>
+
+                    <p>
+                        An edge connects P to Q with cost 4.
+                        Given h(P) = 9 and h(Q) = 5,
+                        determine whether consistency is satisfied.
+                    </p>
+
+                    <details>
+                        <summary>Show worked solution</summary>
+                        <p>Required: h(P) ≤ cost(P,Q) + h(Q).</p>
+                        <p>9 ≤ 4 + 5.</p>
+                        <p>9 ≤ 9 is True.</p>
+                    </details>
+
+
+                    <h3>Question 5 — Misplaced tiles</h3>
+
+                    <p>
+                        The current state is
+                        <code>(1,2,3,4,0,6,7,5,8)</code>.
+                        The goal is
+                        <code>(1,2,3,4,5,6,7,8,0)</code>.
+                        Calculate h₁.
+                    </p>
+
+                    <details>
+                        <summary>Show worked solution</summary>
+                        <p>Tile 5 is misplaced.</p>
+                        <p>Tile 8 is misplaced.</p>
+                        <p>The blank is excluded.</p>
+                        <p><strong>h₁ = 2.</strong></p>
+                    </details>
+
+
+                    <h3>Question 6 — Manhattan distance</h3>
+
+                    <p>
+                        Using the same states:
+                        <code>(1,2,3,4,0,6,7,5,8)</code> and
+                        <code>(1,2,3,4,5,6,7,8,0)</code>,
+                        calculate h₂.
+                    </p>
+
+                    <details>
+                        <summary>Show worked solution</summary>
+                        <p>
+                            Tile 5: current (2,1), goal (1,1).
+                            Distance = 1.
+                        </p>
+                        <p>
+                            Tile 8: current (2,2), goal (2,1).
+                            Distance = 1.
+                        </p>
+                        <p>The blank is excluded.</p>
+                        <p><strong>h₂ = 1 + 1 = 2.</strong></p>
+                    </details>
+
+
+                    <h3>Question 7 — Why exclude the blank?</h3>
+
+                    <p>
+                        Explain why the blank is not counted
+                        in misplaced-tile and Manhattan-distance
+                        heuristics for the 8-puzzle.
+                    </p>
+
+                    <details>
+                        <summary>Show suggested answer</summary>
+                        <p>
+                            The blank represents the available
+                            space. It is not a numbered tile
+                            that must be moved to a goal position.
+                            Counting it could overestimate the
+                            number of tile moves.
+                        </p>
+                    </details>
+
+
+                    <h3>Question 8 — A* priority bug</h3>
+
+                    <p>
+                        A programmer calculates <code>g + h</code>
+                        but inserts paths into the priority
+                        queue using only <code>g</code>.
+                        What search behaviour results?
+                    </p>
+
+                    <details>
+                        <summary>Show suggested answer</summary>
+                        <p>
+                            The frontier behaves like Lowest-Cost-First
+                            because it is ordered by cumulative
+                            path cost rather than f = g + h.
+                        </p>
+                    </details>
+
+
+                    <h3>Question 9 — A* optimality conditions</h3>
+
+                    <p>
+                        State the assumptions from the heuristic
+                        search lecture under which A* is
+                        guaranteed to find an optimal solution
+                        when one exists.
+                    </p>
+
+                    <details>
+                        <summary>Show suggested answer</summary>
+                        <ol>
+                            <li>Finite branching factor.</li>
+                            <li>Arc costs bounded above zero.</li>
+                            <li>Nonnegative admissible heuristic.</li>
+                        </ol>
+                    </details>
+
+                </section>
+
+
+                <!-- =================================================
+                     12. VERIFICATION CHECKLIST
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="edge-cases"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">12</span>
+                        <div>
+                            <p class="section-kicker">VERIFICATION</p>
+                            <h2>Heuristic Search Checklist</h2>
+                        </div>
+                    </div>
+
+                    <ul class="checklist aiv-checklist">
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="h4-check-g" />
+                                <span>
+                                    <strong>Path cost:</strong>
+                                    Did I add every arc cost to obtain g?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="h4-check-h" />
+                                <span>
+                                    <strong>Heuristic endpoint:</strong>
+                                    Did I calculate h using the endpoint
+                                    of the current path?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="h4-check-f" />
+                                <span>
+                                    <strong>A* formula:</strong>
+                                    Did I calculate f = g + h?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="h4-check-priority" />
+                                <span>
+                                    <strong>Frontier priority:</strong>
+                                    Is the frontier ordered by h for
+                                    Best-First or f for A*?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="h4-check-ties" />
+                                <span>
+                                    <strong>Tie-breaking:</strong>
+                                    Did I apply the ordering rule
+                                    stated in the question?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="h4-check-goal" />
+                                <span>
+                                    <strong>Goal test:</strong>
+                                    Did I test the goal after
+                                    removing the path from the frontier?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="h4-check-admissible" />
+                                <span>
+                                    <strong>Admissibility:</strong>
+                                    Did I compare h with the true
+                                    minimum remaining cost?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="h4-check-consistent" />
+                                <span>
+                                    <strong>Consistency:</strong>
+                                    Did I check h(n) ≤ c(n,n') + h(n')
+                                    for each edge?
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input type="checkbox" id="h4-check-manhattan" />
+                                <span>
+                                    <strong>Manhattan distance:</strong>
+                                    Did I calculate horizontal and
+                                    vertical differences and exclude
+                                    the blank?
+                                </span>
+                            </label>
+                        </li>
+
+                    </ul>
+
+                    <button type="button"
+                            class="btn secondary"
+                            id="reset-heuristic-checklist">
+                        Reset Checklist
+                    </button>
+
+                </section>
+
+
+                <!-- =================================================
+                     MODULE COMPLETION
+                     ================================================= -->
+
+                <section class="lesson-completion">
+
+                    <div>
+                        <span class="completion-label">MODULE 04</span>
+
+                        <h2>Can you trace A* independently?</h2>
+
+                        <p>
+                            Complete both Best-First and A*
+                            demonstrations. You should be able
+                            to calculate g, h and f, apply the
+                            correct frontier ordering, and
+                            calculate both 8-puzzle heuristics.
+                        </p>
+                    </div>
+
+                    <button type="button"
+                            class="btn btn-primary"
+                            id="complete-heuristic-module"
+                            disabled>
+                        Mark Module Complete
+                    </button>
+
+                    <p id="heuristic-completion-message"
+                       class="completion-message"
+                       aria-live="polite">
+                        Complete both heuristic search demonstrations first.
+                    </p>
+
+                </section>
+
+
+                <div class="topic-bottom-navigation">
+                    <a href="../topic-03-uninformed-search/index.html?v=6" class="topic-previous-link">← Previous: Uninformed Search</a>
+                    <a href="../topic-05-game-trees/index.html?v=6" class="topic-next-link">Next: Game Trees →</a>
+                </div>
+
+            </article>
+
+        </div>
+
+    </main>
+
+
+    <footer class="ai-footer">
+
+        <div class="footer-content">
+            <a href="../../index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <p>
+                COMP304 Artificial Intelligence · Learn, reason and implement.
+            </p>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© <span id="current-year"></span> StructTrace.</p>
+            <a href="../../index.html?v=6">Back to AIVisual</a>
+        </div>
+
+    </footer>
+
+</body>
+</html>

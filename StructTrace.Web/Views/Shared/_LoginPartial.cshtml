@@ -1,29 +1,58 @@
-﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity
 @using StructTrace.Web.Models
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    bool IsCurrent(string controller) =>
+        string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase);
+}
 
-<ul class="navbar-nav align-items-lg-center gap-2">
+<ul class="st-nav-right">
     @if (SignInManager.IsSignedIn(User))
     {
-        <li class="nav-item">
-            <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
-                Hello @User.Identity?.Name!
+        var me = await UserManager.GetUserAsync(User);
+        var email = me?.Email ?? User.Identity?.Name;
+        var name = UserDisplay.Name(me?.DisplayName, email);
+        var initials = UserDisplay.Initials(me?.DisplayName, email);
+        var nameMissing = string.IsNullOrWhiteSpace(me?.DisplayName);
+
+        if (User.IsInRole(AppRoles.Admin))
+        {
+            <li>
+                <a class="st-pill st-pill-admin @(IsCurrent("Admin") ? "active" : "")"
+                   asp-area="" asp-controller="Admin" asp-action="Index">Admin</a>
+            </li>
+        }
+
+        <li>
+            <a class="st-user-chip @(IsCurrent("Profile") ? "active" : "")"
+               asp-area="" asp-controller="Profile" asp-action="Index"
+               title="@(nameMissing ? "Add your full name" : "View your profile")">
+                <span class="st-avatar">@initials</span>
+                <span>@name</span>
+                @if (nameMissing)
+                {
+                    <span class="st-name-missing" aria-label="Name missing"></span>
+                }
             </a>
         </li>
-        <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button type="submit" class="btn btn-sm btn-outline-danger">Logout</button>
+
+        <li>
+            <form asp-area="Identity" asp-page="/Account/Logout"
+                  asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })"
+                  method="post">
+                <button type="submit" class="st-pill st-pill-logout">Logout</button>
             </form>
         </li>
     }
     else
     {
-        <li class="nav-item">
-            <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        <li>
+            <a class="st-pill" asp-area="Identity" asp-page="/Account/Register">Register</a>
         </li>
-        <li class="nav-item">
-            <a class="btn btn-sm btn-primary" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        <li>
+            <a class="st-pill st-pill-primary" asp-area="Identity" asp-page="/Account/Login">Login</a>
         </li>
     }
 </ul>

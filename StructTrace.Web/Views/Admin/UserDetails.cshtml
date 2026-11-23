@@ -1,0 +1,165 @@
+﻿@model AdminUserDetailViewModel
+@{
+    var u = Model.User;
+    var name = string.IsNullOrWhiteSpace(u.DisplayName) ? "— no name —" : u.DisplayName;
+    var here = $"/Admin/User/{u.Id}";
+    ViewData["Title"] = $"User · {u.Email}";
+}
+
+<section class="st-page-hero">
+    <div>
+        <div class="st-crumbs">
+            <a asp-controller="Home" asp-action="Index">StructTrace</a><span>/</span>
+            <a asp-controller="Admin" asp-action="Index">Administrator</a><span>/</span><span>User</span>
+        </div>
+        <div class="st-profile-id">
+            <span class="st-avatar st-avatar--xl">@UserDisplay.Initials(u.DisplayName, u.Email)</span>
+            <div>
+                <h1>@name</h1>
+                <p>@u.Email</p>
+                <div class="st-hero-meta">
+                    @if (u.IsAdmin) { <span class="st-badge st-badge--admin">Admin</span> }
+                    @if (u.IsStudent) { <span class="st-badge">Student</span> }
+                    @if (u.IsLocked) { <span class="st-badge st-badge--locked">Locked</span> }
+                    <span class="st-badge">Joined @u.Joined</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="st-hero-stats">
+        <div class="st-hero-stat"><strong>@Model.Traces.Count</strong><span>Saved traces</span></div>
+    </div>
+</section>
+
+<partial name="_AdminFlash" />
+
+<div class="st-grid">
+
+    <div class="st-card st-col-5">
+        <div class="st-card-header"><h2>Account</h2></div>
+        <div class="st-card-body">
+            <dl class="st-dl">
+                <dt>Name</dt><dd>@name</dd>
+                <dt>E-mail</dt><dd>@u.Email</dd>
+                <dt>Joined</dt><dd>@u.Joined</dd>
+                <dt>User ID</dt><dd class="st-mono">@u.Id</dd>
+            </dl>
+            <hr />
+            @if (u.IsCurrentUser)
+            {
+                <p class="st-help">This is your own account. Your Admin role and sign-in cannot be changed from here.</p>
+            }
+            else
+            {
+                <div class="d-flex flex-wrap gap-2">
+                    <form asp-action="SetRole" method="post">
+                        <input type="hidden" name="userId" value="@u.Id" />
+                        <input type="hidden" name="role" value="@AppRoles.Admin" />
+                        <input type="hidden" name="add" value="@(u.IsAdmin ? "false" : "true")" />
+                        <input type="hidden" name="returnTo" value="@here" />
+                        <button type="submit" class="st-btn st-btn--amber"
+                                onclick="return confirm('@(u.IsAdmin ? "Remove the Admin role from this user?" : "Give this user the Admin role?")');">
+                            @(u.IsAdmin ? "Remove admin" : "Make admin")
+                        </button>
+                    </form>
+                    <form asp-action="SetRole" method="post">
+                        <input type="hidden" name="userId" value="@u.Id" />
+                        <input type="hidden" name="role" value="@AppRoles.Student" />
+                        <input type="hidden" name="add" value="@(u.IsStudent ? "false" : "true")" />
+                        <input type="hidden" name="returnTo" value="@here" />
+                        <button type="submit" class="st-btn st-btn--secondary">@(u.IsStudent ? "Remove Student" : "Add Student")</button>
+                    </form>
+                    <form asp-action="SetLock" method="post">
+                        <input type="hidden" name="userId" value="@u.Id" />
+                        <input type="hidden" name="locked" value="@(u.IsLocked ? "false" : "true")" />
+                        <input type="hidden" name="returnTo" value="@here" />
+                        <button type="submit" class="st-btn @(u.IsLocked ? "st-btn--secondary" : "st-btn--danger")"
+                                onclick="return confirm('@(u.IsLocked ? "Unlock this account?" : "Lock this account? The user will be signed out.")');">
+                            @(u.IsLocked ? "Unlock account" : "Lock account")
+                        </button>
+                    </form>
+                </div>
+                <p class="st-help mt-2">Role changes apply within a minute. Locking signs the user out within a minute and stops them signing in again.</p>
+            }
+        </div>
+    </div>
+
+    <div class="st-card st-col-7">
+        <div class="st-card-header">
+            <h2>Saved traces</h2>
+            <a class="st-btn st-btn--secondary st-btn--sm" asp-action="Index">← Back to dashboard</a>
+        </div>
+        <div class="st-table-wrap">
+            <table class="st-table">
+                <thead><tr><th>#</th><th>Title</th><th>Lesson</th><th>Input sequence</th><th></th></tr></thead>
+                <tbody>
+                    @if (!Model.Traces.Any())
+                    {
+                        <tr><td colspan="5" class="st-empty">This user has no saved traces.</td></tr>
+                    }
+                    @foreach (var t in Model.Traces)
+                    {
+                        <tr>
+                            <td class="st-mono">@t.Id</td>
+                            <td><strong>@t.Title</strong></td>
+                            <td>@t.Lesson</td>
+                            <td class="st-mono">@t.Input</td>
+                            <td>
+                                <div class="st-actions">
+                                    <form asp-action="DeleteTrace" method="post">
+                                        <input type="hidden" name="id" value="@t.Id" />
+                                        <input type="hidden" name="returnTo" value="@here" />
+                                        <button type="submit" class="st-btn st-btn--danger st-btn--sm"
+                                                onclick="return confirm('Delete saved trace #@t.Id? This cannot be undone.');">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    @if (!u.IsCurrentUser)
+    {
+        <div class="st-card st-col-12 st-danger-zone" id="delete-account">
+            <div class="st-card-header">
+                <h2>Danger zone — delete this account</h2>
+                <small>This cannot be undone</small>
+            </div>
+            <div class="st-card-body">
+                <p>
+                    Deleting removes the user's login, roles and all @Model.Traces.Count saved trace(s).
+                    If you only want to stop them signing in, <strong>lock</strong> the account instead.
+                </p>
+                <form asp-action="DeleteUser" method="post" class="st-delete-form">
+                    <input type="hidden" name="userId" value="@u.Id" />
+                    <div class="st-field">
+                        <label for="confirmEmail">Type <strong>@u.Email</strong> to confirm</label>
+                        <input id="confirmEmail" name="confirmEmail" class="st-input" autocomplete="off"
+                               data-expected="@u.Email.ToLowerInvariant()" placeholder="@u.Email" />
+                    </div>
+                    <button type="submit" class="st-btn st-btn--delete" id="delete-account-btn" disabled>
+                        Delete account permanently
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Enable the delete button only when the typed e-mail matches exactly.
+        (function () {
+            const input = document.getElementById("confirmEmail");
+            const button = document.getElementById("delete-account-btn");
+            if (!input || !button) return;
+            input.addEventListener("input", () => {
+                button.disabled = input.value.trim().toLowerCase() !== input.dataset.expected;
+            });
+        })();
+    </script>
+}

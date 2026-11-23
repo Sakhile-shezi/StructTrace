@@ -1,0 +1,706 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <!-- sign-in guard: must load first -->
+    <script src="/js/visualizer-guard.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>AIVisual | COMP304 Artificial Intelligence</title>
+
+    <meta name="description"
+          content="Interactive COMP304 Artificial Intelligence learning platform with visual explanations, Python examples and examination preparation." />
+
+    <link rel="stylesheet" href="css/ai-visualizer.css?v=6" />
+    <script src="js/ai-core.js?v=6" defer></script>
+    <script src="js/ai-visualizer.js?v=6" defer></script>
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="ai-header">
+        <nav class="ai-nav">
+
+            <a href="index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <button class="mobile-menu-btn"
+                    id="mobile-menu-btn"
+                    aria-label="Toggle navigation"
+                    aria-expanded="false">
+                ☰
+            </button>
+
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#learning-paths">Learning Paths</a></li>
+                <li><a href="#test-revision">Test Revision</a></li>
+                <li><a href="#exam-preparation">Exam Preparation</a></li>
+                <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
+                <li><a href="/">StructTrace</a></li>
+                <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
+            </ul>
+
+        </nav>
+    </header>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="ai-container" id="home">
+
+        <!-- HERO SECTION -->
+
+        <section class="ai-hero">
+
+            <div class="hero-content">
+
+                <div class="hero-badge">
+                    <span class="status-dot"></span>
+                    COMP304P2 · ARTIFICIAL INTELLIGENCE
+                </div>
+
+                <h1>
+                    Understand AI.<br />
+                    <span>Visualise Intelligence.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Learn Artificial Intelligence through detailed explanations,
+                    interactive algorithm visualisations, worked examples and
+                    practical Python programming.
+                </p>
+
+                <div class="hero-actions">
+
+                    <a href="modules/topic-01-introduction/index.html?v=6"
+                       class="btn btn-primary">
+                        Start Learning <span>→</span>
+                    </a>
+
+                    <a href="#learning-paths"
+                       class="btn btn-secondary">
+                        Explore Course
+                    </a>
+
+                </div>
+
+                <div class="hero-meta">
+                    <span>● Topic-by-topic learning</span>
+                    <span>● Interactive demonstrations</span>
+                    <span>● Python programming</span>
+                </div>
+
+            </div>
+
+            <div class="hero-visual">
+
+                <div class="ai-orbit orbit-one"></div>
+                <div class="ai-orbit orbit-two"></div>
+
+                <div class="ai-core">
+                    <span>AI</span>
+                </div>
+
+                <div class="floating-node node-one">SEARCH</div>
+                <div class="floating-node node-two">LEARN</div>
+                <div class="floating-node node-three">REASON</div>
+                <div class="floating-node node-four">PYTHON</div>
+
+            </div>
+
+        </section>
+
+
+        <!-- LEARNING PROGRESS -->
+
+        <section class="progress-section">
+
+            <div class="progress-heading">
+
+                <div>
+                    <p class="section-kicker">YOUR LEARNING JOURNEY</p>
+                    <h2>Learning Progress</h2>
+                    <p class="muted-text">
+                        Completed topics will be tracked as you work through AIVisual.
+                    </p>
+                </div>
+
+                <button type="button"
+                        id="reset-progress-btn"
+                        class="reset-btn">
+                    Reset Progress
+                </button>
+
+            </div>
+
+            <div class="progress-card">
+
+                <div class="progress-info">
+
+                    <div>
+                        <span class="progress-label">Course Completion</span>
+                        <h3 id="progress-percentage">0%</h3>
+                    </div>
+
+                    <div class="progress-count">
+                        <strong id="completed-count">0</strong>
+                        <span id="total-count">10</span>
+                        <small>Lessons completed</small>
+                    </div>
+
+                </div>
+
+                <div class="progress-track">
+                    <div class="progress-fill"
+                         id="progress-bar">
+                    </div>
+                </div>
+
+                <p class="progress-caption" id="progress-text">
+                    Start your first lesson to begin tracking your progress.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- COURSE OVERVIEW -->
+
+        <section class="overview-section">
+
+            <div class="section-heading">
+                <div>
+                    <p class="section-kicker">THE LEARNING EXPERIENCE</p>
+                    <h2>More than lecture notes</h2>
+                    <p class="muted-text">
+                        Understand concepts, experiment with algorithms
+                        and practise solving problems.
+                    </p>
+                </div>
+            </div>
+
+            <div class="overview-grid">
+
+                <article class="overview-card">
+                    <div class="overview-icon blue-icon">◈</div>
+                    <h3>Visual Learning</h3>
+                    <p>
+                        Follow algorithms step by step and understand
+                        how they work internally.
+                    </p>
+                </article>
+
+                <article class="overview-card">
+                    <div class="overview-icon purple-icon">ƒ</div>
+                    <h3>Python Programming</h3>
+                    <p>
+                        Learn how Artificial Intelligence concepts
+                        are implemented using Python.
+                    </p>
+                </article>
+
+                <article class="overview-card">
+                    <div class="overview-icon green-icon">∑</div>
+                    <h3>Formulas & Examples</h3>
+                    <p>
+                        Understand important formulas through
+                        calculations and worked examples.
+                    </p>
+                </article>
+
+                <article class="overview-card">
+                    <div class="overview-icon orange-icon">✓</div>
+                    <h3>Exam Preparation</h3>
+                    <p>
+                        Practise university-style questions and
+                        understand how solutions are constructed.
+                    </p>
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- LEARNING PATHS -->
+
+        <section class="learning-section" id="learning-paths">
+
+            <div class="section-heading">
+                <div>
+                    <p class="section-kicker">COMP304 CURRICULUM</p>
+                    <h2>Explore Learning Paths</h2>
+                    <p class="muted-text">
+                        Follow the course one topic at a time.
+                        Every module contains lessons, worked examples,
+                        interactive visualisations and exam practice.
+                    </p>
+                </div>
+            </div>
+
+            <div class="course-search">
+
+                <span>⌕</span>
+
+                <input type="search"
+                       id="course-search"
+                       placeholder="Search AI topics and learning paths..."
+                       aria-label="Search learning paths" />
+
+            </div>
+
+
+            <div class="course-grid" id="course-grid">
+
+                <article class="course-card featured-card"
+                         data-search="introduction artificial intelligence agents rationality turing history"
+                         data-topic-id="topic-01-introduction">
+
+                    <div class="course-card-top">
+                        <span class="course-number">01</span>
+                        <span class="course-status available">Available</span>
+                    </div>
+
+                    <div class="course-icon">✳</div>
+
+                    <p class="course-category">FOUNDATION</p>
+
+                    <h3>Introduction to Artificial Intelligence</h3>
+
+                    <p class="course-description">
+                        What AI is, intelligent agents, rationality, the Turing Test and the history of the field.
+                    </p>
+
+                    <div class="course-tags">
+                        <span>Intelligent agents</span>
+                        <span>Rationality</span>
+                        <span>AI history</span>
+                    </div>
+
+                    <div class="course-footer">
+                        <span class="lesson-count">Module 01</span>
+                        <a href="modules/topic-01-introduction/index.html?v=6" class="course-link">Open Module →</a>
+                    </div>
+
+                </article>
+
+                <article class="course-card"
+                         data-search="problem formulation state space successor goal test water jug colour swap grid heuristic admissible test 1"
+                         data-topic-id="topic-02-problem-formulation">
+
+                    <div class="course-card-top">
+                        <span class="course-number">02</span>
+                        <span class="course-status available">Available</span>
+                    </div>
+
+                    <div class="course-icon">S₀</div>
+
+                    <p class="course-category">SEARCH FOUNDATIONS</p>
+
+                    <h3>Problem Formulation &amp; State Spaces</h3>
+
+                    <p class="course-description">
+                        States, actions, successor functions, goal tests and path cost, with the water-jug workbench and the Test 1 colour-swap game.
+                    </p>
+
+                    <div class="course-tags">
+                        <span>State spaces</span>
+                        <span>Successors</span>
+                        <span>Goal test</span>
+                    </div>
+
+                    <div class="course-footer">
+                        <span class="lesson-count">Module 02</span>
+                        <a href="modules/topic-02-problem-formulation/index.html?v=6" class="course-link">Open Module →</a>
+                    </div>
+
+                </article>
+
+                <article class="course-card"
+                         data-search="uninformed search bfs dfs lowest cost first ucs frontier"
+                         data-topic-id="topic-03-uninformed-search">
+
+                    <div class="course-card-top">
+                        <span class="course-number">03</span>
+                        <span class="course-status available">Available</span>
+                    </div>
+
+                    <div class="course-icon">⌕</div>
+
+                    <p class="course-category">SEARCH</p>
+
+                    <h3>Uninformed Search</h3>
+
+                    <p class="course-description">
+                        Trace BFS, DFS and lowest-cost-first search with a live frontier and path costs.
+                    </p>
+
+                    <div class="course-tags">
+                        <span>BFS &amp; DFS</span>
+                        <span>Lowest-cost-first</span>
+                        <span>Frontier</span>
+                    </div>
+
+                    <div class="course-footer">
+                        <span class="lesson-count">Module 03</span>
+                        <a href="modules/topic-03-uninformed-search/index.html?v=6" class="course-link">Open Module →</a>
+                    </div>
+
+                </article>
+
+                <article class="course-card"
+                         data-search="heuristic search a star greedy best first admissible manhattan"
+                         data-topic-id="topic-04-heuristic-search">
+
+                    <div class="course-card-top">
+                        <span class="course-number">04</span>
+                        <span class="course-status available">Available</span>
+                    </div>
+
+                    <div class="course-icon">A*</div>
+
+                    <p class="course-category">INFORMED SEARCH</p>
+
+                    <h3>Heuristic Search and A*</h3>
+
+                    <p class="course-description">
+                        Greedy best-first and A*, admissible heuristics and Manhattan distance.
+                    </p>
+
+                    <div class="course-tags">
+                        <span>Heuristics</span>
+                        <span>A* search</span>
+                        <span>Admissibility</span>
+                    </div>
+
+                    <div class="course-footer">
+                        <span class="lesson-count">Module 04</span>
+                        <a href="modules/topic-04-heuristic-search/index.html?v=6" class="course-link">Open Module →</a>
+                    </div>
+
+                </article>
+
+                <article class="course-card"
+                         data-search="game trees minimax alpha beta pruning adversarial"
+                         data-topic-id="topic-05-game-trees">
+
+                    <div class="course-card-top">
+                        <span class="course-number">05</span>
+                        <span class="course-status available">Available</span>
+                    </div>
+
+                    <div class="course-icon">αβ</div>
+
+                    <p class="course-category">ADVERSARIAL SEARCH</p>
+
+                    <h3>Game Trees: Minimax and Alpha-Beta</h3>
+
+                    <p class="course-description">
+                        MAX and MIN decisions, backed-up values and alpha-beta pruning.
+                    </p>
+
+                    <div class="course-tags">
+                        <span>Minimax</span>
+                        <span>Alpha-beta</span>
+                        <span>Pruning</span>
+                    </div>
+
+                    <div class="course-footer">
+                        <span class="lesson-count">Module 05</span>
+                        <a href="modules/topic-05-game-trees/index.html?v=6" class="course-link">Open Module →</a>
+                    </div>
+
+                </article>
+
+                <article class="course-card"
+                         data-search="genetic algorithms tsp fitness selection crossover pmx cycle order mutation"
+                         data-topic-id="topic-06-genetic-algorithms">
+
+                    <div class="course-card-top">
+                        <span class="course-number">06</span>
+                        <span class="course-status available">Available</span>
+                    </div>
+
+                    <div class="course-icon">GA</div>
+
+                    <p class="course-category">EVOLUTIONARY COMPUTING</p>
+
+                    <h3>Genetic Algorithms</h3>
+
+                    <p class="course-description">
+                        Chromosomes, fitness, selection, order / PMX / cycle crossover and mutation for the TSP.
+                    </p>
+
+                    <div class="course-tags">
+                        <span>TSP fitness</span>
+                        <span>PMX &amp; cycle crossover</span>
+                        <span>Mutation</span>
+                    </div>
+
+                    <div class="course-footer">
+                        <span class="lesson-count">Module 06</span>
+                        <a href="modules/topic-06-genetic-algorithms/index.html?v=6" class="course-link">Open Module →</a>
+                    </div>
+
+                </article>
+
+                <article class="course-card"
+                         data-search="machine learning supervised unsupervised reinforcement confusion matrix"
+                         data-topic-id="topic-07-machine-learning">
+
+                    <div class="course-card-top">
+                        <span class="course-number">07</span>
+                        <span class="course-status available">Available</span>
+                    </div>
+
+                    <div class="course-icon">ML</div>
+
+                    <p class="course-category">MACHINE LEARNING</p>
+
+                    <h3>Machine Learning Basics</h3>
+
+                    <p class="course-description">
+                        Supervised, unsupervised and reinforcement learning, confusion matrices and evaluation.
+                    </p>
+
+                    <div class="course-tags">
+                        <span>Learning types</span>
+                        <span>Classification</span>
+                        <span>Evaluation</span>
+                    </div>
+
+                    <div class="course-footer">
+                        <span class="lesson-count">Module 07</span>
+                        <a href="modules/topic-07-machine-learning/index.html?v=6" class="course-link">Open Module →</a>
+                    </div>
+
+                </article>
+
+                <article class="course-card"
+                         data-search="perceptron neural network weights bias learning rate epoch"
+                         data-topic-id="topic-08-perceptron">
+
+                    <div class="course-card-top">
+                        <span class="course-number">08</span>
+                        <span class="course-status available">Available</span>
+                    </div>
+
+                    <div class="course-icon">Σw</div>
+
+                    <p class="course-category">NEURAL NETWORKS</p>
+
+                    <h3>Perceptron Training</h3>
+
+                    <p class="course-description">
+                        Net input, threshold activation, weight updates and epoch-by-epoch training tables.
+                    </p>
+
+                    <div class="course-tags">
+                        <span>Net input</span>
+                        <span>Weight updates</span>
+                        <span>Epochs</span>
+                    </div>
+
+                    <div class="course-footer">
+                        <span class="lesson-count">Module 08</span>
+                        <a href="modules/topic-08-perceptron/index.html?v=6" class="course-link">Open Module →</a>
+                    </div>
+
+                </article>
+
+                <article class="course-card"
+                         data-search="logic predicate first order resolution cnf skolem clause"
+                         data-topic-id="topic-09-logic">
+
+                    <div class="course-card-top">
+                        <span class="course-number">09</span>
+                        <span class="course-status available">Available</span>
+                    </div>
+
+                    <div class="course-icon">∀x</div>
+
+                    <p class="course-category">KNOWLEDGE &amp; REASONING</p>
+
+                    <h3>Logic and Automated Reasoning</h3>
+
+                    <p class="course-description">
+                        Translate English to first-order logic, convert to clause form and prove by resolution.
+                    </p>
+
+                    <div class="course-tags">
+                        <span>First-order logic</span>
+                        <span>CNF</span>
+                        <span>Resolution</span>
+                    </div>
+
+                    <div class="course-footer">
+                        <span class="lesson-count">Module 09</span>
+                        <a href="modules/topic-09-logic/index.html?v=6" class="course-link">Open Module →</a>
+                    </div>
+
+                </article>
+
+                <article class="course-card"
+                         data-search="csp constraint satisfaction backtracking forward checking n queens ac-3 sudoku map colouring"
+                         data-topic-id="topic-10-csp">
+
+                    <div class="course-card-top">
+                        <span class="course-number">10</span>
+                        <span class="course-status available">Available</span>
+                    </div>
+
+                    <div class="course-icon">♛</div>
+
+                    <p class="course-category">CONSTRAINT SATISFACTION</p>
+
+                    <h3>Constraint Satisfaction Problems</h3>
+
+                    <p class="course-description">
+                        Map colouring, N-Queens, backtracking with forward checking, AC-3 and Sudoku.
+                    </p>
+
+                    <div class="course-tags">
+                        <span>Backtracking</span>
+                        <span>Forward checking</span>
+                        <span>N-Queens</span>
+                    </div>
+
+                    <div class="course-footer">
+                        <span class="lesson-count">Module 10</span>
+                        <a href="modules/topic-10-csp/index.html?v=6" class="course-link">Open Module →</a>
+                    </div>
+
+                </article>
+
+            </div>
+
+
+            <p class="no-results" id="no-results" hidden>
+                No learning paths match your search.
+            </p>
+
+        </section>
+
+
+        <!-- TEST 1 REVISION LABS -->
+
+        <section class="overview-section" id="test-revision">
+
+            <div class="section-heading">
+                <div>
+                    <p class="section-kicker">TEST 1 REVISION</p>
+                    <h2>Practise the exact question types</h2>
+                    <p class="muted-text">
+                        Interactive labs built from the Test 1 memo questions.
+                        Each one shows the full working, not just the answer.
+                    </p>
+                </div>
+            </div>
+
+            <div class="overview-grid">
+
+                <a class="overview-card revision-card" href="modules/topic-02-problem-formulation/index.html?v=6#colour-swap">
+                    <div class="overview-icon blue-icon">▦</div>
+                    <h3>State space: two-grid colour swap</h3>
+                    <p>Data structure, successor function, goal test and the mismatches ÷ 2 heuristic.</p>
+                    <span class="course-link">Module 02 →</span>
+                </a>
+
+                <a class="overview-card revision-card" href="modules/topic-10-csp/index.html?v=6#fc-step-table">
+                    <div class="overview-icon purple-icon">♛</div>
+                    <h3>Backtracking with forward checking</h3>
+                    <p>N-Queens step table in the memo's A = [1], B = [-] format, with domains after each step.</p>
+                    <span class="course-link">Module 10 →</span>
+                </a>
+
+                <a class="overview-card revision-card" href="modules/topic-06-genetic-algorithms/index.html?v=6#permutation-crossover">
+                    <div class="overview-icon green-icon">⇄</div>
+                    <h3>TSP: PMX then cycle crossover</h3>
+                    <p>Cost matrix, PMX mapping and repair, fittest-two selection and cycle crossover.</p>
+                    <span class="course-link">Module 06 →</span>
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- EXAM PREPARATION -->
+
+        <section class="exam-section" id="exam-preparation">
+
+            <div class="exam-content">
+
+                <p class="section-kicker">STUDY SMARTER</p>
+
+                <h2>Prepare for COMP304 examinations</h2>
+
+                <p>
+                    Practise with worked examples, important formulas,
+                    Python programming exercises and past examination questions.
+                </p>
+
+                <div class="exam-features">
+
+                    <span>✓ Worked solutions</span>
+                    <span>✓ Python code tracing</span>
+                    <span>✓ Formula revision</span>
+                    <span>✓ Practice quizzes</span>
+
+                </div>
+
+                <a href="#learning-paths" class="btn btn-primary">
+                    Explore Course Topics →
+                </a>
+
+            </div>
+
+            <div class="exam-symbol">
+                <div class="symbol-circle">AI</div>
+                <span>LEARN</span>
+                <span>PRACTISE</span>
+                <span>MASTER</span>
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="ai-footer">
+
+        <div class="footer-content">
+
+            <a href="index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <p>
+                An interactive Artificial Intelligence learning experience
+                powered by StructTrace.
+            </p>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>
+                © <span id="current-year"></span>
+                StructTrace. All rights reserved.
+            </p>
+
+            <a href="/">Back to StructTrace</a>
+        </div>
+
+    </footer>
+
+</body>
+</html>

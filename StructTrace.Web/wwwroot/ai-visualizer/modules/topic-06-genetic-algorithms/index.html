@@ -1,0 +1,4209 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- sign-in guard: must load first -->
+    <script src="/js/visualizer-guard.js"></script>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>Module 06 | Genetic Algorithms - AIVisual</title>
+    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=6" />
+    <link rel="stylesheet" href="../../css/topic-base.css?v=6" />
+    <link rel="stylesheet" href="../../css/topic-pages.css?v=6" />
+
+    <script src="../../js/ai-core.js?v=6" defer></script>
+    <script src="../../js/ai-visualizer.js?v=6" defer></script>
+    <script src="./topic06.js?v=6" defer></script>
+    <script src="./topic06-permutation-crossover.js?v=6" defer></script>
+
+</head>
+
+
+<body class="aiv-topic topic06-page">
+
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <header class="ai-header">
+
+        <nav class="ai-nav">
+
+            <a href="../../index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <button class="mobile-menu-btn" id="mobile-menu-btn" type="button"
+                    aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">☰</button>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="../../index.html?v=6">Course Home</a></li>
+                <li><a href="../topic-05-game-trees/index.html?v=6">← 05. Game Trees</a></li>
+                <li><a href="#genetic-model" class="active" aria-current="page">06. Genetic Algorithms</a></li>
+                <li><a href="../topic-07-machine-learning/index.html?v=6">07. Machine Learning →</a></li>
+                <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
+                <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
+            </ul>
+
+        </nav>
+
+    </header>
+
+
+    <main class="topic-container">
+
+
+        <!-- =========================================================
+             MODULE HERO
+             ========================================================= -->
+
+        <section class="topic-hero">
+
+            <div class="topic-breadcrumb">
+
+                <a href="../../index.html?v=6">AIVisual</a>
+
+                <span>/</span>
+
+                <span>COMP304</span>
+
+                <span>/</span>
+
+                <span>Module 06</span>
+
+            </div>
+
+
+            <div class="topic-hero-content">
+
+                <div>
+
+                    <div class="topic-badges">
+
+                        <span class="topic-label">
+                            MODULE 06
+                        </span>
+
+                        <span class="topic-exam-badge">
+                            EVOLUTIONARY COMPUTING
+                        </span>
+
+                    </div>
+
+
+                    <h1>
+                        Genetic Algorithms
+                        <span>Selection · Crossover · Mutation</span>
+                    </h1>
+
+
+                    <p>
+                        Learn how populations of candidate solutions
+                        evolve through selection, crossover and
+                        mutation. Represent problems as chromosomes,
+                        calculate fitness, trace generations and
+                        implement genetic algorithms in Python.
+                    </p>
+
+
+                    <div class="topic-meta">
+
+                        <span>Chromosomes</span>
+                        <span>Fitness functions</span>
+                        <span>Tournament selection</span>
+                        <span>Order crossover</span>
+                        <span>Mutation</span>
+                        <span>Python</span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="topic-hero-symbol">
+
+                    <div class="topic-symbol-circle">
+                        GA
+                    </div>
+
+                    <span>EVOLVE A SOLUTION</span>
+
+                </div>
+
+            </div>
+
+
+            <div class="topic-hero-footer">
+
+                <span>REPRESENT · EVALUATE · SELECT · REPRODUCE</span>
+
+                <span>COMP304 · GENETIC ALGORITHMS</span>
+
+            </div>
+
+        </section>
+
+
+
+        <div class="topic-layout">
+
+
+            <!-- =========================================================
+                 SIDEBAR
+                 ========================================================= -->
+
+            <aside class="topic-sidebar">
+
+                <div class="sidebar-heading">
+
+                    <span>MODULE CONTENT</span>
+
+                    <span class="sidebar-module-number">06</span>
+
+                </div>
+
+
+                <nav class="topic-navigation">
+
+                    <a href="#genetic-model" class="topic-nav-link active">
+                        <span>01</span>
+                        Evolutionary computing
+                    </a>
+
+                    <a href="#ga-process" class="topic-nav-link">
+                        <span>02</span>
+                        Genetic algorithm cycle
+                    </a>
+
+                    <a href="#representation" class="topic-nav-link">
+                        <span>03</span>
+                        Chromosome representation
+                    </a>
+
+                    <a href="#fitness" class="topic-nav-link">
+                        <span>04</span>
+                        Fitness functions
+                    </a>
+
+                    <a href="#selection" class="topic-nav-link">
+                        <span>05</span>
+                        Selection
+                    </a>
+
+                    <a href="#crossover" class="topic-nav-link">
+                        <span>06</span>
+                        Crossover
+                    </a>
+
+                    <a href="#mutation" class="topic-nav-link">
+                        <span>07</span>
+                        Mutation
+                    </a>
+
+                    <a href="#interactive-ga" class="topic-nav-link">
+                        <span>08</span>
+                        GA visualizer
+                    </a>
+
+                    <a href="#other-problems" class="topic-nav-link">
+                        <span>09</span>
+                        Other problem types
+                    </a>
+
+                    <a href="#parameters" class="topic-nav-link">
+                        <span>10</span>
+                        Parameters and stopping
+                    </a>
+
+                    <a href="#python" class="topic-nav-link">
+                        <span>11</span>
+                        Python implementation
+                    </a>
+
+                    <a href="#practice" class="topic-nav-link">
+                        <span>12</span>
+                        Exam practice
+                    </a>
+
+                    <a href="#checklist" class="topic-nav-link">
+                        <span>13</span>
+                        Verification checklist
+                    </a>
+
+                </nav>
+
+
+                <div class="sidebar-progress">
+
+                    <span>MODULE PROGRESS</span>
+
+                    <div class="sidebar-progress-track">
+                        <div id="lesson-progress-bar"></div>
+                    </div>
+
+                    <p id="lesson-progress-text">0% viewed</p>
+
+                </div>
+
+
+                <a href="../../index.html?v=6" class="back-course-link">
+                    ← Back to AIVisual
+                </a>
+
+            </aside>
+
+
+
+            <!-- =========================================================
+                 MAIN CONTENT
+                 ========================================================= -->
+
+            <article class="topic-content">
+
+
+
+                <!-- =========================================================
+                     01. EVOLUTIONARY COMPUTING
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="genetic-model"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">01</span>
+
+                        <div>
+
+                            <p class="section-kicker">
+                                INTRODUCTION
+                            </p>
+
+                            <h2>What are Genetic Algorithms?</h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+
+                        A Genetic Algorithm (GA) is a search and
+                        optimisation technique inspired by natural
+                        evolution. Instead of improving one candidate
+                        solution at a time, it maintains a population
+                        of candidate solutions.
+
+                    </p>
+
+
+                    <p>
+
+                        Each candidate solution is represented as a
+                        chromosome. The algorithm evaluates the quality
+                        of each chromosome, selects parents, combines
+                        their information through crossover and introduces
+                        variation through mutation.
+
+                    </p>
+
+
+                    <h3>1.1 Biological inspiration and computing</h3>
+
+
+                    <div class="ga-concept-grid">
+
+                        <div class="ga-concept-card">
+
+                            <span class="ga-concept-icon">DNA</span>
+
+                            <h4>Chromosome</h4>
+
+                            <p>
+                                A coded representation of a candidate
+                                solution to the problem.
+                            </p>
+
+                        </div>
+
+
+                        <div class="ga-concept-card">
+
+                            <span class="ga-concept-icon">GENE</span>
+
+                            <h4>Gene</h4>
+
+                            <p>
+                                One component or position in a chromosome.
+                            </p>
+
+                        </div>
+
+
+                        <div class="ga-concept-card">
+
+                            <span class="ga-concept-icon">FIT</span>
+
+                            <h4>Fitness</h4>
+
+                            <p>
+                                A numerical measurement of the quality
+                                of a candidate solution.
+                            </p>
+
+                        </div>
+
+
+                        <div class="ga-concept-card">
+
+                            <span class="ga-concept-icon">POP</span>
+
+                            <h4>Population</h4>
+
+                            <p>
+                                A collection of candidate chromosomes
+                                in the same generation.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <h3>1.2 Important terminology</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Term</th>
+                                    <th>Meaning</th>
+                                    <th>Example</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>Individual</td>
+                                    <td>One candidate solution.</td>
+                                    <td>[0, 2, 1, 3]</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Chromosome</td>
+                                    <td>Encoded representation of a solution.</td>
+                                    <td>A list of city numbers.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Gene</td>
+                                    <td>One component of a chromosome.</td>
+                                    <td>City 2 at position 3.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Population</td>
+                                    <td>Collection of individuals.</td>
+                                    <td>Eight candidate tours.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Generation</td>
+                                    <td>One population iteration.</td>
+                                    <td>Generation 15.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Parent</td>
+                                    <td>Individual selected for reproduction.</td>
+                                    <td>Two selected tours.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Offspring</td>
+                                    <td>New chromosome produced by reproduction.</td>
+                                    <td>A child tour.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Elitism</td>
+                                    <td>Keeping the best individuals unchanged.</td>
+                                    <td>Copying the best two chromosomes.</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>1.3 Why use a population?</h3>
+
+                    <p>
+
+                        A population allows the algorithm to explore
+                        several candidate solutions simultaneously.
+                        Different individuals may contain different
+                        useful characteristics. Crossover combines
+                        information from parents, while mutation
+                        introduces variation.
+
+                    </p>
+
+
+                    <div class="important-note">
+
+                        <span>IMPORTANT</span>
+
+                        <p>
+                            A genetic algorithm does not guarantee
+                            that it will find the global optimum.
+                            A good-looking solution or a converged
+                            population does not prove that the
+                            best possible solution has been found.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     02. GENETIC ALGORITHM CYCLE
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="ga-process"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">02</span>
+
+                        <div>
+
+                            <p class="section-kicker">
+                                ALGORITHM OVERVIEW
+                            </p>
+
+                            <h2>The Genetic Algorithm Cycle</h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+
+                        A genetic algorithm begins with a population
+                        of randomly generated chromosomes. It repeatedly
+                        creates new populations until a termination
+                        condition is satisfied.
+
+                    </p>
+
+
+                    <h3>2.1 Main stages</h3>
+
+
+                    <div class="ga-cycle">
+
+                        <div class="ga-cycle-step">
+                            <span>01</span>
+                            <strong>Initialise population</strong>
+                            <p>Generate candidate chromosomes.</p>
+                        </div>
+
+                        <div class="ga-cycle-arrow">↓</div>
+
+                        <div class="ga-cycle-step">
+                            <span>02</span>
+                            <strong>Evaluate fitness</strong>
+                            <p>Calculate the quality of every chromosome.</p>
+                        </div>
+
+                        <div class="ga-cycle-arrow">↓</div>
+
+                        <div class="ga-cycle-step">
+                            <span>03</span>
+                            <strong>Select parents</strong>
+                            <p>Choose individuals for reproduction.</p>
+                        </div>
+
+                        <div class="ga-cycle-arrow">↓</div>
+
+                        <div class="ga-cycle-step">
+                            <span>04</span>
+                            <strong>Crossover</strong>
+                            <p>Combine information from parent chromosomes.</p>
+                        </div>
+
+                        <div class="ga-cycle-arrow">↓</div>
+
+                        <div class="ga-cycle-step">
+                            <span>05</span>
+                            <strong>Mutation</strong>
+                            <p>Introduce variation into offspring.</p>
+                        </div>
+
+                        <div class="ga-cycle-arrow">↓</div>
+
+                        <div class="ga-cycle-step">
+                            <span>06</span>
+                            <strong>Replacement</strong>
+                            <p>Construct the new population.</p>
+                        </div>
+
+                        <div class="ga-cycle-arrow">↓</div>
+
+                        <div class="ga-cycle-decision">
+
+                            <strong>Termination condition met?</strong>
+
+                            <div>
+                                <span>NO → Evaluate next generation</span>
+                                <span>YES → Return the best solution found</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <h3>2.2 General pseudocode</h3>
+
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>GENETIC ALGORITHM</span>
+                            <span>PSEUDOCODE</span>
+                        </div>
+
+<pre><code>GA(problem):
+
+    population = generate_initial_population()
+
+    evaluate_fitness(population)
+
+    while not termination_condition:
+
+        new_population = []
+
+        while new_population is incomplete:
+
+            parent1 = select(population)
+            parent2 = select(population)
+
+            child1, child2 = crossover(parent1, parent2)
+
+            mutate(child1)
+            mutate(child2)
+
+            add children to new_population
+
+        population = replace(population, new_population)
+
+        evaluate_fitness(population)
+
+    return best_solution(population)</code></pre>
+
+                    </div>
+
+
+                    <h3>2.3 Understanding the cycle</h3>
+
+
+                    <div class="definition-card">
+
+                        <div class="definition-icon">1</div>
+
+                        <div>
+
+                            <span class="definition-label">
+                                INITIALISATION
+                            </span>
+
+                            <p>
+                                Create the first population. Its chromosomes
+                                must follow the representation rules of
+                                the problem.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="definition-card">
+
+                        <div class="definition-icon">2</div>
+
+                        <div>
+
+                            <span class="definition-label">
+                                EVALUATION
+                            </span>
+
+                            <p>
+                                Calculate the fitness of each individual.
+                                This determines which candidates are
+                                preferred by the selection process.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="definition-card">
+
+                        <div class="definition-icon">3</div>
+
+                        <div>
+
+                            <span class="definition-label">
+                                REPRODUCTION
+                            </span>
+
+                            <p>
+                                Select parents, create offspring through
+                                crossover and apply mutation.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="definition-card">
+
+                        <div class="definition-icon">4</div>
+
+                        <div>
+
+                            <span class="definition-label">
+                                REPLACEMENT
+                            </span>
+
+                            <p>
+                                Form the next generation from the new
+                                offspring and any retained elite individuals.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="important-note">
+
+                        <span>EXAM REMINDER</span>
+
+                        <p>
+                            Be able to explain the order of the GA cycle.
+                            Do not confuse selection with crossover:
+                            selection chooses parents, while crossover
+                            creates offspring.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     03. CHROMOSOME REPRESENTATION
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="representation"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">03</span>
+
+                        <div>
+
+                            <p class="section-kicker">
+                                REPRESENTING SOLUTIONS
+                            </p>
+
+                            <h2>Chromosome Representation</h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+
+                        The chromosome representation depends on
+                        the problem being solved. A good representation
+                        must encode a complete candidate solution while
+                        allowing the genetic operators to produce valid
+                        offspring.
+
+                    </p>
+
+
+                    <h3>3.1 Travelling Salesperson Problem</h3>
+
+
+                    <p>
+
+                        In the TSP, a chromosome represents the order
+                        in which cities are visited. Every city must
+                        appear exactly once. Returning to the starting
+                        city is implied and does not need to be stored
+                        in the chromosome.
+
+                    </p>
+
+
+                    <div class="ga-representation">
+
+                        <div class="ga-representation-title">
+                            EXAMPLE TSP CHROMOSOME
+                        </div>
+
+                        <div class="ga-gene-row">
+
+                            <span>0</span>
+                            <span>2</span>
+                            <span>1</span>
+                            <span>3</span>
+
+                        </div>
+
+                        <div class="ga-gene-labels">
+
+                            <span>Gene 1</span>
+                            <span>Gene 2</span>
+                            <span>Gene 3</span>
+                            <span>Gene 4</span>
+
+                        </div>
+
+                        <p>
+                            Tour: 0 → 2 → 1 → 3 → 0
+                        </p>
+
+                    </div>
+
+
+                    <div class="important-note">
+
+                        <span>VALIDITY RULE</span>
+
+                        <p>
+                            A valid TSP chromosome is a permutation
+                            of the city identifiers. It cannot contain
+                            a duplicate city or omit a city.
+                        </p>
+
+                    </div>
+
+
+                    <h3>3.2 Knapsack problem</h3>
+
+
+                    <p>
+
+                        In a 0/1 Knapsack problem, each gene indicates
+                        whether an item is included or excluded.
+
+                    </p>
+
+
+                    <div class="ga-representation">
+
+                        <div class="ga-representation-title">
+                            EXAMPLE BINARY CHROMOSOME
+                        </div>
+
+                        <div class="ga-gene-row">
+
+                            <span>1</span>
+                            <span>0</span>
+                            <span>1</span>
+                            <span>1</span>
+                            <span>0</span>
+                            <span>1</span>
+
+                        </div>
+
+                        <div class="ga-gene-labels">
+
+                            <span>Item 1</span>
+                            <span>Item 2</span>
+                            <span>Item 3</span>
+                            <span>Item 4</span>
+                            <span>Item 5</span>
+                            <span>Item 6</span>
+
+                        </div>
+
+                        <p>
+                            1 = item selected; 0 = item not selected.
+                        </p>
+
+                    </div>
+
+
+                    <h3>3.3 Advert-slot allocation problem</h3>
+
+
+                    <p>
+
+                        The examination guide uses nine advert slots
+                        and three advertisers. Each advertiser must
+                        receive exactly three slots.
+
+                    </p>
+
+
+                    <div class="ga-representation">
+
+                        <div class="ga-representation-title">
+                            EXAMPLE ADVERT CHROMOSOME
+                        </div>
+
+                        <div class="ga-gene-row ga-small-genes">
+
+                            <span>2</span>
+                            <span>1</span>
+                            <span>2</span>
+                            <span>3</span>
+                            <span>2</span>
+                            <span>3</span>
+                            <span>1</span>
+                            <span>1</span>
+                            <span>3</span>
+
+                        </div>
+
+                        <p>
+                            Counts: Advertiser 1 = 3,
+                            Advertiser 2 = 3,
+                            Advertiser 3 = 3.
+                        </p>
+
+                    </div>
+
+
+                    <h3>3.4 Representation determines the operators</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+
+                                <tr>
+                                    <th>Problem</th>
+                                    <th>Chromosome</th>
+                                    <th>Suitable mutation</th>
+                                    <th>Crossover used</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>TSP</td>
+                                    <td>Permutation of cities</td>
+                                    <td>Inversion mutation</td>
+                                    <td>Order crossover</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Knapsack</td>
+                                    <td>Binary vector</td>
+                                    <td>Bit flip</td>
+                                    <td>One-point crossover</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Advert allocation</td>
+                                    <td>List of 1, 2, 3</td>
+                                    <td>Swap mutation</td>
+                                    <td>One-point crossover with repair</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <div class="important-note">
+
+                        <span>VERY IMPORTANT</span>
+
+                        <p>
+                            Do not choose a crossover or mutation operator
+                            without considering the chromosome representation.
+                            An operator must preserve the problem's validity
+                            constraints or include a repair operation.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     04. FITNESS FUNCTIONS
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="fitness"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">04</span>
+
+                        <div>
+
+                            <p class="section-kicker">
+                                EVALUATING CANDIDATE SOLUTIONS
+                            </p>
+
+                            <h2>Fitness Functions</h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+
+                        A fitness function measures how good a
+                        candidate solution is. It assigns a numerical
+                        score to each chromosome.
+
+                    </p>
+
+
+                    <h3>4.1 TSP fitness function</h3>
+
+
+                    <p>
+
+                        For the Travelling Salesperson Problem, fitness
+                        is the total length of the tour. The distance
+                        from the last city back to the first city
+                        must also be included.
+
+                    </p>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">
+                            TOUR LENGTH
+                        </span>
+
+                        <div class="formula-equation">
+                            Fitness(c) =
+                            Σ d(c<sub>i</sub>, c<sub>i+1</sub>)
+                            + d(c<sub>n</sub>, c<sub>1</sub>)
+                        </div>
+
+                        <p>
+                            Sum the distances between consecutive
+                            cities and add the return journey to
+                            the starting city.
+                        </p>
+
+                    </div>
+
+
+                    <p>
+
+                        This is a minimisation problem:
+                        a shorter tour is fitter.
+
+                    </p>
+
+
+                    <h3>4.2 Worked example from the examination guide</h3>
+
+
+                    <p>
+                        The guide supplies this four-city distance table.
+                    </p>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison distance-table">
+
+                            <thead>
+
+                                <tr>
+                                    <th>City</th>
+                                    <th>0</th>
+                                    <th>1</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>10</td>
+                                    <td>15</td>
+                                    <td>20</td>
+                                </tr>
+
+                                <tr>
+                                    <td>1</td>
+                                    <td>10</td>
+                                    <td>0</td>
+                                    <td>35</td>
+                                    <td>25</td>
+                                </tr>
+
+                                <tr>
+                                    <td>2</td>
+                                    <td>15</td>
+                                    <td>35</td>
+                                    <td>0</td>
+                                    <td>30</td>
+                                </tr>
+
+                                <tr>
+                                    <td>3</td>
+                                    <td>20</td>
+                                    <td>25</td>
+                                    <td>30</td>
+                                    <td>0</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <div class="example-box">
+
+                        <strong>Tour 1: [0, 1, 3, 2]</strong>
+
+                        <p>0 → 1 = 10</p>
+                        <p>1 → 3 = 25</p>
+                        <p>3 → 2 = 30</p>
+                        <p>2 → 0 = 15</p>
+
+                        <div class="formula-equation">
+                            10 + 25 + 30 + 15 = 80
+                        </div>
+
+                    </div>
+
+
+                    <div class="example-box">
+
+                        <strong>Tour 2: [0, 2, 1, 3]</strong>
+
+                        <p>0 → 2 = 15</p>
+                        <p>2 → 1 = 35</p>
+                        <p>1 → 3 = 25</p>
+                        <p>3 → 0 = 20</p>
+
+                        <div class="formula-equation">
+                            15 + 35 + 25 + 20 = 95
+                        </div>
+
+                    </div>
+
+
+                    <p>
+                        Therefore, Tour 1 is fitter because it has
+                        the smaller total distance.
+                    </p>
+
+
+                    <h3>4.3 Interactive TSP fitness calculator</h3>
+
+
+                    <div class="fitness-calculator">
+
+                        <div class="calculator-heading">
+                            <h4>Calculate a TSP Tour</h4>
+
+                            <span>FOUR-CITY DISTANCE TABLE</span>
+                        </div>
+
+
+                        <label for="tsp-tour-input">
+                            Enter a tour
+
+                        </label>
+
+                        <input id="tsp-tour-input"
+                               type="text"
+                               value="0, 1, 3, 2"
+                               autocomplete="off" />
+
+                        <p class="calculator-hint">
+                            Enter each city 0, 1, 2 and 3 exactly once.
+                        </p>
+
+
+                        <button type="button"
+                                id="calculate-tsp-fitness"
+                                class="btn primary">
+                            Calculate Tour Fitness
+                        </button>
+
+
+                        <p id="tsp-fitness-error"
+                           class="calculator-error"
+                           aria-live="polite"></p>
+
+
+                        <div id="tsp-fitness-result"
+                             class="calculator-output"
+                             hidden>
+
+                            <div class="calculator-result-number">
+
+                                <span>TOTAL TOUR LENGTH</span>
+
+                                <strong id="tsp-total-distance">—</strong>
+
+                            </div>
+
+
+                            <div id="tsp-leg-breakdown"
+                                 class="calculation-steps"></div>
+
+
+                            <p id="tsp-fitness-judgement"></p>
+
+                        </div>
+
+                    </div>
+
+
+                    <h3>4.4 Fitness with constraints: Knapsack</h3>
+
+
+                    <p>
+
+                        In the 0/1 Knapsack problem, the objective is
+                        to maximise the total value of selected items,
+                        while ensuring that the total weight does not
+                        exceed the capacity.
+
+                    </p>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">
+                            KNAPSACK FITNESS
+                        </span>
+
+                        <div class="formula-equation">
+                            Fitness(c) =
+                        </div>
+
+                        <div class="formula-case">
+
+                            <div class="formula-case-expression">
+                                Σ c<sub>i</sub>v<sub>i</sub>
+                            </div>
+
+                            <div class="formula-case-condition">
+                                if Σ c<sub>i</sub>w<sub>i</sub> ≤ W
+                            </div>
+
+                        </div>
+
+                        <div class="formula-case">
+
+                            <div class="formula-case-expression">
+                                0
+                            </div>
+
+                            <div class="formula-case-condition">
+                                if total weight exceeds W
+                            </div>
+
+                        </div>
+
+                        <p>
+                            cᵢ = 1 if item i is selected, otherwise 0.
+                            vᵢ = item value.
+                            wᵢ = item weight.
+                            W = maximum capacity.
+                        </p>
+
+                    </div>
+
+
+                    <p>
+
+                        For the supplied example:
+                        values = (10, 4, 7, 5, 8, 3),
+                        weights = (5, 3, 4, 2, 6, 1),
+                        and W = 12.
+
+                    </p>
+
+
+                    <div class="example-box">
+
+                        <strong>Chromosome [1, 0, 0, 1, 1, 0]</strong>
+
+                        <p>Selected weight = 5 + 2 + 6 = 13.</p>
+
+                        <p>13 exceeds the capacity of 12.</p>
+
+                        <strong>Fitness = 0.</strong>
+
+                    </div>
+
+
+                    <div class="example-box">
+
+                        <strong>Chromosome [1, 0, 1, 1, 0, 1]</strong>
+
+                        <p>Weight = 5 + 4 + 2 + 1 = 12.</p>
+
+                        <p>Value = 10 + 7 + 5 + 3 = 25.</p>
+
+                        <strong>Fitness = 25.</strong>
+
+                    </div>
+
+
+                    <h3>4.5 Interactive Knapsack fitness calculator</h3>
+
+
+                    <div class="fitness-calculator">
+
+                        <h4>Calculate a Knapsack Chromosome</h4>
+
+                        <label for="knapsack-input">
+                            Six binary genes
+                        </label>
+
+                        <input id="knapsack-input"
+                               type="text"
+                               value="1, 0, 1, 1, 0, 1"
+                               autocomplete="off" />
+
+                        <p class="calculator-hint">
+                            1 means selected; 0 means not selected.
+                            Capacity = 12.
+                        </p>
+
+                        <button type="button"
+                                class="btn primary"
+                                id="calculate-knapsack">
+                            Calculate Knapsack Fitness
+                        </button>
+
+                        <p id="knapsack-error"
+                           class="calculator-error"
+                           aria-live="polite"></p>
+
+                        <div id="knapsack-result"
+                             class="calculator-output"
+                             hidden>
+
+                            <div class="calculator-result-grid">
+
+                                <div>
+                                    <span>TOTAL WEIGHT</span>
+                                    <strong id="knapsack-weight">—</strong>
+                                </div>
+
+                                <div>
+                                    <span>TOTAL VALUE</span>
+                                    <strong id="knapsack-value">—</strong>
+                                </div>
+
+                                <div>
+                                    <span>FITNESS</span>
+                                    <strong id="knapsack-fitness">—</strong>
+                                </div>
+
+                            </div>
+
+                            <p id="knapsack-explanation"></p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="important-note">
+
+                        <span>EXAM DISTINCTION</span>
+
+                        <p>
+                            TSP fitness is a minimisation objective:
+                            smaller tour length is better.
+                            Knapsack fitness is a maximisation objective:
+                            larger value is better.
+                            Always identify the optimisation direction
+                            before writing the selection method.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     05. SELECTION
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="selection"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">05</span>
+
+                        <div>
+
+                            <p class="section-kicker">
+                                PARENT SELECTION
+                            </p>
+
+                            <h2>Selection Methods</h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+
+                        Selection chooses chromosomes from the current
+                        population to become parents. Fitter individuals
+                        should have a greater chance of being selected.
+
+                    </p>
+
+
+                    <h3>5.1 Tournament selection</h3>
+
+
+                    <p>
+
+                        Tournament selection randomly chooses k
+                        individuals from the population. The best
+                        among those selected becomes a parent.
+
+                    </p>
+
+
+                    <ol>
+                        <li>Randomly select k chromosomes.</li>
+                        <li>Calculate or compare their fitness.</li>
+                        <li>Choose the best chromosome from the tournament.</li>
+                        <li>Repeat to select the next parent.</li>
+                    </ol>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">
+                            TOURNAMENT SELECTION
+                        </span>
+
+                        <div class="formula-equation">
+                            Parent = best fitness among k random candidates
+                        </div>
+
+                        <p>
+                            For the TSP minimisation example, best means
+                            the candidate with the smallest tour length.
+                        </p>
+
+                    </div>
+
+
+                    <h3>5.2 Worked tournament</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Candidate</th>
+                                    <th>Tour</th>
+                                    <th>Fitness</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>A</td>
+                                    <td>[0, 1, 3, 2]</td>
+                                    <td>80</td>
+                                </tr>
+
+                                <tr>
+                                    <td>B</td>
+                                    <td>[0, 2, 1, 3]</td>
+                                    <td>95</td>
+                                </tr>
+
+                                <tr>
+                                    <td>C</td>
+                                    <td>[0, 1, 2, 3]</td>
+                                    <td>95</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <div class="example-box">
+
+                        <strong>Suppose k = 3.</strong>
+
+                        <p>
+                            Candidates A, B and C enter the tournament.
+                        </p>
+
+                        <p>
+                            Their fitness values are 80, 95 and 95.
+                        </p>
+
+                        <p>
+                            A wins because 80 is the smallest tour length.
+                        </p>
+
+                    </div>
+
+
+                    <h3>5.3 Interactive tournament selection</h3>
+
+
+                    <div class="selection-workbench">
+
+                        <h4>Run a Tournament</h4>
+
+                        <p>
+                            These candidates use TSP tour lengths.
+                            The smallest distance wins.
+                        </p>
+
+                        <label for="tournament-k">
+                            Tournament size (k)
+                        </label>
+
+                        <select id="tournament-k">
+
+                            <option value="2">k = 2</option>
+
+                            <option value="3" selected>k = 3</option>
+
+                            <option value="4">k = 4</option>
+
+                        </select>
+
+
+                        <button type="button"
+                                class="btn primary"
+                                id="run-tournament">
+                            Select Parent
+                        </button>
+
+
+                        <div id="tournament-results"
+                             class="tournament-results">
+
+                            <p>Run the tournament to see the contenders.</p>
+
+                        </div>
+
+
+                        <p id="tournament-winner"
+                           class="tournament-winner"
+                           aria-live="polite"></p>
+
+                    </div>
+
+
+                    <h3>5.4 Roulette-wheel selection</h3>
+
+
+                    <p>
+
+                        Roulette-wheel selection chooses individuals
+                        with probabilities based on their fitness.
+                        A fitter individual has a greater chance
+                        of being selected.
+
+                    </p>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">
+                            FITNESS-PROPORTIONATE SELECTION
+                        </span>
+
+                        <div class="formula-equation">
+                            P(i) = f(i) / Σ f(j)
+                        </div>
+
+                        <p>
+                            This direct formula applies when fitness is
+                            positive and larger values are better.
+                            A minimisation objective such as TSP tour
+                            length requires a suitable conversion
+                            before using roulette-wheel selection.
+                        </p>
+
+                    </div>
+
+
+                    <div class="important-note">
+
+                        <span>REMEMBER</span>
+
+                        <p>
+                            Your Exam Preparation Guide specifically
+                            asks you to write tournament selection
+                            in Python. Be able to pick k candidates
+                            and return the candidate with the smallest
+                            TSP fitness.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     06. CROSSOVER
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="crossover"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">06</span>
+
+                        <div>
+
+                            <p class="section-kicker">
+                                RECOMBINATION
+                            </p>
+
+                            <h2>Crossover Operators</h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+
+                        Crossover combines information from two parent
+                        chromosomes to produce offspring.
+
+                    </p>
+
+
+                    <h3>6.1 One-point crossover</h3>
+
+
+                    <p>
+
+                        Select one crossover point. The first child
+                        receives the genes before the cut from
+                        Parent 1 and the genes after the cut from
+                        Parent 2. The second child receives the
+                        opposite combination.
+
+                    </p>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">
+                            ONE-POINT CROSSOVER
+                        </span>
+
+                        <div class="formula-equation">
+                            Child 1 = P1[0:k] + P2[k:n]
+                        </div>
+
+                        <div class="formula-equation">
+                            Child 2 = P2[0:k] + P1[k:n]
+                        </div>
+
+                        <p>
+                            k is the selected crossover point.
+                            Positions before k are retained;
+                            positions from k onwards are exchanged.
+                        </p>
+
+                    </div>
+
+
+                    <div class="example-box">
+
+                        <strong>Binary example — cut after gene 3</strong>
+
+<pre><code>Parent 1:  1 0 0 | 1 1 0
+Parent 2:  0 1 1 | 0 0 1
+
+Child 1:   1 0 0 | 0 0 1
+Child 2:   0 1 1 | 1 1 0</code></pre>
+
+                    </div>
+
+
+                    <h3>6.2 Why ordinary one-point crossover fails for TSP</h3>
+
+
+                    <p>
+
+                        TSP chromosomes are permutations. Every city
+                        must appear exactly once. Ordinary one-point
+                        crossover can produce duplicates and omit cities.
+
+                    </p>
+
+
+                    <div class="example-box">
+
+                        <strong>Invalid child example</strong>
+
+<pre><code>Parent 1:  0 1 2 | 3 4 5
+Parent 2:  3 5 0 | 4 1 2
+
+Child:     0 1 2 | 4 1 2</code></pre>
+
+                        <p>
+                            City 1 and city 2 appear twice, while
+                            city 3 and city 5 are missing.
+                        </p>
+
+                    </div>
+
+
+                    <h3>6.3 Order crossover (OX)</h3>
+
+
+                    <p>
+
+                        The Exam Preparation Guide uses order crossover
+                        for TSP chromosomes. It preserves a segment
+                        from one parent and fills the remaining positions
+                        using the order of cities from the other parent.
+
+                    </p>
+
+
+                    <ol>
+                        <li>Choose a segment of positions.</li>
+                        <li>Copy that segment from Parent 1 into the child at the same positions.</li>
+                        <li>Read Parent 2 from left to right and remove cities already copied.</li>
+                        <li>Fill the empty child positions from left to right using the remaining cities.</li>
+                    </ol>
+
+
+                    <div class="example-box">
+
+                        <strong>Worked example from the exam guide</strong>
+
+<pre><code>Parent 1: [0, 1, 2, 3, 4, 5]
+Parent 2: [3, 5, 0, 4, 1, 2]
+
+Keep positions 2 and 3 from Parent 1.
+
+Step 1:
+[_, _, 2, 3, _, _]
+
+Step 2:
+Parent 2 without 2 and 3:
+[5, 0, 4, 1]
+
+Step 3:
+Fill empty positions left to right.
+
+Child:
+[5, 0, 2, 3, 4, 1]</code></pre>
+
+                    </div>
+
+
+                    <h3>6.4 Interactive order crossover</h3>
+
+
+                    <div class="operator-workbench">
+
+                        <h4>Order Crossover Simulator</h4>
+
+                        <label for="ox-parent-1">
+                            Parent 1
+                        </label>
+
+                        <input id="ox-parent-1"
+                               value="0, 1, 2, 3, 4, 5"
+                               autocomplete="off" />
+
+
+                        <label for="ox-parent-2">
+                            Parent 2
+                        </label>
+
+                        <input id="ox-parent-2"
+                               value="3, 5, 0, 4, 1, 2"
+                               autocomplete="off" />
+
+
+                        <div class="operator-index-controls">
+
+                            <label for="ox-start">
+                                Segment start position
+                                <input id="ox-start"
+                                       type="number"
+                                       min="0"
+                                       max="5"
+                                       value="2" />
+                            </label>
+
+                            <label for="ox-end">
+                                Segment end position
+                                <input id="ox-end"
+                                       type="number"
+                                       min="0"
+                                       max="5"
+                                       value="3" />
+                            </label>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="run-order-crossover"
+                                class="btn primary">
+                            Apply Order Crossover
+                        </button>
+
+
+                        <p id="ox-error"
+                           class="calculator-error"
+                           aria-live="polite"></p>
+
+
+                        <div id="ox-results"
+                             class="operator-results"
+                             hidden>
+
+                            <div>
+                                <span>OFFSPRING 1</span>
+                                <strong id="ox-child-1">—</strong>
+                            </div>
+
+                            <div>
+                                <span>OFFSPRING 2</span>
+                                <strong id="ox-child-2">—</strong>
+                            </div>
+
+                        </div>
+
+
+                        <p id="ox-explanation"
+                           class="operator-explanation"></p>
+
+                    </div>
+
+
+                    <div class="important-note">
+
+                        <span>EXAM REMINDER</span>
+
+                        <p>
+                            The supplied guide uses the version that
+                            fills the empty positions from left to right.
+                            Use that exact convention when tracing
+                            its example. Other OX variants may use
+                            a different filling order.
+                        </p>
+
+                    </div>
+
+                                    <h3>6.5 Partially mapped crossover (PMX)</h3>
+
+                    <p>
+                        PMX swaps a middle segment between the parents and then repairs duplicates
+                        outside the segment, using the pairs the swap created as a mapping. Children
+                        stay valid permutations, and every city keeps the position it had in one of
+                        the parents wherever possible.
+                    </p>
+
+                    <ol>
+                        <li>Choose two crossover points. The genes between them (inclusive) form the middle segment.</li>
+                        <li>Child 1 takes Parent 2's segment; child 2 takes Parent 1's segment.</li>
+                        <li>Write the mapping: each segment position pairs Parent 2's city with Parent 1's city.</li>
+                        <li>Fill the outer positions from the child's own parent. If a city is already in the segment, replace it using the mapping, and repeat until it is not.</li>
+                    </ol>
+
+                    <div class="example-box">
+                        <strong>Worked example (Study Guide): cuts after genes 2 and 6</strong>
+<pre><code>P1 = 1 2 | 3 4 5 6 | 7        P2 = 5 4 | 6 7 2 1 | 3
+
+Swap the middle segments:
+  child 1 = _ _ | 6 7 2 1 | _      child 2 = _ _ | 3 4 5 6 | _
+
+Mapping: 6↔3, 7↔4, 2↔5, 1↔6   (chains: 1 → 6 → 3)
+
+child 1 outer genes from P1 = 1, 2, 7
+  1 is in the segment → 6 → 3   ⇒ 3
+  2 is in the segment → 5       ⇒ 5
+  7 is in the segment → 4       ⇒ 4
+child 1 = 3 5 6 7 2 1 4
+
+child 2 outer genes from P2 = 5, 4, 3
+  5 → 2,  4 → 7,  3 → 6 → 1
+child 2 = 2 7 3 4 5 6 1</code></pre>
+                    </div>
+
+                    <div class="important-note">
+                        <span>READING THE QUESTION</span>
+                        <p>
+                            "Cuts after position 2 and after position 5" means the segment is positions 3–5.
+                            "Crossover points at the 4th and 7th positions" (Test 1) means the segment is
+                            positions 4–7 inclusive. Practice exam 3.7: P1 = [3,1,4,7,2,6,5,8], P2 = [6,2,8,5,1,3,7,4],
+                            segment 3–5 gives [3,2,8,5,1,6,7,4] and [6,1,4,7,2,3,5,8].
+                        </p>
+                    </div>
+
+                    <h3>6.6 Cycle crossover (CX)</h3>
+
+                    <p>
+                        Cycle crossover keeps every city in the same position it had in one of the parents.
+                        The positions split into cycles, and the cycles are copied from the parents in turn.
+                    </p>
+
+                    <ol>
+                        <li>Start at position 1. Note Parent 2's city there, find that city in Parent 1, and move to its position.</li>
+                        <li>Repeat until you return to position 1. These positions form cycle 1.</li>
+                        <li>Start the next cycle at the first position not yet used, and so on.</li>
+                        <li>Child 1 copies cycle 1 from Parent 1, cycle 2 from Parent 2, cycle 3 from Parent 1, … Child 2 does the opposite.</li>
+                    </ol>
+
+                    <div class="example-box">
+                        <strong>Worked example (Study Guide)</strong>
+<pre><code>P1 = 8 4 7 3 6 2 5 1 9 0
+P2 = 0 1 2 3 4 5 6 7 8 9
+
+cycle 1: 8 → 0 → 9        (positions 1, 10, 9)
+cycle 2: 4 → 1 → 7 → 2 → 5 → 6
+cycle 3: 3                 (same city in both parents)
+
+child 1 = 8 1 2 3 4 5 6 7 9 0
+child 2 = 0 4 7 3 6 2 5 1 8 9</code></pre>
+                    </div>
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>PMX AND CYCLE CROSSOVER</span>
+                        </div>
+
+<pre><code>def pmx(p1, p2, lo, hi):
+    """Return the two PMX children; lo..hi are 0-based and inclusive."""
+    def child(outer, seg):
+        c = [None] * len(outer)
+        c[lo:hi + 1] = seg[lo:hi + 1]
+        mapping = {seg[i]: outer[i] for i in range(lo, hi + 1)}
+        for i in list(range(lo)) + list(range(hi + 1, len(outer))):
+            city = outer[i]
+            while city in c[lo:hi + 1]:       # duplicate: follow the mapping
+                city = mapping[city]
+            c[i] = city
+        return c
+    return child(p1, p2), child(p2, p1)
+
+
+def cycle_crossover(p1, p2):
+    n = len(p1)
+    cycle_of = [None] * n
+    k = 0
+    for start in range(n):
+        if cycle_of[start] is not None:      # already part of an earlier cycle
+            continue
+        i = start
+        while cycle_of[i] is None:
+            cycle_of[i] = k
+            i = p1.index(p2[i])               # where does P2's city sit in P1?
+        k += 1
+    c1 = [p1[i] if cycle_of[i] % 2 == 0 else p2[i] for i in range(n)]
+    c2 = [p2[i] if cycle_of[i] % 2 == 0 else p1[i] for i in range(n)]
+    return c1, c2</code></pre>
+
+                    </div>
+
+                    <h3>6.7 Test 1 lab: PMX, select the fittest two, then cycle crossover</h3>
+
+                    <p>
+                        This reproduces the Test 1 question on the 8-city cost matrix. Fitness ranks tours by
+                        their closed-tour cost (back to the start city): a shorter tour has a higher fitness.
+                        You can edit the matrix, the parents or the positions to practise other versions.
+                    </p>
+
+                    <div class="xlab" id="permutation-crossover">
+
+                        <div class="xlab-heading">
+                            <div>
+                                <span class="xlab-eyebrow">TEST 1 · TSP GENETIC OPERATORS</span>
+                                <h3>Permutation Crossover Workbench</h3>
+                                <p>PMX → rank parents and offspring by tour cost → cycle crossover on the fittest two.</p>
+                            </div>
+                            <span class="xlab-badge">8 CITIES · CLOSED TOUR</span>
+                        </div>
+
+                        <div class="xlab-grid-2">
+                            <div class="xlab-box">
+                                <h4>Cost matrix (edits stay symmetric)</h4>
+                                <div class="xlab-table-wrap">
+                                    <table class="px-matrix" id="px-matrix"></table>
+                                </div>
+                            </div>
+                            <div class="xlab-box">
+                                <h4>Parents and operators</h4>
+                                <div class="xlab-settings">
+                                    <label for="px-p1" class="span-full">Parent 1<input id="px-p1" autocomplete="off" /></label>
+                                    <label for="px-p2" class="span-full">Parent 2<input id="px-p2" autocomplete="off" /></label>
+                                    <label for="px-lo">PMX segment start (1-indexed)<input id="px-lo" type="number" min="1" max="8" /></label>
+                                    <label for="px-hi">PMX segment end (inclusive)<input id="px-hi" type="number" min="1" max="8" /></label>
+                                    <label for="px-cx-mode" class="span-full">Cycle crossover
+                                        <select id="px-cx-mode">
+                                            <option value="alternate">Alternate cycles (standard)</option>
+                                            <option value="first">First cycle only</option>
+                                        </select>
+                                    </label>
+                                </div>
+                                <div class="xlab-controls">
+                                    <button type="button" class="xlab-btn primary" id="px-run">Run all three steps</button>
+                                    <button type="button" class="xlab-btn secondary" id="px-load">Load Test 1 question</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="xlab-status" id="px-status" aria-live="polite">Loading…</div>
+
+                        <div class="px-output" id="px-output"></div>
+
+                    </div>
+
+                    <div class="important-note">
+                        <span>CHECK YOUR TEST 1 ANSWERS</span>
+                        <p>
+                            PMX gives [1, 8, 2, 4, 5, 6, 7, 3] (cost 257, higher fitness) and
+                            [4, 2, 3, 1, 8, 7, 6, 5] (cost 260, lower fitness, so P = 5). Both offspring beat the parents
+                            (costs 340 and 300), so the offspring are the fittest two. Cycle crossover with alternating
+                            cycles gives [4, 8, 2, 1, 5, 7, 6, 3] (cost 188) and [1, 2, 3, 4, 8, 6, 7, 5] (cost 247),
+                            so AA = 4, BB = 8, CC = 2. If your memo's later letters differ, switch the cycle mode to
+                            "first cycle only" to see that version.
+                        </p>
+                    </div>
+
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     07. MUTATION
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="mutation"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">07</span>
+
+                        <div>
+
+                            <p class="section-kicker">
+                                INTRODUCING VARIATION
+                            </p>
+
+                            <h2>Mutation Operators</h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+
+                        Mutation introduces random changes into
+                        chromosomes. It helps maintain diversity
+                        in the population and reduces the risk
+                        of all individuals becoming too similar.
+
+                    </p>
+
+
+                    <h3>7.1 Inversion mutation for TSP</h3>
+
+
+                    <p>
+
+                        Inversion mutation selects two positions
+                        and reverses the chromosome segment
+                        between those positions, including both
+                        selected positions.
+
+                    </p>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">
+                            INVERSION MUTATION
+                        </span>
+
+                        <div class="formula-equation">
+                            chromosome[i:j+1] =
+                            reverse(chromosome[i:j+1])
+                        </div>
+
+                        <p>
+                            Both endpoints are included in the
+                            reversed segment.
+                        </p>
+
+                    </div>
+
+
+                    <div class="example-box">
+
+                        <strong>Worked example from the guide</strong>
+
+<pre><code>Before:
+[0, 1, 2, 3, 4, 5]
+
+Selected positions:
+i = 1, j = 4
+
+Reverse:
+[1, 2, 3, 4]
+
+After:
+[0, 4, 3, 2, 1, 5]</code></pre>
+
+                        <p>
+                            The result is still a valid permutation
+                            of the six cities.
+                        </p>
+
+                    </div>
+
+
+                    <h3>7.2 Interactive inversion mutation</h3>
+
+
+                    <div class="operator-workbench">
+
+                        <h4>Inversion Mutation Simulator</h4>
+
+
+                        <label for="mutation-input">
+                            Chromosome
+                        </label>
+
+                        <input id="mutation-input"
+                               value="0, 1, 2, 3, 4, 5"
+                               autocomplete="off" />
+
+
+                        <div class="operator-index-controls">
+
+                            <label for="mutation-start">
+                                Start position
+                                <input id="mutation-start"
+                                       type="number"
+                                       min="0"
+                                       max="5"
+                                       value="1" />
+                            </label>
+
+                            <label for="mutation-end">
+                                End position
+                                <input id="mutation-end"
+                                       type="number"
+                                       min="0"
+                                       max="5"
+                                       value="4" />
+                            </label>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="run-inversion"
+                                class="btn primary">
+                            Apply Inversion
+                        </button>
+
+
+                        <p id="mutation-error"
+                           class="calculator-error"
+                           aria-live="polite"></p>
+
+
+                        <div id="mutation-result"
+                             class="operator-results"
+                             hidden>
+
+                            <div>
+                                <span>ORIGINAL CHROMOSOME</span>
+                                <strong id="mutation-before">—</strong>
+                            </div>
+
+                            <div>
+                                <span>MUTATED CHROMOSOME</span>
+                                <strong id="mutation-after">—</strong>
+                            </div>
+
+                        </div>
+
+                        <p id="mutation-explanation"
+                           class="operator-explanation"></p>
+
+                    </div>
+
+
+                    <h3>7.3 Other mutation techniques</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Problem</th>
+                                    <th>Mutation</th>
+                                    <th>What changes?</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>TSP</td>
+                                    <td>Inversion</td>
+                                    <td>Reverse a section of the city order.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Binary Knapsack</td>
+                                    <td>Bit flip</td>
+                                    <td>Change 0 to 1 or 1 to 0.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Advert allocation</td>
+                                    <td>Swap</td>
+                                    <td>Exchange two assigned advertisers.</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>7.4 Why mutation rate matters</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Mutation rate</th>
+                                    <th>Possible effect</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>Too high</td>
+                                    <td>Search may become almost random, losing useful progress.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Too low</td>
+                                    <td>Population may lose diversity and converge prematurely.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Moderate</td>
+                                    <td>Provides variation while retaining useful inherited information.</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <div class="important-note">
+
+                        <span>PYTHON DETAIL</span>
+
+                        <p>
+                            Inversion mutation edits the chromosome
+                            in place. It does not return a new chromosome.
+                            Do not assign its return value back to the
+                            chromosome unless the function explicitly
+                            returns one.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     08. INTERACTIVE GA VISUALIZER
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="interactive-ga"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">08</span>
+
+                        <div>
+
+                            <p class="section-kicker">
+                                COMPLETE GENETIC ALGORITHM
+                            </p>
+
+                            <h2>Interactive TSP Genetic Algorithm</h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+
+                        Now combine the stages. The visualizer creates
+                        a population of tours, evaluates fitness,
+                        performs tournament selection, applies order
+                        crossover and inversion mutation, and builds
+                        the next generation.
+
+                    </p>
+
+
+                    <div class="genetic-workbench">
+
+
+                        <!-- HEADER -->
+
+                        <div class="ga-lab-header">
+
+                            <div>
+
+                                <h3>Evolution Simulator</h3>
+
+                                <p>
+                                    Objective: minimise the total
+                                    four-city tour length.
+                                </p>
+
+                            </div>
+
+                            <label>
+                                Animation speed
+
+                                <select id="ga-speed">
+
+                                    <option value="0.5">0.5x - Slow</option>
+
+                                    <option value="1" selected>1x - Normal</option>
+
+                                    <option value="2">2x - Fast</option>
+
+                                    <option value="4">4x - Very fast</option>
+
+                                </select>
+
+                            </label>
+
+                        </div>
+
+
+                        <!-- PARAMETERS -->
+
+                        <h4>Genetic Algorithm Parameters</h4>
+
+
+                        <div class="ga-parameter-grid">
+
+                            <label>
+                                Population size
+
+                                <input id="ga-population-size"
+                                       type="number"
+                                       min="4"
+                                       max="50"
+                                       value="8" />
+                            </label>
+
+
+                            <label>
+                                Maximum generations
+
+                                <input id="ga-generations"
+                                       type="number"
+                                       min="1"
+                                       max="300"
+                                       value="30" />
+                            </label>
+
+
+                            <label>
+                                Crossover rate
+
+                                <input id="ga-crossover-rate"
+                                       type="number"
+                                       min="0"
+                                       max="1"
+                                       step="0.05"
+                                       value="0.9" />
+                            </label>
+
+
+                            <label>
+                                Mutation rate
+
+                                <input id="ga-mutation-rate"
+                                       type="number"
+                                       min="0"
+                                       max="1"
+                                       step="0.05"
+                                       value="0.3" />
+                            </label>
+
+
+                            <label>
+                                Elite count
+
+                                <input id="ga-elite"
+                                       type="number"
+                                       min="0"
+                                       max="10"
+                                       value="2" />
+                            </label>
+
+
+                            <label>
+                                Random seed
+
+                                <input id="ga-seed"
+                                       type="number"
+                                       value="2026" />
+                            </label>
+
+                        </div>
+
+
+                        <!-- BUTTONS -->
+
+                        <div class="ga-control-buttons">
+
+                            <button type="button"
+                                    id="ga-step"
+                                    class="btn primary">
+                                Next Generation →
+                            </button>
+
+                            <button type="button"
+                                    id="ga-run"
+                                    class="btn secondary">
+                                Run
+                            </button>
+
+                            <button type="button"
+                                    id="ga-reset"
+                                    class="btn danger">
+                                Reset
+                            </button>
+
+                        </div>
+
+
+                        <!-- STATUS -->
+
+                        <div class="ga-status"
+                             id="ga-status"
+                             aria-live="polite">
+
+                            Initialising population...
+
+                        </div>
+
+
+                        <!-- METRICS -->
+
+                        <div class="ga-metrics">
+
+                            <div>
+                                <span>GENERATION</span>
+                                <strong id="ga-current-generation">0</strong>
+                            </div>
+
+                            <div>
+                                <span>POPULATION</span>
+                                <strong id="ga-current-population">8</strong>
+                            </div>
+
+                            <div>
+                                <span>BEST TOUR LENGTH</span>
+                                <strong id="ga-best-fitness">—</strong>
+                            </div>
+
+                            <div>
+                                <span>AVERAGE FITNESS</span>
+                                <strong id="ga-average-fitness">—</strong>
+                            </div>
+
+                        </div>
+
+
+                        <!-- BEST TOUR -->
+
+                        <div class="ga-best-result">
+
+                            <span>BEST SOLUTION FOUND SO FAR</span>
+
+                            <strong id="ga-best-tour">—</strong>
+
+                            <p id="ga-best-return">
+                                The final return to city 0 is included in fitness.
+                            </p>
+
+                        </div>
+
+
+                        <!-- FITNESS CHART -->
+
+                        <h4>Best fitness across generations</h4>
+
+                        <div class="ga-chart-container">
+
+                            <svg id="ga-fitness-chart"
+                                 viewBox="0 0 700 260"
+                                 role="img"
+                                 aria-label="Best TSP tour length across generations">
+
+                            </svg>
+
+                        </div>
+
+
+                        <!-- POPULATION -->
+
+                        <div class="ga-population-heading">
+
+                            <h4>Current Population</h4>
+
+                            <span id="ga-population-count">0 individuals</span>
+
+                        </div>
+
+
+                        <div class="table-responsive">
+
+                            <table class="learning-comparison ga-population-table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Chromosome / Tour</th>
+                                        <th>Fitness</th>
+                                        <th>Status</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="ga-population-body">
+
+                                    <tr>
+                                        <td colspan="4">
+                                            Population is loading.
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                        <!-- GENERATION LOG -->
+
+                        <h4>Generation Activity</h4>
+
+                        <div id="ga-generation-log"
+                             class="ga-generation-log">
+
+                            <p>
+                                The first generation will be shown here.
+                            </p>
+
+                        </div>
+
+
+                        <!-- FINAL RESULT -->
+
+                        <div id="ga-final-result"
+                             class="ga-final-result"
+                             hidden>
+
+                            <h4>Evolution run completed</h4>
+
+                            <p id="ga-final-summary"></p>
+
+                        </div>
+
+                    </div>
+
+
+                    <h3>8.1 What happens in one generation?</h3>
+
+
+                    <ol>
+
+                        <li>Sort the current population by tour length.</li>
+
+                        <li>Copy elite individuals unchanged into the next population.</li>
+
+                        <li>Choose parents using tournament selection.</li>
+
+                        <li>Apply order crossover according to the crossover rate.</li>
+
+                        <li>Apply inversion mutation according to the mutation rate.</li>
+
+                        <li>Repeat until the new population is full.</li>
+
+                        <li>Evaluate the new population and record its fitness.</li>
+
+                    </ol>
+
+
+                    <div class="important-note">
+
+                        <span>NOTICE</span>
+
+                        <p>
+                            The simulator is stochastic. It may find
+                            a good tour, but stopping at a certain
+                            generation does not prove that the global
+                            optimum has been found.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     09. OTHER PROBLEM TYPES
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="other-problems"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">09</span>
+
+                        <div>
+
+                            <p class="section-kicker">
+                                EXAM PROBLEM APPLICATIONS
+                            </p>
+
+                            <h2>Advert Allocation and Knapsack</h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+
+                        The genetic algorithm framework is reusable,
+                        but the chromosome, fitness function and
+                        operators must change to match the problem.
+
+                    </p>
+
+
+                    <h3>9.1 Advert-slot allocation</h3>
+
+
+                    <p>
+
+                        The 2026 Exam Preparation Guide uses nine
+                        advert slots with ratings and three advertisers.
+                        Each advertiser must receive exactly three
+                        slots.
+
+                    </p>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Advertiser</th>
+                                    <th>Price per rating point</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>6</td>
+                                </tr>
+
+                                <tr>
+                                    <td>2</td>
+                                    <td>4</td>
+                                </tr>
+
+                                <tr>
+                                    <td>3</td>
+                                    <td>3</td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <p>
+                        Slot ratings:
+                    </p>
+
+                    <div class="formula-card">
+
+                        <div class="formula-equation">
+                            [55, 50, 47, 45, 40, 36, 32, 28, 24]
+                        </div>
+
+                    </div>
+
+
+                    <h3>9.2 Revenue calculation</h3>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">
+                            MAXIMISATION OBJECTIVE
+                        </span>
+
+                        <div class="formula-equation">
+                            Revenue =
+                            Σ (price per rating × slot rating)
+                        </div>
+
+                        <p>
+                            The advertiser assigned to each slot
+                            determines the price applied to that slot's rating.
+                        </p>
+
+                    </div>
+
+
+                    <div class="example-box">
+
+                        <strong>Worked chromosome</strong>
+
+                        <p>
+                            [2, 1, 2, 3, 2, 3, 1, 1, 3]
+                        </p>
+
+                        <p>
+                            The total revenue is 1543.
+                        </p>
+
+                    </div>
+
+
+                    <div class="example-box">
+
+                        <strong>Best schedule given in the guide</strong>
+
+                        <p>
+                            [1, 1, 1, 2, 2, 2, 3, 3, 3]
+                        </p>
+
+                        <p>
+                            Revenue = 1648.
+                        </p>
+
+                    </div>
+
+
+                    <h3>9.3 Advert allocation fitness calculator</h3>
+
+
+                    <div class="fitness-calculator">
+
+                        <h4>Calculate Advert Revenue</h4>
+
+                        <label for="advert-chromosome">
+                            Nine advertiser assignments
+                        </label>
+
+                        <input id="advert-chromosome"
+                               value="2, 1, 2, 3, 2, 3, 1, 1, 3"
+                               autocomplete="off" />
+
+                        <p class="calculator-hint">
+                            Use values 1, 2 and 3.
+                            Each advertiser must appear exactly three times.
+                        </p>
+
+                        <button type="button"
+                                id="calculate-advert-revenue"
+                                class="btn primary">
+                            Calculate Revenue
+                        </button>
+
+                        <p id="advert-error"
+                           class="calculator-error"
+                           aria-live="polite"></p>
+
+
+                        <div id="advert-result"
+                             class="calculator-output"
+                             hidden>
+
+                            <div class="calculator-result-number">
+
+                                <span>TOTAL REVENUE</span>
+
+                                <strong id="advert-total">—</strong>
+
+                            </div>
+
+
+                            <div class="calculator-result-grid">
+
+                                <div>
+                                    <span>ADVERTISER 1</span>
+                                    <strong id="advert-count-1">—</strong>
+                                </div>
+
+                                <div>
+                                    <span>ADVERTISER 2</span>
+                                    <strong id="advert-count-2">—</strong>
+                                </div>
+
+                                <div>
+                                    <span>ADVERTISER 3</span>
+                                    <strong id="advert-count-3">—</strong>
+                                </div>
+
+                            </div>
+
+
+                            <p id="advert-explanation"></p>
+
+                        </div>
+
+                    </div>
+
+
+                    <h3>9.4 Maintaining the advert constraint</h3>
+
+
+                    <p>
+
+                        One-point crossover may create an offspring
+                        with more than three slots assigned to one
+                        advertiser and fewer than three assigned to another.
+                        The guide therefore repairs the offspring.
+
+                    </p>
+
+
+                    <ul>
+
+                        <li>Count the number of slots assigned to each advertiser.</li>
+
+                        <li>Identify advertisers with more than three slots.</li>
+
+                        <li>Change excess assignments to advertisers with fewer than three.</li>
+
+                        <li>Swap mutation preserves the counts because two assignments are exchanged.</li>
+
+                    </ul>
+
+                    <h3>9.4.1 Complete advert allocation implementation</h3>
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>ADVERT ALLOCATION</span>
+                        </div>
+
+<pre><code>ratings = [55, 50, 47, 45, 40, 36, 32, 28, 24]
+
+price_per_rating = [6, 4, 3]
+
+
+class Adverts(TournamentSelection):
+
+    def generate_chromosome(self):
+
+        return self.random.sample(
+            [1, 1, 1, 2, 2, 2, 3, 3, 3],
+            9
+        )
+
+
+    def fitness(self, chrom):
+
+        total = 0
+
+        for i in range(len(chrom)):
+
+            total += (
+                price_per_rating[chrom[i] - 1]
+                * ratings[i]
+            )
+
+        return total
+
+
+    def repair(self, chrom):
+
+        counts = [
+            chrom.count(1),
+            chrom.count(2),
+            chrom.count(3)
+        ]
+
+        for i in range(len(chrom)):
+
+            advertiser = chrom[i]
+
+            if counts[advertiser - 1] > 3:
+
+                for replacement in (1, 2, 3):
+
+                    if counts[replacement - 1] < 3:
+
+                        chrom[i] = replacement
+
+                        counts[advertiser - 1] -= 1
+
+                        counts[replacement - 1] += 1
+
+                        break
+
+        return chrom
+
+
+    def crossover(self, parent1, parent2):
+
+        point = self.random.randint(
+            1,
+            len(parent1) - 1
+        )
+
+        child1 = (
+            parent1[:point] +
+            parent2[point:]
+        )
+
+        child2 = (
+            parent2[:point] +
+            parent1[point:]
+        )
+
+        return (
+            self.repair(child1),
+            self.repair(child2)
+        )
+
+
+    def mutate(self, chrom):
+
+        i, j = self.random.sample(
+            range(len(chrom)),
+            2
+        )
+
+        chrom[i], chrom[j] = chrom[j], chrom[i]</code></pre>
+
+                    </div>
+
+                    <div class="important-note">
+                        <span>IMPORTANT FRAMEWORK DETAIL</span>
+                        <p>The guide notes that if the supplied base class always treats smaller fitness as better, the advert revenue must be converted to a minimisation score, for example by returning negative total revenue. Check the actual selection direction in Revision 3 before using this class with that framework.</p>
+                    </div>
+
+
+                    <h3>9.5 Knapsack problem revisited</h3>
+
+
+                    <p>
+
+                        For the Knapsack problem, the chromosome
+                        contains one binary gene per item. One-point
+                        crossover combines the parents and bit-flip
+                        mutation adds or removes selected items.
+                        Overweight solutions receive fitness zero
+                        in the supplied worked example.
+
+                    </p>
+
+
+                    <div class="example-box">
+
+                        <strong>Bit-flip mutation</strong>
+
+<pre><code>Before:  1 0 0 0 0 1
+After:   1 0 1 0 0 1</code></pre>
+
+                        <p>
+                            The third gene changes from 0 to 1.
+                            Item 3 is now included.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     10. PARAMETERS AND STOPPING
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="parameters"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">10</span>
+
+                        <div>
+
+                            <p class="section-kicker">
+                                CONTROLLING EVOLUTION
+                            </p>
+
+                            <h2>GA Parameters and Termination</h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <h3>10.1 Important GA parameters</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Meaning</th>
+                                    <th>Guide example</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>population_size</td>
+                                    <td>Number of chromosomes in each population.</td>
+                                    <td>100</td>
+                                </tr>
+
+                                <tr>
+                                    <td>n_generations</td>
+                                    <td>Maximum number of generations.</td>
+                                    <td>200</td>
+                                </tr>
+
+                                <tr>
+                                    <td>crossover_rate</td>
+                                    <td>Probability that a selected pair is crossed over.</td>
+                                    <td>0.9</td>
+                                </tr>
+
+                                <tr>
+                                    <td>mutation_rate</td>
+                                    <td>Probability that a child is mutated.</td>
+                                    <td>0.3</td>
+                                </tr>
+
+                                <tr>
+                                    <td>n_elite</td>
+                                    <td>Number of best individuals copied unchanged.</td>
+                                    <td>2</td>
+                                </tr>
+
+                                <tr>
+                                    <td>k</td>
+                                    <td>Tournament size.</td>
+                                    <td>3</td>
+                                </tr>
+
+                                <tr>
+                                    <td>seed</td>
+                                    <td>Fixes random numbers to repeat a run.</td>
+                                    <td>2026</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>10.2 Elitism</h3>
+
+
+                    <p>
+
+                        Elitism copies the best n individuals unchanged
+                        into the next generation. This prevents those
+                        particular best solutions from being lost
+                        due to crossover or mutation.
+
+                    </p>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">
+                            EXAMPLE
+                        </span>
+
+                        <div class="formula-equation">
+                            n_elite = 2
+                        </div>
+
+                        <p>
+                            Copy the best two individuals unchanged
+                            into the next generation.
+                        </p>
+
+                    </div>
+
+
+                    <div class="important-note">
+
+                        <span>WHAT IF n_elite = 0?</span>
+
+                        <p>
+                            The best individual in the current generation
+                            can be lost through crossover and mutation.
+                            The best fitness can become worse in a
+                            later generation.
+                        </p>
+
+                    </div>
+
+
+                    <h3>10.3 Termination conditions</h3>
+
+
+                    <ul>
+                        <li>A fixed number of generations has been reached.</li>
+                        <li>A time limit has been reached.</li>
+                        <li>The best fitness has not improved for a specified number of generations.</li>
+                        <li>The average population fitness stops changing.</li>
+                        <li>A target fitness value has been reached.</li>
+                    </ul>
+
+
+                    <h3>10.4 Convergence does not prove optimality</h3>
+
+
+                    <div class="important-note">
+
+                        <span>IMPORTANT</span>
+
+                        <p>
+                            Convergence means the population has stopped
+                            changing or improving. It does not prove
+                            that the global optimum has been found.
+                            A genetic algorithm returns the best solution
+                            found so far.
+                        </p>
+
+                    </div>
+
+
+                    <h3>10.5 Genetic Algorithms compared with A*</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+
+                                <tr>
+                                    <th>Feature</th>
+                                    <th>A*</th>
+                                    <th>Genetic Algorithm</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>Solution</td>
+                                    <td>A path.</td>
+                                    <td>A complete candidate solution.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Guarantee</td>
+                                    <td>Optimal with an admissible heuristic under the appropriate conditions.</td>
+                                    <td>No general optimality guarantee.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Memory</td>
+                                    <td>Grows with the frontier.</td>
+                                    <td>Controlled by the population size.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Stopped early</td>
+                                    <td>May have no usable solution.</td>
+                                    <td>Returns the best candidate found so far.</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Needs</td>
+                                    <td>Successors and a heuristic.</td>
+                                    <td>Fitness and genetic operators.</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     11. PYTHON IMPLEMENTATION
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="python"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">11</span>
+
+                        <div>
+
+                            <p class="section-kicker">
+                                PYTHON PROGRAMMING
+                            </p>
+
+                            <h2>Implementing Genetic Algorithms in Python</h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+
+                        The Exam Preparation Guide identifies four
+                        methods that you must understand and be able
+                        to write or trace for a genetic algorithm problem.
+
+                    </p>
+
+
+                    <div class="formula-card">
+
+                        <span class="definition-label">
+                            FOUR REQUIRED METHODS
+                        </span>
+
+                        <div class="formula-equation">
+                            generate_chromosome()
+                        </div>
+
+                        <div class="formula-equation">
+                            fitness(chromosome)
+                        </div>
+
+                        <div class="formula-equation">
+                            crossover(parent1, parent2)
+                        </div>
+
+                        <div class="formula-equation">
+                            mutate(chromosome)
+                        </div>
+
+                    </div>
+
+
+                    <h3>11.1 Generate a TSP chromosome</h3>
+
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>CHROMOSOME GENERATION</span>
+                        </div>
+
+<pre><code>def generate_chromosome(self):
+
+    return self.random.sample(
+        range(self.n_cities),
+        self.n_cities
+    )</code></pre>
+
+                    </div>
+
+
+                    <p>
+
+                        random.sample returns a shuffled copy
+                        containing every city exactly once.
+                        This produces a valid TSP permutation.
+
+                    </p>
+
+
+                    <div class="mistake-card">
+
+                        <strong>Common mistake: random.shuffle</strong>
+
+<pre><code># Incorrect
+return self.random.shuffle(
+    list(range(self.n_cities))
+)</code></pre>
+
+                        <p>
+                            random.shuffle edits the list in place
+                            and returns None. Returning it directly
+                            creates a chromosome with the value None.
+                        </p>
+
+                        <p>
+                            Use random.sample, or create a list,
+                            shuffle it and then return the list.
+                        </p>
+
+                    </div>
+
+
+                    <h3>11.2 TSP fitness method</h3>
+
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>FITNESS FUNCTION</span>
+                        </div>
+
+<pre><code>def fitness(self, tour):
+
+    table = self.distances
+
+    total = 0
+
+    for i in range(len(tour) - 1):
+
+        total += table[tour[i]][tour[i + 1]]
+
+    # Return from the last city to the first.
+    total += table[tour[-1]][tour[0]]
+
+    return total</code></pre>
+
+                    </div>
+
+
+                    <p>
+
+                        Notice the loop ends at len(tour) - 1.
+                        The return journey is added separately.
+                        This calculates a closed tour.
+
+                    </p>
+
+
+                    <div class="mistake-card">
+
+                        <strong>Common mistake: wrong loop bound</strong>
+
+<pre><code># Incorrect
+for i in range(len(tour)):
+    total += table[tour[i]][tour[i + 1]]</code></pre>
+
+                        <p>
+                            When i reaches the last index,
+                            tour[i + 1] is out of range and
+                            Python raises IndexError.
+                        </p>
+
+                    </div>
+
+
+                    <h3>11.3 Order crossover in Python</h3>
+
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>ORDER CROSSOVER</span>
+                        </div>
+
+<pre><code>def order_crossover(rng, parent1, parent2):
+
+    n = len(parent1)
+
+    start, end = sorted(
+        rng.sample(range(n), 2)
+    )
+
+    def create_child(segment_parent, fill_parent):
+
+        child = [None] * n
+
+        # Copy the selected segment.
+        child[start:end + 1] = (
+            segment_parent[start:end + 1]
+        )
+
+        # Remove cities already copied.
+        remaining = [
+            city for city in fill_parent
+            if city not in child
+        ]
+
+        # Fill empty positions left to right.
+        index = 0
+
+        for i in range(n):
+
+            if child[i] is None:
+
+                child[i] = remaining[index]
+
+                index += 1
+
+        return child
+
+
+    child1 = create_child(parent1, parent2)
+
+    child2 = create_child(parent2, parent1)
+
+    return child1, child2</code></pre>
+
+                    </div>
+
+
+                    <h3>11.4 Inversion mutation in Python</h3>
+
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>INVERSION MUTATION</span>
+                        </div>
+
+<pre><code>def inversion_mutate(rng, chromosome):
+
+    i, j = sorted(
+        rng.sample(range(len(chromosome)), 2)
+    )
+
+    chromosome[i:j + 1] = reversed(
+        chromosome[i:j + 1]
+    )</code></pre>
+
+                    </div>
+
+
+                    <div class="important-note">
+
+                        <span>DO NOT ASSIGN THE RETURN VALUE</span>
+
+                        <p>
+                            inversion_mutate changes the list in place
+                            and returns nothing. Call
+                            inversion_mutate(rng, chromosome).
+                            Do not write chromosome =
+                            inversion_mutate(rng, chromosome).
+                        </p>
+
+                    </div>
+
+
+                    <h3>11.5 Tournament selection in Python</h3>
+
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>TOURNAMENT SELECTION</span>
+                        </div>
+
+<pre><code>def select(self, population, k):
+
+    contenders = self.random.sample(
+        population, k
+    )
+
+    best = contenders[0]
+
+    for candidate in contenders[1:]:
+
+        if self.fitness(candidate) < self.fitness(best):
+
+            best = candidate
+
+    return best</code></pre>
+
+                    </div>
+
+
+                    <p>
+
+                        This version selects the smallest fitness
+                        because it is designed for the TSP problem,
+                        where a shorter tour is better.
+
+                    </p>
+
+
+                    <h3>11.6 Important Python behaviour</h3>
+
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="learning-comparison">
+
+                            <thead>
+
+                                <tr>
+                                    <th>Operation</th>
+                                    <th>Returns</th>
+                                    <th>Changes original?</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>random.sample()</td>
+                                    <td>New list</td>
+                                    <td>No</td>
+                                </tr>
+
+                                <tr>
+                                    <td>random.shuffle()</td>
+                                    <td>None</td>
+                                    <td>Yes</td>
+                                </tr>
+
+                                <tr>
+                                    <td>crossover()</td>
+                                    <td>Two children</td>
+                                    <td>Normally no</td>
+                                </tr>
+
+                                <tr>
+                                    <td>inversion_mutate()</td>
+                                    <td>None</td>
+                                    <td>Yes</td>
+                                </tr>
+
+                                <tr>
+                                    <td>swap mutation</td>
+                                    <td>None when in-place</td>
+                                    <td>Yes</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <h3>11.7 Example GA configuration</h3>
+
+
+                    <div class="python-code-card">
+
+                        <div class="code-titlebar">
+                            <span>PYTHON</span>
+                            <span>RUNNING THE COURSE EXAMPLE</span>
+                        </div>
+
+<pre><code>problem = TSP(
+    population_size=100,
+    n_generations=200,
+    crossover_rate=0.9,
+    mutation_rate=0.3,
+    n_elite=2,
+    k=3,
+    seed=2026
+)
+
+tour, length = problem.run()</code></pre>
+
+                    </div>
+
+
+                    <div class="important-note">
+
+                        <span>NOTE ABOUT YOUR COURSE LIBRARY</span>
+
+                        <p>
+                            The Exam Preparation Guide says the genetic
+                            algorithm base-class code and Revision 3
+                            were not included among the provided files.
+                            The examples here follow the method names
+                            and behaviour described in your guide.
+                            Check the exact class constructor and
+                            inheritance signature against Revision 3
+                            when you upload it.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     12. EXAM PRACTICE
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="practice"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">12</span>
+
+                        <div>
+
+                            <p class="section-kicker">
+                                EXAM PREPARATION GUIDE
+                            </p>
+
+                            <h2>Genetic Algorithm Exam Practice</h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <p class="lead-text">
+
+                        These questions use the problem statements
+                        and worked solutions in your COMP304 Exam
+                        Preparation Guide. Try each question before
+                        opening its solution.
+
+                    </p>
+
+
+                    <h3>Question 1 — TSP fitness calculation</h3>
+
+
+                    <p>
+                        Use the distance matrix in Section 04.
+                        Calculate the fitness of:
+                    </p>
+
+                    <ul>
+                        <li>[0, 1, 3, 2]</li>
+                        <li>[0, 2, 1, 3]</li>
+                    </ul>
+
+
+                    <details>
+
+                        <summary>Show worked solution</summary>
+
+                        <p>
+                            First tour: 10 + 25 + 30 + 15 = 80.
+                        </p>
+
+                        <p>
+                            Second tour: 15 + 35 + 25 + 20 = 95.
+                        </p>
+
+                        <p>
+                            The first tour is fitter because
+                            it has the smaller total length.
+                        </p>
+
+                    </details>
+
+
+                    <h3>Question 2 — Chromosome generation debugging</h3>
+
+
+                    <p>
+                        A student writes:
+                    </p>
+
+<pre class="exam-tree-code"><code>def generate_chromosome(self):
+
+    return self.random.shuffle(
+        list(range(self.n_cities))
+    )</code></pre>
+
+
+                    <p>
+                        What happens when this method is called?
+                        Correct the code.
+                    </p>
+
+
+                    <details>
+
+                        <summary>Show suggested answer</summary>
+
+                        <p>
+                            random.shuffle edits its argument in place
+                            and returns None. The method therefore
+                            returns None instead of a chromosome.
+                        </p>
+
+<pre><code>def generate_chromosome(self):
+
+    return self.random.sample(
+        range(self.n_cities),
+        self.n_cities
+    )</code></pre>
+
+                    </details>
+
+
+                    <h3>Question 3 — Inversion mutation</h3>
+
+
+                    <p>
+                        Apply inversion mutation to:
+                    </p>
+
+<pre class="exam-tree-code"><code>[0, 1, 2, 3, 4, 5]</code></pre>
+
+
+                    <p>
+                        The selected positions are i = 1 and j = 4.
+                        Show the resulting chromosome.
+                    </p>
+
+
+                    <details>
+
+                        <summary>Show worked solution</summary>
+
+<pre><code>Original:
+[0, 1, 2, 3, 4, 5]
+
+Reverse positions 1 to 4:
+[4, 3, 2, 1]
+
+Final:
+[0, 4, 3, 2, 1, 5]</code></pre>
+
+                        <p>
+                            The result remains a valid permutation.
+                        </p>
+
+                    </details>
+
+
+                    <h3>Question 4 — Order crossover</h3>
+
+
+                    <p>
+                        Parent 1 = [0, 1, 2, 3, 4, 5].
+                    </p>
+
+                    <p>
+                        Parent 2 = [3, 5, 0, 4, 1, 2].
+                    </p>
+
+                    <p>
+                        Copy positions 2 and 3 from Parent 1.
+                        Use the version of order crossover that
+                        fills empty positions from left to right.
+                    </p>
+
+
+                    <details>
+
+                        <summary>Show worked solution</summary>
+
+<pre><code>Step 1: Copy the segment.
+
+[_, _, 2, 3, _, _]
+
+Step 2: Remove 2 and 3 from Parent 2.
+
+[5, 0, 4, 1]
+
+Step 3: Fill the empty positions.
+
+[5, 0, 2, 3, 4, 1]</code></pre>
+
+                    </details>
+
+
+                    <h3>Question 5 — Tournament selection</h3>
+
+
+                    <p>
+                        Write a method that selects k chromosomes
+                        at random from the population and returns
+                        the one with the smallest fitness.
+                    </p>
+
+
+                    <details>
+
+                        <summary>Show suggested Python answer</summary>
+
+<pre><code>def select(self, population, k):
+
+    contenders = self.random.sample(population, k)
+
+    best = contenders[0]
+
+    for candidate in contenders[1:]:
+
+        if self.fitness(candidate) < self.fitness(best):
+            best = candidate
+
+    return best</code></pre>
+
+                    </details>
+
+
+                    <h3>Question 6 — Advert allocation</h3>
+
+
+                    <p>
+                        A schedule has nine slots and three advertisers.
+                        Each must receive exactly three slots.
+                        Explain why one-point crossover needs a
+                        repair function and why swap mutation is suitable.
+                    </p>
+
+
+                    <details>
+
+                        <summary>Show suggested answer</summary>
+
+                        <p>
+                            One-point crossover may combine parent
+                            segments in a way that assigns more than
+                            three slots to one advertiser and fewer
+                            than three to another. Repair restores
+                            the required counts.
+                        </p>
+
+                        <p>
+                            Swap mutation exchanges two assignments.
+                            It changes their positions but preserves
+                            the number of occurrences of each advertiser.
+                        </p>
+
+                    </details>
+
+
+                    <h3>Question 7 — Elitism</h3>
+
+
+                    <p>
+                        What does n_elite = 2 do? What is the risk
+                        when n_elite = 0?
+                    </p>
+
+
+                    <details>
+
+                        <summary>Show suggested answer</summary>
+
+                        <p>
+                            The two best individuals are copied unchanged
+                            into the next generation. When n_elite = 0,
+                            the best individual may be lost through
+                            crossover or mutation, so the best result
+                            in the population can become worse.
+                        </p>
+
+                    </details>
+
+
+                    <h3>Question 8 — Stopping conditions</h3>
+
+
+                    <p>
+                        Give four possible termination conditions
+                        for a genetic algorithm.
+                    </p>
+
+
+                    <details>
+
+                        <summary>Show suggested answer</summary>
+
+                        <ul>
+                            <li>Fixed number of generations.</li>
+                            <li>Time limit.</li>
+                            <li>No improvement in best fitness for a specified number of generations.</li>
+                            <li>Mean population fitness stops changing.</li>
+                            <li>Target fitness reached.</li>
+                        </ul>
+
+                    </details>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     13. CHECKLIST
+                     ========================================================= -->
+
+                <section class="lesson-section"
+                         id="checklist"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+
+                        <span class="section-number">13</span>
+
+                        <div>
+
+                            <p class="section-kicker">
+                                EXAM VERIFICATION
+                            </p>
+
+                            <h2>Genetic Algorithms Checklist</h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <ul class="checklist aiv-checklist">
+
+                        <li>
+                            <label>
+                                <input id="t06-check-01" type="checkbox" />
+                                <span>
+                                    Explain what a chromosome, gene,
+                                    population and fitness function mean.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t06-check-02" type="checkbox" />
+                                <span>
+                                    Write the complete genetic algorithm cycle.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t06-check-03" type="checkbox" />
+                                <span>
+                                    Generate a valid TSP chromosome using
+                                    random.sample.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t06-check-04" type="checkbox" />
+                                <span>
+                                    Calculate a complete TSP tour fitness,
+                                    including the return to the first city.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t06-check-05" type="checkbox" />
+                                <span>
+                                    Write and trace tournament selection.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t06-check-06" type="checkbox" />
+                                <span>
+                                    Apply order crossover and verify that
+                                    the child remains a permutation.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t06-check-07" type="checkbox" />
+                                <span>
+                                    Write inversion mutation and understand
+                                    its in-place behaviour.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t06-check-08" type="checkbox" />
+                                <span>
+                                    Explain one-point crossover and bit-flip
+                                    mutation for binary chromosomes.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t06-check-09" type="checkbox" />
+                                <span>
+                                    Explain crossover rate, mutation rate,
+                                    population size, tournament size and elitism.
+                                </span>
+                            </label>
+                        </li>
+
+                        <li>
+                            <label>
+                                <input id="t06-check-10" type="checkbox" />
+                                <span>
+                                    Explain why convergence does not guarantee
+                                    a globally optimal solution.
+                                </span>
+                            </label>
+                        </li>
+
+                    </ul>
+
+
+                    <button type="button"
+                            class="btn secondary"
+                            id="ga-reset-checklist">
+                        Reset Checklist
+                    </button>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     MODULE COMPLETION
+                     ========================================================= -->
+
+                <section class="lesson-completion">
+
+                    <div>
+
+                        <span class="completion-label">
+                            MODULE 06
+                        </span>
+
+                        <h2>Can you build a Genetic Algorithm?</h2>
+
+                        <p>
+                            Run the TSP evolution simulator, complete
+                            the crossover and mutation demonstrations,
+                            and verify that you can write the four
+                            required Python methods.
+                        </p>
+
+                    </div>
+
+
+                    <button type="button"
+                            class="btn btn-primary"
+                            id="ga-complete-module"
+                            disabled>
+                        Mark Module Complete
+                    </button>
+
+
+                    <p id="ga-completion-message"
+                       class="completion-message"
+                       aria-live="polite">
+
+                        Complete the operator demonstrations and
+                        at least one evolution run first.
+
+                    </p>
+
+                </section>
+
+
+
+                <!-- =========================================================
+                     BOTTOM NAVIGATION
+                     ========================================================= -->
+
+                <div class="topic-bottom-navigation">
+                    <a href="../topic-05-game-trees/index.html?v=6" class="topic-previous-link">← Previous: Game Trees</a>
+                    <a href="../topic-07-machine-learning/index.html?v=6" class="topic-next-link">Next: Machine Learning Basics →</a>
+                </div>
+
+
+            </article>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =========================================================
+         FOOTER
+         ========================================================= -->
+
+    <footer class="ai-footer">
+
+        <div class="footer-content">
+
+            <a href="../../index.html?v=6" class="ai-brand">
+                AI<span>Visual</span>
+            </a>
+
+            <p>
+                COMP304 Artificial Intelligence · Learn, reason and implement.
+            </p>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <p>
+                © <span id="current-year"></span> StructTrace.
+            </p>
+
+            <a href="../../index.html?v=6">Back to AIVisual</a>
+
+        </div>
+
+    </footer>
+
+</body>
+
+</html>

@@ -1,46 +1,97 @@
-﻿<!DOCTYPE html>
+@using Microsoft.AspNetCore.Identity
+@using StructTrace.Web.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var currentArea = ViewContext.RouteData.Values["area"]?.ToString() ?? "";
+
+    string NavClass(string controller) =>
+        string.IsNullOrEmpty(currentArea) &&
+        string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase)
+            ? "st-nav-link active" : "st-nav-link";
+
+    // Signed-in users with no full name get a gentle prompt (except on the profile page itself).
+    var showNamePrompt = false;
+    if (SignInManager.IsSignedIn(User) &&
+        !string.Equals(currentController, "Profile", StringComparison.OrdinalIgnoreCase))
+    {
+        var me = await UserManager.GetUserAsync(User);
+        showNamePrompt = me != null && string.IsNullOrWhiteSpace(me.DisplayName);
+    }
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - StructTrace.Web</title>
+    <title>@ViewData["Title"] - StructTrace</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/structtrace-theme.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/StructTrace.Web.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
+
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark border-bottom shadow-sm mb-3" style="background-color: #0f172a; border-color: #1e293b !important;">
-            <div class="container-fluid px-4">
-                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index" style="letter-spacing: -0.02em;">
-                    StructTrace<span style="color: #38bdf8;">.Web</span>
+    <header class="st-navbar">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid px-3 px-lg-4">
+
+                <a class="st-brand me-4" asp-area="" asp-controller="Home" asp-action="Index">
+                    Struct<span>Trace</span>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#st-main-nav"
+                        aria-controls="st-main-nav"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1 gap-1">
+
+                <div class="collapse navbar-collapse" id="st-main-nav">
+
+                    <ul class="navbar-nav st-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="@NavClass("Home")" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light" href="/Sandbox">Code Sandbox</a>
+                            <a class="@NavClass("Sandbox")" href="/Sandbox">Code Sandbox</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link fw-semibold" href="~/dsa-visualizer/index.html?v=2" style="color: #38bdf8;">
-                                DSAVisual
+                            <a class="st-nav-link is-dsa" href="/dsa-visualizer/index.html">
+                                <i class="st-nav-dot" aria-hidden="true"></i>DSAVisual
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="st-nav-link is-ai" href="/ai-visualizer/index.html">
+                                <i class="st-nav-dot" aria-hidden="true"></i>AIVisual
                             </a>
                         </li>
                     </ul>
+
                     <partial name="_LoginPartial" />
+
                 </div>
             </div>
         </nav>
     </header>
 
     <div class="container">
-        <main role="main" class="pb-4">
+        <main role="main" class="st-main">
+
+            @if (showNamePrompt)
+            {
+                <div class="st-alert st-alert--warning">
+                    Your profile has no name yet, so you appear only as an e-mail address.
+                    <a asp-area="" asp-controller="Profile" asp-action="Index">Add your full name →</a>
+                </div>
+            }
+
             @RenderBody()
         </main>
     </div>
@@ -48,6 +99,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

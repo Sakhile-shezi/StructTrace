@@ -19,7 +19,7 @@
     // Point DSAVisual brand link to cache-busted 9-module hub
     const brandLink = document.querySelector(".site-header .brand");
     if (brandLink) {
-        brandLink.setAttribute("href", `${prefix}index.html?v=2`);
+        brandLink.setAttribute("href", `${prefix}index.html?v=6`);
     }
 
     // Render unified top navigation bar across root hub and all 9 modules
@@ -27,12 +27,13 @@
     if (navList) {
         const moduleLinks = MODULES.map((m, idx) => {
             const isActive = idx === activeIndex ? ' class="active"' : "";
-            return `<li><a href="${prefix}${m.path}"${isActive}>${m.title}</a></li>`;
+            return `<li><a href="${prefix}${m.path}?v=6"${isActive}>${m.title}</a></li>`;
         }).join("");
 
         const appLinks = `
       <li><a href="/" class="nav-app-link" style="border: 1px solid #334155; color: #e2e8f0; margin-left: 0.25rem;">Home</a></li>
       <li><a href="/Sandbox" class="nav-app-link nav-sandbox-link" style="border: 1px solid #1d4ed8; color: #93c5fd;">Sandbox</a></li>
+      <li><a href="/ai-visualizer/index.html?v=6" class="nav-app-link nav-ai-link" style="border: 1px solid #6d28d9; color: #c4b5fd;">AIVisual</a></li>
       <li><a href="/account/instant-logout" class="nav-app-link nav-logout-link" style="border: 1px solid #7f1d1d; color: #fca5a5;">Logout</a></li>
     `;
 
@@ -52,14 +53,14 @@
         footerNav.innerHTML = `
       <div>
         ${prevMod
-                ? `<a href="${prefix}${prevMod.path}" class="btn secondary">← ${prevMod.full}</a>`
-                : `<a href="${prefix}index.html?v=2" class="btn secondary">← Curriculum Hub</a>`
+                ? `<a href="${prefix}${prevMod.path}?v=6" class="btn secondary">← ${prevMod.full}</a>`
+                : `<a href="${prefix}index.html?v=6" class="btn secondary">← Curriculum Hub</a>`
             }
       </div>
       <div>
         ${nextMod
-                ? `<a href="${prefix}${nextMod.path}" class="btn primary">${nextMod.full} →</a>`
-                : `<a href="${prefix}index.html?v=2" class="btn primary">Finish & Return to Hub →</a>`
+                ? `<a href="${prefix}${nextMod.path}?v=6" class="btn primary">${nextMod.full} →</a>`
+                : `<a href="${prefix}index.html?v=6" class="btn primary">Finish & Return to Hub →</a>`
             }
       </div>
     `;

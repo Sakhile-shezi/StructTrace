@@ -2,29 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
+    <!-- sign-in guard: must load first -->
+    <script src="/js/visualizer-guard.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DSAVisual | Interactive Java Data Structures & Algorithms</title>
-    <link rel="stylesheet" href="css/styles.css?v=4" />
+    <link rel="stylesheet" href="css/styles.css?v=6" />
     <!-- ADD THESE TWO LINES RIGHT BEFORE </head> -->
-    <link rel="stylesheet" href="/dsa-visualizer/dsav-polish.css" />
-    <script src="/dsa-visualizer/dsav-polish.js" defer></script>
+    <link rel="stylesheet" href="/dsa-visualizer/dsav-polish.css?v=6" />
+    <script src="/dsa-visualizer/dsav-polish.js?v=6" defer></script>
 </head>
 <body>
     <header class="site-header">
         <nav class="nav-container" aria-label="Module Navigation">
-            <a href="index.html" class="brand">DSA<span>Visual</span></a>
+            <a href="index.html?v=6" class="brand">DSA<span>Visual</span></a>
             <ul class="nav-links">
-                <li><a href="module-01-foundations/index.html">1. Big-O</a></li>
-                <li><a href="module-02-linked-lists/index.html">2. Linked Lists</a></li>
-                <li><a href="module-03-stacks-queues/index.html">3. Stacks & Queues</a></li>
-                <li><a href="module-04-heaps/index.html">4. Heaps</a></li>
-                <li><a href="module-05-bst/index.html">5. BST</a></li>
-                <li><a href="module-06-balanced-trees/index.html">6. Balanced Trees</a></li>
-                <li><a href="module-07-hashing/index.html">7. Hashing</a></li>
-                <li><a href="module-08-graphs-algorithms/index.html">8. Graphs</a></li>
-                <li><a href="module-09-dijkstra-algorithm/index.html">9. Algorithms</a></li>
+                <li><a href="module-01-foundations/index.html?v=6">1. Big-O</a></li>
+                <li><a href="module-02-linked-lists/index.html?v=6">2. Linked Lists</a></li>
+                <li><a href="module-03-stacks-queues/index.html?v=6">3. Stacks & Queues</a></li>
+                <li><a href="module-04-heaps/index.html?v=6">4. Heaps</a></li>
+                <li><a href="module-05-bst/index.html?v=6">5. BST</a></li>
+                <li><a href="module-06-balanced-trees/index.html?v=6">6. Balanced Trees</a></li>
+                <li><a href="module-07-hashing/index.html?v=6">7. Hashing</a></li>
+                <li><a href="module-08-graphs-algorithms/index.html?v=6">8. Graphs</a></li>
+                <li><a href="module-09-dijkstra-algorithm/index.html?v=6">9. Algorithms</a></li>
                 <li><a href="/" class="nav-app-link">Home</a></li>
                 <li><a href="/Sandbox" class="nav-app-link nav-sandbox-link">Sandbox</a></li>
+                <li><a href="/ai-visualizer/index.html?v=6" class="nav-app-link nav-ai-link">AIVisual</a></li>
                 <li><a href="/account/instant-logout" class="nav-app-link nav-logout-link">Logout</a></li>
             </ul>
         </nav>
@@ -73,7 +76,7 @@
                         <input type="checkbox" class="mod-complete-cb" data-mod="mod1" />
                         Completed
                     </label>
-                    <a href="module-01-foundations/index.html" class="btn primary">Launch Module →</a>
+                    <a href="module-01-foundations/index.html?v=6" class="btn primary">Launch Module →</a>
                 </div>
             </article>
 
@@ -98,7 +101,7 @@
                         <input type="checkbox" class="mod-complete-cb" data-mod="mod2" />
                         Completed
                     </label>
-                    <a href="module-02-linked-lists/index.html" class="btn primary">Launch Module →</a>
+                    <a href="module-02-linked-lists/index.html?v=6" class="btn primary">Launch Module →</a>
                 </div>
             </article>
 
@@ -123,7 +126,7 @@
                         <input type="checkbox" class="mod-complete-cb" data-mod="mod3" />
                         Completed
                     </label>
-                    <a href="module-03-stacks-queues/index.html" class="btn primary">Launch Module →</a>
+                    <a href="module-03-stacks-queues/index.html?v=6" class="btn primary">Launch Module →</a>
                 </div>
             </article>
 
@@ -148,7 +151,7 @@
                         <input type="checkbox" class="mod-complete-cb" data-mod="mod4" />
                         Completed
                     </label>
-                    <a href="module-04-heaps/index.html" class="btn primary">Launch Module →</a>
+                    <a href="module-04-heaps/index.html?v=6" class="btn primary">Launch Module →</a>
                 </div>
             </article>
 
@@ -173,7 +176,7 @@
                         <input type="checkbox" class="mod-complete-cb" data-mod="mod5" />
                         Completed
                     </label>
-                    <a href="module-05-bst/index.html" class="btn primary">Launch Module →</a>
+                    <a href="module-05-bst/index.html?v=6" class="btn primary">Launch Module →</a>
                 </div>
             </article>
 
@@ -198,7 +201,7 @@
                         <input type="checkbox" class="mod-complete-cb" data-mod="mod6" />
                         Completed
                     </label>
-                    <a href="module-06-balanced-trees/index.html" class="btn primary">Launch Module →</a>
+                    <a href="module-06-balanced-trees/index.html?v=6" class="btn primary">Launch Module →</a>
                 </div>
             </article>
 
@@ -223,7 +226,7 @@
                         <input type="checkbox" class="mod-complete-cb" data-mod="mod7" />
                         Completed
                     </label>
-                    <a href="module-07-hashing/index.html" class="btn primary">Launch Module →</a>
+                    <a href="module-07-hashing/index.html?v=6" class="btn primary">Launch Module →</a>
                 </div>
             </article>
 
@@ -248,7 +251,7 @@
                         <input type="checkbox" class="mod-complete-cb" data-mod="mod8" />
                         Completed
                     </label>
-                    <a href="module-08-graphs-algorithms/index.html" class="btn primary">Launch Module →</a>
+                    <a href="module-08-graphs-algorithms/index.html?v=6" class="btn primary">Launch Module →</a>
                 </div>
             </article>
 
@@ -273,13 +276,13 @@
                         <input type="checkbox" class="mod-complete-cb" data-mod="mod9" />
                         Completed
                     </label>
-                    <a href="module-09-dijkstra-algorithm/index.html" class="btn primary">Launch Module →</a>
+                    <a href="module-09-dijkstra-algorithm/index.html?v=6" class="btn primary">Launch Module →</a>
                 </div>
             </article>
         </section>
     </main>
 
-    <script src="js/shared-nav.js?v=4"></script>
+    <script src="js/shared-nav.js?v=6"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const STORAGE_KEY = "dsa_visual_progress_v2";
