@@ -237,7 +237,7 @@
         if (missing.length > 0) {
 
             console.error(
-                "Module 08 is missing HTML elements:",
+                "Topic 08 is missing HTML elements:",
                 missing
             );
 
@@ -2151,9 +2151,9 @@
 
                 el.completionMessage.textContent =
                     complete
-                        ? "A complete training run and a test prediction have been performed. You can mark Module 08 complete."
+                        ? "A complete training run and a test prediction have been performed. You can mark Topic 08 complete."
                         : completedTraining
-                            ? "Training is complete. Test a new input before marking the module complete."
+                            ? "Training is complete. Test a new input before marking the topic complete."
                             : "Complete a training run and test an input first.";
 
             }
@@ -2186,14 +2186,14 @@
 
 
             el.completionButton.textContent =
-                "Module Completed ✓";
+                "Topic Completed ✓";
 
 
             el.completionButton.disabled = true;
 
 
             el.completionMessage.textContent =
-                "Module 08 completed. You are ready for Logic.";
+                "Topic 08 completed. You are ready for Logic.";
 
         }
 
@@ -2477,7 +2477,7 @@
 
 
         console.log(
-            "AIVisual Module 08 initialized successfully."
+            "AIVisual Topic 08 initialized successfully."
         );
 
 

@@ -1,14 +1,14 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
     const MODULES = [
-        { num: 1, title: "1. Big-O", full: "Module 1: Foundations & Big-O", path: "module-01-foundations/index.html" },
-        { num: 2, title: "2. Linked Lists", full: "Module 2: Singly, Doubly & Circular Lists", path: "module-02-linked-lists/index.html" },
-        { num: 3, title: "3. Stacks & Queues", full: "Module 3: Stacks, Queues & Deques", path: "module-03-stacks-queues/index.html" },
-        { num: 4, title: "4. Heaps", full: "Module 4: Binary Min-Heaps", path: "module-04-heaps/index.html" },
-        { num: 5, title: "5. BST", full: "Module 5: Binary Search Trees", path: "module-05-bst/index.html" },
-        { num: 6, title: "6. Balanced Trees", full: "Module 6: AVL & Red-Black Trees", path: "module-06-balanced-trees/index.html" },
-        { num: 7, title: "7. Hashing", full: "Module 7: Sets, Maps & Hash Tables", path: "module-07-hashing/index.html" },
-        { num: 8, title: "8. Graphs", full: "Module 8: Graphs & Traversals", path: "module-08-graphs-algorithms/index.html" }, 
-        { num: 9, title: "9. Algorithms", full: "Module 9: Dijkstra & Classic Algorithms", path: "module-09-dijkstra-algorithm/index.html" },
+        { num: 1, title: "1. Big-O", full: "Topic 1: Foundations & Big-O", path: "topic-01-foundations/index.html" },
+        { num: 2, title: "2. Linked Lists", full: "Topic 2: Singly, Doubly & Circular Lists", path: "topic-02-linked-lists/index.html" },
+        { num: 3, title: "3. Stacks & Queues", full: "Topic 3: Stacks, Queues & Deques", path: "topic-03-stacks-queues/index.html" },
+        { num: 4, title: "4. Heaps", full: "Topic 4: Binary Min-Heaps", path: "topic-04-heaps/index.html" },
+        { num: 5, title: "5. BST", full: "Topic 5: Binary Search Trees", path: "topic-05-bst/index.html" },
+        { num: 6, title: "6. Balanced Trees", full: "Topic 6: AVL & Red-Black Trees", path: "topic-06-balanced-trees/index.html" },
+        { num: 7, title: "7. Hashing", full: "Topic 7: Sets, Maps & Hash Tables", path: "topic-07-hashing/index.html" },
+        { num: 8, title: "8. Graphs", full: "Topic 8: Graphs & Traversals", path: "topic-08-graphs-algorithms/index.html" }, 
+        { num: 9, title: "9. Algorithms", full: "Topic 9: Dijkstra & Classic Algorithms", path: "topic-09-dijkstra-algorithm/index.html" },
     ];
 
     const currentPath = window.location.pathname.toLowerCase();
@@ -16,13 +16,13 @@
     const isRootHub = activeIndex === -1;
     const prefix = isRootHub ? "" : "../";
 
-    // Point DSAVisual brand link to cache-busted 9-module hub
+    // Point DSAVisual brand link to cache-busted 9-topic hub
     const brandLink = document.querySelector(".site-header .brand");
     if (brandLink) {
         brandLink.setAttribute("href", `${prefix}index.html?v=6`);
     }
 
-    // Render unified top navigation bar across root hub and all 9 modules
+    // Render unified top navigation bar across root hub and all 9 topics
     const navList = document.querySelector(".site-header .nav-links");
     if (navList) {
         const moduleLinks = MODULES.map((m, idx) => {
@@ -37,7 +37,7 @@
         navList.innerHTML = moduleLinks + appLinks;
     }
 
-    // Render sequential Previous / Next footer navigation on module pages
+    // Render sequential Previous / Next footer navigation on topic pages
     const mainEl = document.querySelector("main.container");
     if (mainEl && !isRootHub) {
         const prevMod = activeIndex > 0 ? MODULES[activeIndex - 1] : null;
@@ -45,7 +45,7 @@
 
         const footerNav = document.createElement("nav");
         footerNav.className = "module-seq-nav";
-        footerNav.setAttribute("aria-label", "Sequential Module Navigation");
+        footerNav.setAttribute("aria-label", "Sequential Topic Navigation");
 
         footerNav.innerHTML = `
       <div>

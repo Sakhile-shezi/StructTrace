@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (missingElements.length > 0) {
 
         console.error(
-            "Module 04 could not initialise. Missing HTML elements:",
+            "Topic 04 could not initialise. Missing HTML elements:",
             missingElements
         );
 
@@ -248,7 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         } catch (error) {
 
-            console.warn("Could not load module progress:", error);
+            console.warn("Could not load topic progress:", error);
 
             return new Set();
 
@@ -271,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         } catch (error) {
 
-            console.warn("Could not save module progress:", error);
+            console.warn("Could not save topic progress:", error);
 
         }
 
@@ -1594,10 +1594,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             el.completionMessage.textContent =
-                "Module 04 completed.";
+                "Topic 04 completed.";
 
             el.completeButton.textContent =
-                "Module Completed ✓";
+                "Topic Completed ✓";
 
             el.completeButton.disabled = true;
 
@@ -2278,7 +2278,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     console.log(
-        "AIVisual Module 04 loaded successfully."
+        "AIVisual Topic 04 loaded successfully."
     );
 
     console.log(

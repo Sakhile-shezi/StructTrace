@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StructTrace.Web.Data;
 using StructTrace.Web.Models;
+using StructTrace.Web.Services.Progress;
 
 namespace StructTrace.Web.Controllers;
 
@@ -13,15 +14,21 @@ public class ProfileController : Controller
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ApplicationDbContext _db;
+    private readonly IProgressStore _progress;
+    private readonly ILogger<ProfileController> _logger;
 
     public ProfileController(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        ApplicationDbContext db)
+        ApplicationDbContext db,
+        IProgressStore progress,
+        ILogger<ProfileController> logger)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _db = db;
+        _progress = progress;
+        _logger = logger;
     }
 
     // GET /Profile
@@ -86,8 +93,22 @@ public class ProfileController : Controller
 
         var displayName = user.DisplayName ?? "";
 
+        // Progress saved from AIVisual and DSAVisual on any device.
+        Dictionary<string, Dictionary<string, ProgressItem>>? progress = null;
+        try
+        {
+            progress = await _progress.GetAllAsync(user.Id, HttpContext.RequestAborted);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            _logger.LogWarning(ex, "Could not read study progress. Has Update-Database been run?");
+        }
+
         return new ProfileViewModel
         {
+            AiProgress = ProgressCatalog.Ai(progress?.GetValueOrDefault(ProgressAreas.Ai)),
+            DsaProgress = ProgressCatalog.Dsa(progress?.GetValueOrDefault(ProgressAreas.Dsa)),
+            ProgressLoaded = progress != null,
             DisplayName = displayName,
             Email = user.Email ?? user.UserName ?? "",
             Joined = string.Format("{0:dd MMMM yyyy}", user.JoinedAtUtc),

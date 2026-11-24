@@ -100,7 +100,7 @@
 
         if (missing.length > 0) {
             console.error(
-                "Module 05 is missing HTML elements:",
+                "Topic 05 is missing HTML elements:",
                 missing
             );
 
@@ -1811,10 +1811,10 @@
 
 
                     el.completionMessage.textContent =
-                        "Module 05 completed.";
+                        "Topic 05 completed.";
 
                     el.completionButton.textContent =
-                        "Module Completed ✓";
+                        "Topic Completed ✓";
 
                     el.completionButton.disabled = true;
 
@@ -1884,7 +1884,7 @@
 
 
         console.log(
-            "AIVisual Module 05 initialized successfully."
+            "AIVisual Topic 05 initialized successfully."
         );
 
         console.log(

@@ -21,9 +21,9 @@ public static class EmailTemplates
                 Paragraph("Your account is ready. Here is what you can do with it:") +
                 Feature("DSAVisual", "Step through data structures and algorithms, from Big-O to graphs and shortest paths.") +
                 Feature("AIVisual", "Trace search, game trees, genetic algorithms, perceptrons, logic and CSPs step by step.") +
-                Feature("Code Sandbox", "Run traces in C++, Java, Python or C# and save them to your workspace.") +
+                Feature("Code Sandbox", "Step through each algorithm on your own input, and run the Python version right in your browser.") +
                 Button("Open StructTrace", home + "/") +
-                Paragraph("Tip: your profile page shows your AIVisual progress and every trace you save.") +
+                Paragraph("Tip: the topics you complete are saved to your account, so your profile shows the same progress on every device.") +
                 Small($"You are receiving this email because an account was created for {Encode(toAddress)} on StructTrace."));
 
         var text = new StringBuilder()
@@ -32,7 +32,7 @@ public static class EmailTemplates
             .AppendLine("Your account is ready. You can now use:")
             .AppendLine("- DSAVisual: data structures and algorithms, step by step")
             .AppendLine("- AIVisual: search, game trees, GAs, perceptrons, logic and CSPs")
-            .AppendLine("- Code Sandbox: run and save traces in C++, Java, Python or C#")
+            .AppendLine("- Code Sandbox: step through algorithms and run Python in your browser")
             .AppendLine()
             .AppendLine($"Open StructTrace: {home}/")
             .AppendLine()

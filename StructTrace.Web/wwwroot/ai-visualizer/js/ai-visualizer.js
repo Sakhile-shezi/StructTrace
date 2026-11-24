@@ -173,7 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (stats.total === 0) {
 
                 progressText.textContent =
-                    "No learning modules are currently available.";
+                    "No learning topics are currently available.";
 
             } else if (stats.completed === 0) {
 
@@ -183,12 +183,12 @@ document.addEventListener("DOMContentLoaded", () => {
             } else if (stats.percentage === 100) {
 
                 progressText.textContent =
-                    "Excellent! You have completed all available learning modules.";
+                    "Excellent! You have completed all available learning topics.";
 
             } else {
 
                 progressText.textContent =
-                    `You have completed ${stats.completed} of ${stats.total} learning modules. Keep going!`;
+                    `You have completed ${stats.completed} of ${stats.total} learning topics. Keep going!`;
             }
         }
 

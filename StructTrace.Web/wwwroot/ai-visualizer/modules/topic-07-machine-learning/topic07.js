@@ -236,7 +236,7 @@
         if (missing.length > 0) {
 
             console.error(
-                "Module 07 is missing HTML elements:",
+                "Topic 07 is missing HTML elements:",
                 missing
             );
 
@@ -382,7 +382,7 @@
 
                 el.completionMessage.textContent =
                     complete
-                        ? "All interactive activities completed. You can mark Module 07 complete."
+                        ? "All interactive activities completed. You can mark Topic 07 complete."
                         : `Still to complete: ${remaining.join(", ")}.`;
 
             }
@@ -1597,14 +1597,14 @@
 
 
             el.completionButton.textContent =
-                "Module Completed ✓";
+                "Topic Completed ✓";
 
 
             el.completionButton.disabled = true;
 
 
             el.completionMessage.textContent =
-                "Module 07 completed. You are ready for Perceptron Training.";
+                "Topic 07 completed. You are ready for Perceptron Training.";
 
         }
 
@@ -1720,7 +1720,7 @@
 
 
         console.log(
-            "AIVisual Module 07 initialized successfully."
+            "AIVisual Topic 07 initialized successfully."
         );
 
         console.log(

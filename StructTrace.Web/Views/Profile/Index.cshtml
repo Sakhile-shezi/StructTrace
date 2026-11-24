@@ -24,7 +24,8 @@
     </div>
     <div class="st-hero-stats">
         <div class="st-hero-stat"><strong>@Model.Traces.Count</strong><span>Saved traces</span></div>
-        <div class="st-hero-stat"><strong id="pf-ai-count">0/10</strong><span>AIVisual modules</span></div>
+        <div class="st-hero-stat"><strong>@Model.AiProgress.Completed.Count/@Model.AiProgress.Topics.Count</strong><span>AIVisual topics</span></div>
+        <div class="st-hero-stat"><strong>@Model.DsaProgress.Completed.Count/@Model.DsaProgress.Topics.Count</strong><span>DSAVisual topics</span></div>
     </div>
 </section>
 
@@ -102,16 +103,45 @@
         </div>
     </div>
 
-    <!-- AIVISUAL PROGRESS -->
+    <!-- LEARNING PROGRESS (saved to the account, the same on every device) -->
     <div class="st-card st-col-5">
         <div class="st-card-header">
-            <h2>AIVisual progress</h2>
-            <small>Saved in this browser</small>
+            <h2>Learning progress</h2>
+            <small>@(Model.ProgressLoaded ? "Saved to your account" : "Not available right now")</small>
         </div>
         <div class="st-card-body">
-            <div class="st-progress" aria-hidden="true"><div id="pf-ai-bar"></div></div>
-            <p class="st-help" id="pf-ai-text">No AIVisual modules completed yet.</p>
-            <ul class="st-link-list" id="pf-ai-list"></ul>
+            @foreach (var area in new[] { Model.AiProgress, Model.DsaProgress })
+            {
+                var next = area.Next;
+                <div class="st-progress-block">
+                    <div class="st-progress-head">
+                        <strong>@area.Name</strong>
+                        <span>@area.Completed.Count of @area.Topics.Count topics · @area.Percent%</span>
+                    </div>
+                    <div class="st-progress" role="progressbar" aria-label="@area.Name progress"
+                         aria-valuemin="0" aria-valuemax="@area.Topics.Count" aria-valuenow="@area.Completed.Count">
+                        <div style="width: @(area.Percent)%"></div>
+                    </div>
+                    @if (next != null)
+                    {
+                        <a class="st-progress-next" href="@next.Url">@(area.Completed.Count == 0 ? "Start" : "Continue"): @next.Title <span aria-hidden="true">→</span></a>
+                    }
+                    else
+                    {
+                        <p class="st-help">All @area.Name topics completed. Well done!</p>
+                    }
+                </div>
+            }
+            <p class="st-help st-progress-note">
+                @if (Model.ProgressLoaded)
+                {
+                    <text>Topics you mark complete in AIVisual and DSAVisual are saved here and appear on every device you sign in on.</text>
+                }
+                else
+                {
+                    <text>Your progress could not be loaded. It is still kept in the browser you study on and is uploaded as soon as possible.</text>
+                }
+            </p>
         </div>
     </div>
 
@@ -149,40 +179,4 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script>
-        // AIVisual stores module completion in this browser (key: aivisual_progress_v1).
-        (function () {
-            const modules = [
-                ["topic-01-introduction", "Introduction to AI"],
-                ["topic-02-problem-formulation", "Problem Formulation"],
-                ["topic-03-uninformed-search", "Uninformed Search"],
-                ["topic-04-heuristic-search", "Heuristic Search"],
-                ["topic-05-game-trees", "Game Trees"],
-                ["topic-06-genetic-algorithms", "Genetic Algorithms"],
-                ["topic-07-machine-learning", "Machine Learning"],
-                ["topic-08-perceptron", "Perceptron"],
-                ["topic-09-logic", "Logic"],
-                ["topic-10-csp", "Constraint Satisfaction"]
-            ];
-            let progress = {};
-            try { progress = JSON.parse(localStorage.getItem("aivisual_progress_v1") || "{}") || {}; } catch (e) { }
-            const done = modules.filter(([id]) => progress[id] === true);
-            const pct = Math.round(done.length / modules.length * 100);
-            document.getElementById("pf-ai-count").textContent = `${done.length}/${modules.length}`;
-            document.getElementById("pf-ai-bar").style.width = pct + "%";
-            document.getElementById("pf-ai-text").textContent = done.length
-                ? `${done.length} of ${modules.length} modules completed (${pct}%).`
-                : "No AIVisual modules completed yet. Finish a module and press “Mark Module Complete”.";
-            const next = modules.find(([id]) => progress[id] !== true);
-            const list = document.getElementById("pf-ai-list");
-            if (next) {
-                const li = document.createElement("li");
-                const a = document.createElement("a");
-                a.href = `/ai-visualizer/modules/${next[0]}/index.html`;
-                a.textContent = `Continue: ${next[1]} `;
-                const span = document.createElement("span"); span.textContent = "→";
-                a.appendChild(span); li.appendChild(a); list.appendChild(li);
-            }
-        })();
-    </script>
 }

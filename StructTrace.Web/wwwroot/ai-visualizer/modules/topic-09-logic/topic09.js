@@ -258,7 +258,7 @@
         if (missing.length > 0) {
 
             console.error(
-                "Module 09 is missing HTML elements:",
+                "Topic 09 is missing HTML elements:",
                 missing
             );
 
@@ -374,7 +374,7 @@
 
                 el.completionMessage.textContent =
                     complete
-                        ? "All logic challenges and proof traces are complete. You can mark Module 09 complete."
+                        ? "All logic challenges and proof traces are complete. You can mark Topic 09 complete."
                         : `Still to complete: ${remaining.join(", ")}.`;
 
             }
@@ -2091,14 +2091,14 @@
 
 
             el.completionButton.textContent =
-                "Module Completed ✓";
+                "Topic Completed ✓";
 
 
             el.completionButton.disabled = true;
 
 
             el.completionMessage.textContent =
-                "Module 09 completed. You are ready for Constraint Satisfaction Problems.";
+                "Topic 09 completed. You are ready for Constraint Satisfaction Problems.";
 
         }
 
@@ -2246,7 +2246,7 @@
 
 
         console.log(
-            "AIVisual Module 09 initialized successfully."
+            "AIVisual Topic 09 initialized successfully."
         );
 
 

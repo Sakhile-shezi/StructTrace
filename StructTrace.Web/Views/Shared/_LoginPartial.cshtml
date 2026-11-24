@@ -17,6 +17,17 @@
         var initials = UserDisplay.Initials(me?.DisplayName, email);
         var nameMissing = string.IsNullOrWhiteSpace(me?.DisplayName);
 
+        <li>
+            <button type="button" class="st-search-trigger" data-st-search-open
+                    aria-label="Search every topic (shortcut: /)" title="Search every topic (/)">
+                <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true">
+                    <circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="2" />
+                    <path d="M13 13l4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                <span class="st-search-trigger-label">Search topics</span><kbd>/</kbd>
+            </button>
+        </li>
+
         if (User.IsInRole(AppRoles.Admin))
         {
             <li>

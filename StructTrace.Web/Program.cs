@@ -1,13 +1,19 @@
+using System.IO.Compression;
+using System.Security.Claims;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Pgvector.EntityFrameworkCore;
 using StructTrace.Web.Data;
+using StructTrace.Web.Endpoints;
 using StructTrace.Web.Models;
 using StructTrace.Web.Services.Email;
+using StructTrace.Web.Services.Progress;
+using StructTrace.Web.Services.Search;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +53,33 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Identity/Account/Login";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+
+    // The JSON API answers 401/403 instead of sending the caller to the login page.
+    options.Events.OnRedirectToLogin = context =>
+    {
+        if (context.Request.Path.StartsWithSegments("/api"))
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        }
+        else
+        {
+            context.Response.Redirect(context.RedirectUri);
+        }
+        return Task.CompletedTask;
+    };
+
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        if (context.Request.Path.StartsWithSegments("/api"))
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+        }
+        else
+        {
+            context.Response.Redirect(context.RedirectUri);
+        }
+        return Task.CompletedTask;
+    };
 
     // Every account gets the Student role the first time it signs in
     // (this also covers brand-new registrations).
@@ -107,14 +140,68 @@ builder.Services.AddRateLimiter(options =>
                 QueueLimit = 0
             }));
 
+    // The JSON API: 120 requests a minute for each signed-in user.
+    options.AddPolicy(StructTraceApi.RateLimitPolicy, context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            context.User.FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? context.Connection.RemoteIpAddress?.ToString()
+                ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 120,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
+
     options.OnRejected = (context, cancellationToken) =>
     {
-        context.HttpContext.Response.ContentType = "text/plain; charset=utf-8";
-        return new ValueTask(context.HttpContext.Response.WriteAsync(
+        var response = context.HttpContext.Response;
+
+        if (context.HttpContext.Request.Path.StartsWithSegments("/api"))
+        {
+            return new ValueTask(response.WriteAsJsonAsync(
+                new { message = "Too many requests. Please wait a minute and try again." },
+                cancellationToken));
+        }
+
+        response.ContentType = "text/plain; charset=utf-8";
+        return new ValueTask(response.WriteAsync(
             "Too many password-reset requests. Please wait 15 minutes and try again.",
             cancellationToken));
     };
 });
+
+// ==========================================
+// 2c. ACCOUNT-SYNCED PROGRESS + SITE SEARCH (pgvector)
+// Progress: /api/progress keeps AIVisual and DSAVisual progress in the
+// StudyProgress table, so it follows the student to every device.
+// Search: SearchIndexer reads every topic page at start-up and stores
+// one 384-number vector per section in SearchDocuments (and fills
+// Lessons.Embedding); /api/search finds the nearest ones with pgvector.
+// ==========================================
+
+builder.Services.AddScoped<IProgressStore, EfProgressStore>();
+builder.Services.AddSingleton<SearchCatalog>();
+builder.Services.AddHostedService<SearchIndexer>();
+builder.Services.AddScoped<SiteSearchService>();
+
+// ==========================================
+// 2d. COMPRESSION FOR STATIC FILES
+// The visualizer pages, scripts and styles are sent compressed (Brotli or
+// gzip), which makes them roughly 4-6 times smaller. Pages that contain
+// security tokens (forms, account pages) are deliberately NOT compressed
+// (see section 7), which protects them from BREACH-style attacks.
+// ==========================================
+
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+    options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "image/svg+xml" });
+});
+builder.Services.Configure<BrotliCompressionProviderOptions>(o => o.Level = CompressionLevel.Fastest);
+builder.Services.Configure<GzipCompressionProviderOptions>(o => o.Level = CompressionLevel.Fastest);
 
 // ==========================================
 // 3. MVC AND RAZOR PAGES
@@ -199,6 +286,18 @@ else
 
 app.UseHttpsRedirection();
 
+// Compress static content only (see 2d).
+string[] compressedFolders = { "/dsa-visualizer", "/ai-visualizer", "/css", "/js", "/lib" };
+
+app.UseWhen(
+    context => compressedFolders.Any(folder =>
+        context.Request.Path.StartsWithSegments(folder, StringComparison.OrdinalIgnoreCase)),
+    branch => branch.UseResponseCompression());
+
+// Old DSAVisual addresses (/dsa-visualizer/module-01-...) go to the new
+// ones (/dsa-visualizer/topic-01-...). See Endpoints/LegacyUrls.cs.
+app.UseLegacyUrlRedirects();
+
 // ==========================================
 // 8. PROTECT DSAVISUAL AND AIVISUAL
 // Only signed-in users may open anything inside
@@ -246,26 +345,31 @@ app.Use(async (context, next) =>
 });
 
 // Static files. Private files lose their Last-Modified/ETag headers so a
-// browser has nothing to cache them with.
+// browser has nothing to cache them with. Shared styles and scripts that are
+// requested with a version (?v=...) may be kept for a day: change the version
+// number in the page whenever you change the file.
 app.UseStaticFiles(new StaticFileOptions
 {
     OnPrepareResponse = file =>
     {
+        var headers = file.Context.Response.Headers;
+
         if (IsPrivate(file.Context.Request.Path))
         {
-            var headers = file.Context.Response.Headers;
             headers.CacheControl = "no-store, no-cache, must-revalidate, max-age=0";
             headers.Pragma = "no-cache";
             headers.Expires = "0";
             headers.Remove("Last-Modified");
             headers.Remove("ETag");
         }
+        else if (file.Context.Request.Query.ContainsKey("v"))
+        {
+            headers.CacheControl = "public, max-age=86400";
+        }
     }
 });
 
 app.UseRouting();
-
-app.UseRateLimiter();
 
 app.UseAuthentication();
 
@@ -285,6 +389,9 @@ app.Use(async (context, next) =>
 });
 
 app.UseAuthorization();
+
+// After authentication, so the API limit can count requests per user.
+app.UseRateLimiter();
 
 // ==========================================
 // 9. SESSION CHECK + INSTANT LOGOUT
@@ -316,7 +423,8 @@ app.MapGet("/account/session",
             name = UserDisplay.Name(user.DisplayName, user.Email),
             initials = UserDisplay.Initials(user.DisplayName, user.Email),
             nameMissing = string.IsNullOrWhiteSpace(user.DisplayName),
-            isAdmin = context.User.IsInRole(AppRoles.Admin)
+            isAdmin = context.User.IsInRole(AppRoles.Admin),
+            uid = StructTraceApi.UserHash(user.Id)
         });
     });
 
@@ -333,6 +441,8 @@ app.MapGet("/account/instant-logout",
 // ==========================================
 // 10. APPLICATION ROUTES
 // ==========================================
+
+app.MapStructTraceApi();
 
 app.MapControllerRoute(
     name: "default",

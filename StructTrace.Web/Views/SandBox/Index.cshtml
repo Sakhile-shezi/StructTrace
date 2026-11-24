@@ -642,9 +642,44 @@
     }
 
     /* Execution console */
+    .sb-run-note {
+        min-height: 1.2em;
+        margin-top: .45rem;
+        color: #64748b;
+        font-size: .78rem;
+    }
+
+    .sb-run-note.is-warn { color: #b45309; }
+    .sb-run-note.is-error { color: #b91c1c; }
+
+    .sb-stdin {
+        margin-top: .45rem;
+        font-size: .8rem;
+    }
+
+    .sb-stdin summary {
+        width: fit-content;
+        color: #475569;
+        font-weight: 650;
+        cursor: pointer;
+    }
+
+    .sb-stdin textarea {
+        margin-top: .4rem;
+        font-size: .78rem;
+    }
+
+    .sb-console-box .sb-out-meta { color: #64748b; }
+    .sb-console-box .sb-out-stdout { color: #e2e8f0; }
+    .sb-console-box .sb-out-stdin { color: #a78bfa; }
+    .sb-console-box .sb-out-stderr,
+    .sb-console-box .sb-out-error { color: #fca5a5; }
+    .sb-console-box .sb-out-ok { color: #4ade80; }
+    .sb-console-box .sb-out-warn { color: #fbbf24; }
+
     .sb-console-box {
         min-height: 125px;
-        max-height: 210px;
+        max-height: 260px;
         overflow: auto;
         padding: .9rem 1rem;
         border: 1px solid #1e293b;
@@ -878,19 +913,19 @@
             <div class="sb-page-kicker">Interactive programming workspace</div>
             <h1 id="sb-page-heading">Code Sandbox <span>&amp; Trace Studio</span></h1>
             <p>
-                Explore data structures, step through algorithm execution, and test your implementations
-                in C++, Java, Python, and C#. Save your learning sessions to your execution history.
+                Step through each algorithm on your own input, read the implementation in C++, Java, Python
+                or C#, and run the Python version for real in your browser. Save your runs to your history.
             </p>
             <div class="sb-hero-links">
-                <a href="/dsa-visualizer/index.html?v=6"><i style="background:#38bdf8"></i>Learn the theory in DSAVisual</a>
-                <a href="/ai-visualizer/index.html?v=6"><i style="background:#a78bfa"></i>Explore AIVisual</a>
+                <a href="/dsa-visualizer/index.html?v=7"><i style="background:#38bdf8"></i>Learn the theory in DSAVisual</a>
+                <a href="/ai-visualizer/index.html?v=10"><i style="background:#a78bfa"></i>Explore AIVisual</a>
                 <a href="/Profile"><i style="background:#34d399"></i>My saved traces</a>
             </div>
         </div>
         <div class="sb-intro-stats" aria-label="Platform capabilities">
             <div class="sb-intro-stat"><strong>10</strong><span>DSA topics</span></div>
             <div class="sb-intro-stat"><strong>04</strong><span>Languages</span></div>
-            <div class="sb-intro-stat"><strong>Live</strong><span>Step tracing</span></div>
+            <div class="sb-intro-stat"><strong>Live</strong><span>Python runs</span></div>
         </div>
     </section>
 
@@ -1028,21 +1063,32 @@
                         <textarea id="sb-code-editor" class="sb-code-area" spellcheck="false" aria-label="Multi-language source code editor"></textarea>
                         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 small text-muted mt-2">
                             <span id="sb-editor-meta">C++17 • Tab inserts 4 spaces</span>
-                            <div class="d-flex gap-2">
-                                <button type="button" id="sb-simulate-btn" class="btn btn-outline-primary btn-sm fw-semibold">
-                                    ▶ Run Trace & Simulate
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="button" id="sb-run-code-btn" class="btn btn-primary btn-sm fw-semibold"
+                                        title="Run the Python code in the editor (Ctrl+Enter)">
+                                    ▶ Run Python
+                                </button>
+                                <button type="button" id="sb-simulate-btn" class="btn btn-outline-primary btn-sm fw-semibold"
+                                        title="Build the step-by-step trace of this algorithm on your input (left). It does not run the code.">
+                                    Build trace
                                 </button>
                                 <button type="button" id="sb-save-neon-btn" class="btn btn-success btn-sm fw-semibold">
                                     Save Run to Neon
                                 </button>
                             </div>
                         </div>
+                        <div id="sb-run-note" class="sb-run-note" role="status"></div>
+                        <details class="sb-stdin">
+                            <summary>Program input for <code>input()</code></summary>
+                            <textarea id="sb-stdin" class="form-control font-monospace" rows="3" spellcheck="false"
+                                      placeholder="One value per line. Each input() call reads the next line."></textarea>
+                        </details>
                     </div>
 
                     <label for="sb-console-output" class="form-label small fw-semibold text-secondary mb-1">
-                        Execution & Trace Output Console
+                        Output
                     </label>
-                    <div id="sb-console-output" class="sb-console-box" aria-live="polite">Ready. Choose a target option, click "Run Trace & Simulate" to execute against the active input sequence, or "Save Run to Neon" to persist your snapshot.</div>
+                    <div id="sb-console-output" class="sb-console-box" aria-live="polite">Ready. Choose Python and press "Run Python" to run the code, or "Build trace" to step through the algorithm on your input.</div>
                     <div id="sb-neon-feedback" class="small mt-2 fw-semibold"></div>
                 </div>
             </div>
@@ -1114,6 +1160,7 @@
     </div>
 </div>
 
+<script src="~/js/sandbox-python.js" asp-append-version="true"></script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const TOPICS = {
@@ -1329,9 +1376,17 @@
         const LANG_META = {
             cpp: "C++17 • Tab inserts 4 spaces",
             java: "Java 21 • Tab inserts 4 spaces",
-            python: "Python 3.12 • Tab inserts 4 spaces",
+            python: "Python 3.14 · runs in your browser • Tab inserts 4 spaces",
             csharp: "C# 13 • Tab inserts 4 spaces"
         };
+
+        // Python versions that run for real in the browser (see /js/sandbox-python.js).
+        const PY = window.SandboxPython || null;
+        if (PY) {
+            Object.keys(TOPICS).forEach((key) => {
+                if (PY.templates[key]) TOPICS[key].templates.python = PY.templates[key];
+            });
+        }
 
         let currentTopic = "BST";
         let currentLang = "cpp";
@@ -2018,20 +2073,153 @@
             regenerateTrace();
             const summaryLines = frames.map((f, idx) => `[Step ${idx + 1}] ${f.caption}`);
             const arg = getEffectiveTestArg();
-            const header = `=== ${TOPICS[currentTopic].title} | ${currentLang.toUpperCase()} | Target: ${arg || "none"} ===`;
-            const result = `${header}\n${summaryLines.join("\n")}\n\nCompleted ${frames.length} trace frames.`;
+            const header = `=== Trace: ${TOPICS[currentTopic].title} on your input | Target: ${arg || "none"} ===`;
+            const result = `${header}\n${summaryLines.join("\n")}\n\n${frames.length} steps. Use the player on the left to step through them. (A trace shows the algorithm; it does not run the code in the editor.)`;
             consoleOutput.textContent = result;
             return result;
         }
 
         simulateBtn.addEventListener("click", runSimulation);
 
+        // ---------------------------------------------------------------- run Python for real
+        const runCodeBtn = document.getElementById("sb-run-code-btn");
+        const runNote = document.getElementById("sb-run-note");
+        const stdinEl = document.getElementById("sb-stdin");
+        let lastRun = null;   // { code, output, status } of the last real run
+
+        function setNote(text, kind) {
+            runNote.textContent = text || "";
+            runNote.className = "sb-run-note" + (kind ? " is-" + kind : "");
+        }
+
+        function syncRunButton() {
+            if (PY && PY.isRunning()) {
+                runCodeBtn.textContent = "■ Stop";
+                runCodeBtn.classList.replace("btn-primary", "btn-danger");
+                runCodeBtn.disabled = false;
+                return;
+            }
+
+            runCodeBtn.classList.replace("btn-danger", "btn-primary");
+            runCodeBtn.textContent = "▶ Run Python";
+            runCodeBtn.disabled = !PY || currentLang !== "python";
+
+            if (!PY) setNote("Python could not be loaded on this page.", "error");
+            else if (currentLang !== "python") setNote("C++, Java and C# are here to read and copy. Choose Python to run code in your browser; \"Build trace\" works for every language.");
+            else if (!PY.isReady()) setNote("Python runs in your browser. The first run downloads it once (about 6 MB).");
+            else setNote(`Python ${PY.version()} is ready · Ctrl+Enter runs the code · a run stops after 10 seconds.`);
+        }
+
+        // Output is added once per animation frame, so a program that prints a lot
+        // never makes the page slow.
+        let pendingLines = [];
+        let flushScheduled = false;
+
+        function flushConsole() {
+            flushScheduled = false;
+            const fragment = document.createDocumentFragment();
+            pendingLines.forEach(([text, kind]) => {
+                const span = document.createElement("span");
+                span.className = "sb-out-" + kind;
+                span.textContent = text + "\n";
+                fragment.appendChild(span);
+            });
+            pendingLines = [];
+            consoleOutput.appendChild(fragment);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+
+        function consoleLine(text, kind) {
+            pendingLines.push([text, kind]);
+            if (!flushScheduled) {
+                flushScheduled = true;
+                requestAnimationFrame(flushConsole);
+            }
+        }
+
+        function clearConsole() {
+            pendingLines = [];
+            consoleOutput.textContent = "";
+        }
+
+        if (PY) {
+            PY.onStatus((state) => {
+                if (state === "loading") setNote("Loading Python (first time only, about 6 MB)…", "warn");
+                else if (state === "load-error") setNote("Python could not be downloaded. Check your internet connection and try again.", "error");
+                else if (state === "ready" && !PY.isRunning()) syncRunButton();
+            });
+        }
+
+        async function runCode() {
+            if (!PY || currentLang !== "python") return;
+            if (PY.isRunning()) {
+                PY.stop();
+                return;
+            }
+
+            const code = codeEditor.value;
+            const target = getEffectiveTestArg();
+            const output = [];
+
+            clearConsole();
+            consoleLine(`$ python main.py    INPUT = "${traceInputEl.value.trim()}"    TARGET = "${target}"`, "meta");
+
+            const running = PY.run({
+                code,
+                globals: { INPUT: traceInputEl.value, TARGET: target },
+                stdin: stdinEl.value,
+                timeoutMs: 10000,
+                onOutput: (type, text) => {
+                    if (type === "stdin") {
+                        consoleLine("> " + text, "stdin");
+                        return;
+                    }
+                    output.push(text);
+                    consoleLine(text, type);
+                }
+            });
+
+            syncRunButton();
+            const result = await running;
+
+            const messages = {
+                done: [`Finished in ${result.ms} ms.`, "ok"],
+                error: [result.text, "error"],
+                timeout: ["Stopped after 10 seconds. Does a loop never end?", "warn"],
+                stopped: ["Stopped.", "warn"],
+                limit: ["Stopped: the program printed too much output.", "warn"],
+                "load-error": ["Python could not be loaded: " + result.text, "error"]
+            };
+            const [text, kind] = messages[result.status] || ["Finished.", "meta"];
+            consoleLine(text, kind);
+            if (result.status === "error") output.push(result.text);
+
+            lastRun = { code, output: output.join("\n").slice(0, 4000), status: result.status };
+            syncRunButton();
+        }
+
+        runCodeBtn.addEventListener("click", runCode);
+        runCodeBtn.addEventListener("pointerenter", () => { if (PY && currentLang === "python") PY.warmUp(); });
+        codeEditor.addEventListener("keydown", (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                e.preventDefault();
+                runCode();
+            }
+        });
+        langSelect.addEventListener("change", () => {
+            syncRunButton();
+            if (PY && currentLang === "python") PY.warmUp();
+        });
+
         saveNeonBtn.addEventListener("click", async () => {
             // Rebuild the trace so edits to the input are included in the saved record.
-            runSimulation();
-            const outputSummary = frames.length
-                ? frames[frames.length - 1].caption
-                : "Executed trace";
+            regenerateTrace();
+
+            // The real program output when this exact code was just run, otherwise the trace summary.
+            const ranThisCode = lastRun && currentLang === "python" && lastRun.code === codeEditor.value;
+            const outputSummary = ranThisCode
+                ? (lastRun.output || "(no output)")
+                : frames.length ? frames[frames.length - 1].caption : "Executed trace";
 
             const lessonIdElement = document.getElementById("sb-lesson-id");
             const lessonId = Number(lessonIdElement?.value || 0);
@@ -2150,6 +2338,7 @@
                 currentLang = LANG_META[lang] ? lang : "cpp";
                 langSelect.value = currentLang;
                 editorMeta.textContent = LANG_META[currentLang];
+                syncRunButton();
 
                 if (tr.dataset.input) {
                     traceInputEl.value = tr.dataset.input;
@@ -2205,6 +2394,15 @@
             }
         });
 
-        selectTopic("BST");
+        // ?topic=Stack (used by site search) opens the Sandbox on that structure; ?lang=python too.
+        const startParams = new URLSearchParams(location.search);
+        const startLang = (startParams.get("lang") || "").toLowerCase();
+        if (LANG_META[startLang]) {
+            currentLang = startLang;
+            langSelect.value = startLang;
+            editorMeta.textContent = LANG_META[startLang];
+        }
+        selectTopic(TOPICS[startParams.get("topic")] ? startParams.get("topic") : "BST");
+        syncRunButton();
     });
 </script>

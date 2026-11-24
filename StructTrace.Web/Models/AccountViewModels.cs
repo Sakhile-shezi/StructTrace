@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using StructTrace.Web.Services.Progress;
 
 namespace StructTrace.Web.Models;
 
@@ -14,6 +15,13 @@ public class ProfileViewModel
     public string Initials { get; set; } = "?";
     public IList<string> Roles { get; set; } = new List<string>();
     public List<TraceRow> Traces { get; set; } = new();
+
+    /// <summary>AIVisual and DSAVisual progress saved to the account (empty when it could not be read).</summary>
+    public ProgressSummary AiProgress { get; set; } = ProgressCatalog.Ai(null);
+    public ProgressSummary DsaProgress { get; set; } = ProgressCatalog.Dsa(null);
+
+    /// <summary>False when the progress table could not be read (e.g. migration not yet applied).</summary>
+    public bool ProgressLoaded { get; set; }
 
     public bool HasDisplayName => !string.IsNullOrWhiteSpace(DisplayName);
 

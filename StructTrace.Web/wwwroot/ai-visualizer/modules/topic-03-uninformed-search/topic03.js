@@ -1325,7 +1325,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (allCompleted) {
 
             el.completionMessage.textContent =
-                "All three search strategies have been completed. You can now mark this module complete.";
+                "All three search strategies have been completed. You can now mark this topic complete.";
 
         } else {
 
@@ -1371,10 +1371,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             el.completionMessage.textContent =
-                "Module 03 completed. Your three search demonstrations have been saved.";
+                "Topic 03 completed. Your three search demonstrations have been saved.";
 
             el.completeButton.textContent =
-                "Module Completed ✓";
+                "Topic Completed ✓";
 
             el.completeButton.disabled = true;
 
@@ -1497,7 +1497,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     console.log(
-        "COMP304 Module 03: DFS, BFS and LCFS initialized."
+        "COMP304 Topic 03: DFS, BFS and LCFS initialized."
     );
 
 });

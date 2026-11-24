@@ -43,9 +43,12 @@
 
         document.querySelectorAll(".checklist input[type='checkbox'][id]").forEach((cb) => {
             const key = `${location.pathname}::${cb.id}`;
-            if (saved[key]) cb.checked = true;
+            // Topic pages used to live in "module-NN-..." folders: keep ticks saved there.
+            const oldKey = key.replace("/dsa-visualizer/topic-", "/dsa-visualizer/module-");
+            if (saved[key] ?? saved[oldKey]) cb.checked = true;
             cb.addEventListener("change", () => {
                 saved[key] = cb.checked;
+                if (oldKey !== key) delete saved[oldKey];
                 localStorage.setItem(CHECK_KEY, JSON.stringify(saved));
             });
         });

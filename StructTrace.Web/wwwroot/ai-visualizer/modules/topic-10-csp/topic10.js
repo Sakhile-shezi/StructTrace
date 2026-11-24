@@ -120,8 +120,8 @@
                 if (!completion.quiz) remaining.push("finish the CSP quiz");
 
                 page.completionMessage.textContent = complete
-                    ? "All Module 10 practical activities and the quiz are complete. You can mark the module complete."
-                    : `To complete this module: ${remaining.join("; ")}.`;
+                    ? "All Topic 10 practical activities and the quiz are complete. You can mark the topic complete."
+                    : `To complete this topic: ${remaining.join("; ")}.`;
             }
         }
 
@@ -135,10 +135,10 @@
                 window.AIVisualProgress.completeTopic("topic-10-csp");
             }
 
-            page.completeButton.textContent = "Module Completed ✓";
+            page.completeButton.textContent = "Topic Completed ✓";
             page.completeButton.disabled = true;
             page.completionMessage.textContent =
-                "Module 10 completed. You have practised four CSP problem types and the main search and inference techniques.";
+                "Topic 10 completed. You have practised four CSP problem types and the main search and inference techniques.";
         }
 
         // -------------------------------------------------
@@ -1752,7 +1752,7 @@
         updateCompletion();
         window.addEventListener("scroll", updatePageProgress, { passive: true });
 
-        console.log("AIVisual Module 10 initialised.");
+        console.log("AIVisual Topic 10 initialised.");
         console.log("CSP practicals: Australia map colouring, N-Queens, Sudoku and TWO + TWO = FOUR.");
     }
 

@@ -1,0 +1,363 @@
+/* =====================================================================
+   StructTrace - site search (button in the top bar + search panel).
+   Used on every page: the Razor pages (_Layout) and the DSAVisual /
+   AIVisual pages (top bar drawn by /js/visualizer-guard.js).
+   Script: /js/structtrace-search.js   API: GET /api/search?q=...
+   ===================================================================== */
+
+.st-search-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    height: 34px;
+    padding: 0 0.5rem 0 0.65rem;
+    background: #111c33;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    color: #94a3b8;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-size: 0.84rem;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+    .st-search-trigger:hover {
+        background: #172540;
+        border-color: #475569;
+        color: #e2e8f0;
+    }
+
+    .st-search-trigger:focus-visible {
+        outline: 2px solid #38bdf8;
+        outline-offset: 2px;
+    }
+
+    .st-search-trigger svg {
+        flex-shrink: 0;
+    }
+
+    .st-search-trigger kbd {
+        padding: 0.18rem 0.38rem;
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 4px;
+        color: #94a3b8;
+        font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+        font-size: 0.7rem;
+        font-weight: 700;
+        line-height: 1;
+        box-shadow: none;
+    }
+
+/* Laptops: the bar is full, so the button shows only the magnifier. */
+@media (min-width: 992px) and (max-width: 1279.98px) {
+    .st-search-trigger {
+        padding: 0 0.6rem;
+    }
+
+    .st-search-trigger-label,
+    .st-search-trigger kbd {
+        display: none;
+    }
+}
+
+/* Phones and tablets: a full-width button inside the opened menu. */
+@media (max-width: 991.98px) {
+    .st-search-trigger {
+        width: 100%;
+        height: 38px;
+    }
+
+        .st-search-trigger kbd {
+            display: none;
+        }
+}
+
+
+/* ------------------------------------------------------------------ panel */
+
+.st-search-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 72px 16px 16px;
+    background: rgba(2, 6, 23, 0.55);
+    /* AIVisual scales its pages; keep the panel the same size everywhere. */
+    zoom: calc(1 / var(--aiv-scale, 1));
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.45;
+    text-align: left;
+}
+
+    .st-search-overlay.is-open {
+        display: flex;
+    }
+
+    .st-search-overlay *,
+    .st-search-overlay *::before,
+    .st-search-overlay *::after {
+        box-sizing: border-box;
+    }
+
+.st-search-panel {
+    display: flex;
+    flex-direction: column;
+    width: min(700px, 100%);
+    max-height: calc(100vh - 96px);
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 28px 70px rgba(2, 6, 23, 0.45);
+    color: #0f172a;
+}
+
+.st-search-head {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+    .st-search-head > svg {
+        flex-shrink: 0;
+        color: #64748b;
+    }
+
+.st-search-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.25rem 0;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    color: #0f172a;
+    font: inherit;
+    font-size: 1.05rem;
+}
+
+    .st-search-input::placeholder {
+        color: #94a3b8;
+    }
+
+    .st-search-input::-webkit-search-cancel-button {
+        display: none;
+    }
+
+.st-search-close {
+    flex-shrink: 0;
+    padding: 0.22rem 0.5rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    color: #64748b;
+    font: inherit;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+    .st-search-close:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+    }
+
+.st-search-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.55rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.st-search-filter {
+    padding: 0.22rem 0.75rem;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    color: #475569;
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+    .st-search-filter:hover {
+        border-color: #cbd5e1;
+        color: #0f172a;
+    }
+
+    .st-search-filter[aria-pressed="true"] {
+        background: #0f172a;
+        border-color: #0f172a;
+        color: #ffffff;
+    }
+
+.st-search-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.st-search-results {
+    margin: 0;
+    padding: 0.4rem;
+    list-style: none;
+}
+
+.st-search-result a {
+    display: block;
+    padding: 0.62rem 0.75rem;
+    border-radius: 10px;
+    color: inherit;
+    text-decoration: none;
+}
+
+.st-search-result a:hover,
+.st-search-result[aria-selected="true"] a {
+    background: #eff6ff;
+}
+
+.st-search-result[aria-selected="true"] a {
+    box-shadow: inset 3px 0 0 #2563eb;
+}
+
+.st-search-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.15rem;
+    color: #64748b;
+    font-size: 0.74rem;
+}
+
+.st-search-source {
+    padding: 0.08rem 0.42rem;
+    border-radius: 4px;
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+    .st-search-source.is-ai { background: #ede9fe; color: #6d28d9; }
+    .st-search-source.is-dsa { background: #e0f2fe; color: #0369a1; }
+    .st-search-source.is-sandbox { background: #dcfce7; color: #15803d; }
+
+.st-search-title {
+    color: #0f172a;
+    font-size: 0.95rem;
+    font-weight: 750;
+}
+
+.st-search-snippet {
+    margin-top: 0.15rem;
+    color: #334155;
+    font-size: 0.84rem;
+}
+
+.st-search-result mark {
+    padding: 0 1px;
+    background: #fef08a;
+    border-radius: 2px;
+    color: inherit;
+}
+
+.st-search-status {
+    padding: 1rem 1.1rem;
+    color: #64748b;
+    font-size: 0.88rem;
+}
+
+.st-search-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0 1.1rem 1rem;
+}
+
+    .st-search-suggestions button {
+        padding: 0.3rem 0.7rem;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        color: #1e293b;
+        font: inherit;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+        .st-search-suggestions button:hover {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+        }
+
+.st-search-foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-top: 1px solid #f1f5f9;
+    color: #94a3b8;
+    font-size: 0.72rem;
+}
+
+    .st-search-foot kbd {
+        padding: 0.1rem 0.3rem;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        color: #475569;
+        font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+        font-size: 0.68rem;
+        box-shadow: none;
+    }
+
+.st-search-overlay button:focus-visible,
+.st-search-overlay a:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+html.st-search-open,
+html.st-search-open body {
+    overflow: hidden;
+}
+
+/* Phones: the panel fills the screen. */
+@media (max-width: 600px) {
+    .st-search-overlay {
+        padding: 0;
+    }
+
+    .st-search-panel {
+        width: 100%;
+        height: 100%;
+        max-height: none;
+        border: 0;
+        border-radius: 0;
+    }
+
+    .st-search-foot {
+        display: none;
+    }
+}
+
+@media print {
+    .st-search-overlay,
+    .st-search-trigger {
+        display: none !important;
+    }
+}

@@ -1035,7 +1035,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!isGoal(state)) {
 
                 elements.completionMessage.textContent =
-                    "Reach the goal state before marking this module complete.";
+                    "Reach the goal state before marking this topic complete.";
 
                 return;
             }
@@ -1051,10 +1051,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
                 elements.completionMessage.textContent =
-                    "Module 02 marked complete. Your progress has been saved.";
+                    "Topic 02 marked complete. Your progress has been saved.";
 
                 elements.completeButton.textContent =
-                    "Module Completed ✓";
+                    "Topic Completed ✓";
 
                 elements.completeButton.disabled = true;
 
@@ -1192,7 +1192,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         console.log(
-            "COMP304 Module 02: Problem formulation workbench initialized."
+            "COMP304 Topic 02: Problem formulation workbench initialized."
         );
 
     }

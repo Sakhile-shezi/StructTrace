@@ -2857,6 +2857,21 @@
     padding: 4px 8px;
 }
 
+/* A slider + number pair must fit a phone: the slider shrinks, the number box stays small. */
+.aiv-topic .topic-content .xlab-controls .xlab-inline {
+    flex-wrap: wrap;
+    max-width: 100%;
+}
+
+.aiv-topic .topic-content .xlab-controls .xlab-inline input[type="range"] {
+    flex: 1 1 110px;
+    min-width: 0;
+}
+
+.aiv-topic .topic-content .xlab-controls .xlab-inline input[type="number"] {
+    width: 6.5em;
+}
+
 .aiv-topic .cs-cell .cs-num {
     position: absolute;
     top: 3px;

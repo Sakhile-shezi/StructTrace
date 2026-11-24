@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <!-- sign-in guard: must load first -->
-    <script src="/js/visualizer-guard.js?v=5"></script>
+    <script src="/js/visualizer-guard.js?v=6"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DSAVisual | Interactive Java Data Structures & Algorithms</title>
     <link rel="stylesheet" href="css/styles.css?v=6" />
@@ -13,18 +13,18 @@
 </head>
 <body>
     <header class="site-header">
-        <nav class="nav-container" aria-label="Module Navigation">
+        <nav class="nav-container" aria-label="Topic Navigation">
             <a href="index.html?v=6" class="brand">DSA<span>Visual</span></a>
             <ul class="nav-links">
-                <li><a href="module-01-foundations/index.html?v=6">1. Big-O</a></li>
-                <li><a href="module-02-linked-lists/index.html?v=6">2. Linked Lists</a></li>
-                <li><a href="module-03-stacks-queues/index.html?v=6">3. Stacks & Queues</a></li>
-                <li><a href="module-04-heaps/index.html?v=6">4. Heaps</a></li>
-                <li><a href="module-05-bst/index.html?v=6">5. BST</a></li>
-                <li><a href="module-06-balanced-trees/index.html?v=6">6. Balanced Trees</a></li>
-                <li><a href="module-07-hashing/index.html?v=6">7. Hashing</a></li>
-                <li><a href="module-08-graphs-algorithms/index.html?v=6">8. Graphs</a></li>
-                <li><a href="module-09-dijkstra-algorithm/index.html?v=6">9. Algorithms</a></li>
+                <li><a href="topic-01-foundations/index.html?v=6">1. Big-O</a></li>
+                <li><a href="topic-02-linked-lists/index.html?v=6">2. Linked Lists</a></li>
+                <li><a href="topic-03-stacks-queues/index.html?v=6">3. Stacks & Queues</a></li>
+                <li><a href="topic-04-heaps/index.html?v=6">4. Heaps</a></li>
+                <li><a href="topic-05-bst/index.html?v=6">5. BST</a></li>
+                <li><a href="topic-06-balanced-trees/index.html?v=6">6. Balanced Trees</a></li>
+                <li><a href="topic-07-hashing/index.html?v=6">7. Hashing</a></li>
+                <li><a href="topic-08-graphs-algorithms/index.html?v=6">8. Graphs</a></li>
+                <li><a href="topic-09-dijkstra-algorithm/index.html?v=6">9. Algorithms</a></li>
             </ul>
         </nav>
     </header>
@@ -41,7 +41,7 @@
 
             <div class="progress-panel" aria-live="polite">
                 <div class="progress-header">
-                    <span>Study Progress: <strong id="progress-text">0 of 9 active modules completed (0%)</strong></span>
+                    <span>Study Progress: <strong id="progress-text">0 of 9 topics completed (0%)</strong></span>
                     <button type="button" id="reset-progress-btn" class="btn secondary small">Reset Progress</button>
                 </div>
                 <div class="progress-track">
@@ -50,11 +50,11 @@
             </div>
         </section>
 
-        <section class="curriculum-grid" aria-label="Course Modules">
-            <!-- Module 01 -->
+        <section class="curriculum-grid" aria-label="Course Topics">
+            <!-- Topic 01 -->
             <article class="module-card" data-module-id="mod1">
                 <div class="module-card-top">
-                    <span class="module-num">Module 01</span>
+                    <span class="module-num">Topic 01</span>
                     <span class="pill pill-ready">Ready</span>
                 </div>
                 <h2>Foundations & Big-O Notation</h2>
@@ -72,14 +72,14 @@
                         <input type="checkbox" class="mod-complete-cb" data-mod="mod1" />
                         Completed
                     </label>
-                    <a href="module-01-foundations/index.html?v=6" class="btn primary">Launch Module →</a>
+                    <a href="topic-01-foundations/index.html?v=6" class="btn primary">Open Topic →</a>
                 </div>
             </article>
 
-            <!-- Module 02 -->
+            <!-- Topic 02 -->
             <article class="module-card" data-module-id="mod2">
                 <div class="module-card-top">
-                    <span class="module-num">Module 02</span>
+                    <span class="module-num">Topic 02</span>
                     <span class="pill pill-ready">Ready</span>
                 </div>
                 <h2>Singly, Doubly & Circular Linked Lists</h2>
@@ -97,14 +97,14 @@
                         <input type="checkbox" class="mod-complete-cb" data-mod="mod2" />
                         Completed
                     </label>
-                    <a href="module-02-linked-lists/index.html?v=6" class="btn primary">Launch Module →</a>
+                    <a href="topic-02-linked-lists/index.html?v=6" class="btn primary">Open Topic →</a>
                 </div>
             </article>
 
-            <!-- Module 03 -->
+            <!-- Topic 03 -->
             <article class="module-card" data-module-id="mod3">
                 <div class="module-card-top">
-                    <span class="module-num">Module 03</span>
+                    <span class="module-num">Topic 03</span>
                     <span class="pill pill-ready">Ready</span>
                 </div>
                 <h2>Stacks, Queues & Deques</h2>
@@ -122,14 +122,14 @@
                         <input type="checkbox" class="mod-complete-cb" data-mod="mod3" />
                         Completed
                     </label>
-                    <a href="module-03-stacks-queues/index.html?v=6" class="btn primary">Launch Module →</a>
+                    <a href="topic-03-stacks-queues/index.html?v=6" class="btn primary">Open Topic →</a>
                 </div>
             </article>
 
-            <!-- Module 04 -->
+            <!-- Topic 04 -->
             <article class="module-card" data-module-id="mod4">
                 <div class="module-card-top">
-                    <span class="module-num">Module 04</span>
+                    <span class="module-num">Topic 04</span>
                     <span class="pill pill-ready">Ready</span>
                 </div>
                 <h2>Binary Heaps & Priority Queues</h2>
@@ -147,14 +147,14 @@
                         <input type="checkbox" class="mod-complete-cb" data-mod="mod4" />
                         Completed
                     </label>
-                    <a href="module-04-heaps/index.html?v=6" class="btn primary">Launch Module →</a>
+                    <a href="topic-04-heaps/index.html?v=6" class="btn primary">Open Topic →</a>
                 </div>
             </article>
 
-            <!-- Module 05 -->
+            <!-- Topic 05 -->
             <article class="module-card" data-module-id="mod5">
                 <div class="module-card-top">
-                    <span class="module-num">Module 05</span>
+                    <span class="module-num">Topic 05</span>
                     <span class="pill pill-ready">Ready</span>
                 </div>
                 <h2>Binary Search Trees (BST)</h2>
@@ -172,14 +172,14 @@
                         <input type="checkbox" class="mod-complete-cb" data-mod="mod5" />
                         Completed
                     </label>
-                    <a href="module-05-bst/index.html?v=6" class="btn primary">Launch Module →</a>
+                    <a href="topic-05-bst/index.html?v=6" class="btn primary">Open Topic →</a>
                 </div>
             </article>
 
-            <!-- Module 06 -->
+            <!-- Topic 06 -->
             <article class="module-card" data-module-id="mod6">
                 <div class="module-card-top">
-                    <span class="module-num">Module 06</span>
+                    <span class="module-num">Topic 06</span>
                     <span class="pill pill-ready">Ready</span>
                 </div>
                 <h2>Balanced Trees (AVL & Red-Black)</h2>
@@ -197,14 +197,14 @@
                         <input type="checkbox" class="mod-complete-cb" data-mod="mod6" />
                         Completed
                     </label>
-                    <a href="module-06-balanced-trees/index.html?v=6" class="btn primary">Launch Module →</a>
+                    <a href="topic-06-balanced-trees/index.html?v=6" class="btn primary">Open Topic →</a>
                 </div>
             </article>
 
-            <!-- Module 07 -->
+            <!-- Topic 07 -->
             <article class="module-card" data-module-id="mod7">
                 <div class="module-card-top">
-                    <span class="module-num">Module 07</span>
+                    <span class="module-num">Topic 07</span>
                     <span class="pill pill-ready">Ready</span>
                 </div>
                 <h2>Sets, Maps & Hash Tables</h2>
@@ -222,14 +222,14 @@
                         <input type="checkbox" class="mod-complete-cb" data-mod="mod7" />
                         Completed
                     </label>
-                    <a href="module-07-hashing/index.html?v=6" class="btn primary">Launch Module →</a>
+                    <a href="topic-07-hashing/index.html?v=6" class="btn primary">Open Topic →</a>
                 </div>
             </article>
 
-            <!-- Module 08 -->
+            <!-- Topic 08 -->
             <article class="module-card" data-module-id="mod8">
                 <div class="module-card-top">
-                    <span class="module-num">Module 08</span>
+                    <span class="module-num">Topic 08</span>
                     <span class="pill pill-ready">Ready</span>
                 </div>
                 <h2>Graphs & Traversals (BFS & DFS)</h2>
@@ -247,14 +247,14 @@
                         <input type="checkbox" class="mod-complete-cb" data-mod="mod8" />
                         Completed
                     </label>
-                    <a href="module-08-graphs-algorithms/index.html?v=6" class="btn primary">Launch Module →</a>
+                    <a href="topic-08-graphs-algorithms/index.html?v=6" class="btn primary">Open Topic →</a>
                 </div>
             </article>
 
-            <!-- Module 09 -->
+            <!-- Topic 09 -->
             <article class="module-card" data-module-id="mod9">
                 <div class="module-card-top">
-                    <span class="module-num">Module 09</span>
+                    <span class="module-num">Topic 09</span>
                     <span class="pill pill-ready">Ready</span>
                 </div>
                 <h2>Dijkstra & Classic Algorithms</h2>
@@ -272,13 +272,13 @@
                         <input type="checkbox" class="mod-complete-cb" data-mod="mod9" />
                         Completed
                     </label>
-                    <a href="module-09-dijkstra-algorithm/index.html?v=6" class="btn primary">Launch Module →</a>
+                    <a href="topic-09-dijkstra-algorithm/index.html?v=6" class="btn primary">Open Topic →</a>
                 </div>
             </article>
         </section>
     </main>
 
-    <script src="js/shared-nav.js?v=6"></script>
+    <script src="js/shared-nav.js?v=7"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const STORAGE_KEY = "dsa_visual_progress_v2";
@@ -301,7 +301,7 @@
                     }
                 });
                 const pct = Math.round((done / total) * 100);
-                progressText.textContent = `${done} of ${total} active modules completed (${pct}%)`;
+                progressText.textContent = `${done} of ${total} topics completed (${pct}%)`;
                 progressBar.style.width = `${pct}%`;
                 progressBar.setAttribute("aria-valuenow", done);
             }
