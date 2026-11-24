@@ -1237,21 +1237,30 @@ pre {
 
 
 /* =========================================================
-   StructTrace top bar (drawn by /js/visualizer-guard.js) is the sticky
-   bar on every page. The DSAVisual menu is a slim bar under it that
-   scrolls away with the page.
+   The StructTrace top bar (drawn by /js/visualizer-guard.js) and this
+   DSAVisual menu bar both stay at the top while you scroll:
+   55 px StructTrace bar, then this 48 px bar under it.
    ========================================================= */
 .site-header {
-    position: relative;
-    top: auto;
-    z-index: 50;
+    position: sticky;
+    top: 55px;
+    z-index: 1050;
     background: #162033;
     border-bottom: 1px solid #24324a;
 }
 
 .nav-container {
     max-width: none;
+    min-height: 48px;
     padding: 0.4rem 1.5rem;
+}
+
+/* On phones the menu bar scrolls away to leave room for the page. */
+@media (max-width: 760px) {
+    .site-header {
+        position: relative;
+        top: auto;
+    }
 }
 
 .brand {

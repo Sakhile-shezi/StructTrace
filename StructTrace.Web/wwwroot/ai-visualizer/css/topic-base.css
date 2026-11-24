@@ -2580,7 +2580,7 @@
 
 .aiv-topic .fc-workspace .fc-steps {
     position: relative;
-    max-height: max(320px, calc(100vh / var(--aiv-scale, 1) - 150px));
+    max-height: max(320px, calc((100vh - 131px - var(--st-subbar, 49px)) / var(--aiv-scale, 1)));
     margin: 0;
     padding: 3px 6px 3px 3px;
     overflow-y: auto;
@@ -2592,17 +2592,42 @@
 
 .aiv-topic .fc-detail-pane {
     position: sticky;
-    top: calc(80px / var(--aiv-scale, 1));
+    top: calc((68px + var(--st-subbar, 49px)) / var(--aiv-scale, 1));
     min-width: 0;
+    /* never taller than the space under the two bars; scrolls inside if needed */
+    max-height: calc((100vh - 81px - var(--st-subbar, 49px)) / var(--aiv-scale, 1));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
 }
 
     .aiv-topic .fc-detail-pane .xlab-current {
         margin-top: 0;
     }
 
+/* board and domains side by side only when the pane is wide enough;
+   otherwise stacked so the domain table has room for one line per column */
 .aiv-topic .fc-detail-grid {
-    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
 }
+
+    .aiv-topic .fc-detail-grid .fc-mini-board {
+        width: min(100%, 230px);
+    }
+
+    .aiv-topic .fc-detail-grid .xlab-table td {
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+
+    .aiv-topic .fc-detail-grid .xlab-table td:nth-child(2) {
+        white-space: nowrap;
+    }
+
+    .aiv-topic .fc-detail-grid .xlab-pill {
+        display: inline-block;
+        margin: 1px 2px;
+    }
 
 .aiv-topic .fc-pane-nav {
     display: flex;

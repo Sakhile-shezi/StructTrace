@@ -32,8 +32,8 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    min-height: 64px;
-    padding: 0.55rem 1.5rem;
+    min-height: 54px;
+    padding: 0.35rem 1.5rem;
 }
 
 .st-topbar a {
@@ -71,7 +71,7 @@
         display: inline-flex;
         align-items: center;
         gap: 0.45rem;
-        padding: 0.5rem 0.85rem;
+        padding: 0.4rem 0.8rem;
         border: 1px solid transparent;
         border-radius: 8px;
         color: #94a3b8;
@@ -114,7 +114,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.55rem;
-    padding: 0.3rem 0.75rem 0.3rem 0.3rem;
+    padding: 0.2rem 0.7rem 0.2rem 0.2rem;
     border: 1px solid #334155;
     border-radius: 999px;
     color: #e2e8f0;
@@ -132,8 +132,8 @@
 .st-topbar-avatar {
     display: inline-grid;
     place-items: center;
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     flex-shrink: 0;
     border-radius: 50%;
     background: linear-gradient(135deg, #2563eb, #7c3aed);
@@ -157,7 +157,7 @@
 .st-topbar-pill {
     display: inline-flex;
     align-items: center;
-    padding: 0.45rem 0.8rem;
+    padding: 0.4rem 0.75rem;
     border: 1px solid #334155;
     border-radius: 8px;
     color: #e2e8f0;
@@ -196,7 +196,7 @@
 
 @media (max-width: 991.98px) {
     .st-topbar-inner {
-        padding: 0.55rem 1rem;
+        padding: 0.35rem 1rem;
     }
 
     .st-topbar-toggle {
@@ -229,6 +229,98 @@
 
 @media print {
     .st-topbar {
+        display: none;
+    }
+}
+
+
+/* =====================================================================
+   Hide / show the visualizer menu bar (topics / modules)
+   --st-subbar is the height of that bar; pages use it to place sticky
+   sidebars and section jumps under the bars.
+   ===================================================================== */
+
+html {
+    --st-subbar: 49px;
+}
+
+html.st-subbar-hidden {
+    --st-subbar: 0px;
+}
+
+.st-subbar-hide {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    margin-left: 0.35rem;
+    padding: 0;
+    background: transparent;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    color: #94a3b8;
+    font-size: 0.8rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+    .st-subbar-hide:hover {
+        background: #1e293b;
+        color: #ffffff;
+    }
+
+.st-subbar-show {
+    position: fixed;
+    top: 55px;
+    right: 24px;
+    z-index: 1049;
+    display: none;
+    zoom: calc(1 / var(--aiv-scale, 1));
+    padding: 3px 12px 5px;
+    background: #162033;
+    border: 1px solid #24324a;
+    border-top: 0;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 6px 14px rgba(2, 6, 23, 0.25);
+    color: #cbd5e1;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-size: 0.76rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+    .st-subbar-show:hover {
+        background: #1e293b;
+        color: #ffffff;
+    }
+
+.st-subbar-hide:focus-visible,
+.st-subbar-show:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 2px;
+}
+
+@media (min-width: 761px) {
+    html.st-subbar-hidden .ai-header,
+    html.st-subbar-hidden .site-header {
+        display: none;
+    }
+
+    html.st-subbar-hidden .st-subbar-show {
+        display: block;
+    }
+}
+
+/* Phones: the menu bar scrolls away by itself, so no arrow there. */
+@media (max-width: 760px) {
+    html {
+        --st-subbar: 0px;
+    }
+
+    .st-subbar-hide {
         display: none;
     }
 }

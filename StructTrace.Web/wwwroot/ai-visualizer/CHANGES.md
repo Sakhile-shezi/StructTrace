@@ -61,3 +61,15 @@ New shared styles go in `topic-base.css` under `.aiv-topic`. Lab panels reuse th
 - Every DSAVisual and AIVisual page now shows the same StructTrace top bar as the rest of the site (Home, Code Sandbox, DSAVisual, AIVisual, Admin for admins, your name, Logout). It is drawn by `/js/visualizer-guard.js` from `/account/session`, styled by `/css/structtrace-topbar.css`, and is not affected by the View size.
 - The AIVisual menu (All Topics, previous / next topic, View) is now a slim second bar under it; the Home / Sandbox / DSAVisual / Logout pills were removed from it because the top bar has them.
 - Sidebar, step-table pane and section jumps sit just below the new bar.
+
+## Menu bar stays on screen; all topics listed (24 Nov 2026)
+- The AIVisual and DSAVisual menu bars now stay at the top while you scroll, under the StructTrace bar (on phones they scroll away to save space).
+- The AIVisual menu bar lists all ten topics (1. Intro … 10. CSP) like DSAVisual lists its nine modules; the current topic is highlighted, hover shows the full title. Same size, font and colours as the DSAVisual bar, and not affected by the View size.
+- Sidebar, section jumps, trace dock and the N-Queens step-table pane sit below both bars; the step-table board pane scrolls inside itself on short screens.
+
+## Slimmer top bar (24 Nov 2026)
+- The StructTrace bar is 55 px instead of 65 px on every page (main site, DSAVisual, AIVisual); offsets under it moved up to match.
+
+## Hide / show the topics bar (24 Nov 2026)
+- Small arrow at the right end of the AIVisual and DSAVisual menu bars hides it; a "Topics" / "Modules" tab under the StructTrace bar brings it back. Remembered per browser and shared by both visualizers. Not shown on phones.
+- Sidebar, section jumps, trace dock and the step-table pane follow the bar (CSS variable --st-subbar).

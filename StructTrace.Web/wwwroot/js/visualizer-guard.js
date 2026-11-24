@@ -10,6 +10,9 @@
    2. It draws the same StructTrace top bar that every other page of the
       site has (Home, Code Sandbox, DSAVisual, AIVisual, Admin, your name,
       Logout). The visualizer's own menu sits underneath it.
+
+   3. It adds a small arrow that hides or shows the visualizer's menu bar
+      (topics / modules). The choice is remembered in this browser.
    ========================================================= */
 (function () {
     "use strict";
@@ -22,8 +25,18 @@
         var css = document.createElement("link");
         css.id = "st-topbar-css";
         css.rel = "stylesheet";
-        css.href = "/css/structtrace-topbar.css?v=1";
+        css.href = "/css/structtrace-topbar.css?v=3";
         document.head.appendChild(css);
+    }
+
+    // Apply the saved "menu bar hidden" choice before the page is drawn.
+    var SUBBAR_KEY = "structtrace_subbar_hidden";
+    try {
+        if (localStorage.getItem(SUBBAR_KEY) === "1") {
+            root.classList.add("st-subbar-hidden");
+        }
+    } catch (error) {
+        /* storage blocked: the bar starts visible */
     }
 
     function hide() { root.style.visibility = "hidden"; }
@@ -134,6 +147,55 @@
         bar.appendChild(inner);
         document.body.insertBefore(bar, document.body.firstChild);
     }
+
+
+    // ---------------------------------------------------------------- hide / show the menu bar
+
+    function setupSubbarToggle() {
+        var bar = document.querySelector(".ai-header, .site-header");
+        if (!bar || document.getElementById("st-subbar-hide")) return;
+
+        var isAi = bar.classList.contains("ai-header");
+        var what = isAi ? "topics" : "modules";
+        if (!bar.id) bar.id = "st-subbar";
+
+        var hideButton = element("button", "st-subbar-hide", "▴");
+        hideButton.id = "st-subbar-hide";
+        hideButton.type = "button";
+        hideButton.title = "Hide the " + what + " bar";
+        hideButton.setAttribute("aria-label", "Hide the " + what + " bar");
+        hideButton.setAttribute("aria-controls", bar.id);
+        hideButton.setAttribute("aria-expanded", "true");
+
+        var showTab = element("button", "st-subbar-show", "▾ " + (isAi ? "Topics" : "Modules"));
+        showTab.type = "button";
+        showTab.title = "Show the " + what + " bar";
+        showTab.setAttribute("aria-label", "Show the " + what + " bar");
+        showTab.setAttribute("aria-controls", bar.id);
+        showTab.setAttribute("aria-expanded", "false");
+
+        var inner = bar.querySelector(".ai-nav, .nav-container") || bar;
+        inner.appendChild(hideButton);
+        document.body.appendChild(showTab);
+
+        function setHidden(hidden, moveFocus) {
+            root.classList.toggle("st-subbar-hidden", hidden);
+            try {
+                if (hidden) localStorage.setItem(SUBBAR_KEY, "1");
+                else localStorage.removeItem(SUBBAR_KEY);
+            } catch (error) {
+                /* storage blocked: the choice lasts until the page changes */
+            }
+            if (moveFocus) (hidden ? showTab : hideButton).focus();
+            // let the sidebar highlight, trace dock etc. re-measure
+            window.dispatchEvent(new Event("resize"));
+        }
+
+        hideButton.addEventListener("click", function () { setHidden(true, true); });
+        showTab.addEventListener("click", function () { setHidden(false, true); });
+    }
+
+    whenReady(setupSubbarToggle);
 
 
     // ---------------------------------------------------------------- session check
