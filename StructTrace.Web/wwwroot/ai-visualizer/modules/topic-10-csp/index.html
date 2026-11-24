@@ -7,14 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="COMP304 Constraint Satisfaction Problems: map colouring, N-Queens, Sudoku, cryptarithmetic, backtracking and constraint propagation." />
     <title>Module 10 | Constraint Satisfaction Problems - AIVisual</title>
-    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=6" />
-    <link rel="stylesheet" href="../../css/topic-base.css?v=6" />
-    <link rel="stylesheet" href="../../css/topic-pages.css?v=6" />
+    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=8" />
+    <link rel="stylesheet" href="../../css/topic-base.css?v=8" />
+    <link rel="stylesheet" href="../../css/topic-pages.css?v=8" />
+    <link rel="stylesheet" href="../../css/ai-fit.css?v=8" />
+    <script src="../../js/ai-fit.js?v=8"></script>
 
-    <script src="../../js/ai-core.js?v=6" defer></script>
-    <script src="../../js/ai-visualizer.js?v=6" defer></script>
-    <script src="./topic10.js?v=6" defer></script>
-    <script src="./topic10-fc-steps.js?v=6" defer></script>
+    <script src="../../js/ai-core.js?v=8" defer></script>
+    <script src="../../js/ai-extras.js?v=8" defer></script>
+    <script src="../../js/ai-visualizer.js?v=8" defer></script>
+    <script src="./topic10.js?v=8" defer></script>
+    <script src="./topic10-fc-steps.js?v=8" defer></script>
 
 </head>
 
@@ -22,12 +25,12 @@
 
     <header class="ai-header">
         <nav class="ai-nav">
-            <a href="../../index.html?v=6" class="ai-brand">AI<span>Visual</span></a>
+            <a href="../../index.html?v=8" class="ai-brand">AI<span>Visual</span></a>
             <button class="mobile-menu-btn" id="mobile-menu-btn" type="button"
                     aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">☰</button>
             <ul class="nav-links" id="nav-links">
-                <li><a href="../../index.html?v=6">Course Home</a></li>
-                <li><a href="../topic-09-logic/index.html?v=6">← 09. Logic</a></li>
+                <li><a href="../../index.html?v=8">Course Home</a></li>
+                <li><a href="../topic-09-logic/index.html?v=8">← 09. Logic</a></li>
                 <li><a href="#csp-introduction" class="active" aria-current="page">10. CSP</a></li>
                 <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
                 <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
@@ -39,7 +42,7 @@
 
         <section class="topic-hero">
             <div class="topic-breadcrumb">
-                <a href="../../index.html?v=6">AIVisual</a><span>/</span>
+                <a href="../../index.html?v=8">AIVisual</a><span>/</span>
                 <span>COMP304</span><span>/</span><span>Module 10</span>
             </div>
 
@@ -84,25 +87,26 @@
                 </div>
                 <nav class="topic-navigation">
                     <a href="#csp-introduction" class="topic-nav-link active"><span>01</span>CSP fundamentals</a>
-                    <a href="#csp-map" class="topic-nav-link"><span>02</span>Australia map colouring</a>
-                    <a href="#csp-nqueens" class="topic-nav-link"><span>03</span>N-Queens problem</a>
-                    <a href="#csp-sudoku" class="topic-nav-link"><span>04</span>Sudoku CSP</a>
-                    <a href="#csp-cryptarithm" class="topic-nav-link"><span>05</span>Cryptarithmetic</a>
-                    <a href="#csp-constraint-types" class="topic-nav-link"><span>06</span>Constraint types</a>
-                    <a href="#csp-propagation" class="topic-nav-link"><span>07</span>Constraint propagation</a>
-                    <a href="#csp-backtracking" class="topic-nav-link"><span>08</span>Backtracking search</a>
-                    <a href="#csp-heuristics" class="topic-nav-link"><span>09</span>Search heuristics</a>
-                    <a href="#csp-forward-checking" class="topic-nav-link"><span>10</span>Forward checking and MAC</a>
-                    <a href="#csp-intelligent-backtracking" class="topic-nav-link"><span>11</span>Intelligent backtracking</a>
-                    <a href="#csp-practice" class="topic-nav-link"><span>12</span>Exam practice</a>
-                    <a href="#csp-checklist" class="topic-nav-link"><span>13</span>Revision checklist</a>
+                    <a href="#csp-counting" class="topic-nav-link"><span>02</span>Possible worlds</a>
+                    <a href="#csp-map" class="topic-nav-link"><span>03</span>Australia map colouring</a>
+                    <a href="#csp-nqueens" class="topic-nav-link"><span>04</span>N-Queens problem</a>
+                    <a href="#csp-sudoku" class="topic-nav-link"><span>05</span>Sudoku CSP</a>
+                    <a href="#csp-cryptarithm" class="topic-nav-link"><span>06</span>Cryptarithmetic</a>
+                    <a href="#csp-constraint-types" class="topic-nav-link"><span>07</span>Constraint types</a>
+                    <a href="#csp-propagation" class="topic-nav-link"><span>08</span>Constraint propagation</a>
+                    <a href="#csp-backtracking" class="topic-nav-link"><span>09</span>Backtracking search</a>
+                    <a href="#csp-heuristics" class="topic-nav-link"><span>10</span>Search heuristics</a>
+                    <a href="#csp-forward-checking" class="topic-nav-link"><span>11</span>Forward checking and MAC</a>
+                    <a href="#csp-intelligent-backtracking" class="topic-nav-link"><span>12</span>Intelligent backtracking</a>
+                    <a href="#csp-practice" class="topic-nav-link"><span>13</span>Exam practice</a>
+                    <a href="#csp-checklist" class="topic-nav-link"><span>14</span>Revision checklist</a>
                 </nav>
                 <div class="sidebar-progress">
                     <span>PAGE PROGRESS</span>
                     <div class="sidebar-progress-track"><div id="lesson-progress-bar"></div></div>
                     <p id="lesson-progress-text">0% viewed</p>
                 </div>
-                <a href="../../index.html?v=6" class="back-course-link">← Back to AIVisual</a>
+                <a href="../../index.html?v=8" class="back-course-link">← Back to AIVisual</a>
             </aside>
 
             <article class="topic-content">
@@ -163,10 +167,122 @@
                     </div>
                 </section>
 
-                <!-- 02: AUSTRALIA MAP -->
-                <section class="lesson-section" id="csp-map" data-lesson-section>
+
+                <!-- 02: POSSIBLE WORLDS AND GENERATE-AND-TEST -->
+                <section class="lesson-section" id="csp-counting" data-lesson-section>
                     <div class="lesson-section-heading">
                         <span class="section-number">02</span>
+                        <div><p class="section-kicker">DEFINITIONS, COUNTING AND A HAND TRACE</p><h2>Possible Worlds and Generate-and-Test</h2></div>
+                    </div>
+
+                    <p class="lead-text">
+                        No past paper has tested CSPs yet, but both Chapter 6 decks are in scope, so expect
+                        definitions, counting and a short backtracking trace. A CSP is an
+                        <strong>identification</strong> problem: only the final assignment matters, not the path to it.
+                    </p>
+
+                    <h3>Planning versus identification</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead><tr><th></th><th>Planning (Chapter 3 search)</th><th>Identification (CSP)</th></tr></thead>
+                            <tbody>
+                                <tr><td>What matters</td><td>The sequence of actions; paths have costs</td><td>Only the goal assignment</td></tr>
+                                <tr><td>Solution depth</td><td>Varies</td><td>Every solution is at depth n (all variables assigned)</td></tr>
+                                <tr><td>Heuristics</td><td>Estimate distance to the goal</td><td>Rules of thumb for <em>ordering</em> variables and values</td></tr>
+                                <tr><td>Early rejection</td><td>Only a complete state can be goal-tested</td><td>A partial assignment can be rejected as soon as a constraint fails</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>Vocabulary</h3>
+
+                    <ul>
+                        <li><strong>Possible world:</strong> a complete assignment of a value to every variable. A search state may be a partial assignment.</li>
+                        <li><strong>Model (solution):</strong> a possible world that satisfies every constraint.</li>
+                        <li><strong>Scope:</strong> the variables a constraint mentions. V1 + V2 + V4 &lt; 5 has scope {V1, V2, V4}; a k-ary constraint has k variables in its scope. Any k-ary constraint can be rewritten as binary constraints.</li>
+                        <li><strong>Intensional vs extensional:</strong> a constraint given as a rule (A ≤ B) or as a list of allowed tuples ((A, B) ∈ {(1,1), (1,2), (2,2)}).</li>
+                        <li><strong>Hardness:</strong> deciding whether any model exists is NP-hard, so no known algorithm is polynomial in the worst case.</li>
+                    </ul>
+
+                    <h3>Counting possible worlds</h3>
+
+                    <p>
+                        The number of possible worlds is the product of the domain sizes — d<sup>k</sup> when all
+                        k variables share a domain of size d. It is always exponential in the number of variables.
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead><tr><th>Problem</th><th>Variables</th><th>Domain</th><th>Possible worlds</th></tr></thead>
+                            <tbody>
+                                <tr><td>Australia map colouring</td><td>WA, NT, Q, SA, NSW, V, T</td><td>3 colours</td><td>3<sup>7</sup> = 2187</td></tr>
+                                <tr><td>4-queens</td><td>Queen positions</td><td>16 squares</td><td>C(16, 4) = 1820 (queens are identical and cannot share a square, so not 16<sup>4</sup>)</td></tr>
+                                <tr><td>Sudoku</td><td>51 empty cells</td><td>1–9</td><td>9<sup>51</sup></td></tr>
+                                <tr><td>Mars explorer</td><td>Weather, Temperature, Longitude, Latitude</td><td>2, 81, 360, 180 values</td><td>2 × 81 × 360 × 180 = 10,497,600</td></tr>
+                                <tr><td>Crossword, by words</td><td>63 words</td><td>~15,000 words of the right length</td><td>15,000<sup>63</sup></td></tr>
+                                <tr><td>Crossword, by cells</td><td>193 empty cells (15 × 15 − 32)</td><td>26 letters</td><td>26<sup>193</sup></td></tr>
+                                <tr><td>30 binary features</td><td>30</td><td>2</td><td>2<sup>30</sup> = 1,073,741,824</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="xlab" id="pw-lab">
+                        <div class="xlab-heading">
+                            <div>
+                                <span class="xlab-eyebrow">INTERACTIVE CALCULATOR</span>
+                                <h3>Possible-Worlds Counter</h3>
+                                <p>Enter one domain size per variable. Generate-and-test checks c constraints in each world, so it costs O(c · d<sup>k</sup>).</p>
+                            </div>
+                            <span class="xlab-badge">GENERATE-AND-TEST COST</span>
+                        </div>
+                        <div class="xlab-controls">
+                            <label class="xlab-inline">Domain sizes <input id="pw-domains" type="text" value="3, 3, 3, 3, 3, 3, 3" size="26" spellcheck="false" /></label>
+                            <label class="xlab-inline">Constraints c <input id="pw-constraints" type="number" min="1" value="9" /></label>
+                            <button type="button" class="xlab-btn secondary" data-pw-example="3, 3, 3, 3, 3, 3, 3|9">Australia</button>
+                            <button type="button" class="xlab-btn secondary" data-pw-example="2, 81, 360, 180|1">Mars explorer</button>
+                            <button type="button" class="xlab-btn secondary" data-pw-example="3, 2|3">V1, V2 example</button>
+                        </div>
+                        <div class="xlab-metrics">
+                            <div><span>POSSIBLE WORLDS</span><strong id="pw-worlds">—</strong></div>
+                            <div><span>CONSTRAINT CHECKS (WORST CASE)</span><strong id="pw-checks">—</strong></div>
+                        </div>
+                        <div class="xlab-current"><span>WORKING</span><p id="pw-note"></p></div>
+                    </div>
+
+                    <h3>Two hand-worked checks from the slides</h3>
+
+                    <div class="example-box">
+                        <strong>Quick check: list the models</strong>
+                        <p>
+                            V = {V1, V2}, dom(V1) = {1, 2, 3}, dom(V2) = {1, 2}; constraints V2 ≠ 2, V1 + V2 &lt; 5,
+                            V1 &gt; V2. There are 3 × 2 = 6 possible worlds. V2 ≠ 2 forces V2 = 1, and V1 &gt; 1 leaves
+                            V1 = 2 or 3; both satisfy V1 + V2 &lt; 5. Models: <strong>{V1=2, V2=1}</strong> and
+                            <strong>{V1=3, V2=1}</strong>. {V1=1, V2=1} fails V1 &gt; V2.
+                        </p>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>Backtracking toy problem: A, B, C ∈ {1, 2, 3, 4} with A &lt; B and B &lt; C</strong>
+                        <p>Assign B first, then check each constraint as soon as both of its variables have values:</p>
+                        <ul>
+                            <li>B = 1 fails at once: there is no A &lt; 1.</li>
+                            <li>B = 2 forces A = 1; then C = 3 and C = 4 both succeed.</li>
+                            <li>B = 3 forces C = 4; then A = 1 and A = 2 both succeed.</li>
+                            <li>B = 4 fails: there is no C &gt; 4.</li>
+                        </ul>
+                        <p>
+                            That gives 4 models: (1, 2, 3), (1, 2, 4), (1, 3, 4) and (2, 3, 4). Generate-and-test would
+                            have checked all 4<sup>3</sup> = 64 worlds; good variable order (B first) prunes most of them.
+                        </p>
+                    </div>
+                </section>
+
+
+                <!-- 03: AUSTRALIA MAP -->
+                <section class="lesson-section" id="csp-map" data-lesson-section>
+                    <div class="lesson-section-heading">
+                        <span class="section-number">03</span>
                         <div><p class="section-kicker">TEXTBOOK WORKED EXAMPLE</p><h2>Australia Map-Colouring CSP</h2></div>
                     </div>
                     <p class="lead-text">
@@ -290,9 +406,9 @@
                     </div>
                 </section>
 
-                <!-- 03: N QUEENS -->
+                <!-- 04: N QUEENS -->
                 <section class="lesson-section" id="csp-nqueens" data-lesson-section>
-                    <div class="lesson-section-heading"><span class="section-number">03</span><div><p class="section-kicker">FINITE-DOMAIN CSP</p><h2>The N-Queens Problem</h2></div></div>
+                    <div class="lesson-section-heading"><span class="section-number">04</span><div><p class="section-kicker">FINITE-DOMAIN CSP</p><h2>The N-Queens Problem</h2></div></div>
                     <p class="lead-text">Place N queens on an N × N chessboard so that no two queens attack one another. The textbook describes the 8-Queens problem as a finite-domain CSP.</p>
                     <h3>Representing N-Queens as a CSP</h3>
                     <div class="csp-formula-card">
@@ -377,26 +493,36 @@
                             <h4 id="fc-steps-heading">Step table</h4>
                             <span>✕ = assignment failed (a domain was wiped out) · ✓ = solution</span>
                         </div>
-                        <div class="fc-steps" id="fc-steps"></div>
+                        <div class="fc-workspace">
+                            <div class="fc-steps" id="fc-steps" aria-label="Step cards"></div>
+                            <div class="fc-detail-pane">
 
-                        <div class="xlab-current">
-                            <span id="fc-detail-title">STEP</span>
-                            <p id="fc-detail-text"></p>
-                        </div>
+                                <div class="fc-pane-nav" data-dock-controls>
+                                    <button type="button" class="xlab-btn secondary" id="fc-pane-prev" aria-label="Previous step">←</button>
+                                    <span id="fc-pane-position">Step 0 of 0</span>
+                                    <button type="button" class="xlab-btn primary" id="fc-pane-next" aria-label="Next step">→</button>
+                                </div>
 
-                        <div class="xlab-grid-2">
-                            <div class="xlab-box">
-                                <h4>Board after forward checking</h4>
-                                <div class="fc-mini-board" id="fc-board"></div>
-                                <p class="xlab-hint">♛ queen (green outline = this step) · ✕ row removed by forward checking</p>
-                            </div>
-                            <div class="xlab-box">
-                                <h4>Domains after this step</h4>
-                                <div class="xlab-table-wrap">
-                                    <table class="xlab-table">
-                                        <thead><tr><th>Column</th><th>Domain</th><th>Change</th></tr></thead>
-                                        <tbody id="fc-domain-body"></tbody>
-                                    </table>
+                                <div class="xlab-current">
+                                    <span id="fc-detail-title">STEP</span>
+                                    <p id="fc-detail-text"></p>
+                                </div>
+
+                                <div class="xlab-grid-2 fc-detail-grid">
+                                    <div class="xlab-box">
+                                        <h4>Board after forward checking</h4>
+                                        <div class="fc-mini-board" id="fc-board"></div>
+                                        <p class="xlab-hint">♛ queen (green outline = this step) · ✕ row removed by forward checking</p>
+                                    </div>
+                                    <div class="xlab-box">
+                                        <h4>Domains after this step</h4>
+                                        <div class="xlab-table-wrap">
+                                            <table class="xlab-table">
+                                                <thead><tr><th>Column</th><th>Domain</th><th>Change</th></tr></thead>
+                                                <tbody id="fc-domain-body"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -416,9 +542,9 @@
                     </div>
                 </section>
 
-                <!-- 04: SUDOKU -->
+                <!-- 05: SUDOKU -->
                 <section class="lesson-section" id="csp-sudoku" data-lesson-section>
-                    <div class="lesson-section-heading"><span class="section-number">04</span><div><p class="section-kicker">GLOBAL ALLDIFF CONSTRAINTS</p><h2>Sudoku as a CSP</h2></div></div>
+                    <div class="lesson-section-heading"><span class="section-number">05</span><div><p class="section-kicker">GLOBAL ALLDIFF CONSTRAINTS</p><h2>Sudoku as a CSP</h2></div></div>
                     <p class="lead-text">A standard Sudoku board has 81 variables. Each empty square can take a digit from 1 to 9, subject to 27 Alldiff constraints: nine rows, nine columns and nine 3 × 3 boxes.</p>
                     <div class="csp-formula-card"><span>VARIABLES AND DOMAINS</span><div class="pc-equation">X = {A1, A2, ..., I9} &nbsp; (81 variables)</div><div class="pc-equation">D(Aᵢⱼ) = {1,2,3,4,5,6,7,8,9}</div><span>GLOBAL CONSTRAINTS</span><div class="pc-equation">Alldiff(each row), Alldiff(each column), Alldiff(each 3 × 3 box)</div><p>A pre-filled square has a singleton domain containing its given digit. Every unit must contain digits 1 through 9 without repetition.</p></div>
                     <h3>How a candidate is eliminated</h3>
@@ -439,9 +565,9 @@
                     </div>
                 </section>
 
-                <!-- 05: CRYPTARITHMETIC -->
+                <!-- 06: CRYPTARITHMETIC -->
                 <section class="lesson-section" id="csp-cryptarithm" data-lesson-section>
-                    <div class="lesson-section-heading"><span class="section-number">05</span><div><p class="section-kicker">N-ARY AND GLOBAL CONSTRAINTS</p><h2>Cryptarithmetic: TWO + TWO = FOUR</h2></div></div>
+                    <div class="lesson-section-heading"><span class="section-number">06</span><div><p class="section-kicker">N-ARY AND GLOBAL CONSTRAINTS</p><h2>Cryptarithmetic: TWO + TWO = FOUR</h2></div></div>
                     <p class="lead-text">A cryptarithmetic puzzle assigns a different decimal digit to each letter so that the arithmetic equation is correct. The textbook uses TWO + TWO = FOUR and introduces carry variables for the column equations.</p>
                     <div class="crypto-equation-display"><div class="crypto-sum"><span>T W O</span><span>+ T W O</span><span class="crypto-line">F O U R</span></div><div class="crypto-caption">Each letter represents one digit; different letters must have different digits.</div></div>
                     <h3>Variables and constraints</h3>
@@ -476,9 +602,9 @@
                     </div>
                 </section>
 
-                <!-- 06: CONSTRAINT TYPES -->
+                <!-- 07: CONSTRAINT TYPES -->
                 <section class="lesson-section" id="csp-constraint-types" data-lesson-section>
-                    <div class="lesson-section-heading"><span class="section-number">06</span><div><p class="section-kicker">CONSTRAINT MODELLING</p><h2>Types of Domains and Constraints</h2></div></div>
+                    <div class="lesson-section-heading"><span class="section-number">07</span><div><p class="section-kicker">CONSTRAINT MODELLING</p><h2>Types of Domains and Constraints</h2></div></div>
                     <h3>Domain types</h3>
                     <div class="csp-type-grid">
                         <div><h4>Finite discrete</h4><p>A limited set of separate values.</p><div class="pc-equation">{red, green, blue}</div><p>Map colouring and N-Queens.</p></div>
@@ -498,9 +624,9 @@
                     <div class="csp-formula-card"><span>ALL DIFFERENT</span><div class="pc-equation">Alldiff(X₁, X₂, ..., Xₘ)</div><p>All variables participating in the constraint must take different values. Sudoku rows, columns and boxes use Alldiff.</p><span>AT MOST RESOURCE CONSTRAINT</span><div class="pc-equation">Atmost(10, P₁, P₂, P₃, P₄)</div><p>The total assigned personnel cannot exceed 10. A simple inconsistency check is to add the minimum possible values of the domains; if the sum exceeds 10, the constraint cannot be satisfied.</p></div>
                 </section>
 
-                <!-- 07: PROPAGATION -->
+                <!-- 08: PROPAGATION -->
                 <section class="lesson-section" id="csp-propagation" data-lesson-section>
-                    <div class="lesson-section-heading"><span class="section-number">07</span><div><p class="section-kicker">INFERENCE</p><h2>Constraint Propagation and Consistency</h2></div></div>
+                    <div class="lesson-section-heading"><span class="section-number">08</span><div><p class="section-kicker">INFERENCE</p><h2>Constraint Propagation and Consistency</h2></div></div>
                     <p class="lead-text">Constraint propagation uses constraints to reduce domains. A reduction in one variable's domain can lead to further reductions elsewhere in the network.</p>
                     <h3>Node consistency</h3><p>A variable is node-consistent when every value in its domain satisfies all unary constraints.</p>
                     <div class="pc-equation">SA = {red, green, blue}</div><div class="pc-equation">Constraint: SA ≠ green</div><div class="pc-equation pc-equation-answer">Reduced domain: SA = {red, blue}</div>
@@ -538,9 +664,9 @@ function REVISE(Xi, Xj):
                     <div class="csp-formula-card"><span>AC-3 WORST-CASE TIME COMPLEXITY</span><div class="pc-equation">O(cd³)</div><p>n = number of variables, d = maximum domain size, and c = number of binary constraints/arcs. This is the bound given in the textbook's AC-3 analysis.</p></div>
                 </section>
 
-                <!-- 08: BACKTRACKING -->
+                <!-- 09: BACKTRACKING -->
                 <section class="lesson-section" id="csp-backtracking" data-lesson-section>
-                    <div class="lesson-section-heading"><span class="section-number">08</span><div><p class="section-kicker">SYSTEMATIC SEARCH</p><h2>Backtracking Search</h2></div></div>
+                    <div class="lesson-section-heading"><span class="section-number">09</span><div><p class="section-kicker">SYSTEMATIC SEARCH</p><h2>Backtracking Search</h2></div></div>
                     <p class="lead-text">Backtracking builds a solution incrementally. It selects an unassigned variable, tries a value consistent with the current assignment and recursively continues. If a branch fails, the last assignment is removed and another value is tried.</p>
                     <div class="csp-code-card">
                         <div class="csp-code-heading"><span>BACKTRACKING SEARCH</span><span>PSEUDOCODE</span></div><pre><code>function BACKTRACK(assignment):
@@ -568,30 +694,30 @@ function REVISE(Xi, Xj):
                     <div class="important-note"><span>KEY IDEA</span><p>Backtracking is depth-first search over partial assignments. CSP actions are commutative: the order of assigning a fixed set of variables does not change the resulting combined assignment, so the search can choose one variable at each level.</p></div>
                 </section>
 
-                <!-- 09: HEURISTICS -->
+                <!-- 10: HEURISTICS -->
                 <section class="lesson-section" id="csp-heuristics" data-lesson-section>
-                    <div class="lesson-section-heading"><span class="section-number">09</span><div><p class="section-kicker">VARIABLE AND VALUE ORDERING</p><h2>Search Heuristics</h2></div></div>
+                    <div class="lesson-section-heading"><span class="section-number">10</span><div><p class="section-kicker">VARIABLE AND VALUE ORDERING</p><h2>Search Heuristics</h2></div></div>
                     <div class="csp-heuristic-card"><span>MINIMUM REMAINING VALUES · MRV</span><h4>Choose the unassigned variable with the fewest legal values.</h4><p>MRV is also called the most-constrained-variable or fail-first heuristic. It aims to expose failure early.</p><div class="comparison-table-wrapper"><table class="learning-comparison"><thead><tr><th>Variable</th><th>Domain</th><th>Size</th></tr></thead><tbody><tr><td>WA</td><td>{red, green}</td><td>2</td></tr><tr><td>NT</td><td>{blue}</td><td>1</td></tr><tr><td>Q</td><td>{red, blue}</td><td>2</td></tr><tr><td>NSW</td><td>{green, blue}</td><td>2</td></tr></tbody></table></div><div class="csp-heuristic-answer">MRV chooses NT because it has the smallest remaining domain.</div></div>
                     <div class="csp-heuristic-card"><span>DEGREE HEURISTIC</span><h4>Choose the variable involved in the largest number of constraints on other unassigned variables.</h4><p>It is useful as a tie-breaker when MRV cannot distinguish between variables. In the initial Australia graph, SA has the highest degree: 5.</p><div class="csp-heuristic-answer">Select SA when all variables have the same number of legal values.</div></div>
                     <div class="csp-heuristic-card"><span>LEAST-CONSTRAINING VALUE · LCV</span><h4>Choose the value that rules out the fewest choices for neighbouring variables.</h4><p>LCV is a value-ordering heuristic. It tries to preserve the maximum flexibility for subsequent assignments.</p><div class="csp-heuristic-answer">MRV and degree choose variables. LCV chooses a value for the selected variable.</div></div>
                     <div class="comparison-table-wrapper"><table class="learning-comparison"><thead><tr><th>Heuristic</th><th>Decision</th><th>Purpose</th></tr></thead><tbody><tr><td>MRV</td><td>Fewest legal values.</td><td>Detect likely failure early.</td></tr><tr><td>Degree</td><td>Most constraints on other unassigned variables.</td><td>Constrain future choices.</td></tr><tr><td>LCV</td><td>Value that removes the fewest options.</td><td>Preserve flexibility.</td></tr></tbody></table></div>
                 </section>
 
-                <!-- 10: FORWARD CHECKING AND MAC -->
+                <!-- 11: FORWARD CHECKING AND MAC -->
                 <section class="lesson-section" id="csp-forward-checking" data-lesson-section>
-                    <div class="lesson-section-heading"><span class="section-number">10</span><div><p class="section-kicker">SEARCH PLUS INFERENCE</p><h2>Forward Checking and Maintaining Arc Consistency</h2></div></div>
+                    <div class="lesson-section-heading"><span class="section-number">11</span><div><p class="section-kicker">SEARCH PLUS INFERENCE</p><h2>Forward Checking and Maintaining Arc Consistency</h2></div></div>
                     <p>Whenever a variable X is assigned, forward checking examines each unassigned neighbour Y and deletes from Y's domain any value inconsistent with the chosen value for X.</p>
                     <div class="csp-formula-card"><span>FORWARD-CHECKING RULE</span><div class="pc-equation">X = value</div><p>For each unassigned neighbour Y, remove every y from D(Y) that violates the constraint between X and Y.</p></div>
-                    <p>For the exam-style step table (A = [1], B = [-], …), use the <a href="#fc-step-table">N-Queens step table</a> in section 03.</p>
+                    <p>For the exam-style step table (A = [1], B = [-], …), use the <a href="#fc-step-table">N-Queens step table</a> in section 04.</p>
                     <h3>Domain wipeout</h3><p>If a domain becomes empty, the current partial assignment cannot be extended consistently and the solver must backtrack.</p>
                     <div class="csp-wipeout-example"><div class="csp-wipeout-domain"><span>BEFORE</span><strong>SA = {blue}</strong></div><div class="csp-wipeout-arrow">↓</div><div class="csp-wipeout-domain"><span>ASSIGNMENT</span><strong>V = blue</strong></div><div class="csp-wipeout-arrow">↓</div><div class="csp-wipeout-domain failed"><span>AFTER FORWARD CHECKING</span><strong>SA = { }</strong><em>DOMAIN WIPEOUT</em></div></div>
                     <h3>Forward checking versus MAC</h3><div class="comparison-table-wrapper"><table class="learning-comparison"><thead><tr><th>Method</th><th>Propagation</th><th>What it checks</th></tr></thead><tbody><tr><td>Backtracking only</td><td>No domain propagation.</td><td>Consistency of a trial value with assigned variables.</td></tr><tr><td>Forward checking</td><td>One-step domain reduction.</td><td>Unassigned neighbours of the newly assigned variable.</td></tr><tr><td>MAC</td><td>Repeated arc-consistency propagation.</td><td>Uses AC-3, starting from arcs connected to the newly assigned variable.</td></tr></tbody></table></div>
                     <div class="important-note"><span>IMPORTANT LIMITATION</span><p>Forward checking does not recursively propagate every domain reduction. In Figure 6.7, after WA = red and Q = green, NT and SA both have only blue left even though they are neighbours. MAC can detect this kind of inconsistency by continuing arc-consistency propagation.</p></div>
                 </section>
 
-                <!-- 11: INTELLIGENT BACKTRACKING -->
+                <!-- 12: INTELLIGENT BACKTRACKING -->
                 <section class="lesson-section" id="csp-intelligent-backtracking" data-lesson-section>
-                    <div class="lesson-section-heading"><span class="section-number">11</span><div><p class="section-kicker">LOOKING BACKWARD</p><h2>Intelligent Backtracking and Constraint Learning</h2></div></div>
+                    <div class="lesson-section-heading"><span class="section-number">12</span><div><p class="section-kicker">LOOKING BACKWARD</p><h2>Intelligent Backtracking and Constraint Learning</h2></div></div>
                     <h3>Chronological backtracking</h3><p>When a branch fails, return to the most recent decision point and try a different value.</p>
                     <h3>Conflict sets and backjumping</h3><p>A conflict set records assignments responsible for making a variable's possible values fail. Backjumping returns to the most recent relevant assignment in the conflict set, skipping unrelated variables.</p>
                     <div class="csp-example-box"><span>TEXTBOOK EXAMPLE</span><p>Suppose the partial assignment is:</p><div class="pc-equation">{Q = red, NSW = green, V = blue, T = red}</div><p>When SA is considered, every value conflicts with Q, NSW or V. The conflict set is:</p><div class="pc-equation">{Q = red, NSW = green, V = blue}</div><p>Tasmania is not in the conflict set. Backjumping can skip T and return to a relevant earlier assignment.</p></div>
@@ -600,9 +726,9 @@ function REVISE(Xi, Xj):
                     <h3>Constraint learning and no-goods</h3><p>A no-good is a set of variable assignments known to cause a contradiction. The solver records it as a new constraint or in a cache so it does not repeat the same failed combination.</p>
                 </section>
 
-                <!-- 12: EXAM PRACTICE -->
+                <!-- 13: EXAM PRACTICE -->
                 <section class="lesson-section" id="csp-practice" data-lesson-section>
-                    <div class="lesson-section-heading"><span class="section-number">12</span><div><p class="section-kicker">COMP304 EXAM PREPARATION</p><h2>Interactive CSP Exam Quiz</h2></div></div>
+                    <div class="lesson-section-heading"><span class="section-number">13</span><div><p class="section-kicker">COMP304 EXAM PREPARATION</p><h2>Interactive CSP Exam Quiz</h2></div></div>
                     <div class="csp-quiz">
                         <div class="csp-quiz-heading"><span id="csp-quiz-question-number">QUESTION 1 OF 8</span><strong id="csp-quiz-score">Score: 0 / 8</strong></div>
                         <h3 id="csp-quiz-question">What are the three components of a CSP?</h3>
@@ -618,9 +744,9 @@ function REVISE(Xi, Xj):
                     <div class="csp-practice-question"><span>QUESTION 5</span>What is a conflict set, and how does it support backjumping?<details><summary>Show suggested answer</summary><p>A conflict set records earlier assignments responsible for the failure of a variable. Backjumping returns to a relevant assignment rather than always undoing the most recent one.</p></details></div>
                 </section>
 
-                <!-- 13: CHECKLIST -->
+                <!-- 14: CHECKLIST -->
                 <section class="lesson-section" id="csp-checklist" data-lesson-section>
-                    <div class="lesson-section-heading"><span class="section-number">13</span><div><p class="section-kicker">REVISION VERIFICATION</p><h2>CSP Revision Checklist</h2></div></div>
+                    <div class="lesson-section-heading"><span class="section-number">14</span><div><p class="section-kicker">REVISION VERIFICATION</p><h2>CSP Revision Checklist</h2></div></div>
                     <ul class="aiv-checklist">
                         <li><label><input id="t10-check-01" type="checkbox" />Define variables, domains and constraints.</label></li>
                         <li><label><input id="t10-check-02" type="checkbox" />Distinguish complete, partial, consistent and solution assignments.</label></li>
@@ -646,8 +772,8 @@ function REVISE(Xi, Xj):
                 </section>
 
                 <div class="topic-bottom-navigation">
-                    <a href="../topic-09-logic/index.html?v=6" class="topic-previous-link">← Previous: Logic</a>
-                    <a href="../../index.html?v=6" class="topic-next-link">Back to Course Home →</a>
+                    <a href="../topic-09-logic/index.html?v=8" class="topic-previous-link">← Previous: Logic</a>
+                    <a href="../../index.html?v=8" class="topic-next-link">Back to Course Home →</a>
                 </div>
 
             </article>
@@ -655,8 +781,8 @@ function REVISE(Xi, Xj):
     </main>
 
     <footer class="ai-footer">
-        <div class="footer-content"><a href="../../index.html?v=6" class="ai-brand">AI<span>Visual</span></a><p>COMP304 Artificial Intelligence · Learn, reason and implement.</p></div>
-        <div class="footer-bottom"><p>© <span id="current-year"></span> StructTrace.</p><a href="../../index.html?v=6">Back to AIVisual</a></div>
+        <div class="footer-content"><a href="../../index.html?v=8" class="ai-brand">AI<span>Visual</span></a><p>COMP304 Artificial Intelligence · Learn, reason and implement.</p></div>
+        <div class="footer-bottom"><p>© <span id="current-year"></span> StructTrace.</p><a href="../../index.html?v=8">Back to AIVisual</a></div>
     </footer>
 
 </body>

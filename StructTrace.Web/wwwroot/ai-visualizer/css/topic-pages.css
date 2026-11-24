@@ -3981,6 +3981,15 @@ body.topic04-page {
             font-weight: 800;
         }
 
+        .topic05-page .game-tree-svg .gt-node-role {
+            fill: #94a3b8;
+            text-anchor: middle;
+            font-family: "Segoe UI", Arial, sans-serif;
+            font-size: 11px;
+            font-weight: 850;
+            letter-spacing: 0.08em;
+        }
+
 
         /* Active node */
 

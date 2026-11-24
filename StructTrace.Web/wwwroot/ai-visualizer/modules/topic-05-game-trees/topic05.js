@@ -264,8 +264,45 @@
         ]);
 
 
+        /*
+            TEXTBOOK TREE (AIMA Figure 5.2 / study guide)
+
+                         A MAX
+                 /         |         \
+              B MIN      C MIN      D MIN
+             3 12 8      2  4  6    14  5  2
+
+            Minimax: B = 3, C = 2, D = 2, root = 3.
+            Alpha-beta: after C's first leaf (2 <= alpha = 3)
+            the leaves 4 and 6 are pruned.
+        */
+
+        const TEXTBOOK_TREE = internal("A", "MAX", [
+
+            internal("B", "MIN", [
+                leaf("B1", 3),
+                leaf("B2", 12),
+                leaf("B3", 8)
+            ]),
+
+            internal("C", "MIN", [
+                leaf("C1", 2),
+                leaf("C2", 4),
+                leaf("C3", 6)
+            ]),
+
+            internal("D", "MIN", [
+                leaf("D1", 14),
+                leaf("D2", 5),
+                leaf("D3", 2)
+            ])
+
+        ]);
+
+
         const TREE_OPTIONS = {
             lecture: LECTURE_TREE,
+            textbook: TEXTBOOK_TREE,
             "exam-q1": EXAM_Q1_TREE,
             "exam-q3": EXAM_Q3_TREE
         };
@@ -399,11 +436,15 @@
         }
 
 
-        function countByStatus(node, statuses) {
-            let count = statuses.includes(node.status) ? 1 : 0;
+        function countByStatus(node, statuses, leavesOnly = false) {
+            let count =
+                statuses.includes(node.status) &&
+                (!leavesOnly || node.type === "LEAF")
+                    ? 1
+                    : 0;
 
             node.children.forEach(child => {
-                count += countByStatus(child, statuses);
+                count += countByStatus(child, statuses, leavesOnly);
             });
 
             return count;
@@ -1014,9 +1055,11 @@
             );
 
 
+            // only terminal nodes count as "leaves evaluated"
             el.leaves.textContent = countByStatus(
                 root,
-                ["done"]
+                ["done"],
+                true
             );
 
 
@@ -1280,7 +1323,8 @@
 
             const leaves = countByStatus(
                 root,
-                ["done"]
+                ["done"],
+                true
             );
 
 
@@ -1667,9 +1711,11 @@
             setStatus(
                 `${treeKey === "lecture"
                     ? "Chapter 5 lecture example"
-                    : treeKey === "exam-q1"
-                        ? "Exam Guide Question 1"
-                        : "Exam Guide Question 3"
+                    : treeKey === "textbook"
+                        ? "Textbook tree (3 MIN nodes)"
+                        : treeKey === "exam-q1"
+                            ? "Exam Guide Question 1"
+                            : "Exam Guide Question 3"
                 } loaded. Select Next Step to begin.`
             );
 

@@ -1632,6 +1632,8 @@
         }
 
         function setupSectionNavigation() {
+            return; // sidebar highlighting is now done for every topic by ../../js/ai-core.js (initSectionSpy)
+
             const sections = document.querySelectorAll(".topic10-page [data-lesson-section]");
             const links = document.querySelectorAll(".topic10-page .topic-nav-link");
             if (!("IntersectionObserver" in window)) return;

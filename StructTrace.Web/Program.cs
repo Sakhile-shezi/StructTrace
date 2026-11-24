@@ -1,10 +1,13 @@
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Pgvector.EntityFrameworkCore;
 using StructTrace.Web.Data;
 using StructTrace.Web.Models;
+using StructTrace.Web.Services.Email;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +34,11 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
+    options.User.RequireUniqueEmail = true;
+
+    // 5 wrong passwords in a row lock the account for 5 minutes.
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
 })
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -63,7 +71,50 @@ builder.Services.Configure<SecurityStampValidatorOptions>(options =>
     options.ValidationInterval = TimeSpan.FromMinutes(1);
 });
 
-builder.Services.AddSingleton<IEmailSender, NoOpEmailSender>();
+// ==========================================
+// 2b. EMAIL (welcome email + password reset)
+// Settings come from the "Email" section of appsettings.json and user
+// secrets (see INSTALL-EMAIL.md). Emails are queued and sent in the
+// background so pages never wait for the mail server.
+// ==========================================
+
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
+builder.Services.AddSingleton<EmailQueue>();
+builder.Services.AddSingleton<SmtpEmailDelivery>();
+builder.Services.AddHostedService<EmailBackgroundService>();
+builder.Services.AddScoped<AppEmails>();
+builder.Services.AddSingleton<IEmailSender, QueuedEmailSender>();
+
+// Password-reset links stop working after 2 hours (default is 1 day).
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+{
+    options.TokenLifespan = TimeSpan.FromHours(2);
+});
+
+// At most 10 "forgot password" requests per 15 minutes from one address,
+// so nobody can use the form to flood an inbox.
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.AddPolicy("auth-email", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(15),
+                QueueLimit = 0
+            }));
+
+    options.OnRejected = (context, cancellationToken) =>
+    {
+        context.HttpContext.Response.ContentType = "text/plain; charset=utf-8";
+        return new ValueTask(context.HttpContext.Response.WriteAsync(
+            "Too many password-reset requests. Please wait 15 minutes and try again.",
+            cancellationToken));
+    };
+});
 
 // ==========================================
 // 3. MVC AND RAZOR PAGES
@@ -214,6 +265,8 @@ app.UseStaticFiles(new StaticFileOptions
 
 app.UseRouting();
 
+app.UseRateLimiter();
+
 app.UseAuthentication();
 
 // When a signed-out visitor loads any StructTrace page (home, login, logout,
@@ -286,17 +339,4 @@ public static class AppRoles
     public const string Student = "Student";
 
     public static readonly string[] All = { Admin, Student };
-}
-
-// ==========================================
-// EMAIL SENDER
-// ==========================================
-
-public sealed class NoOpEmailSender : IEmailSender
-{
-    public Task SendEmailAsync(
-        string email,
-        string subject,
-        string htmlMessage)
-        => Task.CompletedTask;
 }

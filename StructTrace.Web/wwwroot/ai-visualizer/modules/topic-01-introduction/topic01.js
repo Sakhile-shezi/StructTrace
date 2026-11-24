@@ -675,6 +675,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     function updateActiveSection() {
+        return; // sidebar highlighting is now done for every topic by ../../js/ai-core.js (initSectionSpy)
+
 
         let currentSection = "";
 

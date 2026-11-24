@@ -11,14 +11,17 @@
           content="width=device-width, initial-scale=1.0" />
 
     <title>Module 06 | Genetic Algorithms - AIVisual</title>
-    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=6" />
-    <link rel="stylesheet" href="../../css/topic-base.css?v=6" />
-    <link rel="stylesheet" href="../../css/topic-pages.css?v=6" />
+    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=8" />
+    <link rel="stylesheet" href="../../css/topic-base.css?v=8" />
+    <link rel="stylesheet" href="../../css/topic-pages.css?v=8" />
+    <link rel="stylesheet" href="../../css/ai-fit.css?v=8" />
+    <script src="../../js/ai-fit.js?v=8"></script>
 
-    <script src="../../js/ai-core.js?v=6" defer></script>
-    <script src="../../js/ai-visualizer.js?v=6" defer></script>
-    <script src="./topic06.js?v=6" defer></script>
-    <script src="./topic06-permutation-crossover.js?v=6" defer></script>
+    <script src="../../js/ai-core.js?v=8" defer></script>
+    <script src="../../js/ai-extras.js?v=8" defer></script>
+    <script src="../../js/ai-visualizer.js?v=8" defer></script>
+    <script src="./topic06.js?v=8" defer></script>
+    <script src="./topic06-permutation-crossover.js?v=8" defer></script>
 
 </head>
 
@@ -34,17 +37,17 @@
 
         <nav class="ai-nav">
 
-            <a href="../../index.html?v=6" class="ai-brand">
+            <a href="../../index.html?v=8" class="ai-brand">
                 AI<span>Visual</span>
             </a>
 
             <button class="mobile-menu-btn" id="mobile-menu-btn" type="button"
                     aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">☰</button>
             <ul class="nav-links" id="nav-links">
-                <li><a href="../../index.html?v=6">Course Home</a></li>
-                <li><a href="../topic-05-game-trees/index.html?v=6">← 05. Game Trees</a></li>
+                <li><a href="../../index.html?v=8">Course Home</a></li>
+                <li><a href="../topic-05-game-trees/index.html?v=8">← 05. Game Trees</a></li>
                 <li><a href="#genetic-model" class="active" aria-current="page">06. Genetic Algorithms</a></li>
-                <li><a href="../topic-07-machine-learning/index.html?v=6">07. Machine Learning →</a></li>
+                <li><a href="../topic-07-machine-learning/index.html?v=8">07. Machine Learning →</a></li>
                 <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
                 <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
             </ul>
@@ -65,7 +68,7 @@
 
             <div class="topic-breadcrumb">
 
-                <a href="../../index.html?v=6">AIVisual</a>
+                <a href="../../index.html?v=8">AIVisual</a>
 
                 <span>/</span>
 
@@ -224,13 +227,17 @@
                         Python implementation
                     </a>
 
+                    <a href="#operator-catalogue" class="topic-nav-link">
+                        <span>12</span> Operator catalogue
+                    </a>
+
                     <a href="#practice" class="topic-nav-link">
-                        <span>12</span>
+                        <span>13</span>
                         Exam practice
                     </a>
 
                     <a href="#checklist" class="topic-nav-link">
-                        <span>13</span>
+                        <span>14</span>
                         Verification checklist
                     </a>
 
@@ -250,7 +257,7 @@
                 </div>
 
 
-                <a href="../../index.html?v=6" class="back-course-link">
+                <a href="../../index.html?v=8" class="back-course-link">
                     ← Back to AIVisual
                 </a>
 
@@ -3676,9 +3683,207 @@ tour, length = problem.run()</code></pre>
                 </section>
 
 
+                <!-- =================================================
+                     12. OPERATOR CATALOGUE AND GA DESIGN
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="operator-catalogue"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">12</span>
+                        <div>
+                            <p class="section-kicker">15–20 MARK DESIGN QUESTION</p>
+                            <h2>Operator Catalogue and GA Design Template</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        Every past paper has a GA design question (2018 Q5, 2024 Q3, 2025 Q3), and this year
+                        it is answered in Python. This section collects every operator from the lectures in
+                        one place, then gives the five-part answer template.
+                    </p>
+
+                    <h3>12.1 Vocabulary</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+                            <tbody>
+                                <tr><td>Population</td><td>A subset of all possible solutions</td></tr>
+                                <tr><td>Chromosome / gene / allele</td><td>One candidate solution / one position in it / the value at that position</td></tr>
+                                <tr><td>Genotype / phenotype</td><td>The population in computation space / in the real-world solution space</td></tr>
+                                <tr><td>Encoding / decoding</td><td>Phenotype → genotype / genotype → phenotype</td></tr>
+                                <tr><td>Generation / run</td><td>One iteration of the loop / the whole set of generations, typically 50–500</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        John Holland introduced the GA in 1975, based on Darwinian natural selection. Encodings:
+                        <strong>binary</strong> (0-1 knapsack: 1101 = take A, B, D), <strong>value</strong>
+                        ([5, 8, 10, 13]; the 2025 advert slots), <strong>permutation</strong> (TSP tour
+                        [2, 0, 4, 1, 3]) and <strong>tree</strong> (genetic programming, (+ x (/ 5 y))).
+                    </p>
+
+                    <h3>12.2 Parent selection methods</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead><tr><th>Method</th><th>How it works</th></tr></thead>
+                            <tbody>
+                                <tr><td>Roulette wheel</td><td>P(i) = f(i) / Σf. Spin once per parent.</td></tr>
+                                <tr><td>Stochastic universal sampling</td><td>One spin with several evenly spaced pointers; fit individuals are chosen at least once.</td></tr>
+                                <tr><td>Rank</td><td>Select by rank, not raw fitness, so one super-fit individual cannot take over.</td></tr>
+                                <tr><td>Tournament (k-way)</td><td>Pick k at random, keep the best; repeat per parent. aipython's default (k = 3).</td></tr>
+                                <tr><td>Truncation</td><td>Sort by fitness and keep the top 10–50 % as parents.</td></tr>
+                                <tr><td>Elitism</td><td>Copy the best n<sub>elite</sub> individuals unchanged, so the best never gets worse.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>Roulette example (knapsack lecture)</strong>
+                        <p>
+                            Fitnesses C1 = 15, C2 = 12, C3 = 24, C4 = 0 sum to 51. So P(C3) = 24/51 ≈ 0.47,
+                            P(C1) = 15/51 ≈ 0.29, P(C2) = 12/51 ≈ 0.24, and C4 (overweight, fitness 0) can never be chosen.
+                        </p>
+                    </div>
+
+                    <h3>12.3 Binary crossover operators</h3>
+
+                    <div class="xlab" id="bx-lab">
+                        <div class="xlab-heading">
+                            <div>
+                                <span class="xlab-eyebrow">INTERACTIVE CALCULATOR</span>
+                                <h3>Binary Crossover Workbench</h3>
+                                <p>The defaults are the lecture parents P1 = 011010 and P2 = 110100. Change the operator, cut points or mask and check your hand working.</p>
+                            </div>
+                            <span class="xlab-badge">5 OPERATORS</span>
+                        </div>
+                        <div class="xlab-controls">
+                            <label class="xlab-inline">Operator
+                                <select id="bx-operator">
+                                    <option value="single">Single-point</option>
+                                    <option value="two">Two-point</option>
+                                    <option value="mask">Uniform with a crossover mask</option>
+                                    <option value="half">Half-uniform</option>
+                                    <option value="three">Three-parent</option>
+                                </select>
+                            </label>
+                            <label class="xlab-inline">P1 <input id="bx-p1" type="text" value="011010" size="10" spellcheck="false" /></label>
+                            <label class="xlab-inline">P2 <input id="bx-p2" type="text" value="110100" size="10" spellcheck="false" /></label>
+                            <label class="xlab-inline" data-bx-for="three">P3 <input id="bx-p3" type="text" value="101011" size="10" spellcheck="false" /></label>
+                            <label class="xlab-inline" data-bx-for="single two">Cut after gene <input id="bx-cut1" type="number" min="1" max="9" value="2" /></label>
+                            <label class="xlab-inline" data-bx-for="two">and after gene <input id="bx-cut2" type="number" min="2" max="10" value="4" /></label>
+                            <label class="xlab-inline" data-bx-for="mask">Mask <input id="bx-mask" type="text" value="010110" size="10" spellcheck="false" /></label>
+                        </div>
+                        <div class="bx-output" id="bx-output" aria-live="polite"></div>
+                        <div class="bx-key">
+                            <span><i class="bx-from-p1"></i>from P1</span>
+                            <span><i class="bx-from-p2"></i>from P2</span>
+                            <span><i class="bx-from-p3"></i>from P3</span>
+                            <span><i class="bx-from-both"></i>P1 and P2 agree</span>
+                        </div>
+                        <div class="xlab-current">
+                            <span>RULE</span>
+                            <p id="bx-explanation"></p>
+                        </div>
+                    </div>
+
+                    <ul>
+                        <li><strong>Single-point</strong> after gene 2: O1 = 01|0100 = 010100, O2 = 11|1010 = 111010.</li>
+                        <li><strong>Two-point</strong> after genes 2 and 4 (swap the middle): O1 = 010110, O2 = 111000.</li>
+                        <li><strong>Mask CM = 010110</strong>: O1 takes P1 where CM = 0 and P2 where CM = 1 → 011100; O2 → 110010.</li>
+                        <li><strong>Multi-point</strong> swaps alternate segments between more than two cuts. <strong>Uniform</strong> tosses a coin at every gene. <strong>Shuffle</strong> shuffles gene positions in both parents the same way, does single-point crossover, then unshuffles.</li>
+                    </ul>
+
+                    <h3>12.4 Real-valued crossover</h3>
+
+                    <div class="formula-card">
+                        <span class="definition-label">SINGLE ARITHMETIC AND LINEAR CROSSOVER</span>
+                        <div class="formula-equation">O<sub>k</sub> = (1 − α)·P1<sub>k</sub> + α·P2<sub>k</sub></div>
+                        <p>
+                            With P1<sub>k</sub> = 12.76, P2<sub>k</sub> = 19.41 and α = 0.5 the child gene is 16.085 (≈ 16.08).
+                            Linear crossover makes three children with (α, β) = (0.5, 0.5), (1.5, −0.5) and (−0.5, 1.5):
+                            16.085, 9.435 and 22.735 — the last two lie outside the parents' range.
+                        </p>
+                    </div>
+
+                    <h3>12.5 Mutation operators</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead><tr><th>Operator</th><th>Encoding</th><th>Effect</th></tr></thead>
+                            <tbody>
+                                <tr><td>Bit flip</td><td>Binary</td><td>Flip one or more random bits</td></tr>
+                                <tr><td>Random resetting</td><td>Integer / value</td><td>Give a random gene a new legal value</td></tr>
+                                <tr><td>Swap</td><td>Permutation</td><td>Exchange two positions — always keeps a valid permutation and keeps value counts</td></tr>
+                                <tr><td>Scramble</td><td>Permutation</td><td>Shuffle a random subset of genes</td></tr>
+                                <tr><td>Inversion</td><td>Permutation</td><td>Reverse a segment: 0123456789 → 0165432789 (aipython's <code>inversion_mutate</code>)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        Keep the crossover rate high and the mutation rate low (aipython uses 0.9 and 0.3).
+                        Mutation keeps the population diverse so the GA does not stall on a local maximum.
+                    </p>
+
+                    <h3>12.6 The five-part design answer</h3>
+
+                    <div class="component-list">
+                        <div class="component-item">
+                            <span class="component-number">01</span>
+                            <div><h4>Chromosome</h4><p>What each index means and which values it can hold, with an example.</p></div>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-number">02</span>
+                            <div><h4>Initial population</h4><p>Random but feasible — e.g. shuffle a list that already has the right count of each value.</p></div>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-number">03</span>
+                            <div><h4>Fitness</h4><p>Compute the objective, then either subtract a large penalty × number of violations or repair the chromosome.</p></div>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-number">04</span>
+                            <div><h4>Crossover</h4><p>Return two children and say how feasibility is kept: permutation operators keep counts; otherwise repair afterwards.</p></div>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-number">05</span>
+                            <div><h4>Mutation</h4><p>Choose an operator that keeps feasibility; swapping two genes never changes the count of each value.</p></div>
+                        </div>
+                    </div>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead><tr><th>Past paper</th><th>Problem</th><th>Design idea</th></tr></thead>
+                            <tbody>
+                                <tr><td>2025 Q3</td><td>Assign 9 advert slots to 3 advertisers, 3 slots each, maximise revenue</td><td>Value encoding; shuffle [1,1,1,2,2,2,3,3,3]; swap mutation keeps 3 each (section 09)</td></tr>
+                                <tr><td>2024 Q3</td><td>Machine servicing schedule</td><td>p × n binary string: 1 means the machine is serviced in that period</td></tr>
+                                <tr><td>2018 Q5</td><td>Split coins equally among 4 nephews</td><td>Gene i = which nephew gets coin i; fitness penalises unequal totals</td></tr>
+                                <tr><td>Test 2</td><td>Complete a 4 × 4 Latin-square grid</td><td>Store fixed cells as negatives; fitness = number of conflicts (lower is fitter); mutation never touches fixed cells</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="exam-note">
+                        <strong>Python traps:</strong>
+                        <code>random.shuffle(lst)</code> shuffles in place and returns <code>None</code>;
+                        <code>random.sample(lst, len(lst))</code> returns a shuffled copy. Crossover must return
+                        <em>two</em> children. For TSP, remember the closing leg
+                        <code>table[tour[-1]][tour[0]]</code>. A GA guarantees nothing about optimality —
+                        convergence is a fact about the population, not the problem.
+                    </div>
+
+                </section>
+
+
+
 
                 <!-- =========================================================
-                     12. EXAM PRACTICE
+                     13. EXAM PRACTICE
                      ========================================================= -->
 
                 <section class="lesson-section"
@@ -3687,7 +3892,7 @@ tour, length = problem.run()</code></pre>
 
                     <div class="lesson-section-heading">
 
-                        <span class="section-number">12</span>
+                        <span class="section-number">13</span>
 
                         <div>
 
@@ -3973,7 +4178,7 @@ Step 3: Fill the empty positions.
 
 
                 <!-- =========================================================
-                     13. CHECKLIST
+                     14. CHECKLIST
                      ========================================================= -->
 
                 <section class="lesson-section"
@@ -3982,7 +4187,7 @@ Step 3: Fill the empty positions.
 
                     <div class="lesson-section-heading">
 
-                        <span class="section-number">13</span>
+                        <span class="section-number">14</span>
 
                         <div>
 
@@ -4160,8 +4365,8 @@ Step 3: Fill the empty positions.
                      ========================================================= -->
 
                 <div class="topic-bottom-navigation">
-                    <a href="../topic-05-game-trees/index.html?v=6" class="topic-previous-link">← Previous: Game Trees</a>
-                    <a href="../topic-07-machine-learning/index.html?v=6" class="topic-next-link">Next: Machine Learning Basics →</a>
+                    <a href="../topic-05-game-trees/index.html?v=8" class="topic-previous-link">← Previous: Game Trees</a>
+                    <a href="../topic-07-machine-learning/index.html?v=8" class="topic-next-link">Next: Machine Learning Basics →</a>
                 </div>
 
 
@@ -4181,7 +4386,7 @@ Step 3: Fill the empty positions.
 
         <div class="footer-content">
 
-            <a href="../../index.html?v=6" class="ai-brand">
+            <a href="../../index.html?v=8" class="ai-brand">
                 AI<span>Visual</span>
             </a>
 
@@ -4198,7 +4403,7 @@ Step 3: Fill the empty positions.
                 © <span id="current-year"></span> StructTrace.
             </p>
 
-            <a href="../../index.html?v=6">Back to AIVisual</a>
+            <a href="../../index.html?v=8">Back to AIVisual</a>
 
         </div>
 

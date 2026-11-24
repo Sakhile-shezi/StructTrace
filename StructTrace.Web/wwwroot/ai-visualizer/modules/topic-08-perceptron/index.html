@@ -9,13 +9,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Module 08 | Perceptron Training - AIVisual</title>
-    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=6" />
-    <link rel="stylesheet" href="../../css/topic-base.css?v=6" />
-    <link rel="stylesheet" href="../../css/topic-pages.css?v=6" />
+    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=8" />
+    <link rel="stylesheet" href="../../css/topic-base.css?v=8" />
+    <link rel="stylesheet" href="../../css/topic-pages.css?v=8" />
+    <link rel="stylesheet" href="../../css/ai-fit.css?v=8" />
+    <script src="../../js/ai-fit.js?v=8"></script>
 
-    <script src="../../js/ai-core.js?v=6" defer></script>
-    <script src="../../js/ai-visualizer.js?v=6" defer></script>
-    <script src="./topic08.js?v=6" defer></script>
+    <script src="../../js/ai-core.js?v=8" defer></script>
+    <script src="../../js/ai-extras.js?v=8" defer></script>
+    <script src="../../js/ai-visualizer.js?v=8" defer></script>
+    <script src="./topic08.js?v=8" defer></script>
 
 </head>
 
@@ -29,17 +32,17 @@
 
         <nav class="ai-nav">
 
-            <a href="../../index.html?v=6" class="ai-brand">
+            <a href="../../index.html?v=8" class="ai-brand">
                 AI<span>Visual</span>
             </a>
 
             <button class="mobile-menu-btn" id="mobile-menu-btn" type="button"
                     aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">☰</button>
             <ul class="nav-links" id="nav-links">
-                <li><a href="../../index.html?v=6">Course Home</a></li>
-                <li><a href="../topic-07-machine-learning/index.html?v=6">← 07. Machine Learning</a></li>
+                <li><a href="../../index.html?v=8">Course Home</a></li>
+                <li><a href="../topic-07-machine-learning/index.html?v=8">← 07. Machine Learning</a></li>
                 <li><a href="#perceptron-introduction" class="active" aria-current="page">08. Perceptron</a></li>
-                <li><a href="../topic-09-logic/index.html?v=6">09. Logic →</a></li>
+                <li><a href="../topic-09-logic/index.html?v=8">09. Logic →</a></li>
                 <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
                 <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
             </ul>
@@ -59,7 +62,7 @@
         <section class="topic-hero">
 
             <div class="topic-breadcrumb">
-                <a href="../../index.html?v=6">AIVisual</a>
+                <a href="../../index.html?v=8">AIVisual</a>
                 <span>/</span>
                 <span>COMP304</span>
                 <span>/</span>
@@ -186,23 +189,27 @@
                         2025 spam example
                     </a>
 
+                    <a href="#exam-2024-example" class="topic-nav-link">
+                        <span>10</span> 2024 exam example
+                    </a>
+
                     <a href="#python-implementation" class="topic-nav-link">
-                        <span>10</span>
+                        <span>11</span>
                         Python implementation
                     </a>
 
                     <a href="#xor-limitations" class="topic-nav-link">
-                        <span>11</span>
+                        <span>12</span>
                         XOR limitation
                     </a>
 
                     <a href="#exam-practice" class="topic-nav-link">
-                        <span>12</span>
+                        <span>13</span>
                         Exam practice
                     </a>
 
                     <a href="#checklist" class="topic-nav-link">
-                        <span>13</span>
+                        <span>14</span>
                         Verification checklist
                     </a>
 
@@ -222,7 +229,7 @@
                 </div>
 
 
-                <a href="../../index.html?v=6" class="back-course-link">
+                <a href="../../index.html?v=8" class="back-course-link">
                     ← Back to AIVisual
                 </a>
 
@@ -1661,6 +1668,14 @@
                                 Exam practice — Three-input perceptron
                             </option>
 
+                            <option value="lecture-four">
+                                Lecture example — four inputs
+                            </option>
+
+                            <option value="exam-2024">
+                                2024 Exam — four-input class
+                            </option>
+
                             <option value="spam-2025">
                                 2025 Exam — Spam classification
                             </option>
@@ -2621,9 +2636,105 @@
                 </section>
 
 
+                <!-- =================================================
+                     10. 2024 EXAM WORKED ANSWER
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="exam-2024-example"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">10</span>
+                        <div>
+                            <p class="section-kicker">PAST PAPER · NOVEMBER 2024 Q6</p>
+                            <h2>2024 Exam: Finish the Training Table</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        The 2024 question gives epoch 1 and asks for epoch 2 (8 marks) and one test vector
+                        (2 marks). Load <strong>2024 Exam — four-input class</strong> in the interactive trainer
+                        (section 06) to check every row.
+                    </p>
+
+                    <h3>10.1 The question</h3>
+
+                    <p>
+                        [1 1 1 1] and [−1 1 1 −1] are in the class (t = 1); [−1 −1 1 1] and [1 −1 −1 1] are not
+                        (t = −1). All weights start at zero, α = 1 and θ = 0, with the usual three-valued output
+                        (1 if y<sub>in</sub> &gt; θ, 0 if y<sub>in</sub> = θ, −1 if y<sub>in</sub> &lt; θ).
+                    </p>
+
+                    <h3>10.2 Epoch 1 (given in the paper)</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr><th>x<sub>1</sub> x<sub>2</sub> x<sub>3</sub> x<sub>4</sub></th><th>t</th><th>y<sub>in</sub></th><th>y</th><th>Δw</th><th>Δb</th><th>w after</th><th>b after</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1, 1, 1, 1</td><td>1</td><td>0</td><td>0</td><td>(1, 1, 1, 1)</td><td>1</td><td>(1, 1, 1, 1)</td><td>1</td></tr>
+                                <tr><td>−1, 1, 1, −1</td><td>1</td><td>1</td><td>1</td><td>none</td><td>0</td><td>(1, 1, 1, 1)</td><td>1</td></tr>
+                                <tr><td>−1, −1, 1, 1</td><td>−1</td><td>1</td><td>1</td><td>(1, 1, −1, −1)</td><td>−1</td><td>(2, 2, 0, 0)</td><td>0</td></tr>
+                                <tr><td>1, −1, −1, 1</td><td>−1</td><td>0</td><td>0</td><td>(−1, 1, 1, −1)</td><td>−1</td><td>(1, 3, 1, −1)</td><td>−1</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="exam-note">
+                        <strong>Note the two zero outputs.</strong>
+                        Rows 1 and 4 give y<sub>in</sub> = θ = 0, so y = 0. Zero never equals a target of ±1,
+                        so the weights still update.
+                    </div>
+
+                    <h3>10.3 Epoch 2 (the 8-mark answer)</h3>
+
+                    <p>Start from w = (1, 3, 1, −1), b = −1.</p>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr><th>x</th><th>t</th><th>y<sub>in</sub> = b + Σ x<sub>i</sub>w<sub>i</sub></th><th>y</th><th>Update?</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1, 1, 1, 1</td><td>1</td><td>−1 + (1 + 3 + 1 − 1) = 3</td><td>1</td><td>No</td></tr>
+                                <tr><td>−1, 1, 1, −1</td><td>1</td><td>−1 + (−1 + 3 + 1 + 1) = 3</td><td>1</td><td>No</td></tr>
+                                <tr><td>−1, −1, 1, 1</td><td>−1</td><td>−1 + (−1 − 3 + 1 − 1) = −5</td><td>−1</td><td>No</td></tr>
+                                <tr><td>1, −1, −1, 1</td><td>−1</td><td>−1 + (1 − 3 − 1 − 1) = −5</td><td>−1</td><td>No</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        Every output matches its target, so there are no weight changes and training stops with
+                        <strong>w = (1, 3, 1, −1), b = −1</strong>.
+                    </p>
+
+                    <h3>10.4 Test vector (2 marks)</h3>
+
+                    <div class="formula-card">
+                        <span class="definition-label">TEST [1, 1, −1, −1]</span>
+                        <div class="formula-equation">y<sub>in</sub> = −1 + (1)(1) + (1)(3) + (−1)(1) + (−1)(−1) = 3</div>
+                        <p>3 &gt; θ = 0, so y = 1: the vector is classified as <strong>in the class</strong>.</p>
+                    </div>
+
+                    <h3>10.5 The lecture's four-input example</h3>
+
+                    <p>
+                        Class 1: (1, 1, 1, 1) and (−1, 1, −1, −1). Class −1: (1, 1, 1, −1) and (1, −1, −1, 1).
+                        With α = 1 and θ = 0 the weights change in epochs 1 and 2, and epoch 3 has no change,
+                        ending at <strong>w = (−2, 2, 0, 2), b = 0</strong>. It is also in the trainer as
+                        <strong>Lecture example — four inputs</strong>.
+                    </p>
+
+                </section>
+
+
+
 
                 <!-- =========================================================
-                     10. PYTHON IMPLEMENTATION
+                     11. PYTHON IMPLEMENTATION
                      ========================================================= -->
 
                 <section class="lesson-section"
@@ -2632,7 +2743,7 @@
 
                     <div class="lesson-section-heading">
 
-                        <span class="section-number">10</span>
+                        <span class="section-number">11</span>
 
                         <div>
                             <p class="section-kicker">PYTHON PROGRAMMING</p>
@@ -2650,7 +2761,7 @@
                     </p>
 
 
-                    <h3>10.1 One training step</h3>
+                    <h3>11.1 One training step</h3>
 
 
                     <div class="pc-code-card">
@@ -2691,7 +2802,7 @@
                     </div>
 
 
-                    <h3>10.2 Understand the code line by line</h3>
+                    <h3>11.2 Understand the code line by line</h3>
 
 
                     <div class="pc-code-explanation">
@@ -2739,7 +2850,7 @@
                     </div>
 
 
-                    <h3>10.3 Training through multiple epochs</h3>
+                    <h3>11.3 Training through multiple epochs</h3>
 
 
                     <div class="pc-code-card">
@@ -2787,7 +2898,7 @@
                     </div>
 
 
-                    <h3>10.4 Important Python details</h3>
+                    <h3>11.4 Important Python details</h3>
 
 
                     <div class="comparison-table-wrapper">
@@ -2835,7 +2946,7 @@
                     </div>
 
 
-                    <h3>10.5 Optional test function</h3>
+                    <h3>11.5 Optional test function</h3>
 
 
                     <div class="pc-code-card">
@@ -2879,7 +2990,7 @@
 
 
                 <!-- =========================================================
-                     11. XOR LIMITATION
+                     12. XOR LIMITATION
                      ========================================================= -->
 
                 <section class="lesson-section"
@@ -2888,7 +2999,7 @@
 
                     <div class="lesson-section-heading">
 
-                        <span class="section-number">11</span>
+                        <span class="section-number">12</span>
 
                         <div>
                             <p class="section-kicker">LIMITATIONS</p>
@@ -2906,7 +3017,7 @@
                     </p>
 
 
-                    <h3>11.1 XOR truth table</h3>
+                    <h3>12.1 XOR truth table</h3>
 
 
                     <div class="comparison-table-wrapper">
@@ -2936,7 +3047,7 @@
                     </div>
 
 
-                    <h3>11.2 Visualising the XOR points</h3>
+                    <h3>12.2 Visualising the XOR points</h3>
 
 
                     <div class="pc-xor-diagram">
@@ -3012,7 +3123,7 @@
                     </div>
 
 
-                    <h3>11.3 Why is XOR impossible for a single perceptron?</h3>
+                    <h3>12.3 Why is XOR impossible for a single perceptron?</h3>
 
 
                     <ol>
@@ -3038,7 +3149,7 @@
 
 
                 <!-- =========================================================
-                     12. EXAM PRACTICE
+                     13. EXAM PRACTICE
                      ========================================================= -->
 
                 <section class="lesson-section"
@@ -3047,7 +3158,7 @@
 
                     <div class="lesson-section-heading">
 
-                        <span class="section-number">12</span>
+                        <span class="section-number">13</span>
 
                         <div>
                             <p class="section-kicker">COMP304 EXAM PREPARATION</p>
@@ -3227,7 +3338,7 @@
 
 
                 <!-- =========================================================
-                     13. CHECKLIST
+                     14. CHECKLIST
                      ========================================================= -->
 
                 <section class="lesson-section"
@@ -3236,7 +3347,7 @@
 
                     <div class="lesson-section-heading">
 
-                        <span class="section-number">13</span>
+                        <span class="section-number">14</span>
 
                         <div>
                             <p class="section-kicker">EXAM VERIFICATION</p>
@@ -3410,8 +3521,8 @@
                      ========================================================= -->
 
                 <div class="topic-bottom-navigation">
-                    <a href="../topic-07-machine-learning/index.html?v=6" class="topic-previous-link">← Previous: Machine Learning Basics</a>
-                    <a href="../topic-09-logic/index.html?v=6" class="topic-next-link">Next: Logic →</a>
+                    <a href="../topic-07-machine-learning/index.html?v=8" class="topic-previous-link">← Previous: Machine Learning Basics</a>
+                    <a href="../topic-09-logic/index.html?v=8" class="topic-next-link">Next: Logic →</a>
                 </div>
 
 
@@ -3431,7 +3542,7 @@
 
         <div class="footer-content">
 
-            <a href="../../index.html?v=6" class="ai-brand">
+            <a href="../../index.html?v=8" class="ai-brand">
                 AI<span>Visual</span>
             </a>
 
@@ -3448,7 +3559,7 @@
                 © <span id="current-year"></span> StructTrace.
             </p>
 
-            <a href="../../index.html?v=6">Back to AIVisual</a>
+            <a href="../../index.html?v=8">Back to AIVisual</a>
 
         </div>
 

@@ -2569,6 +2569,79 @@
     letter-spacing: 0.03em;
 }
 
+/* Step cards on the left, board and domains on the right (pane stays in view) */
+.aiv-topic .fc-workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(330px, 1fr);
+    gap: 16px;
+    align-items: start;
+    margin: 10px 0;
+}
+
+.aiv-topic .fc-workspace .fc-steps {
+    position: relative;
+    max-height: max(320px, calc(100vh / var(--aiv-scale, 1) - 150px));
+    margin: 0;
+    padding: 3px 6px 3px 3px;
+    overflow-y: auto;
+    align-content: start;
+    grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+}
+
+.aiv-topic .fc-detail-pane {
+    position: sticky;
+    top: 74px;
+    min-width: 0;
+}
+
+    .aiv-topic .fc-detail-pane .xlab-current {
+        margin-top: 0;
+    }
+
+.aiv-topic .fc-detail-grid {
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.aiv-topic .fc-pane-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 6px;
+    background: var(--lab-card);
+    border: 1px solid var(--lab-border);
+    border-radius: 8px;
+}
+
+    .aiv-topic .fc-pane-nav span {
+        color: #e2e8f0;
+        font-family: var(--lab-mono);
+        font-size: 0.8rem;
+        font-weight: 800;
+    }
+
+    .aiv-topic .fc-pane-nav .xlab-btn {
+        min-width: 48px;
+        padding: 6px 12px;
+    }
+
+@media (max-width: 980px) {
+    .aiv-topic .fc-workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .aiv-topic .fc-workspace .fc-steps {
+        max-height: 340px;
+    }
+
+    .aiv-topic .fc-detail-pane {
+        position: static;
+    }
+}
+
 .aiv-topic .fc-mini-board {
     display: grid;
     width: min(100%, 300px);
@@ -2790,4 +2863,166 @@
 
 .aiv-topic .topic-content .xlab-settings .span-full {
     grid-column: 1 / -1;
+}
+
+
+/* #########################################################
+   PART 6 — STUDY WIDGETS (environment classifier, annealing,
+   binary crossover, activation functions, resolution stepper,
+   possible-worlds counter). Logic lives in js/ai-extras.js.
+   ######################################################### */
+
+/* binary crossover genes */
+.aiv-topic .bx-output {
+    display: grid;
+    gap: 8px;
+    margin: 14px 0 6px;
+}
+
+.aiv-topic .bx-row {
+    display: grid;
+    grid-template-columns: 52px minmax(0, auto) 1fr;
+    align-items: center;
+    gap: 12px;
+}
+
+.aiv-topic .bx-label {
+    color: #93c5fd;
+    font-family: var(--lab-mono);
+    font-size: 0.78rem;
+    font-weight: 900;
+}
+
+.aiv-topic .bx-genes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.aiv-topic .bx-gene {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 32px;
+    border: 1px solid var(--lab-border);
+    border-radius: 6px;
+    font-family: var(--lab-mono);
+    font-size: 0.9rem;
+    font-weight: 900;
+}
+
+.aiv-topic .bx-from-p1 { background: rgba(37, 99, 235, 0.28); border-color: #3b82f6; color: #dbeafe; }
+.aiv-topic .bx-from-p2 { background: rgba(245, 158, 11, 0.22); border-color: #f59e0b; color: #fef3c7; }
+.aiv-topic .bx-from-p3 { background: rgba(167, 139, 250, 0.24); border-color: #a78bfa; color: #ede9fe; }
+.aiv-topic .bx-from-both { background: rgba(52, 211, 153, 0.2); border-color: #34d399; color: #d1fae5; }
+
+.aiv-topic .topic-content .bx-string {
+    justify-self: start;
+    padding: 0;
+    background: none;
+    border: 0;
+    color: var(--lab-muted);
+    font-family: var(--lab-mono);
+    font-size: 0.8rem;
+}
+
+.aiv-topic .bx-key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 8px;
+    color: var(--lab-muted);
+    font-size: 0.72rem;
+}
+
+    .aiv-topic .bx-key i {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        margin-right: 6px;
+        border: 1px solid;
+        border-radius: 3px;
+        vertical-align: -1px;
+    }
+
+/* annealing table */
+.aiv-topic .topic-content .xlab-table tr.sa-row-cold td {
+    color: #64748b;
+}
+
+/* activation explorer */
+.aiv-topic .act-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(220px, 1fr);
+    gap: 16px;
+    align-items: start;
+}
+
+.aiv-topic .act-plot-wrap {
+    padding: 8px;
+    background: var(--lab-deep);
+    border: 1px solid var(--lab-border);
+    border-radius: 8px;
+}
+
+    .aiv-topic .act-plot-wrap svg {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+.aiv-topic .act-swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 8px;
+    border-radius: 50%;
+}
+
+.aiv-topic .topic-content .xlab input[type="range"] {
+    width: 220px;
+    accent-color: #38bdf8;
+}
+
+/* resolution stepper */
+.aiv-topic .topic-content .xlab-table tr.rp-hidden td {
+    color: #475569;
+}
+
+.aiv-topic .topic-content .xlab-table tr.rp-current td {
+    background: rgba(56, 189, 248, 0.12);
+    color: #e0f2fe;
+}
+
+.aiv-topic .rp-clauses {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 6px 14px;
+    margin: 10px 0;
+    padding: 12px 14px;
+    background: var(--lab-deep);
+    border: 1px solid var(--lab-border);
+    border-radius: 8px;
+    font-family: var(--lab-mono);
+    font-size: 0.74rem;
+    color: var(--lab-soft);
+}
+
+    .aiv-topic .rp-clauses b {
+        color: #93c5fd;
+    }
+
+@media (max-width: 860px) {
+    .aiv-topic .act-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .aiv-topic .bx-row {
+        grid-template-columns: 44px 1fr;
+    }
+
+    .aiv-topic .bx-string {
+        grid-column: 2;
+    }
 }

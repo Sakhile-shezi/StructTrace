@@ -9,13 +9,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Module 07 | Machine Learning Basics - AIVisual</title>
-    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=6" />
-    <link rel="stylesheet" href="../../css/topic-base.css?v=6" />
-    <link rel="stylesheet" href="../../css/topic-pages.css?v=6" />
+    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=8" />
+    <link rel="stylesheet" href="../../css/topic-base.css?v=8" />
+    <link rel="stylesheet" href="../../css/topic-pages.css?v=8" />
+    <link rel="stylesheet" href="../../css/ai-fit.css?v=8" />
+    <script src="../../js/ai-fit.js?v=8"></script>
 
-    <script src="../../js/ai-core.js?v=6" defer></script>
-    <script src="../../js/ai-visualizer.js?v=6" defer></script>
-    <script src="./topic07.js?v=6" defer></script>
+    <script src="../../js/ai-core.js?v=8" defer></script>
+    <script src="../../js/ai-extras.js?v=8" defer></script>
+    <script src="../../js/ai-visualizer.js?v=8" defer></script>
+    <script src="./topic07.js?v=8" defer></script>
 
 </head>
 
@@ -28,17 +31,17 @@
     <header class="ai-header">
         <nav class="ai-nav">
 
-            <a href="../../index.html?v=6" class="ai-brand">
+            <a href="../../index.html?v=8" class="ai-brand">
                 AI<span>Visual</span>
             </a>
 
             <button class="mobile-menu-btn" id="mobile-menu-btn" type="button"
                     aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">☰</button>
             <ul class="nav-links" id="nav-links">
-                <li><a href="../../index.html?v=6">Course Home</a></li>
-                <li><a href="../topic-06-genetic-algorithms/index.html?v=6">← 06. Genetic Algorithms</a></li>
+                <li><a href="../../index.html?v=8">Course Home</a></li>
+                <li><a href="../topic-06-genetic-algorithms/index.html?v=8">← 06. Genetic Algorithms</a></li>
                 <li><a href="#ml-introduction" class="active" aria-current="page">07. Machine Learning</a></li>
-                <li><a href="../topic-08-perceptron/index.html?v=6">08. Perceptron →</a></li>
+                <li><a href="../topic-08-perceptron/index.html?v=8">08. Perceptron →</a></li>
                 <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
                 <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
             </ul>
@@ -56,7 +59,7 @@
         <section class="topic-hero">
 
             <div class="topic-breadcrumb">
-                <a href="../../index.html?v=6">AIVisual</a>
+                <a href="../../index.html?v=8">AIVisual</a>
                 <span>/</span>
                 <span>COMP304</span>
                 <span>/</span>
@@ -179,13 +182,17 @@
                         Neural network history
                     </a>
 
+                    <a href="#activation-learning" class="topic-nav-link">
+                        <span>11</span> Activations and learning
+                    </a>
+
                     <a href="#exam-practice" class="topic-nav-link">
-                        <span>11</span>
+                        <span>12</span>
                         Exam practice
                     </a>
 
                     <a href="#checklist" class="topic-nav-link">
-                        <span>12</span>
+                        <span>13</span>
                         Verification checklist
                     </a>
 
@@ -201,7 +208,7 @@
                     <p id="lesson-progress-text">0% viewed</p>
                 </div>
 
-                <a href="../../index.html?v=6" class="back-course-link">
+                <a href="../../index.html?v=8" class="back-course-link">
                     ← Back to AIVisual
                 </a>
 
@@ -2221,9 +2228,164 @@ print(activation)</code></pre>
                 </section>
 
 
+                <!-- =================================================
+                     11. ACTIVATION FUNCTIONS AND LEARNING
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="activation-learning"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">11</span>
+                        <div>
+                            <p class="section-kicker">NEURAL NETWORK BASICS</p>
+                            <h2>Activation Functions, Cost and Gradient Descent</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        A neuron computes a weighted sum and passes it through an activation function.
+                        Learning means adjusting the weights to reduce a cost. This section fills in the
+                        pieces between the single neuron (section 08) and the perceptron (Module 08).
+                    </p>
+
+                    <h3>11.1 Biological and artificial neurons</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead><tr><th>Biological neuron</th><th>Artificial neuron</th></tr></thead>
+                            <tbody>
+                                <tr><td>Dendrites</td><td>Inputs x<sub>i</sub></td></tr>
+                                <tr><td>Synapses</td><td>Weights w<sub>i</sub> (connection strengths)</td></tr>
+                                <tr><td>Cell body (soma)</td><td>Sum Σ x<sub>i</sub>w<sub>i</sub> + b</td></tr>
+                                <tr><td>Axon</td><td>Output y = activation(Σ x<sub>i</sub>w<sub>i</sub> + b)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>Lecture example</strong>
+                        <p>
+                            Inputs (0.15, 0.5, 0.7, 0.22) with weights (0.22, 0.27, 0.72, 0.05):
+                            0.033 + 0.135 + 0.504 + 0.011 = <strong>0.683</strong>. A step activation then outputs 1.
+                        </p>
+                    </div>
+
+                    <h3>11.2 Activation functions</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead><tr><th>Function</th><th>Formula</th><th>Range</th></tr></thead>
+                            <tbody>
+                                <tr><td>Step</td><td>1 if x ≥ 0, else 0</td><td>{0, 1}</td></tr>
+                                <tr><td>Sigmoid</td><td>1 / (1 + e<sup>−x</sup>)</td><td>(0, 1)</td></tr>
+                                <tr><td>tanh</td><td>(1 − e<sup>−2x</sup>) / (1 + e<sup>−2x</sup>)</td><td>(−1, 1)</td></tr>
+                                <tr><td>ReLU</td><td>max(0, x)</td><td>[0, ∞)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="xlab" id="act-lab">
+                        <div class="xlab-heading">
+                            <div>
+                                <span class="xlab-eyebrow">INTERACTIVE PLOT</span>
+                                <h3>Activation Function Explorer</h3>
+                                <p>Move the net input x and read each function's output. Try x = 0.683 from the lecture example.</p>
+                            </div>
+                            <span class="xlab-badge">STEP · SIGMOID · TANH · RELU</span>
+                        </div>
+                        <div class="xlab-controls">
+                            <label class="xlab-inline">x
+                                <input id="act-x" type="range" min="-6" max="6" step="0.01" value="0.683" aria-label="Net input slider" />
+                                <input id="act-x-number" type="number" step="0.1" value="0.683" aria-label="Net input" />
+                            </label>
+                        </div>
+                        <div class="act-layout">
+                            <div class="act-plot-wrap">
+                                <svg id="act-plot" role="img" aria-label="Step, sigmoid, tanh and ReLU plotted from −6 to 6"></svg>
+                            </div>
+                            <div class="xlab-table-wrap">
+                                <table class="xlab-table">
+                                    <thead><tr><th>Function</th><th>Output</th></tr></thead>
+                                    <tbody id="act-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>11.3 Cost and gradient descent</h3>
+
+                    <div class="formula-card">
+                        <span class="definition-label">COST FOR ONE EXAMPLE</span>
+                        <div class="formula-equation">C = 0.5 × (ŷ − y)²</div>
+                        <p>Example: prediction ŷ = 0.664, target y = 1 → C = 0.5 × (0.664 − 1)² = 0.5 × 0.1129 ≈ 0.056.</p>
+                    </div>
+
+                    <div class="formula-card">
+                        <span class="definition-label">GRADIENT DESCENT</span>
+                        <div class="formula-equation">W ← W − α∇C(W)</div>
+                        <p>
+                            Step each weight against the slope of the cost, with learning rate α.
+                            <strong>Backpropagation</strong> pushes the error back through the layers to get each
+                            weight's gradient. Counting weights: 4 inputs fully connected to 14 hidden units
+                            give 4 × 14 = 56 weights into the hidden layer.
+                        </p>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>Line-fitting update (caterpillars vs ladybirds)</strong>
+                        <p>
+                            The slope is updated by Δm = L · E / x. With m = 0.25, learning rate L = 0.5, x = 3.0 and
+                            error E = 0.35: Δm = 0.5 × 0.35 / 3.0 ≈ 0.0583, so the new slope is m = 0.3083.
+                        </p>
+                    </div>
+
+                    <h3>11.4 Network types and history</h3>
+
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <h4>Recurrent networks (RNN)</h4>
+                            <p>Have loops, so earlier outputs feed back in. They suit sequences such as text or speech.</p>
+                        </div>
+                        <div class="concept-card">
+                            <h4>Convolutional networks (CNN)</h4>
+                            <p>Use local receptive fields that scan small patches. They suit images.</p>
+                        </div>
+                        <div class="concept-card">
+                            <h4>Linear separability</h4>
+                            <p>A single perceptron can only separate classes with one line or hyperplane. That is why XOR fails.</p>
+                        </div>
+                    </div>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead><tr><th>Year</th><th>Milestone</th></tr></thead>
+                            <tbody>
+                                <tr><td>1943</td><td>McCulloch and Pitts: first mathematical model of a neuron</td></tr>
+                                <tr><td>1951</td><td>Minsky: first artificial neural network</td></tr>
+                                <tr><td>1958</td><td>Rosenblatt: the perceptron</td></tr>
+                                <tr><td>1969</td><td>Minsky and Papert: a perceptron cannot learn XOR or other non-linear problems</td></tr>
+                                <tr><td>1980s</td><td>Rumelhart, LeCun and others: backpropagation</td></tr>
+                                <tr><td>1989</td><td>Universal approximation theorem for neural networks</td></tr>
+                                <tr><td>2006</td><td>Hinton, Bengio and LeCun: deep networks</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="exam-note">
+                        <strong>Other ML methods named in the lecture:</strong>
+                        linear and logistic regression, random forests and Bayesian techniques. Decision trees
+                        are not examined this year.
+                    </div>
+
+                </section>
+
+
+
 
                 <!-- =========================================================
-                     11. EXAM PRACTICE
+                     12. EXAM PRACTICE
                      ========================================================= -->
 
                 <section class="lesson-section"
@@ -2231,7 +2393,7 @@ print(activation)</code></pre>
                          data-lesson-section>
 
                     <div class="lesson-section-heading">
-                        <span class="section-number">11</span>
+                        <span class="section-number">12</span>
 
                         <div>
                             <p class="section-kicker">COMP304 EXAM PREPARATION</p>
@@ -2489,7 +2651,7 @@ weights = [0.22, 0.27, 0.72, 0.05]</code></pre>
 
 
                 <!-- =========================================================
-                     12. CHECKLIST
+                     13. CHECKLIST
                      ========================================================= -->
 
                 <section class="lesson-section"
@@ -2497,7 +2659,7 @@ weights = [0.22, 0.27, 0.72, 0.05]</code></pre>
                          data-lesson-section>
 
                     <div class="lesson-section-heading">
-                        <span class="section-number">12</span>
+                        <span class="section-number">13</span>
 
                         <div>
                             <p class="section-kicker">EXAM VERIFICATION</p>
@@ -2683,8 +2845,8 @@ weights = [0.22, 0.27, 0.72, 0.05]</code></pre>
                      ========================================================= -->
 
                 <div class="topic-bottom-navigation">
-                    <a href="../topic-06-genetic-algorithms/index.html?v=6" class="topic-previous-link">← Previous: Genetic Algorithms</a>
-                    <a href="../topic-08-perceptron/index.html?v=6" class="topic-next-link">Next: Perceptron Training →</a>
+                    <a href="../topic-06-genetic-algorithms/index.html?v=8" class="topic-previous-link">← Previous: Genetic Algorithms</a>
+                    <a href="../topic-08-perceptron/index.html?v=8" class="topic-next-link">Next: Perceptron Training →</a>
                 </div>
 
 
@@ -2704,7 +2866,7 @@ weights = [0.22, 0.27, 0.72, 0.05]</code></pre>
 
         <div class="footer-content">
 
-            <a href="../../index.html?v=6" class="ai-brand">
+            <a href="../../index.html?v=8" class="ai-brand">
                 AI<span>Visual</span>
             </a>
 
@@ -2720,7 +2882,7 @@ weights = [0.22, 0.27, 0.72, 0.05]</code></pre>
                 © <span id="current-year"></span> StructTrace.
             </p>
 
-            <a href="../../index.html?v=6">Back to AIVisual</a>
+            <a href="../../index.html?v=8">Back to AIVisual</a>
 
         </div>
 

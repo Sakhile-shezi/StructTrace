@@ -8,13 +8,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Module 05 | Game Trees - Minimax and Alpha-Beta - AIVisual</title>
-    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=6" />
-    <link rel="stylesheet" href="../../css/topic-base.css?v=6" />
-    <link rel="stylesheet" href="../../css/topic-pages.css?v=6" />
+    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=8" />
+    <link rel="stylesheet" href="../../css/topic-base.css?v=8" />
+    <link rel="stylesheet" href="../../css/topic-pages.css?v=8" />
+    <link rel="stylesheet" href="../../css/ai-fit.css?v=8" />
+    <script src="../../js/ai-fit.js?v=8"></script>
 
-    <script src="../../js/ai-core.js?v=6" defer></script>
-    <script src="../../js/ai-visualizer.js?v=6" defer></script>
-    <script src="./topic05.js?v=6" defer></script>
+    <script src="../../js/ai-core.js?v=8" defer></script>
+    <script src="../../js/ai-extras.js?v=8" defer></script>
+    <script src="../../js/ai-visualizer.js?v=8" defer></script>
+    <script src="./topic05.js?v=8" defer></script>
 
 </head>
 
@@ -22,17 +25,17 @@
 
     <header class="ai-header">
         <nav class="ai-nav">
-            <a href="../../index.html?v=6" class="ai-brand">
+            <a href="../../index.html?v=8" class="ai-brand">
                 AI<span>Visual</span>
             </a>
 
             <button class="mobile-menu-btn" id="mobile-menu-btn" type="button"
                     aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">☰</button>
             <ul class="nav-links" id="nav-links">
-                <li><a href="../../index.html?v=6">Course Home</a></li>
-                <li><a href="../topic-04-heuristic-search/index.html?v=6">← 04. Heuristic Search</a></li>
+                <li><a href="../../index.html?v=8">Course Home</a></li>
+                <li><a href="../topic-04-heuristic-search/index.html?v=8">← 04. Heuristic Search</a></li>
                 <li><a href="#game-model" class="active" aria-current="page">05. Game Trees</a></li>
-                <li><a href="../topic-06-genetic-algorithms/index.html?v=6">06. Genetic Algorithms →</a></li>
+                <li><a href="../topic-06-genetic-algorithms/index.html?v=8">06. Genetic Algorithms →</a></li>
                 <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
                 <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
             </ul>
@@ -49,7 +52,7 @@
         <section class="topic-hero">
 
             <div class="topic-breadcrumb">
-                <a href="../../index.html?v=6">AIVisual</a>
+                <a href="../../index.html?v=8">AIVisual</a>
                 <span>/</span>
                 <span>COMP304</span>
                 <span>/</span>
@@ -155,12 +158,16 @@
                         <span>09</span> Further lecture topics
                     </a>
 
+                    <a href="#alpha-beta-exam" class="topic-nav-link">
+                        <span>10</span> Alpha-beta exam method
+                    </a>
+
                     <a href="#practice" class="topic-nav-link">
-                        <span>10</span> Exam practice
+                        <span>11</span> Exam practice
                     </a>
 
                     <a href="#checklist" class="topic-nav-link">
-                        <span>11</span> Verification checklist
+                        <span>12</span> Verification checklist
                     </a>
 
                 </nav>
@@ -175,7 +182,7 @@
                     <p id="lesson-progress-text">0% viewed</p>
                 </div>
 
-                <a href="../../index.html?v=6" class="back-course-link">
+                <a href="../../index.html?v=8" class="back-course-link">
                     ← Back to AIVisual
                 </a>
 
@@ -870,6 +877,10 @@
 
                                     <option value="lecture">
                                         Chapter 5 lecture example
+                                    </option>
+
+                                    <option value="textbook">
+                                        Textbook tree (3 MIN nodes)
                                     </option>
 
                                     <option value="exam-q1">
@@ -2028,7 +2039,133 @@ beta = min(beta, best)</code></pre>
 
 
                 <!-- =================================================
-                     10. EXAM PRACTICE
+                     10. ALPHA-BETA ON A PRINTED TREE
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="alpha-beta-exam"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">10</span>
+                        <div>
+                            <p class="section-kicker">10-MARK EXAM QUESTION</p>
+                            <h2>Alpha-Beta on a Printed Tree</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        Every past paper has a 10-mark alpha-beta tree (2018 Q2.3, 2024 Q4, 2025 Q4).
+                        The marks come from a fixed procedure: the right value in every visited node,
+                        an X on every pruned edge, and the root's best move.
+                    </p>
+
+                    <h3>10.1 The procedure</h3>
+
+                    <div class="component-list">
+                        <div class="component-item">
+                            <span class="component-number">01</span>
+                            <div>
+                                <h4>Work left to right, depth-first</h4>
+                                <p>Write α and β beside each node as you enter it, copied from its parent. The root starts with α = −∞, β = +∞.</p>
+                            </div>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-number">02</span>
+                            <div>
+                                <h4>Back up values</h4>
+                                <p>A leaf returns its value. A MIN node keeps the minimum of its children so far; a MAX node keeps the maximum.</p>
+                            </div>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-number">03</span>
+                            <div>
+                                <h4>Test, then update</h4>
+                                <p>After each child, test the prune condition first (MAX: v ≥ β; MIN: v ≤ α). If it holds, stop this node. Otherwise update α at a MAX node or β at a MIN node.</p>
+                            </div>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-number">04</span>
+                            <div>
+                                <h4>Mark the tree</h4>
+                                <p>Put an X on every edge you never traverse and write the final backed-up value in every node you visited. The Test 2 memo writes “NOT VISITED” on skipped nodes.</p>
+                            </div>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-number">05</span>
+                            <div>
+                                <h4>Give the decision</h4>
+                                <p>State the root value and the best move: the child whose value equals the root's.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>10.2 Worked example: the textbook tree</h3>
+
+                    <p>
+                        MAX root with three MIN children whose leaves are [3, 12, 8], [2, 4, 6] and [14, 5, 2].
+                        Load <strong>Textbook tree (3 MIN nodes)</strong> in the simulator in section 05 to step through it.
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr><th>Step</th><th>Node</th><th>α, β on entry</th><th>What happens</th><th>Returns</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1</td><td>B (MIN)</td><td>−∞, +∞</td><td>Sees 3 (β = 3), 12, 8. No cut.</td><td>3 → root sets α = 3</td></tr>
+                                <tr><td>2</td><td>C (MIN)</td><td>3, +∞</td><td>First leaf 2 ≤ α = 3, so prune: leaves 4 and 6 get an X.</td><td>2</td></tr>
+                                <tr><td>3</td><td>D (MIN)</td><td>3, +∞</td><td>14 (β = 14), 5 (β = 5), then 2 ≤ α. Nothing left to prune.</td><td>2</td></tr>
+                                <tr><td>4</td><td>A (MAX root)</td><td>—</td><td>max(3, 2, 2) = 3</td><td>3, take the move to B</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        Plain minimax gives the same root value, 3, with MIN values 3, 2 and 2 — pruning never
+                        changes the root's value.
+                    </p>
+
+                    <div class="example-box">
+                        <strong>Second lecture example to redo yourself</strong>
+                        <p>
+                            The 3-ply tree with leaves 5 6 7 4 5 3 6 6 9 7 5 9 8 6 has root value 6, with the best
+                            path through the middle MIN node. Redo it until you get the same cuts.
+                        </p>
+                    </div>
+
+                    <h3>10.3 Facts that earn marks</h3>
+
+                    <ul>
+                        <li>α is the best value MAX can guarantee on the path to the root; only MAX nodes update it. β is the best value MIN can guarantee; only MIN nodes update it.</li>
+                        <li>α and β are passed <strong>down</strong> to children; only node values are passed <strong>up</strong>.</li>
+                        <li>Pruning compares against values on the whole path from the root, not just the parent.</li>
+                        <li>Move ordering matters: with perfect ordering alpha-beta examines about O(b<sup>m/2</sup>) nodes, which effectively doubles the searchable depth. With the worst ordering nothing is pruned.</li>
+                    </ul>
+
+                    <h3>10.4 Bugs examiners like to plant in Python</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr><th>Planted bug</th><th>Fix</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>α starts at +∞ or β at −∞</td><td>Call with <code>alphabeta(root, d, float('-inf'), float('inf'), True)</code></td></tr>
+                                <tr><td><code>maximizing</code> not flipped in the recursive call</td><td>Pass <code>False</code> from a MAX node and <code>True</code> from a MIN node</td></tr>
+                                <tr><td>β updated at a MAX node</td><td>MAX updates α; MIN updates β</td></tr>
+                                <tr><td><code>&gt;</code> used in the prune test</td><td>Prune when <code>alpha &gt;= beta</code></td></tr>
+                                <tr><td>Returning α instead of v</td><td>Return the node's value <code>v</code></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     11. EXAM PRACTICE
                      ================================================= -->
 
                 <section class="lesson-section"
@@ -2037,7 +2174,7 @@ beta = min(beta, best)</code></pre>
 
                     <div class="lesson-section-heading">
 
-                        <span class="section-number">10</span>
+                        <span class="section-number">11</span>
 
                         <div>
                             <p class="section-kicker">COMP304 EXAM PREPARATION GUIDE</p>
@@ -2261,7 +2398,7 @@ beta = min(beta, best)</code></pre>
 
 
                 <!-- =================================================
-                     11. CHECKLIST
+                     12. CHECKLIST
                      ================================================= -->
 
                 <section class="lesson-section"
@@ -2270,7 +2407,7 @@ beta = min(beta, best)</code></pre>
 
                     <div class="lesson-section-heading">
 
-                        <span class="section-number">11</span>
+                        <span class="section-number">12</span>
 
                         <div>
                             <p class="section-kicker">EXAM VERIFICATION</p>
@@ -2432,8 +2569,8 @@ beta = min(beta, best)</code></pre>
                      ================================================= -->
 
                 <div class="topic-bottom-navigation">
-                    <a href="../topic-04-heuristic-search/index.html?v=6" class="topic-previous-link">← Previous: Heuristic Search</a>
-                    <a href="../topic-06-genetic-algorithms/index.html?v=6" class="topic-next-link">Next: Genetic Algorithms →</a>
+                    <a href="../topic-04-heuristic-search/index.html?v=8" class="topic-previous-link">← Previous: Heuristic Search</a>
+                    <a href="../topic-06-genetic-algorithms/index.html?v=8" class="topic-next-link">Next: Genetic Algorithms →</a>
                 </div>
 
             </article>
@@ -2447,7 +2584,7 @@ beta = min(beta, best)</code></pre>
 
         <div class="footer-content">
 
-            <a href="../../index.html?v=6" class="ai-brand">
+            <a href="../../index.html?v=8" class="ai-brand">
                 AI<span>Visual</span>
             </a>
 
@@ -2459,7 +2596,7 @@ beta = min(beta, best)</code></pre>
 
         <div class="footer-bottom">
             <p>© <span id="current-year"></span> StructTrace.</p>
-            <a href="../../index.html?v=6">Back to AIVisual</a>
+            <a href="../../index.html?v=8">Back to AIVisual</a>
         </div>
 
     </footer>

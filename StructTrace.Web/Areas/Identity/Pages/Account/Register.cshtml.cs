@@ -1,143 +1,136 @@
-#nullable disable
-
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-using System.Text.Encodings.Web;
-using Microsoft.AspNetCore.Authentication;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.WebUtilities;
 using StructTrace.Web.Models;
+using StructTrace.Web.Services.Email;
 
 namespace StructTrace.Web.Areas.Identity.Pages.Account;
 
+[AllowAnonymous]
 public class RegisterModel : PageModel
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly IUserStore<ApplicationUser> _userStore;
-    private readonly IUserEmailStore<ApplicationUser> _emailStore;
+    private readonly AppEmails _emails;
     private readonly ILogger<RegisterModel> _logger;
-    private readonly IEmailSender? _emailSender;
 
     public RegisterModel(
         UserManager<ApplicationUser> userManager,
-        IUserStore<ApplicationUser> userStore,
         SignInManager<ApplicationUser> signInManager,
-        ILogger<RegisterModel> logger,
-        IEmailSender? emailSender = null)
+        AppEmails emails,
+        ILogger<RegisterModel> logger)
     {
         _userManager = userManager;
-        _userStore = userStore;
-        _emailStore = GetEmailStore();
         _signInManager = signInManager;
+        _emails = emails;
         _logger = logger;
-        _emailSender = emailSender;
     }
 
     [BindProperty]
-    public InputModel Input { get; set; }
+    public InputModel Input { get; set; } = new();
 
-    public string ReturnUrl { get; set; }
-
-    public IList<AuthenticationScheme> ExternalLogins { get; set; }
+    public string ReturnUrl { get; set; } = "/";
 
     public class InputModel
     {
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+        [Required(ErrorMessage = "Enter your full name.")]
+        [StringLength(80, MinimumLength = 2, ErrorMessage = "Your name must be 2 to 80 characters long.")]
+        [Display(Name = "Full name")]
+        public string FullName { get; set; } = "";
 
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [Required(ErrorMessage = "Enter your email address.")]
+        [EmailAddress(ErrorMessage = "Enter a valid email address.")]
+        [Display(Name = "Email address")]
+        public string Email { get; set; } = "";
+
+        [Required(ErrorMessage = "Choose a password.")]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "Your password must be at least {2} characters long.")]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
-        public string Password { get; set; }
+        public string Password { get; set; } = "";
 
+        [Required(ErrorMessage = "Type your password again.")]
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set; }
+        [Compare(nameof(Password), ErrorMessage = "The two passwords do not match.")]
+        public string ConfirmPassword { get; set; } = "";
     }
 
-    public async Task OnGetAsync(string returnUrl = null)
+    public void OnGet(string? returnUrl = null)
     {
-        ReturnUrl = returnUrl;
-        ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+        ReturnUrl = SafeReturnUrl(returnUrl);
     }
 
-    public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+    public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
     {
-        returnUrl ??= Url.Content("~/");
-        ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+        ReturnUrl = SafeReturnUrl(returnUrl);
 
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            var user = CreateUser();
-            await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-            await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-            var result = await _userManager.CreateAsync(user, Input.Password);
+            return Page();
+        }
 
-            if (result.Succeeded)
-            {
-                _logger.LogInformation("User created a new account with password.");
+        var email = Input.Email.Trim();
 
-                var userId = await _userManager.GetUserIdAsync(user);
-                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                var callbackUrl = Url.Page(
-                    "/Account/ConfirmEmail",
-                    pageHandler: null,
-                    values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-                    protocol: Request.Scheme);
+        var user = new ApplicationUser
+        {
+            UserName = email,
+            Email = email,
+            DisplayName = Input.FullName.Trim(),
+            JoinedAtUtc = DateTime.UtcNow
+        };
 
-                if (_emailSender != null && !string.IsNullOrEmpty(callbackUrl))
-                {
-                    await _emailSender.SendEmailAsync(
-                        Input.Email,
-                        "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-                }
+        var result = await _userManager.CreateAsync(user, Input.Password);
 
-                if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                {
-                    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                }
-
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                return LocalRedirect(returnUrl);
-            }
+        if (!result.Succeeded)
+        {
+            var duplicateShown = false;
 
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError(string.Empty, error.Description);
+                if (error.Code is "DuplicateUserName" or "DuplicateEmail")
+                {
+                    // Identity reports both codes for the same email: show one message.
+                    if (!duplicateShown)
+                    {
+                        ModelState.AddModelError($"{nameof(Input)}.{nameof(InputModel.Email)}",
+                            "An account with this email already exists. Sign in, or use “Forgot password?” on the sign-in page.");
+                        duplicateShown = true;
+                    }
+                }
+                else if (error.Code.StartsWith("Password", StringComparison.Ordinal))
+                {
+                    ModelState.AddModelError($"{nameof(Input)}.{nameof(InputModel.Password)}", error.Description);
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
             }
+
+            return Page();
         }
 
-        return Page();
+        _logger.LogInformation("New account created for {Email}.", email);
+
+        // New accounts are students. (Program.cs also does this on first sign-in.)
+        if (await _userManager.IsInRoleAsync(user, AppRoles.Student) is false)
+        {
+            await _userManager.AddToRoleAsync(user, AppRoles.Student);
+        }
+
+        // The welcome email is queued and sent in the background,
+        // so registration never waits for (or fails because of) the mail server.
+        await _emails.SendWelcomeAsync(user, SiteUrl());
+
+        await _signInManager.SignInAsync(user, isPersistent: false);
+        return LocalRedirect(ReturnUrl);
     }
 
-    private ApplicationUser CreateUser()
-    {
-        try
-        {
-            return Activator.CreateInstance<ApplicationUser>();
-        }
-        catch
-        {
-            throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'.");
-        }
-    }
+    private string SiteUrl() => $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
 
-    private IUserEmailStore<ApplicationUser> GetEmailStore()
-    {
-        if (!_userManager.SupportsUserEmail)
-        {
-            throw new NotSupportedException("The default UI requires a user store with email support.");
-        }
-        return (IUserEmailStore<ApplicationUser>)_userStore;
-    }
+    private string SafeReturnUrl(string? returnUrl) =>
+        !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl) ? returnUrl : Url.Content("~/");
 }

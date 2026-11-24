@@ -1,0 +1,50 @@
+﻿@*
+    Navy side panel shared by every sign-in / register / password page.
+    Set ViewData["AuthAsideTitle"], ["AuthAsideText"] and ["AuthAsideFoot"]
+    in the page to change the wording; ViewData["AuthAsideCompact"] = true
+    hides the feature list (used on the password pages).
+*@
+@{
+    var title = ViewData["AuthAsideTitle"] as string ?? "Learn algorithms by watching them run";
+    var text = ViewData["AuthAsideText"] as string
+               ?? "Step through data structures, AI algorithms and your own code, one operation at a time.";
+    var foot = ViewData["AuthAsideFoot"] as string ?? "Your progress and saved traces stay with your account.";
+    var compact = ViewData["AuthAsideCompact"] is true;
+}
+
+<aside class="st-auth-aside">
+    <div>
+        <span class="st-auth-pill">StructTrace</span>
+        <h2>@title</h2>
+        <p>@text</p>
+
+        @if (!compact)
+        {
+            <ul class="st-auth-features">
+                <li>
+                    <i class="st-auth-icon-dsa" aria-hidden="true">DSA</i>
+                    <div>
+                        <strong>DSAVisual</strong>
+                        <span>Big-O, lists, trees, heaps, hashing, graphs and shortest paths.</span>
+                    </div>
+                </li>
+                <li>
+                    <i class="st-auth-icon-ai" aria-hidden="true">AI</i>
+                    <div>
+                        <strong>AIVisual</strong>
+                        <span>Search, game trees, genetic algorithms, perceptrons, logic and CSPs.</span>
+                    </div>
+                </li>
+                <li>
+                    <i class="st-auth-icon-code" aria-hidden="true">&lt;/&gt;</i>
+                    <div>
+                        <strong>Code Sandbox</strong>
+                        <span>Trace C++, Java, Python and C# and save runs to your workspace.</span>
+                    </div>
+                </li>
+            </ul>
+        }
+    </div>
+
+    <div class="st-auth-aside-foot">@foot</div>
+</aside>

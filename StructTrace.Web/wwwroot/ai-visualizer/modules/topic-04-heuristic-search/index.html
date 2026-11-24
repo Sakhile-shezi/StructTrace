@@ -8,13 +8,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Module 04 | Heuristic Search and A* - AIVisual</title>
-    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=6" />
-    <link rel="stylesheet" href="../../css/topic-base.css?v=6" />
-    <link rel="stylesheet" href="../../css/topic-pages.css?v=6" />
+    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=8" />
+    <link rel="stylesheet" href="../../css/topic-base.css?v=8" />
+    <link rel="stylesheet" href="../../css/topic-pages.css?v=8" />
+    <link rel="stylesheet" href="../../css/ai-fit.css?v=8" />
+    <script src="../../js/ai-fit.js?v=8"></script>
 
-    <script src="../../js/ai-core.js?v=6" defer></script>
-    <script src="../../js/ai-visualizer.js?v=6" defer></script>
-    <script src="./topic04.js?v=6" defer></script>
+    <script src="../../js/ai-core.js?v=8" defer></script>
+    <script src="../../js/ai-extras.js?v=8" defer></script>
+    <script src="../../js/ai-visualizer.js?v=8" defer></script>
+    <script src="./topic04.js?v=8" defer></script>
 
 </head>
 
@@ -22,17 +25,17 @@
 
     <header class="ai-header">
         <nav class="ai-nav">
-            <a href="../../index.html?v=6" class="ai-brand">
+            <a href="../../index.html?v=8" class="ai-brand">
                 AI<span>Visual</span>
             </a>
 
             <button class="mobile-menu-btn" id="mobile-menu-btn" type="button"
                     aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">☰</button>
             <ul class="nav-links" id="nav-links">
-                <li><a href="../../index.html?v=6">Course Home</a></li>
-                <li><a href="../topic-03-uninformed-search/index.html?v=6">← 03. Uninformed Search</a></li>
+                <li><a href="../../index.html?v=8">Course Home</a></li>
+                <li><a href="../topic-03-uninformed-search/index.html?v=8">← 03. Uninformed Search</a></li>
                 <li><a href="#heuristics" class="active" aria-current="page">04. Heuristic Search</a></li>
-                <li><a href="../topic-05-game-trees/index.html?v=6">05. Game Trees →</a></li>
+                <li><a href="../topic-05-game-trees/index.html?v=8">05. Game Trees →</a></li>
                 <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
                 <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
             </ul>
@@ -49,7 +52,7 @@
         <section class="topic-hero">
 
             <div class="topic-breadcrumb">
-                <a href="../../index.html?v=6">AIVisual</a>
+                <a href="../../index.html?v=8">AIVisual</a>
                 <span>/</span>
                 <span>COMP304</span>
                 <span>/</span>
@@ -157,12 +160,20 @@
                         <span>10</span> Python implementation
                     </a>
 
+                    <a href="#stronger-heuristics" class="topic-nav-link">
+                        <span>11</span> Stronger heuristics
+                    </a>
+
+                    <a href="#local-search" class="topic-nav-link">
+                        <span>12</span> Local search
+                    </a>
+
                     <a href="#practice" class="topic-nav-link">
-                        <span>11</span> Examination practice
+                        <span>13</span> Examination practice
                     </a>
 
                     <a href="#edge-cases" class="topic-nav-link">
-                        <span>12</span> Verification checklist
+                        <span>14</span> Verification checklist
                     </a>
 
                 </nav>
@@ -175,7 +186,7 @@
                     <p id="lesson-progress-text">0% viewed</p>
                 </div>
 
-                <a href="../../index.html?v=6" class="back-course-link">
+                <a href="../../index.html?v=8" class="back-course-link">
                     ← Back to AIVisual
                 </a>
 
@@ -2274,7 +2285,276 @@ A*:
 
 
                 <!-- =================================================
-                     11. EXAMINATION PRACTICE
+                     11. STRONGER HEURISTICS AND WEIGHTED A*
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="stronger-heuristics"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">11</span>
+                        <div>
+                            <p class="section-kicker">BEYOND ONE HEURISTIC</p>
+                            <h2>Dominance, Combining Heuristics and Weighted A*</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        Every search strategy in this course is best-first search with a different
+                        evaluation function. Choosing and combining heuristics changes how many nodes
+                        A* expands without changing the answer, as long as admissibility is kept.
+                    </p>
+
+                    <h3>11.1 One family, five evaluation functions</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr><th>Strategy</th><th>f(n)</th><th>Optimal?</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Breadth-first</td><td>depth of n</td><td>Only if all step costs are equal</td></tr>
+                                <tr><td>Lowest-cost-first (UCS)</td><td>g(n)</td><td>Yes (step costs ≥ ε &gt; 0)</td></tr>
+                                <tr><td>Greedy best-first</td><td>h(n)</td><td>No</td></tr>
+                                <tr><td>A*</td><td>g(n) + h(n)</td><td>Yes, if h is admissible (tree search) or consistent (graph search)</td></tr>
+                                <tr><td>Weighted A*</td><td>g(n) + W × h(n), W &gt; 1</td><td>No guarantee — it expands fewer nodes but may return a worse path</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        Weighted A* slides between the others: W = 0 gives lowest-cost-first, W = 1 gives A*,
+                        and as W → ∞ it behaves like greedy best-first.
+                    </p>
+
+                    <h3>11.2 Dominance</h3>
+
+                    <div class="formula-card">
+                        <span class="definition-label">DEFINITION</span>
+                        <div class="formula-equation">h<sub>2</sub>(n) ≥ h<sub>1</sub>(n) for every n</div>
+                        <p>
+                            If both heuristics are admissible and h<sub>2</sub> is never smaller, h<sub>2</sub>
+                            dominates h<sub>1</sub>, and A* with h<sub>2</sub> never expands more nodes.
+                            A larger admissible estimate is closer to the true cost.
+                        </p>
+                    </div>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr><th>8-puzzle, solution depth 12</th><th>Nodes expanded</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Iterative deepening (no heuristic)</td><td>3,644,035</td></tr>
+                                <tr><td>A* with h<sub>1</sub> = misplaced tiles</td><td>227</td></tr>
+                                <tr><td>A* with h<sub>2</sub> = Manhattan distance</td><td>73</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>11.3 Where admissible heuristics come from</h3>
+
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <h4>Relaxed problems</h4>
+                            <p>Remove a rule and solve the easier problem exactly. Its cost can never exceed the real cost.</p>
+                            <div class="concept-example">8-puzzle: a tile may move anywhere → misplaced tiles. A tile may move to any adjacent square → Manhattan distance.</div>
+                        </div>
+                        <div class="concept-card">
+                            <h4>Take the maximum</h4>
+                            <p>h(n) = max(h<sub>1</sub>(n), …, h<sub>m</sub>(n)) is admissible when each h<sub>i</sub> is, and it dominates all of them.</p>
+                            <div class="concept-example">Use it when no single heuristic is best in every state.</div>
+                        </div>
+                        <div class="concept-card">
+                            <h4>Pattern databases</h4>
+                            <p>Store the exact cost of solving a subproblem, such as getting tiles 1–4 home while ignoring the others.</p>
+                            <div class="concept-example">Look the value up during search; it is admissible because it solves part of the real problem exactly.</div>
+                        </div>
+                    </div>
+
+                    <div class="exam-note">
+                        <strong>“Why is it admissible?” (2025 Q2.2.2, 2024 Q2.3):</strong>
+                        name the relaxation, or show that each real move reduces h by at most that move's cost.
+                        Example from the Test 1 memo: for the two-grid colour swap, h = mismatched cells ÷ 2 is
+                        admissible because one swap fixes at most two mismatched cells.
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     12. LOCAL SEARCH
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="local-search"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">12</span>
+                        <div>
+                            <p class="section-kicker">CHAPTERS 4.1 – 4.2</p>
+                            <h2>Local Search: Hill Climbing and Simulated Annealing</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        Local search keeps only the current state and repeatedly moves to a better
+                        neighbour. Use it when the goal state is unknown but every state has a
+                        utility u(s): it finds a good state, not a path.
+                    </p>
+
+                    <h3>12.1 How it differs from path search</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr><th></th><th>Path search (A*, BFS, …)</th><th>Local search</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Goal</td><td>Known goal test</td><td>Unknown; maximise u(s), s* = argmax u(s)</td></tr>
+                                <tr><td>Answer</td><td>A path and its cost</td><td>A single good state; path cost does not matter</td></tr>
+                                <tr><td>Memory</td><td>Frontier and search tree</td><td>Only the current state(s) — works in huge or continuous spaces</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        To formulate a local search problem give four things: the state space, a factored
+                        state representation, the objective function and the local neighbourhood.
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr><th></th><th>n-Queens</th><th>Travelling salesman</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>State</td><td>Row of the queen in each column, e.g. (2, 3, 2, 3)</td><td>A tour (permutation), e.g. ABCED</td></tr>
+                                <tr><td>Objective</td><td>Minimise attacking pairs (utility = −conflicts)</td><td>Minimise tour length</td></tr>
+                                <tr><td>Neighbour</td><td>Move one queen within its column</td><td>Reverse part of the tour (ABCED → ABDEC)</td></tr>
+                                <tr><td>Space size</td><td>4<sup>4</sup> = 256 for 4-queens</td><td>n! tours</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>12.2 Hill climbing (greedy local search)</h3>
+
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <h4>Steepest ascent</h4>
+                            <p>Evaluate every neighbour and move to the best one.</p>
+                        </div>
+                        <div class="concept-card">
+                            <h4>Stochastic</h4>
+                            <p>Pick at random among the uphill moves.</p>
+                        </div>
+                        <div class="concept-card">
+                            <h4>First choice</h4>
+                            <p>Generate random neighbours until one is better, then take it. The most popular variant.</p>
+                        </div>
+                    </div>
+
+                    <p>
+                        Hill climbing is <strong>neither complete nor optimal</strong>. It gets stuck on local
+                        maxima, on plateaus and shoulders (flat regions) and on ridges. Fixes include
+                        random-restart hill climbing (keep the best of many runs), sideways moves and momentum.
+                        Maximising f is the same as minimising −f; minimising with derivatives is gradient descent.
+                    </p>
+
+                    <h3>12.3 Simulated annealing</h3>
+
+                    <div class="formula-card">
+                        <span class="definition-label">METROPOLIS ACCEPTANCE RULE</span>
+                        <div class="formula-equation">P(accept a worse move) = e<sup>−ΔE / T</sup></div>
+                        <p>
+                            Always accept an improving move. Accept a move that is ΔE &gt; 0 worse with
+                            probability e<sup>−ΔE/T</sup>. High T accepts almost anything (exploration);
+                            low T behaves like hill climbing (exploitation).
+                        </p>
+                    </div>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr><th>Cooling schedule</th><th>Formula</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Classic (logarithmic)</td><td>T<sub>t</sub> = T<sub>0</sub> / log(1 + t)</td></tr>
+                                <tr><td>Exponential</td><td>T<sub>t</sub> = T<sub>0</sub> · α<sup>t</sup>, with 0.8 &lt; α &lt; 1</td></tr>
+                                <tr><td>Fast</td><td>T<sub>t</sub> = T<sub>0</sub> / (1 + t)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        Stop when T &lt; ε. Choose T<sub>0</sub> so that even the worst move is likely to be
+                        accepted at the start. If T falls slowly enough, annealing finds the global optimum
+                        with probability approaching 1 — but usually too slowly to be practical.
+                    </p>
+
+                    <div class="example-box">
+                        <strong>Worked calculation from the guide</strong>
+                        <p>
+                            A move makes the solution 4 worse. At T = 10 it is accepted with probability
+                            e<sup>−0.4</sup> ≈ 0.67. At T = 1 the same move is accepted with probability
+                            e<sup>−4</sup> ≈ 0.018.
+                        </p>
+                    </div>
+
+                    <div class="xlab" id="sa-lab">
+                        <div class="xlab-heading">
+                            <div>
+                                <span class="xlab-eyebrow">INTERACTIVE CALCULATOR</span>
+                                <h3>Annealing Acceptance Calculator</h3>
+                                <p>Set how much worse the move is and the cooling schedule. The table shows how acceptance falls as the temperature drops.</p>
+                            </div>
+                            <span class="xlab-badge">EXPONENTIAL COOLING</span>
+                        </div>
+                        <div class="xlab-controls">
+                            <label class="xlab-inline">ΔE (worse by)
+                                <input id="sa-delta" type="number" min="0.1" step="0.5" value="4" />
+                            </label>
+                            <label class="xlab-inline">T₀
+                                <input id="sa-t0" type="number" min="0.1" step="1" value="10" />
+                            </label>
+                            <label class="xlab-inline">α
+                                <input id="sa-alpha" type="number" min="0.5" max="0.99" step="0.05" value="0.8" />
+                            </label>
+                        </div>
+                        <div class="xlab-metrics">
+                            <div><span>P(ACCEPT) AT T₀</span><strong id="sa-probability">—</strong></div>
+                        </div>
+                        <div class="xlab-current">
+                            <span>WHAT THIS MEANS</span>
+                            <p id="sa-note"></p>
+                        </div>
+                        <div class="xlab-table-wrap">
+                            <table class="xlab-table">
+                                <thead><tr><th>t</th><th>T<sub>t</sub> = T₀·α<sup>t</sup></th><th>Calculation</th><th>P(accept)</th></tr></thead>
+                                <tbody id="sa-body"></tbody>
+                            </table>
+                        </div>
+                        <p class="xlab-hint">Greyed rows: below 5 % — the search has effectively become hill climbing.</p>
+                    </div>
+
+                    <h3>12.4 Other local methods</h3>
+
+                    <ul>
+                        <li><strong>Local beam search</strong> keeps k states and moves to the best k of all their successors.</li>
+                        <li><strong>Genetic algorithms</strong> are population-based local search (Module 06).</li>
+                        <li><strong>Continuous spaces:</strong> discretise with a grid of spacing δ; or use gradient descent x ← x − α∇f(x); Newton–Raphson x ← x − H<sup>−1</sup>(x)∇f(x) uses the Hessian; stochastic gradient descent estimates the gradient from data points and is how neural networks are trained.</li>
+                        <li><strong>Convex</strong> problems have one optimum and are easy; <strong>non-convex</strong> problems, like most discrete ones, have many local optima.</li>
+                    </ul>
+
+                </section>
+
+
+
+
+                <!-- =================================================
+                     13. EXAMINATION PRACTICE
                      ================================================= -->
 
                 <section class="lesson-section"
@@ -2282,7 +2562,7 @@ A*:
                          data-lesson-section>
 
                     <div class="lesson-section-heading">
-                        <span class="section-number">11</span>
+                        <span class="section-number">13</span>
                         <div>
                             <p class="section-kicker">EXAMINATION PRACTICE</p>
                             <h2>Heuristic Search Questions</h2>
@@ -2482,7 +2762,7 @@ A*:
 
 
                 <!-- =================================================
-                     12. VERIFICATION CHECKLIST
+                     14. VERIFICATION CHECKLIST
                      ================================================= -->
 
                 <section class="lesson-section"
@@ -2490,7 +2770,7 @@ A*:
                          data-lesson-section>
 
                     <div class="lesson-section-heading">
-                        <span class="section-number">12</span>
+                        <span class="section-number">14</span>
                         <div>
                             <p class="section-kicker">VERIFICATION</p>
                             <h2>Heuristic Search Checklist</h2>
@@ -2645,8 +2925,8 @@ A*:
 
 
                 <div class="topic-bottom-navigation">
-                    <a href="../topic-03-uninformed-search/index.html?v=6" class="topic-previous-link">← Previous: Uninformed Search</a>
-                    <a href="../topic-05-game-trees/index.html?v=6" class="topic-next-link">Next: Game Trees →</a>
+                    <a href="../topic-03-uninformed-search/index.html?v=8" class="topic-previous-link">← Previous: Uninformed Search</a>
+                    <a href="../topic-05-game-trees/index.html?v=8" class="topic-next-link">Next: Game Trees →</a>
                 </div>
 
             </article>
@@ -2659,7 +2939,7 @@ A*:
     <footer class="ai-footer">
 
         <div class="footer-content">
-            <a href="../../index.html?v=6" class="ai-brand">
+            <a href="../../index.html?v=8" class="ai-brand">
                 AI<span>Visual</span>
             </a>
 
@@ -2670,7 +2950,7 @@ A*:
 
         <div class="footer-bottom">
             <p>© <span id="current-year"></span> StructTrace.</p>
-            <a href="../../index.html?v=6">Back to AIVisual</a>
+            <a href="../../index.html?v=8">Back to AIVisual</a>
         </div>
 
     </footer>

@@ -89,7 +89,8 @@
             memoBtn: $("fc-memo-toggle"), steps: $("fc-steps"), total: $("fc-total"), fails: $("fc-fails"),
             solution: $("fc-solution"), detailTitle: $("fc-detail-title"), detailText: $("fc-detail-text"),
             board: $("fc-board"), domainBody: $("fc-domain-body"), compare: $("fc-compare"),
-            heading: $("fc-steps-heading")
+            heading: $("fc-steps-heading"), panePrev: $("fc-pane-prev"), paneNext: $("fc-pane-next"),
+            position: $("fc-pane-position")
         };
         if (!el.lab) return;
 
@@ -177,7 +178,9 @@
 
             // board with axis labels; rows numbered 1..N from the top, like the memo figure
             el.board.innerHTML = "";
-            el.board.style.gridTemplateColumns = `repeat(${n + 1}, minmax(0, 1fr))`;
+            // label column/row sized to the labels; every square row and column equal
+            el.board.style.gridTemplateColumns = `1.4em repeat(${n}, minmax(0, 1fr))`;
+            el.board.style.gridTemplateRows = `1.6em repeat(${n}, minmax(0, 1fr))`;
             const corner = document.createElement("div"); corner.className = "sq-label"; el.board.appendChild(corner);
             for (let c = 0; c < n; c++) {
                 const h = document.createElement("div"); h.className = "sq-label"; h.textContent = LETTERS[c]; el.board.appendChild(h);
@@ -223,8 +226,24 @@
             }
         }
 
+        // Keep the selected card visible inside the scrolling card list (not the page).
+        function revealActiveCard() {
+            const card = el.steps.querySelector(".fc-step.is-active");
+            if (!card || el.steps.scrollHeight <= el.steps.clientHeight) return;
+            const top = card.offsetTop;
+            const bottom = top + card.offsetHeight;
+            if (top < el.steps.scrollTop) {
+                el.steps.scrollTop = top - 6;
+            } else if (bottom > el.steps.scrollTop + el.steps.clientHeight) {
+                el.steps.scrollTop = bottom - el.steps.clientHeight + 6;
+            }
+        }
+
         function render() {
+            const keepScroll = el.steps.scrollTop;
             renderCards();
+            el.steps.scrollTop = keepScroll;
+            revealActiveCard();
             renderDetail();
             el.total.textContent = run.steps.length;
             el.fails.textContent = run.steps.filter(s => s.outcome === "fail").length;
@@ -234,6 +253,9 @@
                 : "none";
             el.prev.disabled = active <= 0;
             el.next.disabled = active >= run.steps.length - 1;
+            if (el.panePrev) el.panePrev.disabled = el.prev.disabled;
+            if (el.paneNext) el.paneNext.disabled = el.next.disabled;
+            if (el.position) el.position.textContent = `Step ${active + 1} of ${run.steps.length}`;
             el.memoBtn.hidden = n !== 6;
             el.compare.hidden = n !== 6;
             el.memoBtn.textContent = showMemo ? "Show strict trace" : "Show Test 1 memo table";
@@ -252,6 +274,8 @@
         el.n.addEventListener("change", build);
         el.prev.addEventListener("click", () => { if (active > 0) { active--; render(); } });
         el.next.addEventListener("click", () => { if (active < run.steps.length - 1) { active++; render(); } });
+        if (el.panePrev) el.panePrev.addEventListener("click", () => el.prev.click());
+        if (el.paneNext) el.paneNext.addEventListener("click", () => el.next.click());
         el.memoBtn.addEventListener("click", () => { showMemo = !showMemo; render(); });
 
         build();

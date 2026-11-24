@@ -8,14 +8,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Module 02 | Problem Formulation & State Spaces - AIVisual</title>
-    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=6" />
-    <link rel="stylesheet" href="../../css/topic-base.css?v=6" />
-    <link rel="stylesheet" href="../../css/topic-pages.css?v=6" />
+    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=8" />
+    <link rel="stylesheet" href="../../css/topic-base.css?v=8" />
+    <link rel="stylesheet" href="../../css/topic-pages.css?v=8" />
+    <link rel="stylesheet" href="../../css/ai-fit.css?v=8" />
+    <script src="../../js/ai-fit.js?v=8"></script>
 
-    <script src="../../js/ai-core.js?v=6" defer></script>
-    <script src="../../js/ai-visualizer.js?v=6" defer></script>
-    <script src="./topic02.js?v=6" defer></script>
-    <script src="./topic02-colour-swap.js?v=6" defer></script>
+    <script src="../../js/ai-core.js?v=8" defer></script>
+    <script src="../../js/ai-extras.js?v=8" defer></script>
+    <script src="../../js/ai-visualizer.js?v=8" defer></script>
+    <script src="./topic02.js?v=8" defer></script>
+    <script src="./topic02-colour-swap.js?v=8" defer></script>
 
 </head>
 
@@ -23,17 +26,17 @@
 
     <header class="ai-header">
         <nav class="ai-nav">
-            <a href="../../index.html?v=6" class="ai-brand">
+            <a href="../../index.html?v=8" class="ai-brand">
                 AI<span>Visual</span>
             </a>
 
             <button class="mobile-menu-btn" id="mobile-menu-btn" type="button"
                     aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">☰</button>
             <ul class="nav-links" id="nav-links">
-                <li><a href="../../index.html?v=6">Course Home</a></li>
-                <li><a href="../topic-01-introduction/index.html?v=6">← 01. Introduction</a></li>
+                <li><a href="../../index.html?v=8">Course Home</a></li>
+                <li><a href="../topic-01-introduction/index.html?v=8">← 01. Introduction</a></li>
                 <li><a href="#problem-workbench" class="active" aria-current="page">02. Problem Formulation</a></li>
-                <li><a href="../topic-03-uninformed-search/index.html?v=6">03. Uninformed Search →</a></li>
+                <li><a href="../topic-03-uninformed-search/index.html?v=8">03. Uninformed Search →</a></li>
                 <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
                 <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
             </ul>
@@ -50,7 +53,7 @@
         <section class="topic-hero">
 
             <div class="topic-breadcrumb">
-                <a href="../../index.html?v=6">AIVisual</a>
+                <a href="../../index.html?v=8">AIVisual</a>
                 <span>/</span>
                 <span>COMP304</span>
                 <span>/</span>
@@ -153,12 +156,16 @@
                         <span>09</span> Colour-swap game (Test 1)
                     </a>
 
+                    <a href="#state-space-counting" class="topic-nav-link">
+                        <span>10</span> Counting states
+                    </a>
+
                     <a href="#practice" class="topic-nav-link">
-                        <span>10</span> Exam practice
+                        <span>11</span> Exam practice
                     </a>
 
                     <a href="#edge-cases" class="topic-nav-link">
-                        <span>11</span> Edge cases
+                        <span>12</span> Edge cases
                     </a>
 
                 </nav>
@@ -171,7 +178,7 @@
                     <p id="lesson-progress-text">0% viewed</p>
                 </div>
 
-                <a href="../../index.html?v=6" class="back-course-link">
+                <a href="../../index.html?v=8" class="back-course-link">
                     ← Back to AIVisual
                 </a>
 
@@ -2008,7 +2015,123 @@ class ColourSwap(Search_problem):
 
 
                 <!-- =================================================
-                     10. EXAMINATION PRACTICE
+                     10. COUNTING STATES AND SUCCESSORS
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="state-space-counting"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">10</span>
+                        <div>
+                            <p class="section-kicker">EXAM FORMULATION QUESTION</p>
+                            <h2>Counting States and Successors</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        The “novel puzzle” question (about 15 marks: 2018 Q2.1, 2024 Q1, 2025 Q2) asks
+                        you to formulate a new problem, count its states or successors, and propose an
+                        admissible heuristic. The scenario changes every year; the method does not.
+                    </p>
+
+                    <h3>10.1 Answer template</h3>
+
+                    <div class="component-list">
+                        <div class="component-item">
+                            <span class="component-number">01</span>
+                            <div>
+                                <h4>State representation</h4>
+                                <p>Say exactly what is stored and give one concrete example as a tuple. Record everything that affects future moves and nothing else (no move counter).</p>
+                            </div>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-number">02</span>
+                            <div>
+                                <h4>Start state and goal condition</h4>
+                                <p>Write the start state in your representation, then the goal as a test (“every cell matches the target”), not as a picture.</p>
+                            </div>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-number">03</span>
+                            <div>
+                                <h4>Actions and successors</h4>
+                                <p>State the legal moves and count the successors of the start state. Show the arithmetic.</p>
+                            </div>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-number">04</span>
+                            <div>
+                                <h4>Size of the state space</h4>
+                                <p>Count arrangements, then remove the unreachable ones if the question asks for reachable states.</p>
+                            </div>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-number">05</span>
+                            <div>
+                                <h4>Heuristic and admissibility argument</h4>
+                                <p>Name the relaxation, or show that one real move can reduce h by at most the cost of that move. A definition alone earns no marks.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>10.2 State-space sizes worth remembering</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr><th>Problem</th><th>Count</th><th>Reasoning</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Vacuum world, n cells</td><td>n × 2<sup>n</sup></td><td>Agent position × clean/dirty for every cell. Two cells: 2 × 2² = 8.</td></tr>
+                                <tr><td>8-puzzle</td><td>9!/2 = 181,440</td><td>9! arrangements of 8 tiles and the blank; only half can be reached from any start.</td></tr>
+                                <tr><td>15-puzzle</td><td>16!/2 ≈ 1.05 × 10<sup>13</sup></td><td>Same parity argument as the 8-puzzle.</td></tr>
+                                <tr><td>4-queens, anywhere</td><td>C(16, 4) = 1820</td><td>Choose 4 of 16 squares; queens are identical.</td></tr>
+                                <tr><td>4-queens, one per column</td><td>4<sup>4</sup> = 256</td><td>Each of 4 columns picks one of 4 rows.</td></tr>
+                                <tr><td>Eight coins (2024 Q1)</td><td>9! = 362,880</td><td>9 circles hold 8 distinct coins and one gap.</td></tr>
+                                <tr><td>Colour swap (Test 1)</td><td>192 successors</td><td>Every pair of cells in each grid can be swapped (see section 09).</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>10.3 Worked example: eight coins</h3>
+
+                    <div class="example-box">
+                        <strong>Successors depend on where the gap is</strong>
+                        <p>
+                            A coin can only move into the empty circle along a line. When the centre is
+                            empty, all 8 rim coins can move in, so there are <strong>8 successors</strong>.
+                            When a rim circle is empty, only its two rim neighbours and the centre coin can
+                            move in, so there are <strong>3 successors</strong>.
+                        </p>
+                    </div>
+
+                    <div class="formula-card">
+                        <span class="definition-label">A BETTER ADMISSIBLE HEURISTIC</span>
+                        <p>
+                            h<sub>1</sub>(n) = number of coins out of place.
+                            h<sub>2</sub>(n) = sum of each coin's clockwise ring distance from its home.
+                        </p>
+                        <p>
+                            Each move shifts one coin by at most one step, so neither heuristic can
+                            overestimate. h<sub>2</sub> ≥ h<sub>1</sub> in every state, so h<sub>2</sub>
+                            dominates h<sub>1</sub> and A* with h<sub>2</sub> expands fewer nodes.
+                        </p>
+                    </div>
+
+                    <div class="exam-note">
+                        <strong>Marking tip:</strong>
+                        counting questions are marked on the reasoning. Write the formula (9!, C(16, 4),
+                        n × 2<sup>n</sup>) before the number, and say which arrangements you excluded and why.
+                    </div>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     11. EXAMINATION PRACTICE
                      ================================================= -->
 
                 <section class="lesson-section"
@@ -2016,7 +2139,7 @@ class ColourSwap(Search_problem):
                          data-lesson-section>
 
                     <div class="lesson-section-heading">
-                        <span class="section-number">10</span>
+                        <span class="section-number">11</span>
                         <div>
                             <p class="section-kicker">EXAMINATION PRACTICE</p>
                             <h2>Test Your Problem Formulation Skills</h2>
@@ -2223,7 +2346,7 @@ class ColourSwap(Search_problem):
 
 
                 <!-- =================================================
-                     11. EDGE CASES
+                     12. EDGE CASES
                      ================================================= -->
 
                 <section class="lesson-section"
@@ -2231,7 +2354,7 @@ class ColourSwap(Search_problem):
                          data-lesson-section>
 
                     <div class="lesson-section-heading">
-                        <span class="section-number">11</span>
+                        <span class="section-number">12</span>
                         <div>
                             <p class="section-kicker">VERIFICATION</p>
                             <h2>Problem Modelling Verification Checklist</h2>
@@ -2381,8 +2504,8 @@ class ColourSwap(Search_problem):
 
 
                 <div class="topic-bottom-navigation">
-                    <a href="../topic-01-introduction/index.html?v=6" class="topic-previous-link">← Previous: Introduction to AI</a>
-                    <a href="../topic-03-uninformed-search/index.html?v=6" class="topic-next-link">Next: Uninformed Search →</a>
+                    <a href="../topic-01-introduction/index.html?v=8" class="topic-previous-link">← Previous: Introduction to AI</a>
+                    <a href="../topic-03-uninformed-search/index.html?v=8" class="topic-next-link">Next: Uninformed Search →</a>
                 </div>
 
             </article>
@@ -2394,7 +2517,7 @@ class ColourSwap(Search_problem):
 
     <footer class="ai-footer">
         <div class="footer-content">
-            <a href="../../index.html?v=6" class="ai-brand">
+            <a href="../../index.html?v=8" class="ai-brand">
                 AI<span>Visual</span>
             </a>
             <p>COMP304 Artificial Intelligence · Learn, reason and implement.</p>
@@ -2402,7 +2525,7 @@ class ColourSwap(Search_problem):
 
         <div class="footer-bottom">
             <p>© <span id="current-year"></span> StructTrace.</p>
-            <a href="../../index.html?v=6">Back to AIVisual</a>
+            <a href="../../index.html?v=8">Back to AIVisual</a>
         </div>
     </footer>
 

@@ -503,6 +503,62 @@
             },
 
 
+            "lecture-four": {
+
+                name: "Lecture four-input example",
+
+                description:
+                    "Lecture solved example · 4 inputs · 4 training rows · converges in epoch 3.",
+
+                features: 4,
+
+                rows: [
+
+                    { x: [1, 1, 1, 1], t: 1 },
+
+                    { x: [-1, 1, -1, -1], t: 1 },
+
+                    { x: [1, 1, 1, -1], t: -1 },
+
+                    { x: [1, -1, -1, 1], t: -1 }
+
+                ],
+
+                testInput: "1, 1, 1, 1",
+
+                maxEpochs: 20
+
+            },
+
+
+            "exam-2024": {
+
+                name: "2024 Exam four-input class",
+
+                description:
+                    "2024 Main Exam Question 6 · 4 inputs · epoch 1 is given, train epoch 2.",
+
+                features: 4,
+
+                rows: [
+
+                    { x: [1, 1, 1, 1], t: 1 },
+
+                    { x: [-1, 1, 1, -1], t: 1 },
+
+                    { x: [-1, -1, 1, 1], t: -1 },
+
+                    { x: [1, -1, -1, 1], t: -1 }
+
+                ],
+
+                testInput: "1, 1, -1, -1",
+
+                maxEpochs: 2
+
+            },
+
+
             "spam-2025": {
 
                 name: "2025 Exam spam classification",
@@ -2205,6 +2261,8 @@
         // =================================================
 
         function setupSectionNavigation() {
+            return; // sidebar highlighting is now done for every topic by ../../js/ai-core.js (initSectionSpy)
+
 
             const sections = document.querySelectorAll(
                 ".topic08-page [data-lesson-section]"

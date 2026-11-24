@@ -9,13 +9,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Module 01 | Introduction to Artificial Intelligence - AIVisual</title>
-    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=6" />
-    <link rel="stylesheet" href="../../css/topic-base.css?v=6" />
-    <link rel="stylesheet" href="../../css/topic-pages.css?v=6" />
+    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=8" />
+    <link rel="stylesheet" href="../../css/topic-base.css?v=8" />
+    <link rel="stylesheet" href="../../css/topic-pages.css?v=8" />
+    <link rel="stylesheet" href="../../css/ai-fit.css?v=8" />
+    <script src="../../js/ai-fit.js?v=8"></script>
 
-    <script src="../../js/ai-core.js?v=6" defer></script>
-    <script src="../../js/ai-visualizer.js?v=6" defer></script>
-    <script src="./topic01.js?v=6" defer></script>
+    <script src="../../js/ai-core.js?v=8" defer></script>
+    <script src="../../js/ai-extras.js?v=8" defer></script>
+    <script src="../../js/ai-visualizer.js?v=8" defer></script>
+    <script src="./topic01.js?v=8" defer></script>
 
 </head>
 
@@ -23,16 +26,16 @@
 
     <header class="ai-header">
         <nav class="ai-nav">
-            <a href="../../index.html?v=6" class="ai-brand">
+            <a href="../../index.html?v=8" class="ai-brand">
                 AI<span>Visual</span>
             </a>
 
             <button class="mobile-menu-btn" id="mobile-menu-btn" type="button"
                     aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">☰</button>
             <ul class="nav-links" id="nav-links">
-                <li><a href="../../index.html?v=6">Course Home</a></li>
+                <li><a href="../../index.html?v=8">Course Home</a></li>
                 <li><a href="#top" class="active" aria-current="page">01. Introduction</a></li>
-                <li><a href="../topic-02-problem-formulation/index.html?v=6">02. Problem Formulation →</a></li>
+                <li><a href="../topic-02-problem-formulation/index.html?v=8">02. Problem Formulation →</a></li>
                 <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
                 <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
             </ul>
@@ -49,7 +52,7 @@
         <section class="topic-hero">
 
             <div class="topic-breadcrumb">
-                <a href="../../index.html?v=6">AIVisual</a>
+                <a href="../../index.html?v=8">AIVisual</a>
                 <span>/</span>
                 <span>COMP304</span>
                 <span>/</span>
@@ -144,16 +147,20 @@
                         <span>07</span> Agent worked example
                     </a>
 
+                    <a href="#task-environments" class="topic-nav-link">
+                        <span>08</span> PEAS and environments
+                    </a>
+
                     <a href="#ai-ml" class="topic-nav-link">
-                        <span>08</span> AI versus ML
+                        <span>09</span> AI versus ML
                     </a>
 
                     <a href="#history" class="topic-nav-link">
-                        <span>09</span> History and applications
+                        <span>10</span> History and applications
                     </a>
 
                     <a href="#practice" class="topic-nav-link">
-                        <span>10</span> Examination practice
+                        <span>11</span> Examination practice
                     </a>
 
                 </nav>
@@ -166,7 +173,7 @@
                     <p id="lesson-progress-text">0% completed</p>
                 </div>
 
-                <a href="../../index.html?v=6" class="back-course-link">
+                <a href="../../index.html?v=8" class="back-course-link">
                     ← Back to course
                 </a>
 
@@ -1528,7 +1535,200 @@ print("Action:", action)</code></pre>
 
 
                 <!-- =================================================
-                     08. AI VS MACHINE LEARNING
+                     08. PEAS AND TASK ENVIRONMENTS
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="task-environments"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">08</span>
+                        <div>
+                            <p class="section-kicker">AGENT DESIGN</p>
+                            <h2>PEAS, Task Environments and Agent Types</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        Before designing an agent, describe the task it faces. The exam asks you to
+                        write a PEAS description, classify an environment and justify each choice,
+                        and name the type of agent that fits.
+                    </p>
+
+                    <h3>8.1 Precise definitions</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr><th>Term</th><th>Meaning</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Percept</td><td>The agent's input at one instant.</td></tr>
+                                <tr><td>Percept sequence</td><td>Everything the agent has perceived so far: P = [p<sub>0</sub>, p<sub>1</sub>, …, p<sub>t</sub>].</td></tr>
+                                <tr><td>Agent function</td><td>The abstract mapping f : P → a from a percept sequence to an action.</td></tr>
+                                <tr><td>Agent program</td><td>The concrete code that implements f. <strong>Agent = architecture + program.</strong></td></tr>
+                                <tr><td>Rational agent</td><td>Chooses the action that maximises the <em>expected</em> value of its performance measure, given its percept sequence.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <h4>Why not a lookup table?</h4>
+                            <p>
+                                A table that lists an action for every possible percept sequence grows
+                                exponentially with the length of the sequence, so it can never be stored
+                                or filled in.
+                            </p>
+                        </div>
+                        <div class="concept-card">
+                            <h4>Rationality ≠ omniscience</h4>
+                            <p>
+                                An ideal agent would maximise the <em>actual</em> outcome, which needs
+                                knowledge of the future. A rational agent maximises the
+                                <em>expected</em> outcome, so it can still be unlucky.
+                            </p>
+                        </div>
+                        <div class="concept-card">
+                            <h4>Consequentialism</h4>
+                            <p>
+                                AI judges an agent by the consequences of what it does: the sequence of
+                                environment states its actions produce.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="exam-note">
+                        <strong>Performance-measure rule of thumb:</strong>
+                        measure what you want achieved in the environment, not how you think the
+                        agent should behave. “+1 each time a square is cleaned” rewards making a mess
+                        and cleaning it again; “+1 per clean square at each time step” rewards a clean floor.
+                    </div>
+
+                    <h3>8.2 PEAS descriptions</h3>
+
+                    <p>
+                        PEAS stands for <strong>P</strong>erformance measure, <strong>E</strong>nvironment,
+                        <strong>A</strong>ctuators and <strong>S</strong>ensors. Two examples from the course:
+                    </p>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr><th></th><th>Automated taxi</th><th>Delivery drone</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>Performance</strong></td><td>Safe, fast, legal, comfortable trip; profit</td><td>Profit, delivery time, airspace laws, right location, package intact, no accidents, low noise, battery life</td></tr>
+                                <tr><td><strong>Environment</strong></td><td>Roads, traffic, pedestrians, customers</td><td>Airspace, obstacles (birds, buildings, poles), landing hazards, weather, routes, package weight</td></tr>
+                                <tr><td><strong>Actuators</strong></td><td>Steering, accelerator, brake, signal, horn</td><td>Propellers, flight control, payload arm or claw, lights, delivery mechanism</td></tr>
+                                <tr><td><strong>Sensors</strong></td><td>Cameras, LiDAR, speedometer, GPS</td><td>GPS, radar or LiDAR, altimeter, barometer, gyroscope, accelerometer, camera, weight sensor</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>8.3 Classifying the environment</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead>
+                                <tr><th>Property</th><th>Question to ask</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Fully vs partially observable</td><td>Do the sensors give the complete relevant state at each moment?</td></tr>
+                                <tr><td>Single vs multi-agent</td><td>Is another entity best described as maximising its own performance measure? Another car is an agent; a telephone pole is part of the environment.</td></tr>
+                                <tr><td>Deterministic vs stochastic</td><td>Is the next state completely fixed by the current state and action? Stochastic means outcomes have probabilities.</td></tr>
+                                <tr><td>Episodic vs sequential</td><td>Does the current decision affect future decisions?</td></tr>
+                                <tr><td>Static vs dynamic</td><td>Can the world change while the agent is thinking? Semi-dynamic: the world waits but the score does not.</td></tr>
+                                <tr><td>Discrete vs continuous</td><td>Are states, time and actions countable?</td></tr>
+                                <tr><td>Known vs unknown</td><td>Does the agent (or its designer) know the outcomes of its actions?</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        The hardest case is partially observable, multi-agent, stochastic, sequential,
+                        dynamic, continuous and unknown. This course assumes static, fully observable,
+                        deterministic and discrete environments.
+                    </p>
+
+                    <div class="xlab" id="env-lab">
+                        <div class="xlab-heading">
+                            <div>
+                                <span class="xlab-eyebrow">PRACTICE · AIMA FIGURE 2.6</span>
+                                <h3>Environment Classifier</h3>
+                                <p>Pick a task. Try to classify it yourself first, then compare with the table.</p>
+                            </div>
+                            <span class="xlab-badge">6 PROPERTIES</span>
+                        </div>
+                        <div class="xlab-controls">
+                            <label class="xlab-inline">Task environment
+                                <select id="env-select"></select>
+                            </label>
+                        </div>
+                        <div class="xlab-table-wrap">
+                            <table class="xlab-table">
+                                <thead><tr><th>Property</th><th>Classification</th><th>Justification</th></tr></thead>
+                                <tbody id="env-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <h3>8.4 Types of agent</h3>
+
+                    <div class="component-list">
+                        <div class="component-item">
+                            <span class="component-number">01</span>
+                            <div>
+                                <h4>Simple reflex agent</h4>
+                                <p>Acts on the current percept only, using condition–action rules. It ignores history.</p>
+                            </div>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-number">02</span>
+                            <div>
+                                <h4>Model-based reflex agent</h4>
+                                <p>Keeps internal state about the parts of the world it cannot see right now.</p>
+                            </div>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-number">03</span>
+                            <div>
+                                <h4>Goal-based (problem-solving) agent</h4>
+                                <p>Plans ahead by considering action sequences that reach a goal. That planning is <strong>search</strong> (Modules 02–04).</p>
+                            </div>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-number">04</span>
+                            <div>
+                                <h4>Utility-based agent</h4>
+                                <p>Chooses between goals and routes using a utility function, so it can trade off speed, safety and cost.</p>
+                            </div>
+                        </div>
+                        <div class="component-item">
+                            <span class="component-number">05</span>
+                            <div>
+                                <h4>Learning agent</h4>
+                                <p>Improves its own performance from experience (Modules 07–08). Learning is optional for an agent, not required.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>8.5 More facts worth quoting</h3>
+
+                    <ul>
+                        <li><strong>Narrow AI</strong> solves one specific problem; <strong>AGI</strong> is a hypothetical agent that can learn any intellectual task a human can.</li>
+                        <li><strong>ELIZA (1964)</strong> imitated conversation with simple pattern matching, showing how easily people are fooled — one criticism of the Turing Test.</li>
+                        <li><strong>SAE self-driving levels:</strong> 1 driver assistance, 2 partial, 3 conditional, 4 high, 5 full automation.</li>
+                        <li><strong>Components of an agent:</strong> communicate with the environment (sensors and actuators), represent knowledge, reason and plan; learning is optional. ML ⊂ AI, and deep learning ⊂ ML.</li>
+                    </ul>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     09. AI VS MACHINE LEARNING
                      ================================================= -->
 
                 <section class="lesson-section"
@@ -1536,14 +1736,14 @@ print("Action:", action)</code></pre>
                          data-lesson-section>
 
                     <div class="lesson-section-heading">
-                        <span class="section-number">08</span>
+                        <span class="section-number">09</span>
                         <div>
                             <p class="section-kicker">IMPORTANT RELATIONSHIP</p>
                             <h2>AI, Machine Learning and Deep Learning</h2>
                         </div>
                     </div>
 
-                    <h3>8.1 Artificial Intelligence</h3>
+                    <h3>9.1 Artificial Intelligence</h3>
 
                     <p>
                         AI is the broader field concerned with
@@ -1552,7 +1752,7 @@ print("Action:", action)</code></pre>
                         representation, planning, goals and learning.
                     </p>
 
-                    <h3>8.2 Machine Learning</h3>
+                    <h3>9.2 Machine Learning</h3>
 
                     <p>
                         Machine Learning focuses on learning from
@@ -1565,7 +1765,7 @@ print("Action:", action)</code></pre>
                         for the whole field of AI.
                     </p>
 
-                    <h3>8.3 Deep Learning</h3>
+                    <h3>9.3 Deep Learning</h3>
 
                     <p>
                         Deep Learning is a subfield of Machine Learning
@@ -1604,7 +1804,7 @@ print("Action:", action)</code></pre>
                         </div>
                     </div>
 
-                    <h3>8.4 Three types of Machine Learning</h3>
+                    <h3>9.4 Three types of Machine Learning</h3>
 
                     <div class="comparison-table-wrapper">
                         <table class="learning-comparison">
@@ -1635,7 +1835,7 @@ print("Action:", action)</code></pre>
                         </table>
                     </div>
 
-                    <h3>8.5 Test your classification</h3>
+                    <h3>9.5 Test your classification</h3>
 
                     <p>
                         Identify the learning type in each scenario.
@@ -1664,7 +1864,7 @@ print("Action:", action)</code></pre>
 
 
                 <!-- =================================================
-                     09. HISTORY AND APPLICATIONS
+                     10. HISTORY AND APPLICATIONS
                      ================================================= -->
 
                 <section class="lesson-section"
@@ -1672,14 +1872,14 @@ print("Action:", action)</code></pre>
                          data-lesson-section>
 
                     <div class="lesson-section-heading">
-                        <span class="section-number">09</span>
+                        <span class="section-number">10</span>
                         <div>
                             <p class="section-kicker">DEVELOPMENT AND APPLICATIONS</p>
                             <h2>History of AI and AI Today</h2>
                         </div>
                     </div>
 
-                    <h3>9.1 Important developments</h3>
+                    <h3>10.1 Important developments</h3>
 
                     <div class="timeline">
 
@@ -1768,7 +1968,7 @@ print("Action:", action)</code></pre>
 
                     </div>
 
-                    <h3>9.2 What contributed to recent AI successes?</h3>
+                    <h3>10.2 What contributed to recent AI successes?</h3>
 
                     <ul>
                         <li>Faster computers and specialised hardware, including GPUs.</li>
@@ -1778,7 +1978,7 @@ print("Action:", action)</code></pre>
                         <li>Improved optimisation methods, including Deep Learning.</li>
                     </ul>
 
-                    <h3>9.3 Moravec's Paradox</h3>
+                    <h3>10.3 Moravec's Paradox</h3>
 
                     <p>
                         Moravec's Paradox describes the observation
@@ -1798,7 +1998,7 @@ print("Action:", action)</code></pre>
                         </p>
                     </div>
 
-                    <h3>9.4 The AI Effect</h3>
+                    <h3>10.4 The AI Effect</h3>
 
                     <p>
                         The AI Effect describes how a task may stop
@@ -1818,7 +2018,7 @@ print("Action:", action)</code></pre>
                         </p>
                     </div>
 
-                    <h3>9.5 Applications of AI</h3>
+                    <h3>10.5 Applications of AI</h3>
 
                     <div class="comparison-table-wrapper">
                         <table class="learning-comparison">
@@ -1853,7 +2053,7 @@ print("Action:", action)</code></pre>
                         </table>
                     </div>
 
-                    <h3>9.6 Why are autonomous vehicles challenging?</h3>
+                    <h3>10.6 Why are autonomous vehicles challenging?</h3>
 
                     <p>
                         The lecture identifies several components
@@ -1888,7 +2088,7 @@ print("Action:", action)</code></pre>
 
 
                 <!-- =================================================
-                     10. EXAMINATION PRACTICE
+                     11. EXAMINATION PRACTICE
                      ================================================= -->
 
                 <section class="lesson-section"
@@ -1896,7 +2096,7 @@ print("Action:", action)</code></pre>
                          data-lesson-section>
 
                     <div class="lesson-section-heading">
-                        <span class="section-number">10</span>
+                        <span class="section-number">11</span>
                         <div>
                             <p class="section-kicker">APPLY WHAT YOU LEARNED</p>
                             <h2>Examination Practice</h2>
@@ -2333,8 +2533,8 @@ print("Action:", action)</code></pre>
 
 
             <div class="topic-bottom-navigation">
-                    <a href="../../index.html?v=6" class="topic-previous-link">← Course Home</a>
-                    <a href="../topic-02-problem-formulation/index.html?v=6" class="topic-next-link">Next: Problem Formulation →</a>
+                    <a href="../../index.html?v=8" class="topic-previous-link">← Course Home</a>
+                    <a href="../topic-02-problem-formulation/index.html?v=8" class="topic-next-link">Next: Problem Formulation →</a>
                 </div>
 
             </article>
@@ -2347,7 +2547,7 @@ print("Action:", action)</code></pre>
     <footer class="ai-footer">
 
         <div class="footer-content">
-            <a href="../../index.html?v=6" class="ai-brand">
+            <a href="../../index.html?v=8" class="ai-brand">
                 AI<span>Visual</span>
             </a>
 
@@ -2358,7 +2558,7 @@ print("Action:", action)</code></pre>
 
         <div class="footer-bottom">
             <p>© <span id="current-year"></span> StructTrace.</p>
-            <a href="../../index.html?v=6">Back to AIVisual</a>
+            <a href="../../index.html?v=8">Back to AIVisual</a>
         </div>
 
     </footer>

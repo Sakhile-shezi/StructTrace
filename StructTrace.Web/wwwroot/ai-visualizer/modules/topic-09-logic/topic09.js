@@ -2002,6 +2002,8 @@
         // =================================================
 
         function setupSectionNavigation() {
+            return; // sidebar highlighting is now done for every topic by ../../js/ai-core.js (initSectionSpy)
+
 
             const sections = document.querySelectorAll(
                 ".topic09-page [data-lesson-section]"

@@ -9,13 +9,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Module 09 | Logic - AIVisual</title>
-    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=6" />
-    <link rel="stylesheet" href="../../css/topic-base.css?v=6" />
-    <link rel="stylesheet" href="../../css/topic-pages.css?v=6" />
+    <link rel="stylesheet" href="../../css/ai-visualizer.css?v=8" />
+    <link rel="stylesheet" href="../../css/topic-base.css?v=8" />
+    <link rel="stylesheet" href="../../css/topic-pages.css?v=8" />
+    <link rel="stylesheet" href="../../css/ai-fit.css?v=8" />
+    <script src="../../js/ai-fit.js?v=8"></script>
 
-    <script src="../../js/ai-core.js?v=6" defer></script>
-    <script src="../../js/ai-visualizer.js?v=6" defer></script>
-    <script src="./topic09.js?v=6" defer></script>
+    <script src="../../js/ai-core.js?v=8" defer></script>
+    <script src="../../js/ai-extras.js?v=8" defer></script>
+    <script src="../../js/ai-visualizer.js?v=8" defer></script>
+    <script src="./topic09.js?v=8" defer></script>
 
 </head>
 
@@ -28,17 +31,17 @@
     <header class="ai-header">
         <nav class="ai-nav">
 
-            <a href="../../index.html?v=6" class="ai-brand">
+            <a href="../../index.html?v=8" class="ai-brand">
                 AI<span>Visual</span>
             </a>
 
             <button class="mobile-menu-btn" id="mobile-menu-btn" type="button"
                     aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">☰</button>
             <ul class="nav-links" id="nav-links">
-                <li><a href="../../index.html?v=6">Course Home</a></li>
-                <li><a href="../topic-08-perceptron/index.html?v=6">← 08. Perceptron</a></li>
+                <li><a href="../../index.html?v=8">Course Home</a></li>
+                <li><a href="../topic-08-perceptron/index.html?v=8">← 08. Perceptron</a></li>
                 <li><a href="#logic-introduction" class="active" aria-current="page">09. Logic</a></li>
-                <li><a href="../topic-10-csp/index.html?v=6">10. CSP →</a></li>
+                <li><a href="../topic-10-csp/index.html?v=8">10. CSP →</a></li>
                 <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
                 <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
             </ul>
@@ -56,7 +59,7 @@
         <section class="topic-hero">
 
             <div class="topic-breadcrumb">
-                <a href="../../index.html?v=6">AIVisual</a>
+                <a href="../../index.html?v=8">AIVisual</a>
                 <span>/</span>
                 <span>COMP304</span>
                 <span>/</span>
@@ -184,18 +187,22 @@
                         West criminal proof
                     </a>
 
+                    <a href="#logic-panther" class="topic-nav-link">
+                        <span>10</span> 2024 panther proof
+                    </a>
+
                     <a href="#logic-practice" class="topic-nav-link">
-                        <span>10</span>
+                        <span>11</span>
                         Interactive exam practice
                     </a>
 
                     <a href="#logic-mistakes" class="topic-nav-link">
-                        <span>11</span>
+                        <span>12</span>
                         Common mistakes
                     </a>
 
                     <a href="#logic-checklist" class="topic-nav-link">
-                        <span>12</span>
+                        <span>13</span>
                         Verification checklist
                     </a>
 
@@ -215,7 +222,7 @@
                 </div>
 
 
-                <a href="../../index.html?v=6" class="back-course-link">
+                <a href="../../index.html?v=8" class="back-course-link">
                     ← Back to AIVisual
                 </a>
 
@@ -2229,9 +2236,138 @@
                 </section>
 
 
+                <!-- =================================================
+                     10. 2024 EXAM: EVERY PANTHER HUNTS RABBITS
+                     ================================================= -->
+
+                <section class="lesson-section"
+                         id="logic-panther"
+                         data-lesson-section>
+
+                    <div class="lesson-section-heading">
+                        <span class="section-number">10</span>
+                        <div>
+                            <p class="section-kicker">PAST PAPER · NOVEMBER 2024 Q5</p>
+                            <h2>Semantics and the 2024 Panther Proof</h2>
+                        </div>
+                    </div>
+
+                    <p class="lead-text">
+                        Every paper has a 15-mark logic question in three parts: translate a statement (2),
+                        convert everything to clause form (5) and prove a goal by resolution (8). This section
+                        works through the 2024 question and adds the semantics you need to explain a proof.
+                    </p>
+
+                    <h3>10.1 What makes a sentence true</h3>
+
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <h4>Model</h4>
+                            <p>A non-empty domain of objects plus the relations and functions among them.</p>
+                        </div>
+                        <div class="concept-card">
+                            <h4>Interpretation</h4>
+                            <p>Maps constant symbols to objects, predicate symbols to relations and function symbols to functions.</p>
+                            <div class="concept-example">Brother(Richard, John) is true because ⟨Richard, John⟩ is in the brother relation.</div>
+                        </div>
+                        <div class="concept-card">
+                            <h4>Equality</h4>
+                            <p>Says two terms refer to the same object. Sibling needs it: ∀x,y Sibling(x, y) ⇔ [¬(x = y) ∧ ∃m,f ¬(m = f) ∧ Parent(m, x) ∧ Parent(f, x) ∧ Parent(m, y) ∧ Parent(f, y)].</p>
+                        </div>
+                    </div>
+
+                    <h3>10.2 The 2024 question</h3>
+
+                    <div class="comparison-table-wrapper">
+                        <table class="learning-comparison">
+                            <thead><tr><th>#</th><th>Statement</th></tr></thead>
+                            <tbody>
+                                <tr><td>1</td><td>∀x CarnivorousCat(x) ⇒ ∃y (isAMountain(y) ∧ livesOn(x, y))</td></tr>
+                                <tr><td>2</td><td>∀x panther(x) ⇒ CarnivorousCat(x)</td></tr>
+                                <tr><td>3</td><td>∀x panther(x) ⇒ Nocturnal(x)</td></tr>
+                                <tr><td>4</td><td>∀x ∀y isAMountain(y) ∧ CarnivorousCat(x) ∧ Nocturnal(x) ∧ livesOn(x, y) ⇒ hasHerbivores(y)</td></tr>
+                                <tr><td>5</td><td>∀x ∀y livesOn(x, y) ∧ hasHerbivores(y) ⇒ huntsRabbits(x)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>Q5.1 Translation of statement 4</strong>
+                        <p>
+                            For every x and y: if y is a mountain and x is a nocturnal carnivorous cat that
+                            lives on y, then y has herbivores.
+                        </p>
+                    </div>
+
+                    <h3>10.3 Clause form (Q5.2)</h3>
+
+                    <p>
+                        CC abbreviates CarnivorousCat. Statement 1's ∃y sits inside ∀x, so it becomes a
+                        Skolem function f(x), and its conjunction splits into two clauses.
+                    </p>
+
+                    <div class="xlab" id="rp-lab" data-trace-lab>
+                        <div class="xlab-heading">
+                            <div>
+                                <span class="xlab-eyebrow">INTERACTIVE PROOF · Q5.3</span>
+                                <h3>Resolution Proof: Every Panther Hunts Rabbits</h3>
+                                <p>Reveal one resolution at a time. Each row names the two clauses used and the substitution θ.</p>
+                            </div>
+                            <span class="xlab-badge">7 RESOLUTIONS</span>
+                        </div>
+
+                        <div class="rp-clauses">
+                            <div><b>C1a</b> ¬CC(x) ∨ isAMountain(f(x))</div>
+                            <div><b>C1b</b> ¬CC(x) ∨ livesOn(x, f(x))</div>
+                            <div><b>C2</b> ¬panther(x) ∨ CC(x)</div>
+                            <div><b>C3</b> ¬panther(x) ∨ Nocturnal(x)</div>
+                            <div><b>C4</b> ¬isAMountain(y) ∨ ¬CC(x) ∨ ¬Nocturnal(x) ∨ ¬livesOn(x, y) ∨ hasHerbivores(y)</div>
+                            <div><b>C5</b> ¬livesOn(x, y) ∨ ¬hasHerbivores(y) ∨ huntsRabbits(x)</div>
+                            <div><b>G1</b> panther(p) &nbsp;(negated goal)</div>
+                            <div><b>G2</b> ¬huntsRabbits(p) &nbsp;(negated goal)</div>
+                        </div>
+
+                        <div class="xlab-controls">
+                            <button type="button" class="xlab-btn secondary" id="rp-prev">← Previous</button>
+                            <button type="button" class="xlab-btn primary" id="rp-next">Resolve next →</button>
+                            <button type="button" class="xlab-btn secondary" id="rp-reset">Reset proof</button>
+                            <span class="xlab-inline">Step <strong id="rp-count">0 / 7</strong></span>
+                        </div>
+
+                        <div class="xlab-current">
+                            <span id="rp-step-title">START</span>
+                            <p id="rp-step-text"></p>
+                        </div>
+
+                        <div class="xlab-table-wrap">
+                            <table class="xlab-table">
+                                <thead><tr><th>#</th><th>Clauses</th><th>θ</th><th>Resolvent</th></tr></thead>
+                                <tbody id="rp-body"></tbody>
+                            </table>
+                        </div>
+
+                        <div class="xlab-result" id="rp-done" hidden>
+                            <strong>Proved.</strong> The empty clause shows that “some panther does not hunt rabbits”
+                            contradicts the knowledge base, so ∀x panther(x) ⇒ huntsRabbits(x).
+                        </div>
+                    </div>
+
+                    <h3>10.4 Exam tips for every resolution question</h3>
+
+                    <ul>
+                        <li>Number every clause and give the substitution at every step.</li>
+                        <li>Negating a universal goal: ¬∀x (P(x) ⇒ Q(x)) ≡ ∃x (P(x) ∧ ¬Q(x)). Skolemise with a <strong>fresh</strong> constant and split into two clauses.</li>
+                        <li>Split conjunctions: a fact such as Loser(Tony) ∧ Loser(Tom) is two clauses. A biconditional becomes two clauses.</li>
+                        <li>Merge duplicate literals in a resolvent, as in steps 2, 3 and 6 above.</li>
+                    </ul>
+
+                </section>
+
+
+
 
                 <!-- =========================================================
-                     10. EXAM PRACTICE
+                     11. EXAM PRACTICE
                      ========================================================= -->
 
                 <section class="lesson-section"
@@ -2240,7 +2376,7 @@
 
                     <div class="lesson-section-heading">
 
-                        <span class="section-number">10</span>
+                        <span class="section-number">11</span>
 
                         <div>
                             <p class="section-kicker">COMP304 EXAM PREPARATION</p>
@@ -2445,7 +2581,7 @@
 
 
                 <!-- =========================================================
-                     11. COMMON MISTAKES
+                     12. COMMON MISTAKES
                      ========================================================= -->
 
                 <section class="lesson-section"
@@ -2454,7 +2590,7 @@
 
                     <div class="lesson-section-heading">
 
-                        <span class="section-number">11</span>
+                        <span class="section-number">12</span>
 
                         <div>
                             <p class="section-kicker">EXAM ERROR PREVENTION</p>
@@ -2557,7 +2693,7 @@
 
 
                 <!-- =========================================================
-                     12. CHECKLIST
+                     13. CHECKLIST
                      ========================================================= -->
 
                 <section class="lesson-section"
@@ -2566,7 +2702,7 @@
 
                     <div class="lesson-section-heading">
 
-                        <span class="section-number">12</span>
+                        <span class="section-number">13</span>
 
                         <div>
                             <p class="section-kicker">EXAM VERIFICATION</p>
@@ -2740,8 +2876,8 @@
                      ========================================================= -->
 
                 <div class="topic-bottom-navigation">
-                    <a href="../topic-08-perceptron/index.html?v=6" class="topic-previous-link">← Previous: Perceptron Training</a>
-                    <a href="../topic-10-csp/index.html?v=6" class="topic-next-link">Next: Constraint Satisfaction Problems →</a>
+                    <a href="../topic-08-perceptron/index.html?v=8" class="topic-previous-link">← Previous: Perceptron Training</a>
+                    <a href="../topic-10-csp/index.html?v=8" class="topic-next-link">Next: Constraint Satisfaction Problems →</a>
                 </div>
 
 
@@ -2760,7 +2896,7 @@
 
         <div class="footer-content">
 
-            <a href="../../index.html?v=6" class="ai-brand">
+            <a href="../../index.html?v=8" class="ai-brand">
                 AI<span>Visual</span>
             </a>
 
@@ -2777,7 +2913,7 @@
                 © <span id="current-year"></span> StructTrace.
             </p>
 
-            <a href="../../index.html?v=6">Back to AIVisual</a>
+            <a href="../../index.html?v=8">Back to AIVisual</a>
 
         </div>
 

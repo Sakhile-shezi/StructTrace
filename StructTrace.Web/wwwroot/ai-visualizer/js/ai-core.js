@@ -261,6 +261,115 @@ window.AIV = (() => {
 
 
     // =====================================================
+    // 8b. SIDEBAR SECTION HIGHLIGHT (all topic pages)
+    // Highlights the sidebar link of the section being read.
+    // One implementation for every topic, so the sidebar
+    // behaves the same everywhere.
+    // =====================================================
+
+    function initSectionSpy() {
+
+        const links = Array.from(document.querySelectorAll(
+            ".topic-navigation .topic-nav-link[href^='#']"
+        ));
+
+        const items = links
+            .map(link => ({
+                link,
+                target: document.getElementById(
+                    decodeURIComponent(link.getAttribute("href").slice(1))
+                )
+            }))
+            .filter(item => item.target)
+            // Page order, in case the sidebar lists sections differently.
+            .sort((a, b) =>
+                a.target.compareDocumentPosition(b.target) &
+                Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1
+            );
+
+        if (!items.length) {
+            return;
+        }
+
+        const nav = links[0].closest(".topic-navigation");
+        let current = null;
+        let ticking = false;
+
+        function setActive(item) {
+
+            if (item === current) {
+                return;
+            }
+
+            current = item;
+
+            items.forEach(entry => {
+                const isActive = entry === item;
+                entry.link.classList.toggle("active", isActive);
+
+                if (isActive) {
+                    entry.link.setAttribute("aria-current", "location");
+                } else {
+                    entry.link.removeAttribute("aria-current");
+                }
+            });
+
+            // If the sidebar list itself scrolls, keep the active link visible.
+            if (nav && nav.scrollHeight > nav.clientHeight + 2) {
+                const top = item.link.offsetTop - nav.offsetTop;
+                const bottom = top + item.link.offsetHeight;
+
+                if (top < nav.scrollTop) {
+                    nav.scrollTop = top - 8;
+                } else if (bottom > nav.scrollTop + nav.clientHeight) {
+                    nav.scrollTop = bottom - nav.clientHeight + 8;
+                }
+            }
+        }
+
+        function update() {
+
+            ticking = false;
+
+            // A section becomes "current" once its top passes 30% of the screen.
+            const line = window.innerHeight * 0.3;
+            let active = items[0];
+
+            items.forEach(item => {
+                if (item.target.getBoundingClientRect().top <= line) {
+                    active = item;
+                }
+            });
+
+            // At the very bottom, the last section is current even if it is short.
+            const atBottom =
+                window.innerHeight + window.scrollY >=
+                document.documentElement.scrollHeight - 4;
+
+            if (atBottom) {
+                active = items[items.length - 1];
+            }
+
+            setActive(active);
+        }
+
+        function requestUpdate() {
+
+            if (!ticking) {
+                ticking = true;
+                window.requestAnimationFrame(update);
+            }
+        }
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+
+        update();
+    }
+
+
+    // =====================================================
     // 9. SHARED INITIALISATION
     // =====================================================
 
@@ -269,6 +378,8 @@ window.AIV = (() => {
         initSpeedControls();
 
         initChecklists();
+
+        initSectionSpy();
 
         console.log("AIVisual shared core initialized.");
 
