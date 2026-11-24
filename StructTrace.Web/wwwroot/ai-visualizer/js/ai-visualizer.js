@@ -318,20 +318,24 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const query = searchInput.value
+        // Every word typed must appear somewhere in the card
+        // (its keywords or its visible text), in any order.
+        const words = searchInput.value
             .trim()
-            .toLowerCase();
+            .toLowerCase()
+            .split(/\s+/)
+            .filter(Boolean);
 
         let visibleCount = 0;
 
         document.querySelectorAll(".course-card").forEach(card => {
 
             const searchText = (
-                card.dataset.search ||
+                (card.dataset.search || "") + " " +
                 card.textContent
-            ).toLowerCase();
+            ).toLowerCase().replace(/\s+/g, " ");
 
-            const matches = searchText.includes(query);
+            const matches = words.every(word => searchText.includes(word));
 
             card.hidden = !matches;
 
@@ -353,6 +357,14 @@ document.addEventListener("DOMContentLoaded", () => {
             "input",
             searchCourses
         );
+
+        // Esc clears the search and shows every module again.
+        searchInput.addEventListener("keydown", event => {
+            if (event.key === "Escape") {
+                searchInput.value = "";
+                searchCourses();
+            }
+        });
     }
 
 

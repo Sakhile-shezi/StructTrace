@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <!-- sign-in guard: must load first -->
-    <script src="/js/visualizer-guard.js"></script>
+    <script src="/js/visualizer-guard.js?v=2"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>AIVisual | COMP304 Artificial Intelligence</title>
@@ -13,13 +13,14 @@
           content="Interactive COMP304 Artificial Intelligence learning platform with visual explanations, Python examples and examination preparation." />
 
     <link rel="stylesheet" href="css/ai-visualizer.css?v=8" />
-    <link rel="stylesheet" href="css/ai-fit.css?v=8" />
-    <script src="js/ai-fit.js?v=8"></script>
+    <link rel="stylesheet" href="css/ai-fit.css?v=11" />
+    <link rel="stylesheet" href="css/ai-theme.css?v=11" />
+    <script src="js/ai-fit.js?v=11"></script>
     <script src="js/ai-core.js?v=8" defer></script>
-    <script src="js/ai-visualizer.js?v=8" defer></script>
+    <script src="js/ai-visualizer.js?v=9" defer></script>
 </head>
 
-<body>
+<body class="aiv-home">
 
     <!-- ================= HEADER ================= -->
 
@@ -38,13 +39,9 @@
             </button>
 
             <ul class="nav-links" id="nav-links">
-                <li><a href="#home" class="active">Home</a></li>
                 <li><a href="#learning-paths">Learning Paths</a></li>
                 <li><a href="#test-revision">Test Revision</a></li>
                 <li><a href="#exam-preparation">Exam Preparation</a></li>
-                <li><a href="/dsa-visualizer/index.html?v=6">DSAVisual</a></li>
-                <li><a href="/">StructTrace</a></li>
-                <li><a href="/account/instant-logout" class="nav-logout-link">Logout</a></li>
             </ul>
 
         </nav>

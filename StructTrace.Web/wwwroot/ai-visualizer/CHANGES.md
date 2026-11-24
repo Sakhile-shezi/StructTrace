@@ -49,3 +49,15 @@ New shared styles go in `topic-base.css` under `.aiv-topic`. Lab panels reuse th
 - 09 §10 Semantics and the 2024 panther resolution proof (stepper)
 - 10 §02 Possible worlds and generate-and-test + possible-worlds counter
 - Widget logic: `js/ai-extras.js`; styles in `topic-base.css` PART 6.
+
+## Same look and Home link as DSAVisual (24 Nov 2026)
+- Homepage switched from the all-dark design to the StructTrace look used by DSAVisual and the Sandbox: light page, navy banners, white cards (`css/ai-theme.css`, `body.aiv-home`).
+- Header is the same navy as the site and DSAVisual on every AIVisual page.
+- Nav now ends with the same pills as DSAVisual: **Home** (StructTrace home page), **Sandbox**, **DSAVisual**, View, **Logout**. "Home" no longer means the AIVisual page; the AIVisual start page is "All Topics" (or the AIVisual logo).
+- View size: 70 % and 75 % added.
+
+## One StructTrace top bar everywhere; search fixed (24 Nov 2026)
+- The homepage module search never hid anything: the cards' `display:flex` overrode the `hidden` attribute. Fixed, and the search now matches every word you type (in any order); Esc clears it.
+- Every DSAVisual and AIVisual page now shows the same StructTrace top bar as the rest of the site (Home, Code Sandbox, DSAVisual, AIVisual, Admin for admins, your name, Logout). It is drawn by `/js/visualizer-guard.js` from `/account/session`, styled by `/css/structtrace-topbar.css`, and is not affected by the View size.
+- The AIVisual menu (All Topics, previous / next topic, View) is now a slim second bar under it; the Home / Sandbox / DSAVisual / Logout pills were removed from it because the top bar has them.
+- Sidebar, step-table pane and section jumps sit just below the new bar.

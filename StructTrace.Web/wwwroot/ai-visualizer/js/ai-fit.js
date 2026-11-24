@@ -65,6 +65,8 @@
     function sizeOptions() {
         return [
             ["auto", "Fit screen (" + Math.round(autoScale() * 100) + "%)"],
+            ["70", "70%"],
+            ["75", "75%"],
             ["80", "80%"],
             ["90", "90%"],
             ["100", "100%"],
@@ -265,9 +267,14 @@
         document.body.appendChild(dock);
     }
 
+    // Bottom edge of whatever is covering the top of the screen: the sticky
+    // StructTrace bar, or the AIVisual menu while it is still in view.
     function headerBottom() {
-        var header = document.querySelector(".ai-header");
-        return header ? Math.max(0, header.getBoundingClientRect().bottom) : 0;
+        var bottom = 0;
+        [document.getElementById("st-topbar"), document.querySelector(".ai-header")].forEach(function (bar) {
+            if (bar) bottom = Math.max(bottom, bar.getBoundingClientRect().bottom);
+        });
+        return Math.max(0, bottom);
     }
 
     function fullyVisible(element, top, bottom) {

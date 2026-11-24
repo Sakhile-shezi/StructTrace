@@ -1,0 +1,234 @@
+/* =====================================================================
+   StructTrace - shared top bar for DSAVisual and AIVisual pages.
+   Drawn by /js/visualizer-guard.js. It copies the main site navbar
+   (Views/Shared/_Layout.cshtml + structtrace-theme.css) value for value,
+   so the bar looks the same on every page of the site.
+   ===================================================================== */
+
+.st-topbar,
+.st-topbar *,
+.st-topbar *::before,
+.st-topbar *::after {
+    box-sizing: border-box;
+}
+
+.st-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1100;
+    /* AIVisual scales its pages (View size). Undo that here so the bar
+       is the same size as on the rest of the site. */
+    zoom: calc(1 / var(--aiv-scale, 1));
+    background: #0f172a;
+    border-bottom: 1px solid #1e293b;
+    box-shadow: 0 6px 18px rgba(2, 6, 23, 0.25);
+    color: #e2e8f0;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.st-topbar-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    min-height: 64px;
+    padding: 0.55rem 1.5rem;
+}
+
+.st-topbar a {
+    text-decoration: none;
+}
+
+.st-topbar-brand {
+    margin-right: 1.5rem;
+    color: #ffffff;
+    font-size: 1.28rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+}
+
+    .st-topbar-brand span {
+        color: #38bdf8;
+    }
+
+.st-topbar-menu {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.45rem;
+}
+
+.st-topbar-links {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+    .st-topbar-links a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.5rem 0.85rem;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        color: #94a3b8;
+        font-size: 0.88rem;
+        font-weight: 650;
+        white-space: nowrap;
+        transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+    }
+
+        .st-topbar-links a:hover {
+            background: rgba(148, 163, 184, 0.12);
+            color: #ffffff;
+        }
+
+        .st-topbar-links a.active {
+            background: #172540;
+            border-color: #334155;
+            color: #ffffff;
+        }
+
+    .st-topbar-links i {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .st-topbar-links a.is-dsa i { background: #38bdf8; }
+    .st-topbar-links a.is-ai i { background: #a78bfa; }
+
+.st-topbar-user {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.st-topbar-chip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.3rem 0.75rem 0.3rem 0.3rem;
+    border: 1px solid #334155;
+    border-radius: 999px;
+    color: #e2e8f0;
+    font-size: 0.85rem;
+    font-weight: 650;
+    transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+    .st-topbar-chip:hover {
+        background: #172540;
+        border-color: #475569;
+        color: #e2e8f0;
+    }
+
+.st-topbar-avatar {
+    display: inline-grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+}
+
+.st-topbar-missing {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 11px;
+    height: 11px;
+    border: 2px solid #0f172a;
+    border-radius: 50%;
+    background: #f59e0b;
+}
+
+.st-topbar-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    color: #e2e8f0;
+    font-size: 0.84rem;
+    font-weight: 700;
+    line-height: 1.2;
+    transition: background 0.18s ease, color 0.18s ease;
+}
+
+    .st-topbar-pill:hover { background: rgba(148, 163, 184, 0.14); color: #ffffff; }
+
+.st-topbar-pill-admin { border-color: #92400e; color: #fcd34d; }
+.st-topbar-pill-admin:hover { background: #78350f; color: #ffffff; }
+
+.st-topbar-pill-logout { border-color: #7f1d1d; color: #fca5a5; }
+.st-topbar-pill-logout:hover { background: #7f1d1d; color: #ffffff; }
+
+.st-topbar a:focus-visible,
+.st-topbar button:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 2px;
+}
+
+.st-topbar-toggle {
+    display: none;
+    margin-left: auto;
+    padding: 0.3rem 0.65rem;
+    background: transparent;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    color: #e2e8f0;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+@media (max-width: 991.98px) {
+    .st-topbar-inner {
+        padding: 0.55rem 1rem;
+    }
+
+    .st-topbar-toggle {
+        display: inline-block;
+    }
+
+    .st-topbar-menu {
+        display: none;
+        flex-basis: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0.75rem 0 0.4rem;
+    }
+
+    .st-topbar.is-open .st-topbar-menu {
+        display: flex;
+    }
+
+    .st-topbar-links {
+        flex-direction: column;
+        align-items: stretch;
+        margin-bottom: 0.6rem;
+    }
+
+    .st-topbar-user {
+        padding-top: 0.6rem;
+        border-top: 1px solid #1e293b;
+    }
+}
+
+@media print {
+    .st-topbar {
+        display: none;
+    }
+}

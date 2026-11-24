@@ -1,0 +1,300 @@
+/* =====================================================================
+   AIVisual - StructTrace look
+   Loaded on every AIVisual page, after ai-fit.css.
+   1. Header and navigation pills (same as DSAVisual and the main site)
+   2. Light homepage (body.aiv-home), matching the DSAVisual hub:
+      light page, navy banners, white cards.
+   ===================================================================== */
+
+
+/* ---------- 1. HEADER AND NAV PILLS ---------- */
+
+/* The AIVisual menu is the slim second bar under the StructTrace top bar
+   (same colours and alignment as the DSAVisual menu). */
+.ai-header {
+    background: #162033;
+    border-bottom: 1px solid #24324a;
+    backdrop-filter: none;
+}
+
+.ai-nav {
+    width: auto;
+    max-width: none;
+    padding-left: calc(1.5rem / var(--aiv-scale, 1));
+    padding-right: calc(1.5rem / var(--aiv-scale, 1));
+}
+
+.nav-links li a.nav-app-link {
+    border: 1px solid #334155;
+    color: #e2e8f0;
+}
+
+    .nav-links li a.nav-app-link:hover {
+        background: #1e293b;
+        color: #ffffff;
+    }
+
+.nav-links li a.nav-sandbox-link {
+    border-color: #1d4ed8;
+    color: #93c5fd;
+}
+
+    .nav-links li a.nav-sandbox-link:hover {
+        background: #1d4ed8;
+        color: #ffffff;
+    }
+
+.nav-links li a.nav-dsa-link {
+    border-color: #0369a1;
+    color: #7dd3fc;
+}
+
+    .nav-links li a.nav-dsa-link:hover {
+        background: #0369a1;
+        color: #ffffff;
+    }
+
+
+/* ---------- 2. LIGHT HOMEPAGE ---------- */
+
+/* The cards use display:flex, which beat the "hidden" attribute, so the
+   course search marked cards hidden but they stayed on screen. */
+.aiv-home [hidden] {
+    display: none !important;
+}
+
+body.aiv-home {
+    background: #f5f8fc;
+    color: #0f172a;
+}
+
+.aiv-home .ai-container {
+    padding-top: 26px;
+}
+
+/* navy hero banner */
+.aiv-home .ai-hero {
+    min-height: 0;
+    padding: 2.6rem 2.8rem;
+    background:
+        radial-gradient(circle at 85% 15%, rgba(37, 99, 235, 0.32), transparent 36%),
+        linear-gradient(130deg, #101a30 0%, #172b50 55%, #123b65 100%);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 17px;
+    box-shadow: 0 15px 40px rgba(15, 23, 42, 0.13);
+    color: #f1f5f9;
+}
+
+    .aiv-home .ai-hero h1 {
+        color: #ffffff;
+        font-size: clamp(2rem, 3.6vw, 3rem);
+    }
+
+    .aiv-home .hero-description {
+        color: #c5d3e7;
+    }
+
+    .aiv-home .hero-meta {
+        color: #a8bad3;
+    }
+
+    .aiv-home .hero-badge {
+        background: rgba(56, 189, 248, 0.12);
+        border-color: rgba(56, 189, 248, 0.32);
+        color: #67e8f9;
+    }
+
+.aiv-home .btn-primary {
+    background: #2563eb;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+}
+
+    .aiv-home .btn-primary:hover {
+        background: #1d4ed8;
+        box-shadow: 0 10px 24px rgba(37, 99, 235, 0.38);
+    }
+
+.aiv-home .btn-secondary {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(148, 163, 184, 0.35);
+    color: #f1f5f9;
+}
+
+    .aiv-home .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: #93c5fd;
+    }
+
+/* section headings on the light page */
+.aiv-home .section-kicker {
+    color: #0891b2;
+}
+
+.aiv-home .muted-text,
+.aiv-home .no-results {
+    color: #64748b;
+}
+
+/* progress */
+.aiv-home .progress-card {
+    background: #ffffff;
+    border: 1px solid #dce4ef;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+}
+
+.aiv-home .progress-label,
+.aiv-home .progress-caption,
+.aiv-home .progress-count span,
+.aiv-home .progress-count small {
+    color: #64748b;
+}
+
+.aiv-home .progress-info h3 {
+    color: #2563eb;
+}
+
+.aiv-home .progress-count strong {
+    color: #0f172a;
+}
+
+.aiv-home .progress-track {
+    background: #e2e8f0;
+}
+
+.aiv-home .progress-fill {
+    background: linear-gradient(90deg, #2563eb, #38bdf8);
+}
+
+.aiv-home .reset-btn {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+}
+
+    .aiv-home .reset-btn:hover {
+        border-color: #2563eb;
+        color: #1d4ed8;
+    }
+
+/* white cards */
+.aiv-home .overview-card,
+.aiv-home .course-card {
+    background: #ffffff;
+    border: 1px solid #dce4ef;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+}
+
+    .aiv-home .overview-card:hover,
+    .aiv-home .course-card:hover {
+        background: #ffffff;
+        border-color: #93c5fd;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.09);
+    }
+
+.aiv-home .featured-card {
+    background: linear-gradient(145deg, #eff6ff, #ffffff 55%);
+    border-color: #bfdbfe;
+}
+
+.aiv-home .overview-card p,
+.aiv-home .course-description,
+.aiv-home .lesson-count {
+    color: #64748b;
+}
+
+.aiv-home .blue-icon { background: #e0f2fe; color: #0284c7; }
+.aiv-home .purple-icon { background: #ede9fe; color: #7c3aed; }
+.aiv-home .green-icon { background: #dcfce7; color: #059669; }
+.aiv-home .orange-icon { background: #ffedd5; color: #ea580c; }
+
+.aiv-home .course-search {
+    background: #ffffff;
+    border: 1px solid #dce4ef;
+}
+
+    .aiv-home .course-search span {
+        color: #2563eb;
+    }
+
+    .aiv-home .course-search input {
+        color: #0f172a;
+    }
+
+        .aiv-home .course-search input::placeholder {
+            color: #94a3b8;
+        }
+
+    .aiv-home .course-search:focus-within {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+    }
+
+.aiv-home .course-number {
+    color: #2563eb;
+}
+
+.aiv-home .available {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.aiv-home .course-icon {
+    background: #eef2ff;
+    border-color: #e0e7ff;
+    color: #4f46e5;
+}
+
+.aiv-home .course-category {
+    color: #0891b2;
+}
+
+.aiv-home .course-tags span {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+}
+
+.aiv-home .course-footer {
+    border-top-color: #e2e8f0;
+}
+
+.aiv-home .course-link {
+    color: #2563eb;
+}
+
+    .aiv-home .course-link:hover {
+        color: #1d4ed8;
+    }
+
+/* navy exam banner, like the hero */
+.aiv-home .exam-section {
+    background:
+        radial-gradient(circle at 12% 40%, rgba(37, 99, 235, 0.28), transparent 45%),
+        linear-gradient(130deg, #101a30 0%, #172b50 55%, #123b65 100%);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 17px;
+    box-shadow: 0 15px 40px rgba(15, 23, 42, 0.13);
+    color: #f1f5f9;
+}
+
+    .aiv-home .exam-section .section-kicker {
+        color: #67e8f9;
+    }
+
+    .aiv-home .exam-content > p:not(.section-kicker) {
+        color: #c5d3e7;
+    }
+
+    .aiv-home .exam-features {
+        color: #dbeafe;
+    }
+
+/* footer in the header's navy */
+.aiv-home .ai-footer {
+    margin-top: 3rem;
+    background: #0f172a;
+    border-top: 0;
+    color: #e2e8f0;
+}

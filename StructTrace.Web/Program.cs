@@ -291,17 +291,34 @@ app.UseAuthorization();
 // /account/session is called by every DSAVisual and AIVisual page
 // (wwwroot/js/visualizer-guard.js). If the user is not signed in the
 // page sends them to the login page, even if it was opened from the
-// browser cache or with the Back button.
+// browser cache or with the Back button. When they are signed in, it
+// also returns the name, initials and Admin flag that the shared
+// StructTrace top bar shows on those pages.
 // ==========================================
 
-app.MapGet("/account/session", (HttpContext context) =>
-{
-    context.Response.Headers.CacheControl = "no-store";
+app.MapGet("/account/session",
+    async (HttpContext context, UserManager<ApplicationUser> userManager) =>
+    {
+        context.Response.Headers.CacheControl = "no-store";
 
-    return context.User.Identity?.IsAuthenticated == true
-        ? Results.Json(new { signedIn = true })
-        : Results.Json(new { signedIn = false }, statusCode: StatusCodes.Status401Unauthorized);
-});
+        var user = context.User.Identity?.IsAuthenticated == true
+            ? await userManager.GetUserAsync(context.User)
+            : null;
+
+        if (user == null)
+        {
+            return Results.Json(new { signedIn = false }, statusCode: StatusCodes.Status401Unauthorized);
+        }
+
+        return Results.Json(new
+        {
+            signedIn = true,
+            name = UserDisplay.Name(user.DisplayName, user.Email),
+            initials = UserDisplay.Initials(user.DisplayName, user.Email),
+            nameMissing = string.IsNullOrWhiteSpace(user.DisplayName),
+            isAdmin = context.User.IsInRole(AppRoles.Admin)
+        });
+    });
 
 app.MapGet("/account/instant-logout",
     async (HttpContext context, SignInManager<ApplicationUser> signInManager) =>

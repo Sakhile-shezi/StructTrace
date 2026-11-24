@@ -1234,3 +1234,26 @@ pre {
         padding: 1.15rem 1rem;
     }
 }
+
+
+/* =========================================================
+   StructTrace top bar (drawn by /js/visualizer-guard.js) is the sticky
+   bar on every page. The DSAVisual menu is a slim bar under it that
+   scrolls away with the page.
+   ========================================================= */
+.site-header {
+    position: relative;
+    top: auto;
+    z-index: 50;
+    background: #162033;
+    border-bottom: 1px solid #24324a;
+}
+
+.nav-container {
+    max-width: none;
+    padding: 0.4rem 1.5rem;
+}
+
+.brand {
+    font-size: 1.15rem;
+}

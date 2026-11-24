@@ -2592,7 +2592,7 @@
 
 .aiv-topic .fc-detail-pane {
     position: sticky;
-    top: 74px;
+    top: calc(80px / var(--aiv-scale, 1));
     min-width: 0;
 }
 
