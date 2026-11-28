@@ -73,3 +73,12 @@ New shared styles go in `topic-base.css` under `.aiv-topic`. Lab panels reuse th
 ## Hide / show the topics bar (24 Nov 2026)
 - Small arrow at the right end of the AIVisual and DSAVisual menu bars hides it; a "Topics" / "Modules" tab under the StructTrace bar brings it back. Remembered per browser and shared by both visualizers. Not shown on phones.
 - Sidebar, section jumps, trace dock and the step-table pane follow the bar (CSS variable --st-subbar).
+
+## "Mark Topic Complete" fixed; exam notes (27 Nov 2026)
+- The button looked broken: it stayed disabled (clicks did nothing) until the topic's activities were finished, and a topic completed on an earlier visit showed the greyed-out button again. Now (`js/ai-visualizer.js`, section 10b, no change to the topic scripts' rules):
+  - a click before the activities are finished highlights what is still to do;
+  - a completed topic shows a green **Topic Completed ✓** with a small **Mark as not complete** link;
+  - completing reads the saved progress first, so topics completed on another device are kept;
+  - the homepage re-reads progress when shown again with the Back button.
+- Clearer to-do messages: Topic 02 (reach the water-jug goal), Topics 07 and 09 (activity names with section numbers instead of internal flag names).
+- **Exam notes** (`notes.html`, `js/ai-notes.js`, `css/ai-notes.css`): 67 past-exam problems with simulations, solutions, study notes and personal notes saved to the account (`Controllers/AiNotesController.cs`, table `AiNotes`). Linked from the homepage menu and hero.

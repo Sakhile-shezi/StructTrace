@@ -348,6 +348,19 @@
         };
 
 
+        // What each unfinished activity means, in words a student can act on.
+        const COMPLETION_LABELS = {
+                    translation: "answer every translation question correctly (2.4)",
+                    quantifier: "answer the quantifier-order challenge correctly (3.4)",
+                    skolemisation: "answer the Skolemisation challenge correctly (5.4)",
+                    cnfImplication: "step the implication example to the end (6.2)",
+                    cnfStudent: "step the student example to the end (6.2)",
+                    cnfBird: "step the bird example to the end (6.2)",
+                    peanutsProof: "finish the peanuts resolution proof (8.4)",
+                    westProof: "finish the Colonel West resolution proof (9.6)"
+                };
+
+
         function updateCompletion() {
 
             const complete = Object.values(
@@ -369,13 +382,13 @@
                     completion
                 )
                     .filter(([, done]) => !done)
-                    .map(([name]) => name);
+                    .map(([name]) => COMPLETION_LABELS[name] || name);
 
 
                 el.completionMessage.textContent =
                     complete
                         ? "All logic challenges and proof traces are complete. You can mark Topic 09 complete."
-                        : `Still to complete: ${remaining.join(", ")}.`;
+                        : `Still to do: ${remaining.join("; ")}.`;
 
             }
 

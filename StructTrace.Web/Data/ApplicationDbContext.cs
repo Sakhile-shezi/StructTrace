@@ -19,6 +19,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<StudyProgress> StudyProgress => Set<StudyProgress>();
     public DbSet<SearchDocument> SearchDocuments => Set<SearchDocument>();
 
+    // AI exam notes: each user's personal notes per AIVisual problem.
+    public DbSet<AiNote> AiNotes => Set<AiNote>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -58,6 +61,17 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             entity.HasIndex(d => d.Embedding)
                   .HasMethod("hnsw")
                   .HasOperators("vector_cosine_ops");
+        });
+
+        // AI exam notes: one note per user per problem, removed with the account.
+        modelBuilder.Entity<AiNote>(entity =>
+        {
+            entity.ToTable("AiNotes");
+            entity.HasIndex(n => new { n.UserId, n.ProblemId }).IsUnique();
+            entity.HasOne(n => n.User)
+                  .WithMany()
+                  .HasForeignKey(n => n.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

@@ -68,6 +68,11 @@ public static class StructTraceApi
             // "now" lets the browser correct for a wrong clock when it stamps changes.
             return Results.Ok(new { uid = UserHash(userId), now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), areas });
         }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            // The browser left the page before the answer came: nothing to send.
+            return ClientClosedRequest();
+        }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             logs.CreateLogger("StructTrace.Api").LogError(ex, "Could not read progress. Has Update-Database been run?");
@@ -81,8 +86,7 @@ public static class StructTraceApi
         ClaimsPrincipal user,
         HttpContext context,
         IProgressStore store,
-        ILoggerFactory logs,
-        CancellationToken ct)
+        ILoggerFactory logs)
     {
         context.Response.Headers.CacheControl = "no-store";
 
@@ -100,7 +104,10 @@ public static class StructTraceApi
 
         try
         {
-            var items = await store.MergeAsync(userId, area, body!.Items!, ct);
+            // Not cancelled when the browser leaves the page: a save that has
+            // started always finishes, so no progress is lost and the
+            // transaction is never cut off half way.
+            var items = await store.MergeAsync(userId, area, body!.Items!, CancellationToken.None);
             return Results.Ok(new { uid = UserHash(userId), area, items });
         }
         catch (InvalidOperationException ex) when (ex.Message.Contains("too large", StringComparison.OrdinalIgnoreCase))
@@ -118,9 +125,23 @@ public static class StructTraceApi
         string? q, int? limit, string? source, HttpContext context, SiteSearchService search, CancellationToken ct)
     {
         context.Response.Headers.CacheControl = "no-store";
-        var response = await search.SearchAsync(q, limit ?? 8, source, ct);
-        return Results.Ok(response);
+
+        try
+        {
+            var response = await search.SearchAsync(q, limit ?? 8, source, ct);
+            return Results.Ok(response);
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            // The search box sent a newer search (or the page closed): nothing to send.
+            return ClientClosedRequest();
+        }
     }
+
+    // 499 "client closed request": the browser stopped waiting for this answer.
+    // Catching the cancellation here keeps it out of the logs and stops the
+    // Visual Studio debugger from breaking on it.
+    private static IResult ClientClosedRequest() => Results.StatusCode(499);
 
     private static IResult Unavailable() =>
         Results.Json(

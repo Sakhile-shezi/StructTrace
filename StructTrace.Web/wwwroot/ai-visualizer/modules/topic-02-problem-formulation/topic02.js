@@ -480,6 +480,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
             elements.completeButton.disabled = !isGoal(state);
         }
+
+        updateCompletionMessage();
+    }
+
+
+    // Tells the student what unlocks "Mark Topic Complete".
+    function updateCompletionMessage() {
+
+        if (!elements.completionMessage) {
+            return;
+        }
+
+        if (
+            window.AIVisualProgress &&
+            typeof AIVisualProgress.isCompleted === "function" &&
+            AIVisualProgress.isCompleted("topic-02-problem-formulation")
+        ) {
+            return;
+        }
+
+        elements.completionMessage.textContent = isGoal(state)
+            ? "Goal state reached. You can now mark this topic complete."
+            : "To complete this topic, reach the goal state in the water-jug lab " +
+              "(make the moves yourself or press \u201cPlay Sample Solution\u201d).";
     }
 
 
@@ -1015,11 +1039,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-        if (elements.completionMessage) {
-
-            elements.completionMessage.textContent = "";
-
-        }
+        updateCompletionMessage();
 
     }
 

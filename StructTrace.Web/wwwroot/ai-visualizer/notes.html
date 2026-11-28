@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <!-- sign-in guard and StructTrace top bar: must load first -->
+  <script src="/js/visualizer-guard.js?v=6"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Exam Notes | AIVisual</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/ai-notes.css?v=1">
+  <style>
+    html, body { margin: 0; background: light-dark(#ffffff, #10191e); color-scheme: light dark; }
+    .back-link { display: inline-block; margin: 10px 16px 0; font: 600 14px/1.4 Inter, system-ui, sans-serif; color: #2e6f8e; text-decoration: none; }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <a class="back-link" href="index.html">← Back to the AI visualizer</a>
+  <div id="ai-notes"></div>
+
+  <script src="js/ai-notes.js?v=1"></script>
+  <script>
+    AIN.mount(document.getElementById('ai-notes'), {
+      title: 'AI exam notes',
+      notesApi: '/api/ai-notes',        // Controllers/AiNotesController.cs: "My notes" saved to the signed-in account
+      tokenUrl: '/api/ai-notes/token'   // antiforgery token for saving
+    });
+  </script>
+</body>
+</html>

@@ -356,6 +356,18 @@
         };
 
 
+        // What each unfinished activity means, in words a student can act on.
+        const COMPLETION_LABELS = {
+                    learningTypes: "identify the learning type for every scenario (2.2)",
+                    classificationRegression: "answer every classification-or-regression question (4.2)",
+                    consistency: "check an answer to the consistency question (3.3)",
+                    biasVariance: "move the model-complexity slider (6.3)",
+                    confusionMatrix: "identify a confusion-matrix outcome (7.3)",
+                    neuron: "calculate a neuron output (8.5)",
+                    scaling: "calculate a min-max scaled value (9.4)"
+                };
+
+
         function updateCompletion() {
 
             const complete = Object.values(
@@ -377,13 +389,13 @@
                     completion
                 )
                     .filter(([, done]) => !done)
-                    .map(([name]) => name);
+                    .map(([name]) => COMPLETION_LABELS[name] || name);
 
 
                 el.completionMessage.textContent =
                     complete
                         ? "All interactive activities completed. You can mark Topic 07 complete."
-                        : `Still to complete: ${remaining.join(", ")}.`;
+                        : `Still to do: ${remaining.join("; ")}.`;
 
             }
 
